@@ -15,7 +15,7 @@ struct SuperSwitch81 : Module {
 		PARAM_STEP7,
 		PARAM_STEP8,
 		PARAM_STEPS,
-		PARAM_NOREPEAT,
+		PARAM_NO_REPEATS,
 		PARAM_UP,
 		PARAM_DOWN,
 		PARAM_RANDOM,
@@ -47,7 +47,7 @@ struct SuperSwitch81 : Module {
 	};
 
 	enum LightId {
-		LIGHT_NOREPEATS,
+		LIGHT_NO_REPEATS,
 		LIGHT_RESET_TO_FIRST_STEP,
 		LIGHTS_COUNT
 	};
@@ -80,7 +80,7 @@ struct SuperSwitch81 : Module {
 		configParam(PARAM_STEPS, 1.0f, 8.0f, 8.0f, "Steps", "", 0.0f, 1.0f, 0.0f);
 		paramQuantities[PARAM_STEPS]->snapEnabled = true;
 
-		configButton(PARAM_NOREPEAT, "No random consecutive repeats");
+		configButton(PARAM_NO_REPEATS, "No random consecutive repeats");
 		configButton(PARAM_RESET_TO_FIRST_STEP, "Reset to first step");
 
 		for (int i = 0; i < 8; i++) {
@@ -221,7 +221,7 @@ struct SuperSwitch81 : Module {
 		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
 			outputs[OUTPUT_OUT].writeVoltages(outVoltages);
 
-		if (btNoRepeats.process(params[PARAM_NOREPEAT].getValue()))
+		if (btNoRepeats.process(params[PARAM_NO_REPEATS].getValue()))
 			bNoRepeats ^= true;
 
 		if (btResetToFirstStep.process(params[PARAM_RESET_TO_FIRST_STEP].getValue())) {
@@ -230,7 +230,7 @@ struct SuperSwitch81 : Module {
 				selectedIn = 0;
 		}
 
-		lights[LIGHT_NOREPEATS].setBrightnessSmooth(bNoRepeats, args.sampleTime);
+		lights[LIGHT_NO_REPEATS].setBrightnessSmooth(bNoRepeats, args.sampleTime);
 		lights[LIGHT_RESET_TO_FIRST_STEP].setBrightnessSmooth(bResetToFirstStep, args.sampleTime);
 	};
 
@@ -286,7 +286,7 @@ struct SuperSwitch81Widget : ModuleWidget {
 		addInput(createInputCentered<BananutBlack>(mm2px(Vec(56.197, 32.461)), module, SuperSwitch81::INPUT_STEPS));
 
 		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<RedLight>>>(mm2px(Vec(40.928, 45.085)),
-			module, SuperSwitch81::PARAM_NOREPEAT, SuperSwitch81::LIGHT_NOREPEATS));
+			module, SuperSwitch81::PARAM_NO_REPEATS, SuperSwitch81::LIGHT_NO_REPEATS));
 		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<BlueLight>>>(mm2px(Vec(51.759, 45.085)),
 			module, SuperSwitch81::PARAM_RESET_TO_FIRST_STEP, SuperSwitch81::LIGHT_RESET_TO_FIRST_STEP));
 
