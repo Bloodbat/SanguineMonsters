@@ -103,6 +103,44 @@ struct SuperSwitch81 : Module {
 		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
 	};
 
+	void doDownTrigger() {
+		selectedIn++;
+		bClockReceived = true;
+	};
+
+	void doRandomTrigger() {
+		if (!bNoRepeats) {
+			selectedIn = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
+		}
+		else {
+			randomNum = selectedIn;
+			while (randomNum == selectedIn)
+				randomNum = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
+			selectedIn = randomNum;
+		}
+		bClockReceived = true;
+	};
+
+	void doResetTrigger() {
+		if (bResetToFirstStep)
+			selectedIn = 0;
+		else {
+			selectedIn = -1;
+			bClockReceived = false;
+			// TODO!! BUG!!  Stop sending value when resetting!
+		}
+	};
+
+	void doUpTrigger() {
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
+			selectedIn--;
+		else
+		{
+			selectedIn = stepCount - 1;
+			bClockReceived = true;
+		}
+	};
+
 	void process(const ProcessArgs& args) override {
 		memset(outVoltages, 0, PORT_MAX_CHANNELS * sizeof(float));
 
@@ -114,88 +152,43 @@ struct SuperSwitch81 : Module {
 
 		if (inputs[INPUT_RESET].isConnected()) {
 			if (stInputReset.process(inputs[INPUT_RESET].getVoltage())) {
-				if (bResetToFirstStep)
-					selectedIn = 0;
-				else {
-					selectedIn = -1;
-					bClockReceived = false;
-				}
+				doResetTrigger();
 			}
 		}
 
 		if (inputs[INPUT_UP].isConnected()) {
 			if (stInputUp.process(inputs[INPUT_UP].getVoltage())) {
-				if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
-					selectedIn--;
-				else
-				{
-					selectedIn = stepCount - 1;
-					bClockReceived = true;
-				}
+				doUpTrigger();
 			}
 		}
 
 		if (inputs[INPUT_DOWN].isConnected()) {
 			if (stInputDown.process(inputs[INPUT_DOWN].getVoltage())) {
-				selectedIn++;
-				bClockReceived = true;
+				doDownTrigger();
 			}
 		}
 
 		if (inputs[INPUT_RANDOM].isConnected()) {
 			if (stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) {
-				if (!bNoRepeats) {
-					selectedIn = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
-				}
-				else {
-					randomNum = selectedIn;
-					while (randomNum == selectedIn)
-						randomNum = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
-					selectedIn = randomNum;
-				}
-				bClockReceived = true;
+				doRandomTrigger();
 			}
 		}
 
 		if (stReset.process(params[PARAM_RESET].getValue()))
 		{
-			if (bResetToFirstStep)
-				selectedIn = 0;
-			else
-			{
-				selectedIn = -1;
-				bClockReceived = false;
-				// TODO!! BUG!!  Stop sending value when resetting!
-			}			
+			doResetTrigger();
 		}
 
 		if (stUp.process(params[PARAM_UP].getValue())) {
-			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
-				selectedIn--;
-			else
-			{
-				selectedIn = stepCount - 1;
-				bClockReceived = true;
-			}
+			doUpTrigger();
 		}
 
 		if (stDown.process(params[PARAM_DOWN].getValue())) {
-			selectedIn++;
-			bClockReceived = true;
+			doDownTrigger();
 		}
 
 		if (stRandom.process(params[PARAM_RANDOM].getValue())) {
-			if (!bNoRepeats) {
-				selectedIn = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
-			}
-			else {
-				randomNum = selectedIn;
-				while (randomNum == selectedIn)
-					randomNum = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
-				selectedIn = randomNum;
-			}
-			if (!bResetToFirstStep && !bClockReceived)
-				bClockReceived = true;
+			doRandomTrigger();
 		}
 
 		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
