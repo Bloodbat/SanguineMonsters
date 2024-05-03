@@ -20,7 +20,7 @@ struct SuperSwitch81 : Module {
 		PARAM_DOWN,
 		PARAM_RANDOM,
 		PARAM_RESET,
-		PARAM_RESET_TO_ZERO,
+		PARAM_RESET_TO_FIRST_STEP,
 		PARAMS_COUNT
 	};
 
@@ -48,12 +48,12 @@ struct SuperSwitch81 : Module {
 
 	enum LightId {
 		LIGHT_NOREPEATS,
-		LIGHT_RESETTOZERO,
+		LIGHT_RESET_TO_FIRST_STEP,
 		LIGHTS_COUNT
 	};
 
 	dsp::BooleanTrigger btNoRepeats;
-	dsp::BooleanTrigger btResetToZero;
+	dsp::BooleanTrigger btResetToFirstStep;
 	dsp::SchmittTrigger stInputUp;
 	dsp::SchmittTrigger stInputDown;
 	dsp::SchmittTrigger stInputRandom;
@@ -65,7 +65,7 @@ struct SuperSwitch81 : Module {
 	dsp::SchmittTrigger stStep[8];
 	bool bClockReceived = false;
 	bool bNoRepeats = false;
-	bool bResetToZero = false;
+	bool bResetToFirstStep = true;
 	int inChannelCount = 0;
 	int stepCount = 8;
 	int selectedIn = 0;
@@ -81,7 +81,7 @@ struct SuperSwitch81 : Module {
 		paramQuantities[PARAM_STEPS]->snapEnabled = true;
 
 		configButton(PARAM_NOREPEAT, "No random consecutive repeats");
-		configButton(PARAM_RESET_TO_ZERO, "Reset to zero");
+		configButton(PARAM_RESET_TO_FIRST_STEP, "Reset to first step");
 
 		for (int i = 0; i < 8; i++) {
 			configButton(PARAM_STEP1 + i, "Step " + std::to_string(i + 1));
@@ -114,7 +114,7 @@ struct SuperSwitch81 : Module {
 
 		if (inputs[INPUT_RESET].isConnected()) {
 			if (stInputReset.process(inputs[INPUT_RESET].getVoltage())) {
-				if (!bResetToZero)
+				if (bResetToFirstStep)
 					selectedIn = 0;
 				else {
 					selectedIn = -1;
@@ -125,7 +125,7 @@ struct SuperSwitch81 : Module {
 
 		if (inputs[INPUT_UP].isConnected()) {
 			if (stInputUp.process(inputs[INPUT_UP].getVoltage())) {
-				if (!bResetToZero || (bResetToZero && bClockReceived))
+				if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
 					selectedIn--;
 				else
 				{
@@ -159,17 +159,18 @@ struct SuperSwitch81 : Module {
 
 		if (stReset.process(params[PARAM_RESET].getValue()))
 		{
-			if (!bResetToZero)
+			if (bResetToFirstStep)
 				selectedIn = 0;
 			else
 			{
 				selectedIn = -1;
 				bClockReceived = false;
-			}
+				// TODO!! BUG!!  Stop sending value when resetting!
+			}			
 		}
 
 		if (stUp.process(params[PARAM_UP].getValue())) {
-			if (!bResetToZero || (bResetToZero && bClockReceived))
+			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
 				selectedIn--;
 			else
 			{
@@ -193,11 +194,11 @@ struct SuperSwitch81 : Module {
 					randomNum = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
 				selectedIn = randomNum;
 			}
-			if (bResetToZero && !bClockReceived)
+			if (!bResetToFirstStep && !bClockReceived)
 				bClockReceived = true;
 		}
 
-		if (!bResetToZero || (bResetToZero && bClockReceived))
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
 			for (int i = 0; i < stepCount; i++) {
 				if (stStep[i].process(params[PARAM_STEP1 + i].getValue()))
 					selectedIn = i;
@@ -217,24 +218,24 @@ struct SuperSwitch81 : Module {
 			params[PARAM_STEP1 + i].setValue(i == selectedIn ? 1 : 0);
 
 		outputs[OUTPUT_OUT].setChannels(inChannelCount);
-		if (!bResetToZero || (bResetToZero && bClockReceived))
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
 			outputs[OUTPUT_OUT].writeVoltages(outVoltages);
 
 		if (btNoRepeats.process(params[PARAM_NOREPEAT].getValue()))
 			bNoRepeats ^= true;
 
-		if (btResetToZero.process(params[PARAM_RESET_TO_ZERO].getValue())) {
-			bResetToZero ^= true;
-			if (!bResetToZero)
+		if (btResetToFirstStep.process(params[PARAM_RESET_TO_FIRST_STEP].getValue())) {
+			bResetToFirstStep ^= true;
+			if (bResetToFirstStep)
 				selectedIn = 0;
 		}
 
 		lights[LIGHT_NOREPEATS].setBrightnessSmooth(bNoRepeats, args.sampleTime);
-		lights[LIGHT_RESETTOZERO].setBrightnessSmooth(bResetToZero, args.sampleTime);
+		lights[LIGHT_RESET_TO_FIRST_STEP].setBrightnessSmooth(bResetToFirstStep, args.sampleTime);
 	};
 
 	void onReset() override {
-		if (!bResetToZero)
+		if (bResetToFirstStep)
 			selectedIn = 0;
 		else {
 			selectedIn = -1;
@@ -251,7 +252,7 @@ struct SuperSwitch81 : Module {
 	json_t* dataToJson() override {
 		json_t* rootJ = json_object();
 		json_object_set_new(rootJ, "noRepeats", json_boolean(bNoRepeats));
-		json_object_set_new(rootJ, "resetToZero", json_boolean(bResetToZero));
+		json_object_set_new(rootJ, "resetToFirstStep", json_boolean(bResetToFirstStep));
 		return rootJ;
 	}
 
@@ -260,9 +261,9 @@ struct SuperSwitch81 : Module {
 		if (noRepeatsJ)
 			bNoRepeats = json_boolean_value(noRepeatsJ);
 
-		json_t* resetToZeroJ = json_object_get(rootJ, "resetToZero");
-		bResetToZero = json_boolean_value(resetToZeroJ);
-		if (bResetToZero) {
+		json_t* resetToFirstStepJ = json_object_get(rootJ, "resetToFirstStep");
+		bResetToFirstStep = json_boolean_value(resetToFirstStepJ);
+		if (!bResetToFirstStep) {
 			selectedIn = -1;
 			bClockReceived = false;
 		}
@@ -287,7 +288,7 @@ struct SuperSwitch81Widget : ModuleWidget {
 		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<RedLight>>>(mm2px(Vec(40.928, 45.085)),
 			module, SuperSwitch81::PARAM_NOREPEAT, SuperSwitch81::LIGHT_NOREPEATS));
 		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<BlueLight>>>(mm2px(Vec(51.759, 45.085)),
-			module, SuperSwitch81::PARAM_RESET_TO_ZERO, SuperSwitch81::LIGHT_RESETTOZERO));
+			module, SuperSwitch81::PARAM_RESET_TO_FIRST_STEP, SuperSwitch81::LIGHT_RESET_TO_FIRST_STEP));
 
 		float currentY = 23.904f;
 		float deltaY = 13.129f;
@@ -413,12 +414,12 @@ struct SuperSwitch81Widget : ModuleWidget {
 		stepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/light_steps.svg")));
 		switchFrameBuffer->addChild(stepsLight);
 
-		SanguineShapedLight* resetToZeroLight = new SanguineShapedLight();
-		resetToZeroLight->box.pos = mm2px(Vec(58.089, 42.74));
-		resetToZeroLight->wrap();
-		resetToZeroLight->module = module;
-		resetToZeroLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/from_zero.svg")));
-		switchFrameBuffer->addChild(resetToZeroLight);
+		SanguineShapedLight* resetToFirstStepLight = new SanguineShapedLight();
+		resetToFirstStepLight->box.pos = mm2px(Vec(56.723, 42.74));
+		resetToFirstStepLight->wrap();
+		resetToFirstStepLight->module = module;
+		resetToFirstStepLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/from_one.svg")));
+		switchFrameBuffer->addChild(resetToFirstStepLight);
 
 		SanguineShapedLight* entropyLight = new SanguineShapedLight();
 		entropyLight->box.pos = mm2px(Vec(31.011, 42.982));
