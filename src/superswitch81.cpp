@@ -127,7 +127,9 @@ struct SuperSwitch81 : Module {
 		else {
 			selectedIn = -1;
 			bClockReceived = false;
-			// TODO!! BUG!!  Stop sending value when resetting!
+			memset(outVoltages, 0, PORT_MAX_CHANNELS * sizeof(float));
+			outputs[OUTPUT_OUT].setChannels(0);
+			outputs[OUTPUT_OUT].writeVoltages(outVoltages);			
 		}
 	};
 
@@ -209,10 +211,11 @@ struct SuperSwitch81 : Module {
 
 		for (int i = 0; i < 8; i++)
 			params[PARAM_STEP1 + i].setValue(i == selectedIn ? 1 : 0);
-
-		outputs[OUTPUT_OUT].setChannels(inChannelCount);
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
+		
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
+			outputs[OUTPUT_OUT].setChannels(inChannelCount);
 			outputs[OUTPUT_OUT].writeVoltages(outVoltages);
+		}
 
 		if (btNoRepeats.process(params[PARAM_NO_REPEATS].getValue()))
 			bNoRepeats ^= true;
