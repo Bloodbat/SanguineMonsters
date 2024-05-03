@@ -48,7 +48,7 @@ struct SuperSwitch18 : Module {
 	};
 
 	dsp::SchmittTrigger stDecrease;
-	dsp::SchmittTrigger stIncrease;	
+	dsp::SchmittTrigger stIncrease;
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
@@ -59,15 +59,18 @@ struct SuperSwitch18 : Module {
 	dsp::SchmittTrigger stResetToFirstStep;
 	dsp::SchmittTrigger stStep[8];
 	bool bClockReceived = false;
+	bool bLastOneShotValue = false;
 	bool bLastResetToFirstStepValue = true;
 	bool bNoRepeats = false;
 	bool bOneShot = false;
+	bool bOneShotDone = false;
 	bool bResetToFirstStep = true;
 	float outVoltages[8 * PORT_MAX_CHANNELS] = {};
 	int outChannelsCounts[8] = {};
-	int stepCount = 8;
-	int selectedOut = 0;
 	int randomNum;
+	int selectedOut = 0;
+	int stepCount = 8;
+	int stepsDone = 0;
 
 	pcg32_random_t pcgRng;
 
@@ -111,11 +114,17 @@ struct SuperSwitch18 : Module {
 			selectedOut = stepCount - 1;
 			bClockReceived = true;
 		}
+		stepsDone++;
+		if (stepsDone > stepCount)
+			stepsDone = 0;
 	}
 
 	void doIncreaseTrigger() {
 		selectedOut++;
 		bClockReceived = true;
+		stepsDone++;
+		if (stepsDone > stepCount)
+			stepsDone = 0;
 	};
 
 	void doRandomTrigger() {
@@ -129,6 +138,9 @@ struct SuperSwitch18 : Module {
 			selectedOut = randomNum;
 		}
 		bClockReceived = true;
+		stepsDone++;
+		if (stepsDone > stepCount)
+			stepsDone = 0;
 	}
 
 	void doResetTrigger() {
@@ -145,6 +157,9 @@ struct SuperSwitch18 : Module {
 			selectedOut = -1;
 			bClockReceived = false;
 		}
+		stepsDone = 0;
+		if (bOneShot)
+			bOneShotDone = false;
 	};
 
 	void process(const ProcessArgs& args) override {
@@ -162,65 +177,70 @@ struct SuperSwitch18 : Module {
 			}
 		}
 
-		if (inputs[INPUT_DECREASE].isConnected()) {
-			if (stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) {
-				doDecreaseTrigger();
-			}
-		}
-
-		if (inputs[INPUT_INCREASE].isConnected()) {
-			if (stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) {
-				doIncreaseTrigger();
-			}
-		}
-
-		if (inputs[INPUT_RANDOM].isConnected()) {
-			if (stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) {
-				doRandomTrigger();
-			}
-		}
-
 		if (stReset.process(params[PARAM_RESET].getValue()))
 		{
 			doResetTrigger();
 		}
 
-		if (stDecrease.process(params[PARAM_DECREASE].getValue())) {
-			doDecreaseTrigger();
-		}
-
-		if (stIncrease.process(params[PARAM_INCREASE].getValue())) {
-			doIncreaseTrigger();
-		}
-
-		if (stRandom.process(params[PARAM_RANDOM].getValue())) {
-			doRandomTrigger();
-		}
-
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
-			for (int i = 0; i < stepCount; i++) {
-				if (stStep[i].process(params[PARAM_STEP1 + i].getValue()))
-					selectedOut = i;
-
-				while (selectedOut < 0)
-					selectedOut += stepCount;
-				while (selectedOut >= stepCount)
-					selectedOut -= stepCount;
-
-				if (inputs[INPUT_IN].isConnected()) {
-					inputs[INPUT_IN].readVoltages(outVoltages + selectedOut * PORT_MAX_CHANNELS);
-					outChannelsCounts[selectedOut] = inputs[INPUT_IN].getChannels();
+		if (!bOneShot || (bOneShot && !bOneShotDone)) {
+			if (inputs[INPUT_DECREASE].isConnected()) {
+				if (stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) {
+					doDecreaseTrigger();
 				}
 			}
 
-		for (int i = 0; i < 8; i++)
-		{
-			params[PARAM_STEP1 + i].setValue(i == selectedOut ? 1 : 0);
-
-			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-				outputs[OUTPUT_OUT1 + i].setChannels(outChannelsCounts[i]);
-				outputs[OUTPUT_OUT1 + i].writeVoltages(outVoltages + i * PORT_MAX_CHANNELS);
+			if (inputs[INPUT_INCREASE].isConnected()) {
+				if (stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) {
+					doIncreaseTrigger();
+				}
 			}
+
+			if (inputs[INPUT_RANDOM].isConnected()) {
+				if (stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) {
+					doRandomTrigger();
+				}
+			}
+
+			if (stDecrease.process(params[PARAM_DECREASE].getValue())) {
+				doDecreaseTrigger();
+			}
+
+			if (stIncrease.process(params[PARAM_INCREASE].getValue())) {
+				doIncreaseTrigger();
+			}
+
+			if (stRandom.process(params[PARAM_RANDOM].getValue())) {
+				doRandomTrigger();
+			}
+
+			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
+				for (int i = 0; i < stepCount; i++) {
+					if (stStep[i].process(params[PARAM_STEP1 + i].getValue()))
+						selectedOut = i;
+
+					while (selectedOut < 0)
+						selectedOut += stepCount;
+					while (selectedOut >= stepCount)
+						selectedOut -= stepCount;
+
+					if (inputs[INPUT_IN].isConnected()) {
+						inputs[INPUT_IN].readVoltages(outVoltages + selectedOut * PORT_MAX_CHANNELS);
+						outChannelsCounts[selectedOut] = inputs[INPUT_IN].getChannels();
+					}
+				}
+
+			for (int i = 0; i < 8; i++)
+			{
+				params[PARAM_STEP1 + i].setValue(i == selectedOut ? 1 : 0);
+
+				if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
+					outputs[OUTPUT_OUT1 + i].setChannels(outChannelsCounts[i]);
+					outputs[OUTPUT_OUT1 + i].writeVoltages(outVoltages + i * PORT_MAX_CHANNELS);
+				}
+			}
+
+			if (bOneShot && stepsDone == stepCount)
+				bOneShotDone = true;
 		}
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
@@ -228,6 +248,10 @@ struct SuperSwitch18 : Module {
 		if (!bLastResetToFirstStepValue && bResetToFirstStep)
 			selectedOut = 0;
 		bLastResetToFirstStepValue = bResetToFirstStep;
+		bOneShot = params[PARAM_ONE_SHOT].getValue();
+		if (bOneShot && (bOneShot != bLastOneShotValue))
+			bOneShotDone = false;
+		bLastOneShotValue = bOneShot;
 	};
 
 	void onReset() override {
@@ -268,6 +292,10 @@ struct SuperSwitch18 : Module {
 		}
 		else
 			selectedOut = 0;
+		bOneShot = params[PARAM_ONE_SHOT].getValue();
+		if (bOneShot && bOneShot != bLastOneShotValue)
+			bOneShotDone = false;
+		bLastOneShotValue = bOneShot;
 	}
 };
 
