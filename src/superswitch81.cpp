@@ -47,16 +47,16 @@ struct SuperSwitch81 : Module {
 		OUTPUTS_COUNT
 	};
 
-	dsp::SchmittTrigger stNoRepeats;
-	dsp::SchmittTrigger stResetToFirstStep;
-	dsp::SchmittTrigger stInputUp;
-	dsp::SchmittTrigger stInputDown;
+	dsp::SchmittTrigger stDecrease;
+	dsp::SchmittTrigger stIncrease;
+	dsp::SchmittTrigger stInputDecrease;
+	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
-	dsp::SchmittTrigger stInputReset;
-	dsp::SchmittTrigger stDown;
-	dsp::SchmittTrigger stUp;
-	dsp::SchmittTrigger stRandom;
+	dsp::SchmittTrigger stInputReset;	
+	dsp::SchmittTrigger stNoRepeats;
+	dsp::SchmittTrigger stRandom;	
 	dsp::SchmittTrigger stReset;
+	dsp::SchmittTrigger stResetToFirstStep;
 	dsp::SchmittTrigger stStep[8];
 	bool bClockReceived = false;
 	bool bLastResetToFirstStepValue = true;
@@ -158,13 +158,13 @@ struct SuperSwitch81 : Module {
 		}
 
 		if (inputs[INPUT_DECREASE].isConnected()) {
-			if (stInputUp.process(inputs[INPUT_DECREASE].getVoltage())) {
+			if (stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) {
 				doDecreaseTrigger();
 			}
 		}
 
 		if (inputs[INPUT_INCREASE].isConnected()) {
-			if (stInputDown.process(inputs[INPUT_INCREASE].getVoltage())) {
+			if (stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) {
 				doIncreaseTrigger();
 			}
 		}
@@ -180,11 +180,11 @@ struct SuperSwitch81 : Module {
 			doResetTrigger();
 		}
 
-		if (stUp.process(params[PARAM_DECREASE].getValue())) {
+		if (stDecrease.process(params[PARAM_DECREASE].getValue())) {
 			doDecreaseTrigger();
 		}
 
-		if (stDown.process(params[PARAM_INCREASE].getValue())) {
+		if (stIncrease.process(params[PARAM_INCREASE].getValue())) {
 			doIncreaseTrigger();
 		}
 
