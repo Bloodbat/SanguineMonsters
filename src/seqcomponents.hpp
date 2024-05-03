@@ -12,6 +12,6 @@ struct SeqStepSwitch :SanguineLightUpSwitch {
 struct SeqControlSwitch :SanguineLightUpSwitch {
 	SeqControlSwitch() {
 		haloColorOn = nvgRGB(239, 250, 110);
-		haloColorOff = nvgRGB(0, 167, 255);		
+		haloColorOff = nvgRGB(0, 167, 255);
 	}
 };
