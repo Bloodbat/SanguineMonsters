@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7.6mm" height="7.6mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
+viewBox="0 0 50.1 50.1"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <g id="Faceplate">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <circle fill="black" cx="25.05" cy="25.05" r="25.05"/>
+ </g>
+ <g id="Lights">
+  <metadata id="CorelCorpID_1Corel-Layer"/>
+  <polygon fill="#CF2600" fill-rule="nonzero" points="17.51,41.47 29.83,14.31 14.22,14.31 14.22,8.63 37.19,8.63 37.19,13 24.81,41.47 "/>
+ </g>
+</svg>

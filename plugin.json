@@ -1,0 +1,37 @@
+{
+  "slug": "SanguineMonsters",
+  "name": "Sanguine Modules Monsters",
+  "version": "2.0.0",
+  "license": "GPL-3.0-or-later",
+  "author": "Bloodbat",
+  "pluginUrl": "https://github.com/Bloodbat/SanguineMonsters",
+  "sourceUrl": "https://github.com/Bloodbat/SanguineMonsters",
+  "description": "Monster modules for your everyday needs.",
+  "changelogUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/CHANGELOG.md",
+  "modules": [
+    {
+      "slug": "Sanguine-SuperSwitch81",
+      "name": "Sanguine Hydra",
+      "description": "An 8 to 1 switch that can avoid consecutive repeated values and can be reset from either 0 or 1.",
+      "manualUrl": "",
+      "tags": [
+        "Switch",
+        "Random",
+        "Sequencer",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "Sanguine-SuperSwitch18",
+      "name": "Sanguine Gegenees",
+      "description": "A 1 to 8 switch that can avoid consecutive repeated values and can be reset from either 0 or 1.",
+      "manualUrl": "",
+      "tags": [
+        "Switch",
+        "Random",
+        "Sequencer",
+        "Polyphonic"
+      ]
+    }
+  ]
+}
