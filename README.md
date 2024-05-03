@@ -2,7 +2,7 @@
 
 ## Modules
 
-![alt text](pics/monster modules.png)
+![alt text](pics/monster_modules.png)
 
 ## Sanguine Hydra
 
