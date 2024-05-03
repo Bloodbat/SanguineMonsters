@@ -16,8 +16,8 @@ struct SuperSwitch18 : Module {
 		PARAM_STEP8,
 		PARAM_STEPS,
 		PARAM_NO_REPEATS,
-		PARAM_UP,
-		PARAM_DOWN,
+		PARAM_DECREASE,
+		PARAM_INCREASE,
 		PARAM_RANDOM,
 		PARAM_RESET,
 		PARAM_RESET_TO_FIRST_STEP,
@@ -28,8 +28,8 @@ struct SuperSwitch18 : Module {
 	enum InputIds {
 		INPUT_IN,
 		INPUT_STEPS,
-		INPUT_UP,
-		INPUT_DOWN,
+		INPUT_DECREASE,
+		INPUT_INCREASE,
 		INPUT_RANDOM,
 		INPUT_RESET,
 		INPUTS_COUNT
@@ -72,7 +72,7 @@ struct SuperSwitch18 : Module {
 	pcg32_random_t pcgRng;
 
 	SuperSwitch18() {
-		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT,0);
+		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
 		configParam(PARAM_STEPS, 1.0f, 8.0f, 8.0f, "Steps", "", 0.0f, 1.0f, 0.0f);
 		paramQuantities[PARAM_STEPS]->snapEnabled = true;
@@ -88,13 +88,13 @@ struct SuperSwitch18 : Module {
 
 		configInput(INPUT_STEPS, "Step count");
 
-		configButton(PARAM_UP, "Previous step");
-		configButton(PARAM_DOWN, "Next step");
+		configButton(PARAM_DECREASE, "Previous step");
+		configButton(PARAM_INCREASE, "Next step");
 		configButton(PARAM_RANDOM, "Random step");
 		configButton(PARAM_RESET, "Reset");
 
-		configInput(INPUT_UP, "Trigger previous step");
-		configInput(INPUT_DOWN, "Trigger next step");
+		configInput(INPUT_DECREASE, "Trigger previous step");
+		configInput(INPUT_INCREASE, "Trigger next step");
 		configInput(INPUT_RANDOM, "Trigger random");
 		configInput(INPUT_RESET, "Trigger reset");
 		configInput(INPUT_IN, "Voltage");
@@ -103,7 +103,17 @@ struct SuperSwitch18 : Module {
 		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
 	};
 
-	void doDownTrigger() {
+	void doDecreaseTrigger() {
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
+			selectedOut--;
+		else
+		{
+			selectedOut = stepCount - 1;
+			bClockReceived = true;
+		}
+	}
+
+	void doIncreaseTrigger() {
 		selectedOut++;
 		bClockReceived = true;
 	};
@@ -137,16 +147,6 @@ struct SuperSwitch18 : Module {
 		}
 	};
 
-	void doUpTrigger() {
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
-			selectedOut--;
-		else
-		{
-			selectedOut = stepCount - 1;
-			bClockReceived = true;
-		}
-	}
-
 	void process(const ProcessArgs& args) override {
 		memset(outVoltages, 0, 8 * PORT_MAX_CHANNELS * sizeof(float));
 
@@ -162,15 +162,15 @@ struct SuperSwitch18 : Module {
 			}
 		}
 
-		if (inputs[INPUT_UP].isConnected()) {
-			if (stInputUp.process(inputs[INPUT_UP].getVoltage())) {
-				doUpTrigger();
+		if (inputs[INPUT_DECREASE].isConnected()) {
+			if (stInputUp.process(inputs[INPUT_DECREASE].getVoltage())) {
+				doDecreaseTrigger();
 			}
 		}
 
-		if (inputs[INPUT_DOWN].isConnected()) {
-			if (stInputDown.process(inputs[INPUT_DOWN].getVoltage())) {
-				doDownTrigger();
+		if (inputs[INPUT_INCREASE].isConnected()) {
+			if (stInputDown.process(inputs[INPUT_INCREASE].getVoltage())) {
+				doIncreaseTrigger();
 			}
 		}
 
@@ -185,12 +185,12 @@ struct SuperSwitch18 : Module {
 			doResetTrigger();
 		}
 
-		if (stUp.process(params[PARAM_UP].getValue())) {
-			doUpTrigger();
+		if (stUp.process(params[PARAM_DECREASE].getValue())) {
+			doDecreaseTrigger();
 		}
 
-		if (stDown.process(params[PARAM_DOWN].getValue())) {
-			doDownTrigger();
+		if (stDown.process(params[PARAM_INCREASE].getValue())) {
+			doIncreaseTrigger();
 		}
 
 		if (stRandom.process(params[PARAM_RANDOM].getValue())) {
@@ -282,7 +282,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(9.844, 18.272)), module, SuperSwitch18::PARAM_STEPS));
-		addInput(createInputCentered<BananutBlack>(mm2px(Vec(9.844, 32.461)), module, SuperSwitch18::INPUT_STEPS));		
+		addInput(createInputCentered<BananutBlack>(mm2px(Vec(9.844, 32.461)), module, SuperSwitch18::INPUT_STEPS));
 
 		float currentY = 23.904f;
 		float deltaY = 13.129f;
@@ -382,9 +382,9 @@ struct SuperSwitch18Widget : ModuleWidget {
 
 		currentY = 55.291f;
 		deltaY = 14.631f;
-		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.487, currentY)), module, SuperSwitch18::INPUT_UP));
+		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.487, currentY)), module, SuperSwitch18::INPUT_INCREASE));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.487, currentY)), module, SuperSwitch18::INPUT_DOWN));
+		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.487, currentY)), module, SuperSwitch18::INPUT_DECREASE));
 		currentY += deltaY;
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.487, currentY)), module, SuperSwitch18::INPUT_RANDOM));
 		currentY += deltaY;
@@ -392,13 +392,13 @@ struct SuperSwitch18Widget : ModuleWidget {
 
 		currentY = 51.376f;
 		SeqControlSwitch* btnUp = createParamCentered<SeqControlSwitch>(mm2px(Vec(21.433, currentY)),
-			module, SuperSwitch18::PARAM_UP);
+			module, SuperSwitch18::PARAM_INCREASE);
 		btnUp->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_off.svg")));
 		btnUp->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_on.svg")));
 		addParam(btnUp);
 		currentY += deltaY;
 		SeqControlSwitch* btnDown = createParamCentered<SeqControlSwitch>(mm2px(Vec(21.433, currentY)),
-			module, SuperSwitch18::PARAM_DOWN);
+			module, SuperSwitch18::PARAM_DECREASE);
 		btnDown->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_off.svg")));
 		btnDown->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_on.svg")));
 		addParam(btnDown);
@@ -435,7 +435,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 		stepsLight->wrap();
 		stepsLight->module = module;
 		stepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/light_steps.svg")));
-		switchFrameBuffer->addChild(stepsLight);	
+		switchFrameBuffer->addChild(stepsLight);
 
 		SanguineShapedLight* inLight = new SanguineShapedLight();
 		inLight->box.pos = mm2px(Vec(6.943, 106.547));

@@ -2,15 +2,15 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Creator: CorelDRAW -->
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7.8304mm" height="7.8304mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 78.5 78.5"
+viewBox="0 0 55.03 55.03"
  xmlns:xlink="http://www.w3.org/1999/xlink"
  xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
  <g id="Faceplate">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect fill="black" x="-0" y="-0" width="78.5" height="78.5"/>
+  <rect fill="black" x="-0" y="-0" width="55.03" height="55.03"/>
  </g>
  <g id="Lights">
   <metadata id="CorelCorpID_1Corel-Layer"/>
-  <polygon fill="#EFFA6E" fill-rule="nonzero" points="32.2,74.36 32.2,35.33 21.1,35.33 39.2,4.13 57.4,35.33 46.3,35.33 46.3,74.36 "/>
+  <polygon id="Increase" fill="#EFFA6E" fill-rule="nonzero" points="30.61,24.51 47.71,24.51 47.71,30.61 30.61,30.61 30.61,48.31 24.42,48.31 24.42,30.61 7.32,30.61 7.32,24.51 24.42,24.51 24.42,6.72 30.61,6.72 "/>
  </g>
 </svg>

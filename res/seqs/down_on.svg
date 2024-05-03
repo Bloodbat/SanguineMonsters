@@ -2,15 +2,15 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Creator: CorelDRAW -->
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7.8304mm" height="7.8304mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 68.55 68.55"
+viewBox="0 0 47.68 47.68"
  xmlns:xlink="http://www.w3.org/1999/xlink"
  xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
  <g id="Faceplate">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect fill="black" x="-0" y="-0" width="68.55" height="68.55"/>
+  <rect fill="black" x="-0" y="-0" width="47.68" height="47.68"/>
  </g>
  <g id="Lights">
   <metadata id="CorelCorpID_1Corel-Layer"/>
-  <polygon fill="#EFFA6E" fill-rule="nonzero" points="34.24,64.94 18.43,37.69 28.12,37.69 28.12,3.61 40.43,3.61 40.43,37.69 50.13,37.69 "/>
+  <polygon id="Decrease" fill="#EFFA6E" fill-rule="nonzero" points="7.69,29.05 7.69,18.64 39.99,18.64 39.99,29.05 "/>
  </g>
 </svg>
