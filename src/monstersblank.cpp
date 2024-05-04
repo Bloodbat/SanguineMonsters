@@ -16,14 +16,7 @@ struct MonstersBlankWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		FramebufferWidget* blankFrameBuffer = new FramebufferWidget();
-		addChild(blankFrameBuffer);
-
-		SanguineShapedLight* vampLight = new SanguineShapedLight();
-		vampLight->box.pos = mm2px(Vec(13.007, 20.804));
-		vampLight->wrap();
-		vampLight->module = module;
-		vampLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/vamp_lit_blank.svg")));
-		blankFrameBuffer->addChild(vampLight);
+		addChild(blankFrameBuffer);		
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
 		monstersLight->box.pos = mm2px(Vec(3.253, 43.216));
