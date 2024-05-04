@@ -13,7 +13,7 @@
       "slug": "Sanguine-SuperSwitch81",
       "name": "Sanguine Hydra",
       "description": "An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
-      "manualUrl": "",
+      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Switch",
         "Random",
@@ -25,7 +25,7 @@
       "slug": "Sanguine-SuperSwitch18",
       "name": "Sanguine Gegenees",
       "description": "A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
-      "manualUrl": "",
+      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Switch",
         "Random",
@@ -37,7 +37,7 @@
       "slug": "Sanguine-Monsters-Blank",
       "name": "Sanguine Monsters Blank",
       "description": "Put a vampire and the Monsters logo on your rack!",
-      "manualUrl": "",
+      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Blank",
         "Visual"
