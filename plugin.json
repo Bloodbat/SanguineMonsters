@@ -32,6 +32,16 @@
         "Sequencer",
         "Polyphonic"
       ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Blank",
+      "name": "Sanguine Monsters Blank",
+      "description": "Put a vampire and the Monsters logo in your rack!",
+      "manualUrl": "",
+      "tags": [
+        "Blank",
+        "Visual"
+      ]
     }
   ]
 }
