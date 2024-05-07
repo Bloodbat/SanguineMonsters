@@ -8,3 +8,4 @@ extern Plugin* pluginInstance;
 extern Model* modelSuperSwitch81;
 extern Model* modelSuperSwitch18;
 extern Model* modelMonstersBlank;
+extern Model* modelDollyX;

@@ -42,6 +42,17 @@
         "Blank",
         "Visual"
       ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Dolly-X",
+      "name": "Sanguine Monsters Dolly-X",
+      "description": "Dual monophonic to polyphonic channel cloner.",
+      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
+      "tags": [
+        "Utility",
+        "Polyphonic",
+        "Dual"
+      ]
     }
   ]
 }

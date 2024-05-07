@@ -8,4 +8,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelSuperSwitch81);
 	p->addModel(modelSuperSwitch18);
 	p->addModel(modelMonstersBlank);
+	p->addModel(modelDollyX);
 }
