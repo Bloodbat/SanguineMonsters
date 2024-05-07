@@ -1,4 +1,4 @@
-#include "sanguinecomponents.hpp"
+﻿#include "sanguinecomponents.hpp"
 #include <color.hpp>
 
 using namespace rack;
@@ -33,7 +33,8 @@ BefacoTinyKnobRed::BefacoTinyKnobRed() {
 // Displays
 
 SanguineAlphaDisplay::SanguineAlphaDisplay() {
-	font = APP->window->loadFont(asset::plugin(pluginInstance, "res/hdad-segment14-1.002/Segment14.ttf"));
+	font = APP->window->loadFont(asset::plugin(pluginInstance, "res/components/Segment14.ttf"));	
+	box.size = mm2px(Vec(100.8, 21.2));
 }
 
 void SanguineAlphaDisplay::draw(const DrawArgs& args) {
@@ -56,19 +57,19 @@ void SanguineAlphaDisplay::drawLayer(const DrawArgs& args, int layer) {
 		if (module && !module->isBypassed()) {
 			if (font) {
 				// Text					
-				nvgFontSize(args.vg, 38);
+				nvgFontSize(args.vg, 40);
 				nvgFontFaceId(args.vg, font->handle);
 				nvgTextLetterSpacing(args.vg, 2.5);
 
-				Vec textPos = Vec(9, 48);
+				Vec textPos = Vec(9, 52);
 				nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
 				// Background of all segments
 				nvgText(args.vg, textPos.x, textPos.y, "~~~~~~~~", NULL);
 				nvgFillColor(args.vg, textColor);
-				if (selectedItem && itemList)
-				{
-					std::string itemToPrint = itemList->at(*selectedItem);
-					nvgText(args.vg, textPos.x, textPos.y, itemToPrint.c_str(), NULL);
+				if (displayText && !(displayText->empty()))
+				{	
+					// TODO: Make sure we only display max. display chars.
+					nvgText(args.vg, textPos.x, textPos.y, displayText->c_str(), NULL);
 				}
 				drawRectHalo(args, box.size, textColor, 55, 0.f);
 			}
@@ -100,6 +101,8 @@ void SanguineLedNumberDisplay::drawLayer(const DrawArgs& args, int layer) {
 	if (layer == 1) {
 		if (module && !module->isBypassed()) {
 			if (font) {
+				// TODO don't do all this if there's no value.
+
 				// Text					
 				nvgFontSize(args.vg, 33.95);
 				nvgFontFaceId(args.vg, font->handle);
@@ -120,6 +123,112 @@ void SanguineLedNumberDisplay::drawLayer(const DrawArgs& args, int layer) {
 					displayValue.insert(0, 1, '0');
 
 				nvgText(args.vg, textPos.x, textPos.y, displayValue.c_str(), NULL);
+				drawRectHalo(args, box.size, textColor, 55, 0.f);
+			}
+		}
+	}
+	Widget::drawLayer(args, layer);
+}
+
+Sanguine96x32OLEDDisplay::Sanguine96x32OLEDDisplay() {
+	font = APP->window->loadFont(asset::plugin(pluginInstance, "res/components/sanguinematrix.ttf"));
+	box.size = mm2px(Vec(16.298, 5.418));
+}
+
+void Sanguine96x32OLEDDisplay::draw(const DrawArgs& args) {
+	// Background
+	NVGcolor backgroundColor = nvgRGB(10, 10, 10);
+	NVGcolor borderColor = nvgRGB(100, 100, 100);
+	nvgBeginPath(args.vg);
+	nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
+	nvgFillColor(args.vg, backgroundColor);
+	nvgFill(args.vg);
+	nvgStrokeWidth(args.vg, 1.0);
+	nvgStrokeColor(args.vg, borderColor);
+	nvgStroke(args.vg);
+
+	Widget::draw(args);
+}
+
+void Sanguine96x32OLEDDisplay::drawLayer(const DrawArgs& args, int layer) {
+	if (layer == 1) {
+		if (module && !module->isBypassed()) {
+			if (font) {
+				if (oledText && !(oledText->empty())) {
+					// Text					
+					nvgFontSize(args.vg, 6);
+					nvgFontFaceId(args.vg, font->handle);
+
+					nvgFillColor(args.vg, textColor);
+
+					Vec textPos = Vec(3, 7.5);
+					std::string textCopy;
+					textCopy.assign(oledText->data());
+					bool multiLine = oledText->size() > 8;
+					if (multiLine) {
+						std::string displayText = "";
+						for (uint32_t i = 0; i < 8; i++)
+							displayText += textCopy[i];
+						textCopy.erase(0, 8);
+						nvgText(args.vg, textPos.x, textPos.y, displayText.c_str(), NULL);
+						textPos = Vec(3, 14.5);
+						displayText = "";
+						for (uint32_t i = 0; (i < 8 || i < textCopy.length()); i++)
+							displayText += textCopy[i];
+						nvgText(args.vg, textPos.x, textPos.y, displayText.c_str(), NULL);
+					}
+					else {
+						nvgText(args.vg, textPos.x, textPos.y, oledText->c_str(), NULL);						
+					}
+					//drawRectHalo(args, box.size, textColor, 55, 0.f);					
+				}
+			}
+		}
+	}
+	Widget::drawLayer(args, layer);
+}
+
+SanguineMatrixDisplay::SanguineMatrixDisplay()
+{
+	font = APP->window->loadFont(asset::plugin(pluginInstance, "res/components/sanguinematrix.ttf"));
+	box.size = mm2px(Vec(68.433, 10.16));
+}
+
+void SanguineMatrixDisplay::draw(const DrawArgs& args) {
+	// Background
+	NVGcolor backgroundColor = nvgRGB(0x38, 0x38, 0x38);
+	NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
+	nvgBeginPath(args.vg);
+	nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 5.0);
+	nvgFillColor(args.vg, backgroundColor);
+	nvgFill(args.vg);
+	nvgStrokeWidth(args.vg, 1.0);
+	nvgStrokeColor(args.vg, borderColor);
+	nvgStroke(args.vg);
+
+	Widget::draw(args);
+}
+
+void SanguineMatrixDisplay::drawLayer(const DrawArgs& args, int layer) {
+	if (layer == 1) {
+		if (module && !module->isBypassed()) {
+			if (font) {
+				// Text					
+				nvgFontSize(args.vg, 16.45);
+				nvgFontFaceId(args.vg, font->handle);
+				nvgTextLetterSpacing(args.vg, 2);
+
+				// Verify this!
+				Vec textPos = Vec(5, 24);
+				nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+				// Background of all segments
+				nvgText(args.vg, textPos.x, textPos.y, "████████████", NULL);
+				nvgFillColor(args.vg, textColor);
+				if (displayText && !(displayText->empty()))
+				{
+					// TODO make sure we only display max. display chars					
+					nvgText(args.vg, textPos.x, textPos.y, displayText->c_str(), NULL);
+				}
 				drawRectHalo(args, box.size, textColor, 55, 0.f);
 			}
 		}
@@ -205,7 +314,7 @@ void drawCircularHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloCo
 	NVGpaint paint = nvgRadialGradient(args.vg, c.x, c.y, radius, oradius, icol, ocol);
 	nvgFillPaint(args.vg, paint);
 	nvgFill(args.vg);
-};
+}
 
 void drawRectHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor, unsigned char haloOpacity, float positionX)
 {
@@ -232,4 +341,4 @@ void drawRectHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor,
 	nvgFillPaint(args.vg, paint);
 	nvgFill(args.vg);
 	nvgGlobalCompositeOperation(args.vg, NVG_SOURCE_OVER);
-};
+}
