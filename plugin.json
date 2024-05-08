@@ -53,6 +53,17 @@
         "Polyphonic",
         "Dual"
       ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Oraculus",
+      "name": "Sanguine Monsters Oraculus",
+      "description": "n to 1 switch/sequencer that takes a polyphonic cable input.",
+      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
+      "tags": [
+        "Utility",
+        "Polyphonic",
+        "Switch"
+      ]
     }
   ]
 }
