@@ -224,8 +224,15 @@ struct SuperSwitch81 : Module {
 					}
 				}
 
-			for (int i = 0; i < 8; i++)
-				params[PARAM_STEP1 + i].setValue(i == selectedIn ? 1 : 0);
+			for (int i = 0; i < 8; i++) {
+				if (i < stepCount) {
+					params[PARAM_STEP1 + i].setValue(i == selectedIn ? 1 : 0);
+				}
+				else
+				{
+					params[PARAM_STEP1 + i].setValue(2);
+				}
+			}
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				outputs[OUTPUT_OUT].setChannels(inChannelCount);
@@ -326,48 +333,56 @@ struct SuperSwitch81Widget : ModuleWidget {
 			module, SuperSwitch81::PARAM_STEP1);
 		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_off.svg")));
 		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_on.svg")));
+		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_disabled.svg")));
 		addParam(step1);
 		currentY += deltaY;
 		SeqStepSwitch* step2 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP2);
 		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_off.svg")));
 		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_on.svg")));
+		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_disabled.svg")));
 		addParam(step2);
 		currentY += deltaY;
 		SeqStepSwitch* step3 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP3);
 		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_off.svg")));
 		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_on.svg")));
+		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_disabled.svg")));
 		addParam(step3);
 		currentY += deltaY;
 		SeqStepSwitch* step4 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP4);
 		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_off.svg")));
 		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_on.svg")));
+		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_disabled.svg")));
 		addParam(step4);
 		currentY += deltaY;
 		SeqStepSwitch* step5 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP5);
 		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_off.svg")));
 		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_on.svg")));
+		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_disabled.svg")));
 		addParam(step5);
 		currentY += deltaY;
 		SeqStepSwitch* step6 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP6);
 		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_off.svg")));
 		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_on.svg")));
+		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_disabled.svg")));
 		addParam(step6);
 		currentY += deltaY;
 		SeqStepSwitch* step7 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP7);
 		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_off.svg")));
 		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_on.svg")));
+		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_disabled.svg")));
 		addParam(step7);
 		currentY += deltaY;
 		SeqStepSwitch* step8 = createParam<SeqStepSwitch>(mm2px(Vec(18.763, currentY)),
 			module, SuperSwitch81::PARAM_STEP8);
 		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_off.svg")));
 		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_on.svg")));
+		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_disabled.svg")));
 		addParam(step8);
 
 		currentY = 43.085f;
@@ -440,7 +455,7 @@ struct SuperSwitch81Widget : ModuleWidget {
 		addChild(switchFrameBuffer);
 
 		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay();
-		display->box.pos = mm2px(Vec(31.647, 13.972));		
+		display->box.pos = mm2px(Vec(31.647, 13.972));
 		display->module = module;
 		display->textColor = nvgRGB(200, 0, 0);
 		switchFrameBuffer->addChild(display);
