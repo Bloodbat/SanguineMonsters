@@ -31,7 +31,7 @@ struct Oraculus : Module {
 
 	enum LightIds {
 		ENUMS(LIGHT_CHANNEL, 16 * 3),
-		NUM_LIGHTS
+		LIGHTS_COUNT
 	};
 
 	dsp::ClockDivider clockDivider;
@@ -62,7 +62,7 @@ struct Oraculus : Module {
 	pcg32_random_t pcgRng;
 
 	Oraculus() {
-		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, NUM_LIGHTS);
+		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
 		configButton(PARAM_NO_REPEATS, "No random consecutive repeats");
 
@@ -192,14 +192,14 @@ struct Oraculus : Module {
 		for (int i = 0; i < 16; i++) {
 			currentLight = i * 3;
 			if (i == finalChannel) {
-				lights[currentLight + 0].setBrightnessSmooth(0.5f, sampleTime);
+				lights[currentLight + 0].setBrightnessSmooth(0.59f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.5f, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(1.f, sampleTime);
 			}
 			else if (i < channelCount) {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0.3f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.3f, sampleTime);
+				lights[currentLight + 1].setBrightnessSmooth(0.28f, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(0.15f, sampleTime);
 			}
 			else {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
