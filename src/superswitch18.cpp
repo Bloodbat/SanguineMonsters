@@ -72,6 +72,8 @@ struct SuperSwitch18 : Module {
 	int stepCount = 8;
 	int stepsDone = 0;
 
+	dsp::ClockDivider clockDivider;
+
 	pcg32_random_t pcgRng;
 
 	SuperSwitch18() {
@@ -104,6 +106,7 @@ struct SuperSwitch18 : Module {
 		params[PARAM_STEP1].setValue(1);
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
 		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		clockDivider.setDivision(64);
 	};
 
 	void doDecreaseTrigger() {
@@ -165,10 +168,12 @@ struct SuperSwitch18 : Module {
 	void process(const ProcessArgs& args) override {
 		memset(outVoltages, 0, 8 * PORT_MAX_CHANNELS * sizeof(float));
 
-		if (inputs[INPUT_STEPS].isConnected())
-			stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.0f, 8.0f));
-		else if (params[PARAM_STEPS].getValue() != stepCount) {
-			stepCount = params[PARAM_STEPS].getValue();
+		if (clockDivider.process()) {
+			if (inputs[INPUT_STEPS].isConnected())
+				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.0f, 8.0f));
+			else if (params[PARAM_STEPS].getValue() != stepCount) {
+				stepCount = params[PARAM_STEPS].getValue();
+			}
 		}
 
 		if (inputs[INPUT_RESET].isConnected()) {
