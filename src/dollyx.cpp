@@ -29,9 +29,9 @@ struct DollyX : Module {
 
 	int cloneCounts[kSUBMODULES];
 
-	bool cvConnected[kSUBMODULES];
-	bool inputConnected[kSUBMODULES];
-	bool outputConnected[kSUBMODULES];
+	bool bCvConnected[kSUBMODULES];
+	bool bInputConnected[kSUBMODULES];
+	bool bOutputConnected[kSUBMODULES];
 
 	dsp::ClockDivider clockDivider;
 
@@ -67,7 +67,7 @@ struct DollyX : Module {
 		}
 
 		for (int i = 0; i < kSUBMODULES; i++) {
-			if (outputConnected[i] && inputConnected[i]) {
+			if (bOutputConnected[i] && bInputConnected[i]) {
 				for (int j = 0; j < cloneCounts[i]; j++) {
 					outputs[OUTPUT_POLYOUT_1 + i].setVoltage(inputs[INPUT_MONO_IN1 + i].getVoltage(), j);
 				}
@@ -76,7 +76,7 @@ struct DollyX : Module {
 	}
 
 	int getChannelCloneCount(int channel) {
-		if (cvConnected[channel]) {
+		if (bCvConnected[channel]) {
 			float inputValue = math::clamp(inputs[INPUT_CHANNELS1_CV + channel].getVoltage(), 0.f, 10.f);
 			int steps = (int)rescale(inputValue, 0.f, 10.f, 0.f, 15.f);
 			return steps;
@@ -101,9 +101,9 @@ struct DollyX : Module {
 
 	void checkConnections() {
 		for (int i = 0; i < kSUBMODULES; i++) {
-			cvConnected[i] = inputs[INPUT_CHANNELS1_CV + i].isConnected();
-			inputConnected[i] = inputs[INPUT_MONO_IN1 + i].isConnected();
-			outputConnected[i] = outputs[OUTPUT_POLYOUT_1 + i].isConnected();
+			bCvConnected[i] = inputs[INPUT_CHANNELS1_CV + i].isConnected();
+			bInputConnected[i] = inputs[INPUT_MONO_IN1 + i].isConnected();
+			bOutputConnected[i] = outputs[OUTPUT_POLYOUT_1 + i].isConnected();
 		}
 	}
 
