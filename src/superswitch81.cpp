@@ -410,17 +410,17 @@ struct SuperSwitch81Widget : ModuleWidget {
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(59.553, currentY)), module, SuperSwitch81::INPUT_RESET));
 
 		currentY = 51.376f;
-		SeqControlSwitch* btnUp = createParamCentered<SeqControlSwitch>(mm2px(Vec(36.776, currentY)),
+		SeqControlSwitch* btnIncrease = createParamCentered<SeqControlSwitch>(mm2px(Vec(36.776, currentY)),
 			module, SuperSwitch81::PARAM_INCREASE);
-		btnUp->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_off.svg")));
-		btnUp->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_on.svg")));
-		addParam(btnUp);
+		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_off.svg")));
+		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_on.svg")));
+		addParam(btnIncrease);
 		currentY += deltaY;
-		SeqControlSwitch* btnDown = createParamCentered<SeqControlSwitch>(mm2px(Vec(36.776, currentY)),
+		SeqControlSwitch* btnDecrease = createParamCentered<SeqControlSwitch>(mm2px(Vec(36.776, currentY)),
 			module, SuperSwitch81::PARAM_DECREASE);
-		btnDown->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_off.svg")));
-		btnDown->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_on.svg")));
-		addParam(btnDown);
+		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_off.svg")));
+		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_on.svg")));
+		addParam(btnDecrease);
 		currentY += deltaY;
 		SeqControlSwitch* btnRandom = createParamCentered<SeqControlSwitch>(mm2px(Vec(36.776, currentY)),
 			module, SuperSwitch81::PARAM_RANDOM);
