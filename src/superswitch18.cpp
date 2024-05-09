@@ -467,7 +467,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 		FramebufferWidget* switchFrameBuffer = new FramebufferWidget();
 		addChild(switchFrameBuffer);
 
-		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay();
+		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay(2);
 		display->box.pos = mm2px(Vec(18.894, 13.972));
 		display->module = module;
 		display->textColor = nvgRGB(200, 0, 0);

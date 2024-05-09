@@ -139,7 +139,7 @@ struct DollyXWidget : ModuleWidget {
 		FramebufferWidget* dollyFrameBuffer = new FramebufferWidget();
 		addChild(dollyFrameBuffer);
 
-		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay();
+		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay(2);
 		displayCloner1->box.pos = mm2px(Vec(6.475, 17.493));
 		displayCloner1->module = module;
 		dollyFrameBuffer->addChild(displayCloner1);
@@ -147,7 +147,7 @@ struct DollyXWidget : ModuleWidget {
 		if (module)
 			displayCloner1->value = (&module->cloneCounts[0]);
 
-		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay();
+		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay(2);
 		displayCloner2->box.pos = mm2px(Vec(6.475, 72.164));
 		displayCloner2->module = module;
 		dollyFrameBuffer->addChild(displayCloner2);
