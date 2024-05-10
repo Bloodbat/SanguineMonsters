@@ -106,7 +106,7 @@ struct SuperSwitch81 : Module {
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
 		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
 
-		clockDivider.setDivision(64);
+		clockDivider.setDivision(16);
 	};
 
 	void doDecreaseTrigger() {
