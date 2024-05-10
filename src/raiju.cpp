@@ -38,7 +38,7 @@ struct Raiju : Module {
 	Raiju() {
 		config(PARAMS_COUNT, 0, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		configParam(PARAM_CHANNEL_COUNT, 1.0f, 16.0f, 16.0f, "Polyphonic output channels", "", 0.0f, 1.0f, 0.0f);
+		configParam(PARAM_CHANNEL_COUNT, 1.0f, 16.0f, 1.0f, "Polyphonic output channels", "", 0.0f, 1.0f, 0.0f);
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
 
 		for (int i = 0; i < kVoltagesCount; i++) {
