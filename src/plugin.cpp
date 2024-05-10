@@ -10,4 +10,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelMonstersBlank);
 	p->addModel(modelDollyX);
 	p->addModel(modelOraculus);
+	p->addModel(modelRaiju);
 }

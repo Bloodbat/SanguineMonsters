@@ -64,6 +64,16 @@
         "Polyphonic",
         "Switch"
       ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Raiju",
+      "name": "Sanguine Monsters Raiju",
+      "description": "A flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage",
+      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
+      "tags": [
+        "Utility",
+        "Polyphonic"
+      ]
     }
   ]
 }

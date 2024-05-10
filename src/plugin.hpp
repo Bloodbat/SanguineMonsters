@@ -10,3 +10,4 @@ extern Model* modelSuperSwitch18;
 extern Model* modelMonstersBlank;
 extern Model* modelDollyX;
 extern Model* modelOraculus;
+extern Model* modelRaiju;

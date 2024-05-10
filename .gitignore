@@ -8,3 +8,5 @@ dep
 dist
 sources
 .vs
+/makeplugin.sh
+/move.sh
