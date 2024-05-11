@@ -59,7 +59,7 @@ struct Raiju : Module {
 			channelCount = params[PARAM_CHANNEL_COUNT].getValue();
 			bOutputConnected[i] = outputs[OUTPUT_VOLTAGE + i].isConnected();
 			voltages[i] = params[PARAM_VOLTAGE + i].getValue();
-			std::stringstream	stringStream;
+			std::stringstream stringStream;
 			stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[i];
 			if (voltages[i] < 0 && voltages[i] > -10)
 			{
@@ -78,8 +78,7 @@ struct Raiju : Module {
 		const float sampleTime = APP->engine->getSampleTime() * kClockDivision;
 		for (int i = 0; i < kVoltagesCount; i++) {
 			float lightValue;
-			int currentLight = LIGHT_VOLTAGE + i * 2;
-			lightValue = rescale(voltages[i], -10.f, 10.f, 0.f, 1.0f);
+			int currentLight = LIGHT_VOLTAGE + i * 2;			
 			if (voltages[i] > 0) {
 				lightValue = rescale(voltages[i], 0.f, 10.f, 0.f, 1.0f);
 				lights[currentLight + 0].setBrightnessSmooth(lightValue, sampleTime);
