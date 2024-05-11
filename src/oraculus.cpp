@@ -178,6 +178,7 @@ struct Oraculus : Module {
 		}
 		else {
 			finalChannel = -1;
+			outputs[OUTPUT_MONOPHONIC].setVoltage(0.f);
 		}
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
