@@ -68,6 +68,8 @@ struct DollyX : Module {
 					outputs[OUTPUT_POLYOUT_1 + i].setVoltage(inputs[INPUT_MONO_IN1 + i].getVoltage(), j);
 				}
 			}
+			else
+				outputs[OUTPUT_POLYOUT_1 + i].setChannels(0);
 		}
 	}
 
