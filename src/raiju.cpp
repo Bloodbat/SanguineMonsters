@@ -1,11 +1,13 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include <iomanip>
+#include "seqcomponents.hpp"
 
 struct Raiju : Module {
 	static const int kVoltagesCount = 8;
 
 	enum ParamIds {
+		ENUMS(PARAM_VOLTAGE_SELECTOR, kVoltagesCount),
 		PARAM_CHANNEL_COUNT,
 		ENUMS(PARAM_VOLTAGE, kVoltagesCount),
 		PARAMS_COUNT
@@ -17,15 +19,13 @@ struct Raiju : Module {
 		OUTPUTS_COUNT
 	};
 
-	enum LightIds {
-		ENUMS(LIGHT_VOLTAGE, kVoltagesCount * 2),
-		LIGHTS_COUNT
-	};
-	
 	bool bOutputConnected = false;
 	bool bPolyOutConnected = false;
 
-	int channelCount = 1;
+	int currentChannelCount = 1;
+	int channelCounts[kVoltagesCount] = { 1,1,1,1,1,1,1,1 };
+	int lastSelectedVoltage = -1;
+	int selectedVoltage = 0;
 
 	static const int kClockDivision = 64;
 
@@ -33,10 +33,12 @@ struct Raiju : Module {
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
+	dsp::SchmittTrigger switches[kVoltagesCount];
+
 	dsp::ClockDivider clockDivider;
 
 	Raiju() {
-		config(PARAMS_COUNT, 0, OUTPUTS_COUNT, LIGHTS_COUNT);
+		config(PARAMS_COUNT, 0, OUTPUTS_COUNT, 0);
 
 		configParam(PARAM_CHANNEL_COUNT, 1.0f, 16.0f, 1.0f, "Polyphonic output channels", "", 0.0f, 1.0f, 0.0f);
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
@@ -47,22 +49,40 @@ struct Raiju : Module {
 		}
 
 		configOutput(OUTPUT_EIGHT_CHANNELS, "Voltage series polyphonic");
-		
+
 		memset(voltages, 0, sizeof(float) * kVoltagesCount);
 
 		clockDivider.setDivision(kClockDivision);
 	}
 
+	void pollSwitches() {
+		for (uint8_t i = 0; i < kVoltagesCount; i++) {
+			if (switches[i].process(params[PARAM_VOLTAGE_SELECTOR + i].getValue())) {
+				selectedVoltage = i;
+			}
+		}
+	}
+
 	void process(const ProcessArgs& args) override {
-		if (clockDivider.process()) {	
-			const float sampleTime = APP->engine->getSampleTime() * kClockDivision;
-
-			float lightValue;
-
+		if (clockDivider.process()) {
 			bPolyOutConnected = outputs[OUTPUT_EIGHT_CHANNELS].isConnected();
-			channelCount = params[PARAM_CHANNEL_COUNT].getValue();
 
-			for (int i = 0; i < kVoltagesCount; i++) {
+			pollSwitches();
+			currentChannelCount = channelCounts[selectedVoltage];
+			if (selectedVoltage != lastSelectedVoltage) {
+				params[PARAM_CHANNEL_COUNT].setValue(currentChannelCount);
+				lastSelectedVoltage = selectedVoltage;
+			}
+
+			int selectedChannelCount = params[PARAM_CHANNEL_COUNT].getValue();
+			if (currentChannelCount != selectedChannelCount) {
+				channelCounts[selectedVoltage] = selectedChannelCount;
+				currentChannelCount = selectedChannelCount;
+			}
+
+			for (uint8_t i = 0; i < kVoltagesCount; i++) {
+				params[PARAM_VOLTAGE_SELECTOR + i].setValue(i == selectedVoltage ? 1 : 0);
+
 				// Get channel voltages and update strings for displays				
 				voltages[i] = params[PARAM_VOLTAGE + i].getValue();
 				std::stringstream stringStream;
@@ -78,31 +98,13 @@ struct Raiju : Module {
 					strVoltages[i] = stringStream.str();
 
 				if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
-					outputs[OUTPUT_VOLTAGE + i].setChannels(channelCount);
-					for (int j = 0; j < channelCount; j++) {
+					outputs[OUTPUT_VOLTAGE + i].setChannels(channelCounts[i]);
+					for (int j = 0; j < channelCounts[i]; j++) {
 						outputs[OUTPUT_VOLTAGE + i].setVoltage(voltages[i], j);
 					}
 				}
 				else {
 					outputs[OUTPUT_VOLTAGE + i].setChannels(0);
-				}
-
-				// Adjust lights
-				int currentLight = LIGHT_VOLTAGE + i * 2;
-				if (voltages[i] > 0) {
-					lightValue = rescale(voltages[i], 0.f, 10.f, 0.f, 1.0f);
-					lights[currentLight + 0].setBrightnessSmooth(lightValue, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(0, sampleTime);
-				}
-				else if (voltages[i] < 0) {
-					lightValue = rescale(voltages[i], -10.f, 0.f, -1.f, 0.f);
-					lights[currentLight + 0].setBrightnessSmooth(0, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(-lightValue, sampleTime);
-				}
-				else
-				{
-					lights[currentLight + 0].setBrightnessSmooth(0, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(0, sampleTime);
 				}
 			}
 
@@ -111,7 +113,29 @@ struct Raiju : Module {
 				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
 			}
 			else
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);			
+				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);
+		}
+	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+
+		json_t* channelCountsJ = json_array();
+		for (int channelCount : channelCounts) {
+			json_t* cJ = json_integer(channelCount);
+			json_array_append_new(channelCountsJ, cJ);
+		}
+		json_object_set_new(rootJ, "channelCounts", channelCountsJ);
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		json_t* channelCountsJ = json_object_get(rootJ, "channelCounts");
+		size_t idx;
+		json_t* cJ;
+		json_array_foreach(channelCountsJ, idx, cJ) {
+			channelCounts[idx] = json_integer_value(cJ);
 		}
 	}
 };
@@ -132,15 +156,13 @@ struct RaijuWidget : ModuleWidget {
 		float currentY = 32.982;
 
 		for (int i = 0; i < 4; i++) {
-			addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(11.011, currentY)), module, Raiju::PARAM_VOLTAGE + i));
-			addChild(createLightCentered<SmallLight<GreenRedLight>>(mm2px(Vec(66.069, currentY)), module, Raiju::LIGHT_VOLTAGE + i * 2));
+			addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(19.21, currentY)), module, Raiju::PARAM_VOLTAGE + i));
 			currentY += yDistance;
 		}
 
 		currentY = 32.982;
 		for (int i = 4; i < 8; i++) {
-			addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(125.773, currentY)), module, Raiju::PARAM_VOLTAGE + i));
-			addChild(createLightCentered<SmallLight<GreenRedLight>>(mm2px(Vec(70.727, currentY)), module, Raiju::LIGHT_VOLTAGE + i * 2));
+			addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(117.942, currentY)), module, Raiju::PARAM_VOLTAGE + i));
 			currentY += yDistance;
 		}
 
@@ -161,72 +183,125 @@ struct RaijuWidget : ModuleWidget {
 		FramebufferWidget* raijuFrameBuffer = new FramebufferWidget();
 		addChild(raijuFrameBuffer);
 
+		currentY = 29.182f;
+		yDistance = 19.689f;
+
+		SeqStepSwitch* step1 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0);
+		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_off.svg")));
+		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_on.svg")));
+		addParam(step1);
+		currentY += yDistance;
+		SeqStepSwitch* step2 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 1);
+		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_off.svg")));
+		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_on.svg")));
+		addParam(step2);
+		currentY += yDistance;
+		SeqStepSwitch* step3 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 2);
+		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_off.svg")));
+		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_on.svg")));
+		addParam(step3);
+		currentY += yDistance;
+		SeqStepSwitch* step4 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 3);
+		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_off.svg")));
+		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_on.svg")));
+		addParam(step4);
+
+		currentY = 29.182f;
+		yDistance = 19.689f;
+		SeqStepSwitch* step5 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 4);
+		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_off.svg")));
+		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_on.svg")));
+		addParam(step5);
+		currentY += yDistance;
+		SeqStepSwitch* step6 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 5);
+		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_off.svg")));
+		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_on.svg")));
+		addParam(step6);
+		currentY += yDistance;
+		SeqStepSwitch* step7 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 6);
+		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_off.svg")));
+		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_on.svg")));
+		addParam(step7);
+		currentY += yDistance;
+		SeqStepSwitch* step8 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 7);
+		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_off.svg")));
+		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_on.svg")));
+		addParam(step8);
+
 		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2);
 		displayChannelCount->box.pos = mm2px(Vec(104.581, 6.497));
 		displayChannelCount->module = module;
 		raijuFrameBuffer->addChild(displayChannelCount);
 
 		if (module)
-			displayChannelCount->value = (&module->channelCount);
+			displayChannelCount->value = (&module->currentChannelCount);
 
-		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(8);
-		displayVoltage1->box.pos = mm2px(Vec(17.504, 27.902));
+		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7);
+		displayVoltage1->box.pos = mm2px(Vec(25.703, 27.902));
 		displayVoltage1->module = module;
 		raijuFrameBuffer->addChild(displayVoltage1);
 
 		if (module)
 			displayVoltage1->displayText = &module->strVoltages[0];
 
-		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(8);
-		displayVoltage2->box.pos = mm2px(Vec(17.504, 47.591));
+		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7);
+		displayVoltage2->box.pos = mm2px(Vec(25.703, 47.591));
 		displayVoltage2->module = module;
 		raijuFrameBuffer->addChild(displayVoltage2);
 
 		if (module)
 			displayVoltage2->displayText = &module->strVoltages[1];
 
-		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(8);
-		displayVoltage3->box.pos = mm2px(Vec(17.504, 67.279));
+		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7);
+		displayVoltage3->box.pos = mm2px(Vec(25.703, 67.279));
 		displayVoltage3->module = module;
 		raijuFrameBuffer->addChild(displayVoltage3);
 
 		if (module)
 			displayVoltage3->displayText = &module->strVoltages[2];
 
-		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(8);
-		displayVoltage4->box.pos = mm2px(Vec(17.504, 86.968));
+		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7);
+		displayVoltage4->box.pos = mm2px(Vec(25.703, 86.968));
 		displayVoltage4->module = module;
 		raijuFrameBuffer->addChild(displayVoltage4);
 
 		if (module)
 			displayVoltage4->displayText = &module->strVoltages[3];
 
-		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(8);
-		displayVoltage5->box.pos = mm2px(Vec(73.664, 27.902));
+		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7);
+		displayVoltage5->box.pos = mm2px(Vec(71.536, 27.902));
 		displayVoltage5->module = module;
 		raijuFrameBuffer->addChild(displayVoltage5);
 
 		if (module)
 			displayVoltage5->displayText = &module->strVoltages[4];
 
-		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(8);
-		displayVoltage6->box.pos = mm2px(Vec(73.664, 47.591));
+		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7);
+		displayVoltage6->box.pos = mm2px(Vec(71.536, 47.591));
 		displayVoltage6->module = module;
 		raijuFrameBuffer->addChild(displayVoltage6);
 
 		if (module)
 			displayVoltage6->displayText = &module->strVoltages[5];
 
-		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(8);
-		displayVoltage7->box.pos = mm2px(Vec(73.664, 67.279));
+		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7);
+		displayVoltage7->box.pos = mm2px(Vec(71.536, 67.279));
 		displayVoltage7->module = module;
 		raijuFrameBuffer->addChild(displayVoltage7);
 
 		if (module)
 			displayVoltage7->displayText = &module->strVoltages[6];
 
-		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(8);
-		displayVoltage8->box.pos = mm2px(Vec(73.664, 86.968));
+		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7);
+		displayVoltage8->box.pos = mm2px(Vec(71.536, 86.968));
 		displayVoltage8->module = module;
 		raijuFrameBuffer->addChild(displayVoltage8);
 
