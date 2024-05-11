@@ -78,7 +78,7 @@ struct Raiju : Module {
 		const float sampleTime = APP->engine->getSampleTime() * kClockDivision;
 		for (int i = 0; i < kVoltagesCount; i++) {
 			float lightValue;
-			int currentLight = LIGHT_VOLTAGE + i * 2;			
+			int currentLight = LIGHT_VOLTAGE + i * 2;
 			if (voltages[i] > 0) {
 				lightValue = rescale(voltages[i], 0.f, 10.f, 0.f, 1.0f);
 				lights[currentLight + 0].setBrightnessSmooth(lightValue, sampleTime);
@@ -101,11 +101,6 @@ struct Raiju : Module {
 
 		if (clockDivider.process()) {
 			getValues();
-
-			if (bPolyOutConnected)
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
-			else
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);
 			for (int i = 0; i < kVoltagesCount; i++) {
 				if (bOutputConnected[i]) {
 					outputs[OUTPUT_VOLTAGE + i].setChannels(channelCount);
@@ -116,9 +111,13 @@ struct Raiju : Module {
 				else {
 					outputs[OUTPUT_VOLTAGE + i].setChannels(0);
 				}
-				if (bPolyOutConnected)
-					outputs[OUTPUT_EIGHT_CHANNELS].setVoltage(voltages[i], i);
 			}
+			if (bPolyOutConnected) {
+				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
+				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
+			}
+			else
+				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);
 			updateLights();
 		}
 	}
