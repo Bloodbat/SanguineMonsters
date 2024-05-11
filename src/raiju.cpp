@@ -242,7 +242,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayChannelCount);
 
 		if (module)
-			displayChannelCount->value = (&module->currentChannelCount);
+			displayChannelCount->values.numberValue = (&module->currentChannelCount);
 
 		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7);
 		displayVoltage1->box.pos = mm2px(Vec(25.703, 27.902));
@@ -250,7 +250,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage1);
 
 		if (module)
-			displayVoltage1->displayText = &module->strVoltages[0];
+			displayVoltage1->values.displayText = &module->strVoltages[0];
 
 		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7);
 		displayVoltage2->box.pos = mm2px(Vec(25.703, 47.591));
@@ -258,7 +258,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage2);
 
 		if (module)
-			displayVoltage2->displayText = &module->strVoltages[1];
+			displayVoltage2->values.displayText = &module->strVoltages[1];
 
 		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7);
 		displayVoltage3->box.pos = mm2px(Vec(25.703, 67.279));
@@ -266,7 +266,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage3);
 
 		if (module)
-			displayVoltage3->displayText = &module->strVoltages[2];
+			displayVoltage3->values.displayText = &module->strVoltages[2];
 
 		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7);
 		displayVoltage4->box.pos = mm2px(Vec(25.703, 86.968));
@@ -274,7 +274,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage4);
 
 		if (module)
-			displayVoltage4->displayText = &module->strVoltages[3];
+			displayVoltage4->values.displayText = &module->strVoltages[3];
 
 		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7);
 		displayVoltage5->box.pos = mm2px(Vec(71.536, 27.902));
@@ -282,7 +282,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage5);
 
 		if (module)
-			displayVoltage5->displayText = &module->strVoltages[4];
+			displayVoltage5->values.displayText = &module->strVoltages[4];
 
 		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7);
 		displayVoltage6->box.pos = mm2px(Vec(71.536, 47.591));
@@ -290,7 +290,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage6);
 
 		if (module)
-			displayVoltage6->displayText = &module->strVoltages[5];
+			displayVoltage6->values.displayText = &module->strVoltages[5];
 
 		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7);
 		displayVoltage7->box.pos = mm2px(Vec(71.536, 67.279));
@@ -298,7 +298,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage7);
 
 		if (module)
-			displayVoltage7->displayText = &module->strVoltages[6];
+			displayVoltage7->values.displayText = &module->strVoltages[6];
 
 		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7);
 		displayVoltage8->box.pos = mm2px(Vec(71.536, 86.968));
@@ -306,7 +306,7 @@ struct RaijuWidget : ModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage8);
 
 		if (module)
-			displayVoltage8->displayText = &module->strVoltages[7];
+			displayVoltage8->values.displayText = &module->strVoltages[7];
 
 		SanguineShapedLight* channelsLight = new SanguineShapedLight();
 		channelsLight->box.pos = mm2px(Vec(125.219, 16.15));

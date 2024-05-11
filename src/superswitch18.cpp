@@ -474,7 +474,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 		switchFrameBuffer->addChild(display);
 
 		if (module)
-			display->value = (&module->stepCount);
+			display->values.numberValue = (&module->stepCount);
 
 		SanguineShapedLight* stepsLight = new SanguineShapedLight();
 		stepsLight->box.pos = mm2px(Vec(23.285, 30.505));
