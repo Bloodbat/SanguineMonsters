@@ -21,8 +21,8 @@ struct Raiju : Module {
 		ENUMS(LIGHT_VOLTAGE, kVoltagesCount * 2),
 		LIGHTS_COUNT
 	};
-
-	bool bOutputConnected[kVoltagesCount];
+	
+	bool bOutputConnected = false;
 	bool bPolyOutConnected = false;
 
 	int channelCount = 1;
@@ -47,62 +47,37 @@ struct Raiju : Module {
 		}
 
 		configOutput(OUTPUT_EIGHT_CHANNELS, "Voltage series polyphonic");
-
-		memset(bOutputConnected, false, sizeof(bool) * kVoltagesCount);
+		
 		memset(voltages, 0, sizeof(float) * kVoltagesCount);
 
 		clockDivider.setDivision(kClockDivision);
 	}
 
-	void getValues() {
-		for (int i = 0; i < kVoltagesCount; i++) {
-			channelCount = params[PARAM_CHANNEL_COUNT].getValue();
-			bOutputConnected[i] = outputs[OUTPUT_VOLTAGE + i].isConnected();
-			voltages[i] = params[PARAM_VOLTAGE + i].getValue();
-			std::stringstream stringStream;
-			stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[i];
-			if (voltages[i] < 0 && voltages[i] > -10)
-			{
-				std::string tmpStr = stringStream.str();
-				tmpStr.replace(0, 1, "0");
-				tmpStr.insert(0, "-");
-				strVoltages[i] = tmpStr;
-			}
-			else
-				strVoltages[i] = stringStream.str();
-		}
-		bPolyOutConnected = outputs[OUTPUT_EIGHT_CHANNELS].isConnected();
-	}
-
-	void updateLights() {
-		const float sampleTime = APP->engine->getSampleTime() * kClockDivision;
-		for (int i = 0; i < kVoltagesCount; i++) {
-			float lightValue;
-			int currentLight = LIGHT_VOLTAGE + i * 2;
-			if (voltages[i] > 0) {
-				lightValue = rescale(voltages[i], 0.f, 10.f, 0.f, 1.0f);
-				lights[currentLight + 0].setBrightnessSmooth(lightValue, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0, sampleTime);
-			}
-			else if (voltages[i] < 0) {
-				lightValue = rescale(voltages[i], -10.f, 0.f, -1.f, 0.f);
-				lights[currentLight + 0].setBrightnessSmooth(0, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(-lightValue, sampleTime);
-			}
-			else
-			{
-				lights[currentLight + 0].setBrightnessSmooth(0, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0, sampleTime);
-			}
-		}
-	}
-
 	void process(const ProcessArgs& args) override {
+		if (clockDivider.process()) {	
+			const float sampleTime = APP->engine->getSampleTime() * kClockDivision;
 
-		if (clockDivider.process()) {
-			getValues();
+			float lightValue;
+
+			bPolyOutConnected = outputs[OUTPUT_EIGHT_CHANNELS].isConnected();
+			channelCount = params[PARAM_CHANNEL_COUNT].getValue();
+
 			for (int i = 0; i < kVoltagesCount; i++) {
-				if (bOutputConnected[i]) {
+				// Get channel voltages and update strings for displays				
+				voltages[i] = params[PARAM_VOLTAGE + i].getValue();
+				std::stringstream stringStream;
+				stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[i];
+				if (voltages[i] < 0 && voltages[i] > -10)
+				{
+					std::string tmpStr = stringStream.str();
+					tmpStr.replace(0, 1, "0");
+					tmpStr.insert(0, "-");
+					strVoltages[i] = tmpStr;
+				}
+				else
+					strVoltages[i] = stringStream.str();
+
+				if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
 					outputs[OUTPUT_VOLTAGE + i].setChannels(channelCount);
 					for (int j = 0; j < channelCount; j++) {
 						outputs[OUTPUT_VOLTAGE + i].setVoltage(voltages[i], j);
@@ -111,14 +86,32 @@ struct Raiju : Module {
 				else {
 					outputs[OUTPUT_VOLTAGE + i].setChannels(0);
 				}
+
+				// Adjust lights
+				int currentLight = LIGHT_VOLTAGE + i * 2;
+				if (voltages[i] > 0) {
+					lightValue = rescale(voltages[i], 0.f, 10.f, 0.f, 1.0f);
+					lights[currentLight + 0].setBrightnessSmooth(lightValue, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(0, sampleTime);
+				}
+				else if (voltages[i] < 0) {
+					lightValue = rescale(voltages[i], -10.f, 0.f, -1.f, 0.f);
+					lights[currentLight + 0].setBrightnessSmooth(0, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(-lightValue, sampleTime);
+				}
+				else
+				{
+					lights[currentLight + 0].setBrightnessSmooth(0, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(0, sampleTime);
+				}
 			}
+
 			if (bPolyOutConnected) {
 				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
 				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
 			}
 			else
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);
-			updateLights();
+				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);			
 		}
 	}
 };
