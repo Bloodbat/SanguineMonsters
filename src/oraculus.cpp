@@ -129,51 +129,55 @@ struct Oraculus : Module {
 			doResetTrigger();
 		}
 
-		if (bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) {
-			doIncreaseTrigger();
+		if (channelCount > 0) {
+			if (bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) {
+				doIncreaseTrigger();
+			}
+
+			if (bDecreaseConnected && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) {
+				doDecreaseTrigger();
+			}
+
+			if (bRandomConnected && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) {
+				doRandomTrigger();
+			}
+
+			if (stDecrease.process(params[PARAM_DECREASE].getValue())) {
+				doDecreaseTrigger();
+			}
+
+			if (stIncrease.process(params[PARAM_INCREASE].getValue())) {
+				doIncreaseTrigger();
+			}
+
+			if (stRandom.process(params[PARAM_RANDOM].getValue())) {
+				doRandomTrigger();
+			}
+
+
+			if (bCvConnected && channelCount > 1) {
+				float cv = inputs[INPUT_CV_OFFSET].getVoltage();
+				int channelOffset = std::floor(cv * (channelCount / 10.f));
+				finalChannel = selectedChannel + channelOffset;
+				if (finalChannel < 0)
+					finalChannel = channelCount + channelOffset;
+				if (finalChannel >= channelCount)
+					finalChannel = channelOffset - (channelCount - selectedChannel);
+			}
+			else {
+				finalChannel = selectedChannel;
+			}
+
+
+			if (channelCount < 1)
+				finalChannel = -1;
+
+			if (finalChannel > -1) {
+				outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
+			}
 		}
 
-		if (bDecreaseConnected && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) {
-			doDecreaseTrigger();
-		}
-
-		if (bRandomConnected && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) {
-			doRandomTrigger();
-		}
-
-		if (stDecrease.process(params[PARAM_DECREASE].getValue())) {
-			doDecreaseTrigger();
-		}
-
-		if (stIncrease.process(params[PARAM_INCREASE].getValue())) {
-			doIncreaseTrigger();
-		}
-
-		if (stRandom.process(params[PARAM_RANDOM].getValue())) {
-			doRandomTrigger();
-		}
-
-		if (bCvConnected && channelCount > 1) {
-			float cv = inputs[INPUT_CV_OFFSET].getVoltage();
-			int channelOffset = std::floor(cv * (channelCount / 10.f));
-			finalChannel = selectedChannel + channelOffset;
-			if (finalChannel < 0)
-				finalChannel = channelCount + channelOffset;
-			if (finalChannel >= channelCount)
-				finalChannel = channelOffset - (channelCount - selectedChannel);
-		}
-		else {
-			finalChannel = selectedChannel;
-		}
-
-		if (channelCount < 1)
-			finalChannel = -1;
-
-		if (finalChannel > -1) {
-			outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
-
-			bNoRepeats = params[PARAM_NO_REPEATS].getValue();
-		}
+		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
 	}
 
 	void checkConnections() {
