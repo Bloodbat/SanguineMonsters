@@ -35,8 +35,6 @@ struct DollyX : Module {
 
 	dsp::ClockDivider clockDivider;
 
-	pcg32_random_t pcgRng;
-
 	DollyX() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
@@ -52,9 +50,7 @@ struct DollyX : Module {
 		configInput(INPUT_MONO_IN1, "Mono 1");
 		configInput(INPUT_MONO_IN2, "Mono 2");
 		configInput(INPUT_CHANNELS1_CV, "Channels CV 1");
-		configInput(INPUT_CHANNELS2_CV, "Channels CV 2");
-
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		configInput(INPUT_CHANNELS2_CV, "Channels CV 2");		
 
 		clockDivider.setDivision(64);
 		onReset();
@@ -104,12 +100,6 @@ struct DollyX : Module {
 			bCvConnected[i] = inputs[INPUT_CHANNELS1_CV + i].isConnected();
 			bInputConnected[i] = inputs[INPUT_MONO_IN1 + i].isConnected();
 			bOutputConnected[i] = outputs[OUTPUT_POLYOUT_1 + i].isConnected();
-		}
-	}
-
-	void onRandomize() override {
-		for (int i = 0; i < kSUBMODULES; i++) {
-			cloneCounts[i] = (int)pcg32_boundedrand_r(&pcgRng, 16) + 1;
 		}
 	}
 };
