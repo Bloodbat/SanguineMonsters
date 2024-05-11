@@ -6,6 +6,7 @@ struct SeqStepSwitch :SanguineLightUpSwitch {
 	SeqStepSwitch() {
 		haloColorOn = nvgRGB(207, 38, 0);
 		haloColorOff = nvgRGB(0, 207, 76);
+		momentary = false;
 	}
 };
 
