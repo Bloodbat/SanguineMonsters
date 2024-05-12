@@ -74,6 +74,14 @@
         "Utility",
         "Polyphonic"
       ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Sphinx",
+      "name": "Sphinx",
+      "description": "An euclidean sequencer with different modes.",
+      "tags": [
+        "Sequencer"
+      ]
     }
   ]
 }

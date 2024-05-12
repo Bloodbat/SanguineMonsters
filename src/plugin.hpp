@@ -11,3 +11,4 @@ extern Model* modelMonstersBlank;
 extern Model* modelDollyX;
 extern Model* modelOraculus;
 extern Model* modelRaiju;
+extern Model* modelSphinx;
