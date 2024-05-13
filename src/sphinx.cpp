@@ -20,10 +20,7 @@ struct Sphinx : Module {
 		PARAM_SHIFT,
 		PARAM_PADDING,
 		PARAM_ACCENT,
-		PARAM_EUCLIDEAN,
-		PARAM_RANDOM,
-		PARAM_FIBONACCI,
-		PARAM_LINEAR,
+		PARAM_PATTERN_STYLE,
 		PARAM_GATE_MODE,
 		PARAMS_COUNT
 	};
@@ -41,12 +38,13 @@ struct Sphinx : Module {
 	enum OutputIds {
 		OUTPUT_GATE,
 		OUTPUT_ACCENT,
+		OUTPUT_EOC,
 		OUTPUTS_COUNT
 	};
 
 	enum LightIds {
 		ENUMS(LIGHT_GATE_MODE, 1 * 3),
-		ENUMS(LIGHT_PATTERN_STYLE, 4 * 3),
+		ENUMS(LIGHT_PATTERN_STYLE, 1 * 3),
 		LIGHTS_COUNT
 	};
 
@@ -98,12 +96,13 @@ struct Sphinx : Module {
 	dsp::SchmittTrigger stClock;
 	dsp::SchmittTrigger stReset;
 
-	dsp::SchmittTrigger stModes[4];
+	dsp::SchmittTrigger stPatternStyle;
 
 	dsp::SchmittTrigger stGateMode;
 
 	dsp::PulseGenerator pgGate;
 	dsp::PulseGenerator pgAccent;
+	dsp::PulseGenerator pgEoc;
 
 	dsp::ClockDivider clockDivider;
 
@@ -135,8 +134,10 @@ struct Sphinx : Module {
 						gateString = "Turing";
 						break;
 					}
-					default:
+					default: {
 						gateString = "";
+						break;
+					}
 					}
 				}
 			}
@@ -144,6 +145,48 @@ struct Sphinx : Module {
 				gateString = "";
 			}
 			return gateString;
+		}
+	};
+
+	struct PatternStyleParam : ParamQuantity {
+		std::string getDisplayValueString() override {
+			// Convolution to avoid annoying warning.
+			std::string patternString = "";
+			if (module != nullptr) {
+				Sphinx* moduleSphinx = static_cast<Sphinx*>(module);
+
+				if (paramId == PARAM_PATTERN_STYLE) {
+					PatternStyle patternStyle = moduleSphinx->patternStyle;
+
+					switch (patternStyle)
+					{
+					case EUCLIDEAN_PATTERN: {
+						patternString = "Euclidean";
+						break;
+					}
+					case RANDOM_PATTERN: {
+						patternString = "Random";
+						break;
+					}
+					case FIBONACCI_PATTERN: {
+						patternString = "Fibonacci";
+						break;
+					}
+					case LINEAR_PATTERN: {
+						patternString = "Linear";
+						break;
+					}
+					default: {
+						patternString = "";
+						break;
+					}
+					}
+				}
+			}
+			else {
+				patternString = "";
+			}
+			return patternString;
 		}
 	};
 
@@ -158,10 +201,7 @@ struct Sphinx : Module {
 		configParam(PARAM_ACCENT, 0.f, 1.f, 0.f, "Accents", "%", 0.f, 100.f);
 		configParam(PARAM_SHIFT, 0.f, 1.f, 0.f, "Accents rotation", "%", 0.f, 100.f);
 
-		configButton(PARAM_EUCLIDEAN, "Euclidean mode");
-		configButton(PARAM_LINEAR, "Linear mode");
-		configButton(PARAM_RANDOM, "Random mode");
-		configButton(PARAM_FIBONACCI, "Fibonacci mode");
+		configButton<PatternStyleParam>(PARAM_PATTERN_STYLE, "Pattern style");
 
 		configButton<GateModeParam>(PARAM_GATE_MODE, "Gate mode");
 
@@ -176,6 +216,7 @@ struct Sphinx : Module {
 
 		configOutput(OUTPUT_GATE, "Gate");
 		configOutput(OUTPUT_ACCENT, "Accent");
+		configOutput(OUTPUT_EOC, "End of cycle");
 
 		patternLightColorTable[0].red = true;
 		patternLightColorTable[0].green = false;
@@ -344,6 +385,7 @@ struct Sphinx : Module {
 			currentStep++;
 			if (currentStep >= patternLength + patternPadding) {
 				currentStep = 0;
+				pgEoc.trigger(1e-3);
 			}
 
 			if (gateMode == GM_TURING) {
@@ -383,6 +425,8 @@ struct Sphinx : Module {
 		}
 		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0 : 0.0);
 
+		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(1.0 / args.sampleRate) ? 10.0f : 0.f);
+
 		patternLength = clamp(params[PARAM_LENGTH].getValue() +
 			rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.0f, 0.f), 1.f, 32.f);
 
@@ -414,31 +458,20 @@ struct Sphinx : Module {
 
 
 		if (clockDivider.process()) {
-			// Switch modes
-			for (int i = 0; i < 4; i++) {
-				if (stModes[i].process(params[PARAM_EUCLIDEAN + i].getValue())) {
-					patternStyle = (PatternStyle)i;
-					bCalculate = true;
-				}
+			// Switch modes			
+			if (stPatternStyle.process(params[PARAM_PATTERN_STYLE].getValue())) {
+				patternStyle = (PatternStyle)((patternStyle + 1) % 4);
+				bCalculate = true;
 			}
+
 
 			if (stGateMode.process(params[PARAM_GATE_MODE].getValue()))
 				gateMode = (GateMode)((gateMode + 1) % 3);
 
-			// Update lights
-			for (int i = 0; i < 4; i++) {
-				int currentLight = LIGHT_PATTERN_STYLE + i * 3;
-				if (i != patternStyle) {
-					lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-				}
-				else {
-					lights[currentLight + 0].setBrightnessSmooth(patternLightColorTable[patternStyle].red, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(patternLightColorTable[patternStyle].green, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(patternLightColorTable[patternStyle].blue, sampleTime);
-				}
-			}
+			// Update lights			
+			lights[LIGHT_PATTERN_STYLE + 0].setBrightnessSmooth(patternLightColorTable[patternStyle].red, sampleTime);
+			lights[LIGHT_PATTERN_STYLE + 1].setBrightnessSmooth(patternLightColorTable[patternStyle].green, sampleTime);
+			lights[LIGHT_PATTERN_STYLE + 2].setBrightnessSmooth(patternLightColorTable[patternStyle].blue, sampleTime);
 
 			lights[LIGHT_GATE_MODE + 0].setBrightnessSmooth(gateModeLightColorTable[gateMode].red, sampleTime);
 			lights[LIGHT_GATE_MODE + 1].setBrightnessSmooth(gateModeLightColorTable[gateMode].green, sampleTime);
@@ -649,7 +682,7 @@ struct SphinxWidget : ModuleWidget {
 
 		SphinxDisplay* sphinxDisplay = new SphinxDisplay();
 		sphinxDisplay->module = module;
-		sphinxDisplay->box.pos = mm2px(Vec(21.626, 8.271));
+		sphinxDisplay->box.pos = mm2px(Vec(19.726, 8.271));
 		sphinxDisplay->box.size = mm2px(Vec(22.14, 22.14));
 		sphinxFrameBuffer->addChild(sphinxDisplay);
 
@@ -663,20 +696,11 @@ struct SphinxWidget : ModuleWidget {
 			sphinxDisplay->patternStyle = &module->patternStyle;
 		}
 
-		addChild(createParamCentered<TL1105>(mm2px(Vec(50.15, 8.508)), module, Sphinx::PARAM_EUCLIDEAN));
-		addChild(createParamCentered<TL1105>(mm2px(Vec(50.15, 15.661)), module, Sphinx::PARAM_RANDOM));
-		addChild(createParamCentered<TL1105>(mm2px(Vec(50.15, 22.815)), module, Sphinx::PARAM_FIBONACCI));
-		addChild(createParamCentered<TL1105>(mm2px(Vec(50.15, 29.968)), module, Sphinx::PARAM_LINEAR));
+		addChild(createParamCentered<TL1105>(mm2px(Vec(49.822, 13.947)), module, Sphinx::PARAM_PATTERN_STYLE));
 
-		float currentY = 8.508;
-		float deltaY = 7.153;
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(44.519, 13.947)), module, Sphinx::LIGHT_PATTERN_STYLE));
 
-		for (int i = 0; i < 4; i++)
-		{
-			addChild(createLightCentered<TinyLight<RedGreenBlueLight>>(mm2px(Vec(45.833, currentY)),
-				module, Sphinx::LIGHT_PATTERN_STYLE + i * 3));
-			currentY += deltaY;
-		}
+		addChild(createOutputCentered<BananutBlack>(mm2px(Vec(48.472, 26.411)), module, Sphinx::OUTPUT_EOC));
 
 		addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(10.386, 40.197)), module, Sphinx::PARAM_LENGTH));
 		addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(27.82, 40.197)), module, Sphinx::PARAM_STEPS));
@@ -744,8 +768,8 @@ struct SphinxWidget : ModuleWidget {
 		addChild(createInputCentered<BananutGreen>(mm2px(Vec(7.326, 112.894)), module, Sphinx::INPUT_CLOCK));
 		addChild(createInputCentered<BananutGreen>(mm2px(Vec(19.231, 112.894)), module, Sphinx::INPUT_RESET));
 
-		addChild(createParamCentered<TL1105>(mm2px(Vec(27.9, 112.894)), module, Sphinx::PARAM_GATE_MODE));
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(27.9, 106.082)), module, Sphinx::LIGHT_GATE_MODE));
+		addChild(createParamCentered<TL1105>(mm2px(Vec(27.9, 110.729)), module, Sphinx::PARAM_GATE_MODE));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(27.9, 104.625)), module, Sphinx::LIGHT_GATE_MODE));
 
 		addChild(createOutputCentered<BananutRed>(mm2px(Vec(36.543, 112.894)), module, Sphinx::OUTPUT_GATE));
 		addChild(createOutputCentered<BananutRed>(mm2px(Vec(48.448, 112.894)), module, Sphinx::OUTPUT_ACCENT));
