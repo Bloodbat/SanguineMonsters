@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="6.5879mm" height="4.1288mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 157.9 98.96"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
- <g id="Lights">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <polygon id="InLight" fill="#EFFA6E" fill-rule="nonzero" points="78.95,98.96 -0,0 70.47,0 70.47,23.06 47.63,23.06 78.95,62.21 110.27,23.06 87.43,23.06 87.43,0 157.9,0 "/>
- </g>
-</svg>
+<svg clip-rule="evenodd" fill-rule="evenodd" height="4.1288mm" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 157.9 98.96" width="6.5879mm" xmlns="http://www.w3.org/2000/svg"><path d="m78.95 98.96-78.95-98.96h70.47v23.06h-22.84l31.32 39.15 31.32-39.15h-22.84v-23.06h70.47z" fill="#effa6e" fill-rule="nonzero"/></svg>

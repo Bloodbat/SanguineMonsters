@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="6.5879mm" height="4.1287mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 658.8 412.88"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
- <g id="Layer_x0020_1">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <polygon id="OutLight" fill="#EFFA6E" fill-rule="nonzero" points="-0,412.88 329.4,0 658.8,412.88 364.79,412.88 364.79,316.69 460.07,316.69 329.4,153.35 198.72,316.69 294,316.69 294,412.88 "/>
- </g>
-</svg>
+<svg clip-rule="evenodd" fill-rule="evenodd" height="4.1287mm" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 658.8 412.88" width="6.5879mm" xmlns="http://www.w3.org/2000/svg"><path d="m0 412.88 329.4-412.88 329.4 412.88h-294.01v-96.19h95.28l-130.67-163.34-130.68 163.34h95.28v96.19z" fill="#effa6e" fill-rule="nonzero"/></svg>

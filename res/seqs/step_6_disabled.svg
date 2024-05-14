@@ -1,16 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7.6mm" height="7.6mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 42.9 42.9"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
- <g id="Faceplate">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <circle fill="black" cx="21.45" cy="21.45" r="21.45"/>
- </g>
- <g id="Lights">
-  <metadata id="CorelCorpID_1Corel-Layer"/>
-  <path fill="#333333" fill-rule="nonzero" d="M21.24 35.87c-3.04,0 -5.46,-1.13 -7.27,-3.38 -1.81,-2.25 -2.71,-5.55 -2.71,-9.89 0,-5.12 1.14,-9 3.43,-11.63 2.29,-2.63 5.81,-3.94 10.55,-3.94 0.58,0 1.17,0.02 1.77,0.05 0.6,0.03 1.12,0.1 1.56,0.2l0 4.76c-0.55,-0.14 -1.12,-0.24 -1.72,-0.31 -0.6,-0.07 -1.2,-0.1 -1.82,-0.1 -2.66,0 -4.65,0.73 -5.97,2.2 -1.31,1.47 -2.11,3.67 -2.38,6.61l0.26 0c0.65,-1.09 1.46,-1.91 2.43,-2.46 0.97,-0.55 2.16,-0.82 3.56,-0.82 2.49,0 4.38,0.8 5.66,2.41 1.28,1.6 1.92,3.77 1.92,6.51 0,3.01 -0.81,5.39 -2.43,7.15 -1.62,1.76 -3.9,2.64 -6.84,2.64zm-0.1 -4.97c2.42,0 3.64,-1.59 3.64,-4.76 0,-1.37 -0.29,-2.44 -0.87,-3.23 -0.58,-0.79 -1.47,-1.18 -2.66,-1.18 -1.09,0 -2.05,0.4 -2.87,1.2 -0.82,0.8 -1.23,1.95 -1.23,3.46 0,1.33 0.36,2.42 1.08,3.25 0.72,0.84 1.69,1.25 2.92,1.25z"/>
- </g>
-</svg>
+<svg clip-rule="evenodd" fill-rule="evenodd" height="7.6mm" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 42.9 42.9" width="7.6mm" xmlns="http://www.w3.org/2000/svg"><circle cx="21.45" cy="21.45" r="21.45"/><path d="m21.24 35.87c-3.04 0-5.46-1.13-7.27-3.38s-2.71-5.55-2.71-9.89c0-5.12 1.14-9 3.43-11.63s5.81-3.94 10.55-3.94c.58 0 1.17.02 1.77.05s1.12.1 1.56.2v4.76c-.55-.14-1.12-.24-1.72-.31s-1.2-.1-1.82-.1c-2.66 0-4.65.73-5.97 2.2-1.31 1.47-2.11 3.67-2.38 6.61h.26c.65-1.09 1.46-1.91 2.43-2.46s2.16-.82 3.56-.82c2.49 0 4.38.8 5.66 2.41 1.28 1.6 1.92 3.77 1.92 6.51 0 3.01-.81 5.39-2.43 7.15s-3.9 2.64-6.84 2.64zm-.1-4.97c2.42 0 3.64-1.59 3.64-4.76 0-1.37-.29-2.44-.87-3.23s-1.47-1.18-2.66-1.18c-1.09 0-2.05.4-2.87 1.2s-1.23 1.95-1.23 3.46c0 1.33.36 2.42 1.08 3.25.72.84 1.69 1.25 2.92 1.25z" fill="#333" fill-rule="nonzero"/></svg>

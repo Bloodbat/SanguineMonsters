@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="3.8001mm" height="2.8877mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 68.06 51.72"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
- <g id="Lights">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <path id="Reset_x0020_Lit" fill="#EFFA6E" fill-rule="nonzero" d="M56.24 19.54l0 -7.6 -15.27 0 0 5.47 -12.44 -8.67 12.44 -8.73 0 5.47 21.74 0 0 14.08 -6.47 0zm-47.51 11.5l-8.74 -12.44 5.47 0 0 -13.13 21.55 0 0 6.47 -15.02 0 0 6.66 5.41 0 -8.67 12.44zm32.3 15.21l0 -6.47 15.02 0 0 -6.66 -5.41 0 8.74 -12.44 8.67 12.44 -5.47 0 0 13.13 -21.56 0zm-13.95 5.47l0 -5.47 -21.74 0 0 -14.08 6.47 0 0 7.6 15.27 0 0 -5.47 12.44 8.74 -12.44 8.67z"/>
- </g>
-</svg>
+<svg clip-rule="evenodd" fill-rule="evenodd" height="2.8877mm" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 68.06 51.72" width="3.8001mm" xmlns="http://www.w3.org/2000/svg"><path d="m56.24 19.54v-7.6h-15.27v5.47l-12.44-8.67 12.44-8.73v5.47h21.74v14.08h-6.47zm-47.51 11.5-8.74-12.44h5.47v-13.13h21.55v6.47h-15.02v6.66h5.41zm32.3 15.21v-6.47h15.02v-6.66h-5.41l8.74-12.44 8.67 12.44h-5.47v13.13h-21.56zm-13.95 5.47v-5.47h-21.74v-14.08h6.47v7.6h15.27v-5.47l12.44 8.74-12.44 8.67z" fill="#effa6e" fill-rule="nonzero"/></svg>

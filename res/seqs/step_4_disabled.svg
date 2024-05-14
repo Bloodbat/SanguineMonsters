@@ -1,16 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7.6mm" height="7.6mm" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"
-viewBox="0 0 42.9 42.9"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
- <g id="Faceplate">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <circle fill="black" cx="21.45" cy="21.45" r="21.45"/>
- </g>
- <g id="Lights">
-  <metadata id="CorelCorpID_1Corel-Layer"/>
-  <path fill="#333333" fill-rule="nonzero" d="M22.06 35.54l0 -5.84 -11.42 0 0 -4.15 11.52 -18.18 5.33 0 0 17.72 3.64 0 0 4.61 -3.64 0 0 5.84 -5.43 0zm-6.2 -10.45l6.2 0 0 -4.76c0,-0.31 0.01,-0.77 0.03,-1.38 0.02,-0.61 0.04,-1.26 0.08,-1.95 0.03,-0.68 0.07,-1.28 0.1,-1.79 0.03,-0.51 0.05,-0.82 0.05,-0.92l-0.15 0c-0.24,0.55 -0.5,1.06 -0.77,1.54 -0.27,0.48 -0.58,0.99 -0.92,1.54l-4.61 7.73z"/>
- </g>
-</svg>
+<svg clip-rule="evenodd" fill-rule="evenodd" height="7.6mm" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 42.9 42.9" width="7.6mm" xmlns="http://www.w3.org/2000/svg"><circle cx="21.45" cy="21.45" r="21.45"/><path d="m22.06 35.54v-5.84h-11.42v-4.15l11.52-18.18h5.33v17.72h3.64v4.61h-3.64v5.84zm-6.2-10.45h6.2v-4.76c0-.31.01-.77.03-1.38s.04-1.26.08-1.95c.03-.68.07-1.28.1-1.79s.05-.82.05-.92h-.15c-.24.55-.5 1.06-.77 1.54s-.58.99-.92 1.54l-4.61 7.73z" fill="#333" fill-rule="nonzero"/></svg>
