@@ -41,8 +41,28 @@ struct Sanguine1PSGreen : Rogan {
 	Sanguine1PSGreen();
 };
 
+struct Sanguine1PSOrange : Rogan {
+	Sanguine1PSOrange();
+};
+
+struct Sanguine1PSPurple : Rogan {
+	Sanguine1PSPurple();
+};
+
 struct Sanguine1PSRed : Rogan {
 	Sanguine1PSRed();
+};
+
+struct Sanguine1PSYellow : Rogan {
+	Sanguine1PSYellow();
+};
+
+struct Sanguine2PSBlue : Rogan {
+	Sanguine2PSBlue();
+};
+
+struct Sanguine2PSRed : Rogan {
+	Sanguine2PSRed();
 };
 
 struct Sanguine3PSGreen : Rogan {
@@ -120,6 +140,14 @@ struct TOrangeLight : TBase {
 	}
 };
 using OrangeLight = TOrangeLight<>;
+
+template <typename TBase = GrayModuleLightWidget>
+struct TPurpleLight : TBase {
+	TPurpleLight() {
+		this->addBaseColor(SCHEME_PURPLE);
+	}
+};
+using PurpleLight = TPurpleLight<>;
 
 // Decorations
 
