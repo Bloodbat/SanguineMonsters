@@ -41,8 +41,7 @@ struct Oraculus : Module {
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
-	dsp::SchmittTrigger stInputReset;
-	dsp::SchmittTrigger stNoRepeats;
+	dsp::SchmittTrigger stInputReset;	
 	dsp::SchmittTrigger stRandom;
 	dsp::SchmittTrigger stReset;
 

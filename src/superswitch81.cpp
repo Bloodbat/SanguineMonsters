@@ -52,11 +52,9 @@ struct SuperSwitch81 : Module {
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
-	dsp::SchmittTrigger stInputReset;
-	dsp::SchmittTrigger stNoRepeats;
+	dsp::SchmittTrigger stInputReset;	
 	dsp::SchmittTrigger stRandom;
-	dsp::SchmittTrigger stReset;
-	dsp::SchmittTrigger stResetToFirstStep;
+	dsp::SchmittTrigger stReset;	
 	dsp::SchmittTrigger stStep[8];
 	bool bClockReceived = false;
 	bool bLastOneShotValue = false;
