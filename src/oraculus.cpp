@@ -229,7 +229,7 @@ struct OraculusWidget : ModuleWidget {
 
 		addInput(createInputCentered<BananutGreen>(mm2px(Vec(17.78, 18.643)), module, Oraculus::INPUT_POLYPHONIC));
 
-		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.452, 38.204)), module, Oraculus::INPUT_CV_OFFSET));
+		addInput(createInputCentered<BananutBlack>(mm2px(Vec(6.452, 38.204)), module, Oraculus::INPUT_CV_OFFSET));
 
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.452, 55.801)), module, Oraculus::INPUT_INCREASE));
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.452, 68.984)), module, Oraculus::INPUT_DECREASE));
