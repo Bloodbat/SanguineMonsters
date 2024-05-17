@@ -430,34 +430,34 @@ struct Sphinx : Module {
 		patternLength = clamp(params[PARAM_LENGTH].getValue() +
 			rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.0f, 0.f), 1.f, 32.f);
 
-		patternPadding = abs((32. - patternLength) * clamp(params[PARAM_PADDING].getValue() +
-			inputs[INPUT_PADDING].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
-
-		patternRotation = abs((patternLength + patternPadding - 1.) * clamp(params[PARAM_ROTATION].getValue() +
-			inputs[INPUT_ROTATION].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
-
-		patternFill = abs((1. + (patternLength - 1.) * clamp(params[PARAM_STEPS].getValue() +
-			inputs[INPUT_STEPS].getNormalVoltage(0.) / 9., 0.0f, 1.0f)));
-
-		patternAccent = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
-			inputs[INPUT_ACCENT].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
-
-		if (patternAccent == 0) {
-			patternShift = 0;
-		}
-		else {
-			patternShift = abs((patternFill - 1.) * clamp(params[PARAM_SHIFT].getValue() +
-				inputs[INPUT_SHIFT].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
-		}
-
-		// New sequence in case of parameter change.
-		if (patternLength + patternRotation + patternAccent + patternFill + patternPadding + patternShift != patternChecksum) {
-			patternChecksum = patternLength + patternRotation + patternAccent + patternFill + patternPadding + patternShift;
-			bCalculate = true;
-		}
-
-
 		if (clockDivider.process()) {
+
+			patternPadding = abs((32. - patternLength) * clamp(params[PARAM_PADDING].getValue() +
+				inputs[INPUT_PADDING].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+
+			patternRotation = abs((patternLength + patternPadding - 1.) * clamp(params[PARAM_ROTATION].getValue() +
+				inputs[INPUT_ROTATION].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+
+			patternFill = abs((1. + (patternLength - 1.) * clamp(params[PARAM_STEPS].getValue() +
+				inputs[INPUT_STEPS].getNormalVoltage(0.) / 9., 0.0f, 1.0f)));
+
+			patternAccent = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
+				inputs[INPUT_ACCENT].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+
+			if (patternAccent == 0) {
+				patternShift = 0;
+			}
+			else {
+				patternShift = abs((patternFill - 1.) * clamp(params[PARAM_SHIFT].getValue() +
+					inputs[INPUT_SHIFT].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+			}
+
+			// New sequence in case of parameter change.
+			if (patternLength + patternRotation + patternAccent + patternFill + patternPadding + patternShift != patternChecksum) {
+				patternChecksum = patternLength + patternRotation + patternAccent + patternFill + patternPadding + patternShift;
+				bCalculate = true;
+			}
+
 			// Switch modes			
 			if (stPatternStyle.process(params[PARAM_PATTERN_STYLE].getValue())) {
 				patternStyle = (PatternStyle)((patternStyle + 1) % 4);
