@@ -89,16 +89,13 @@ struct Sphinx : Module {
 	int currentStep = 0;
 	int turing = 0;
 
+	PatternStyle lastPatternStyle = EUCLIDEAN_PATTERN;
 	PatternStyle patternStyle = EUCLIDEAN_PATTERN;
 
 	static const int kClockUpdateFrequency = 16;
 
 	dsp::SchmittTrigger stClock;
-	dsp::SchmittTrigger stReset;
-
-	dsp::SchmittTrigger stPatternStyle;
-
-	dsp::SchmittTrigger stGateMode;
+	dsp::SchmittTrigger stReset;	
 
 	dsp::PulseGenerator pgGate;
 	dsp::PulseGenerator pgAccent;
@@ -112,84 +109,6 @@ struct Sphinx : Module {
 		GM_TURING
 	} gateMode = GM_TRIGGER;
 
-	struct GateModeParam : ParamQuantity {
-		std::string getDisplayValueString() override {
-			// Convolution to avoid annoying warning.
-			std::string gateString = "";
-			if (module != nullptr) {
-				Sphinx* moduleSphinx = static_cast<Sphinx*>(module);
-
-				if (paramId == PARAM_GATE_MODE) {
-					GateMode gateMode = moduleSphinx->gateMode;
-					switch (gateMode) {
-					case GM_TRIGGER: {
-						gateString = "Trigger";
-						break;
-					}
-					case GM_GATE: {
-						gateString = "Gate";
-						break;
-					}
-					case GM_TURING: {
-						gateString = "Turing";
-						break;
-					}
-					default: {
-						gateString = "";
-						break;
-					}
-					}
-				}
-			}
-			else {
-				gateString = "";
-			}
-			return gateString;
-		}
-	};
-
-	struct PatternStyleParam : ParamQuantity {
-		std::string getDisplayValueString() override {
-			// Convolution to avoid annoying warning.
-			std::string patternString = "";
-			if (module != nullptr) {
-				Sphinx* moduleSphinx = static_cast<Sphinx*>(module);
-
-				if (paramId == PARAM_PATTERN_STYLE) {
-					PatternStyle patternStyle = moduleSphinx->patternStyle;
-
-					switch (patternStyle)
-					{
-					case EUCLIDEAN_PATTERN: {
-						patternString = "Euclidean";
-						break;
-					}
-					case RANDOM_PATTERN: {
-						patternString = "Random";
-						break;
-					}
-					case FIBONACCI_PATTERN: {
-						patternString = "Fibonacci";
-						break;
-					}
-					case LINEAR_PATTERN: {
-						patternString = "Linear";
-						break;
-					}
-					default: {
-						patternString = "";
-						break;
-					}
-					}
-				}
-			}
-			else {
-				patternString = "";
-			}
-			return patternString;
-		}
-	};
-
 	Sphinx() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
@@ -201,9 +120,9 @@ struct Sphinx : Module {
 		configParam(PARAM_ACCENT, 0.f, 1.f, 0.f, "Accents", "%", 0.f, 100.f);
 		configParam(PARAM_SHIFT, 0.f, 1.f, 0.f, "Accents rotation", "%", 0.f, 100.f);
 
-		configButton<PatternStyleParam>(PARAM_PATTERN_STYLE, "Pattern style");
+		configSwitch(PARAM_PATTERN_STYLE, 0.f, 3.f, 0.f, "Pattern style", { "Euclidean", "Random", "Fibonacci", "Linear" });
 
-		configButton<GateModeParam>(PARAM_GATE_MODE, "Gate mode");
+		configSwitch(PARAM_GATE_MODE, 0.f, 2.f, 0.f, "Gate mode", { "Trigger", "Gate", "Turing" });
 
 		configInput(INPUT_ACCENT, "Accents CV");
 		configInput(INPUT_CLOCK, "Clock");
@@ -458,15 +377,12 @@ struct Sphinx : Module {
 				bCalculate = true;
 			}
 
-			// Switch modes			
-			if (stPatternStyle.process(params[PARAM_PATTERN_STYLE].getValue())) {
-				patternStyle = (PatternStyle)((patternStyle + 1) % 4);
+			patternStyle = PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
+			if (patternStyle != lastPatternStyle) {
 				bCalculate = true;
 			}
 
-
-			if (stGateMode.process(params[PARAM_GATE_MODE].getValue()))
-				gateMode = (GateMode)((gateMode + 1) % 3);
+			gateMode = GateMode(params[PARAM_GATE_MODE].getValue());
 
 			// Update lights			
 			lights[LIGHT_PATTERN_STYLE + 0].setBrightnessSmooth(patternLightColorTable[patternStyle].red, sampleTime);
@@ -476,24 +392,6 @@ struct Sphinx : Module {
 			lights[LIGHT_GATE_MODE + 0].setBrightnessSmooth(gateModeLightColorTable[gateMode].red, sampleTime);
 			lights[LIGHT_GATE_MODE + 1].setBrightnessSmooth(gateModeLightColorTable[gateMode].green, sampleTime);
 			lights[LIGHT_GATE_MODE + 2].setBrightnessSmooth(gateModeLightColorTable[gateMode].blue, sampleTime);
-		}
-	}
-
-	json_t* dataToJson() override {
-		json_t* rootJ = json_object();
-		json_object_set_new(rootJ, "gateMode", json_integer((int)gateMode));
-		json_object_set_new(rootJ, "style", json_integer((int)patternStyle));
-		return rootJ;
-	}
-
-	void dataFromJson(json_t* rootJ) override {
-		json_t* modeJ = json_object_get(rootJ, "gateMode");
-		if (modeJ) {
-			gateMode = (GateMode)json_integer_value(modeJ);
-		}
-		json_t* styleJ = json_object_get(rootJ, "style");
-		if (styleJ) {
-			patternStyle = (PatternStyle)json_integer_value(styleJ);
 		}
 	}
 };
@@ -667,6 +565,13 @@ struct SphinxDisplay : TransparentWidget {
 	}
 };
 
+struct TL1105Latch : TL1105 {
+	TL1105Latch() {
+		momentary = false;
+		latch = true;
+	}
+};
+
 struct SphinxWidget : ModuleWidget {
 	SphinxWidget(Sphinx* module) {
 		setModule(module);
@@ -696,7 +601,7 @@ struct SphinxWidget : ModuleWidget {
 			sphinxDisplay->patternStyle = &module->patternStyle;
 		}
 
-		addChild(createParamCentered<TL1105>(mm2px(Vec(49.822, 13.947)), module, Sphinx::PARAM_PATTERN_STYLE));
+		addChild(createParamCentered<TL1105Latch>(mm2px(Vec(49.822, 13.947)), module, Sphinx::PARAM_PATTERN_STYLE));
 
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(44.519, 13.947)), module, Sphinx::LIGHT_PATTERN_STYLE));
 
@@ -768,7 +673,7 @@ struct SphinxWidget : ModuleWidget {
 		addChild(createInputCentered<BananutGreen>(mm2px(Vec(7.326, 112.894)), module, Sphinx::INPUT_CLOCK));
 		addChild(createInputCentered<BananutGreen>(mm2px(Vec(19.231, 112.894)), module, Sphinx::INPUT_RESET));
 
-		addChild(createParamCentered<TL1105>(mm2px(Vec(27.9, 110.729)), module, Sphinx::PARAM_GATE_MODE));
+		addChild(createParamCentered<TL1105Latch>(mm2px(Vec(27.9, 110.729)), module, Sphinx::PARAM_GATE_MODE));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(27.9, 104.625)), module, Sphinx::LIGHT_GATE_MODE));
 
 		addChild(createOutputCentered<BananutRed>(mm2px(Vec(36.543, 112.894)), module, Sphinx::OUTPUT_GATE));
