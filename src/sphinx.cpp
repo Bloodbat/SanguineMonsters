@@ -385,7 +385,7 @@ struct Sphinx : Module {
 			currentStep++;
 			if (currentStep >= patternLength + patternPadding) {
 				currentStep = 0;
-				pgEoc.trigger(1e-3);
+				pgEoc.trigger();
 			}
 
 			if (gateMode == GM_TURING) {
@@ -398,7 +398,7 @@ struct Sphinx : Module {
 			else {
 				bGateOn = false;
 				if (sequence[currentStep]) {
-					pgGate.trigger(1e-3);
+					pgGate.trigger();
 					if (gateMode == GM_GATE) {
 						bGateOn = true;
 					}
@@ -407,7 +407,7 @@ struct Sphinx : Module {
 
 			bAccentOn = false;
 			if (patternAccent && accents.at(currentStep)) {
-				pgAccent.trigger(1e-3);
+				pgAccent.trigger();
 				if (gateMode == GM_GATE) {
 					bAccentOn = true;
 				}
