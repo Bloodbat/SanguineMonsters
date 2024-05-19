@@ -65,8 +65,8 @@ struct Sphinx : Module {
 	std::vector<bool> calculatedAccents;
 
 	// Padded + rotated + distributed
-	std::array<bool, MAXLEN> sequence;
-	std::array<bool, MAXLEN> accents;
+	std::array<bool, MAXLEN * 2> sequence;
+	std::array<bool, MAXLEN * 2> accents;
 
 	bool bAccentOn;
 	bool bCalculate;
@@ -397,8 +397,8 @@ struct Sphinx : Module {
 
 struct SphinxDisplay : TransparentWidget {
 	Sphinx* module;
-	std::array<bool, MAXLEN>* sequence = nullptr;
-	std::array<bool, MAXLEN>* accents = nullptr;
+	std::array<bool, MAXLEN * 2>* sequence = nullptr;
+	std::array<bool, MAXLEN * 2>* accents = nullptr;
 	int* currentStep = nullptr;
 	int* patternFill = nullptr;
 	int* patternLength = nullptr;
