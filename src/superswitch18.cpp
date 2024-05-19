@@ -222,8 +222,10 @@ struct SuperSwitch18 : Module {
 				}
 
 				if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-					outputs[OUTPUT_OUT1 + i].setChannels(outChannelsCounts[i]);
-					outputs[OUTPUT_OUT1 + i].writeVoltages(outVoltages + i * PORT_MAX_CHANNELS);
+					if (outputs[OUTPUT_OUT1 + i].isConnected()) {
+						outputs[OUTPUT_OUT1 + i].setChannels(outChannelsCounts[i]);
+						outputs[OUTPUT_OUT1 + i].writeVoltages(outVoltages + i * PORT_MAX_CHANNELS);
+					}
 				}
 			}
 

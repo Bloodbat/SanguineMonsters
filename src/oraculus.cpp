@@ -53,6 +53,7 @@ struct Oraculus : Module {
 	bool bDecreaseConnected = false;
 	bool bIncreaseConnected = false;
 	bool bNoRepeats = false;
+	bool bOutputConnected = false;
 	bool bRandomConnected = false;
 	bool bResetConnected = false;
 
@@ -162,12 +163,16 @@ struct Oraculus : Module {
 				finalChannel = -1;
 
 			if (finalChannel > -1) {
-				outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
+				if (bOutputConnected) {
+					outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
+				}
 			}
 		}
 		else {
 			finalChannel = -1;
-			outputs[OUTPUT_MONOPHONIC].setChannels(0);
+			if (bOutputConnected) {
+				outputs[OUTPUT_MONOPHONIC].setChannels(0);
+			}
 		}
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
@@ -179,6 +184,7 @@ struct Oraculus : Module {
 		bDecreaseConnected = inputs[INPUT_DECREASE].isConnected();
 		bRandomConnected = inputs[INPUT_RANDOM].isConnected();
 		bResetConnected = inputs[INPUT_RESET].isConnected();
+		bOutputConnected = outputs[OUTPUT_MONOPHONIC].isConnected();
 	}
 
 	void updateLights() {

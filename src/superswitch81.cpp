@@ -218,8 +218,10 @@ struct SuperSwitch81 : Module {
 			}
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-				outputs[OUTPUT_OUT].setChannels(inChannelCount);
-				outputs[OUTPUT_OUT].writeVoltages(outVoltages);
+				if (outputs[OUTPUT_OUT].isConnected()) {
+					outputs[OUTPUT_OUT].setChannels(inChannelCount);
+					outputs[OUTPUT_OUT].writeVoltages(outVoltages);
+				}
 
 				if (bOneShot && stepsDone == stepCount)
 					bOneShotDone = true;
