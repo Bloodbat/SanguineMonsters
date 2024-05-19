@@ -69,7 +69,7 @@ struct Sphinx : Module {
 	std::array<bool, MAXLEN * 2> accents;
 
 	bool bAccentOn;
-	bool bCalculate;	
+	bool bCalculate;
 	bool bGateOn;
 
 	int patternFill = 4;
@@ -269,81 +269,81 @@ struct Sphinx : Module {
 			}
 		}
 
-		bCalculate = false;	
+		bCalculate = false;
 	}
 
 	void process(const ProcessArgs& args) override {
+		if (bCalculate) {
+			onReset();
+			lastPatternFill = patternFill;
+			lastPatternLength = patternLength;
+			lastPatternAccent = patternAccent;
+		}
+
+		bool nextStep = false;
+
+		// Reset sequence.
+		if (inputs[INPUT_RESET].isConnected()) {
+			if (stReset.process(inputs[INPUT_RESET].getVoltage())) {
+				currentStep = patternLength + patternPadding;
+			}
+		}
+
+		if (inputs[INPUT_CLOCK].isConnected()) {
+			if (stClock.process(inputs[INPUT_CLOCK].getVoltage())) {
+				nextStep = true;
+			}
+		}
+
+		if (nextStep) {
+			currentStep++;
+			if (currentStep >= patternLength + patternPadding) {
+				currentStep = 0;
+				pgEoc.trigger();
+			}
+
+			if (gateMode == GM_TURING) {
+				turing = 0;
+				for (int i = 0; i < patternLength; i++) {
+					turing |= sequence[(currentStep + i) % patternLength + patternPadding];
+					turing <<= 1;
+				}
+			}
+			else {
+				bGateOn = false;
+				if (sequence[currentStep]) {
+					pgGate.trigger();
+					if (gateMode == GM_GATE) {
+						bGateOn = true;
+					}
+				}
+			}
+
+			bAccentOn = false;
+			if (patternAccent && accents.at(currentStep)) {
+				pgAccent.trigger();
+				if (gateMode == GM_GATE) {
+					bAccentOn = true;
+				}
+			}
+		}
+
+		bool bGatePulse = pgGate.process(1.0 / args.sampleRate);
+		bool bAccentPulse = pgAccent.process(1.0 / args.sampleRate);
+
+		if (gateMode == GM_TURING) {
+			outputs[OUTPUT_GATE].setVoltage(10.0 * (turing / pow(2., patternLength) - 1.));
+		}
+		else {
+			outputs[OUTPUT_GATE].setVoltage(bGateOn | bGatePulse ? 10.0 : 0.0);
+		}
+		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0 : 0.0);
+
+		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(1.0 / args.sampleRate) ? 10.0f : 0.f);
+
 		if (clockDivider.process()) {
 			// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 			const float sampleTime = APP->engine->getSampleTime() * kClockUpdateFrequency;
-
-			if (bCalculate) {
-				onReset();
-				lastPatternFill = patternFill;
-				lastPatternLength = patternLength;
-				lastPatternAccent = patternAccent;
-			}
-
-			bool nextStep = false;
-
-			// Reset sequence.
-			if (inputs[INPUT_RESET].isConnected()) {
-				if (stReset.process(inputs[INPUT_RESET].getVoltage())) {
-					currentStep = patternLength + patternPadding;
-				}
-			}
-
-			if (inputs[INPUT_CLOCK].isConnected()) {
-				if (stClock.process(inputs[INPUT_CLOCK].getVoltage())) {
-					nextStep = true;
-				}
-			}
-
-			if (nextStep) {
-				currentStep++;
-				if (currentStep >= patternLength + patternPadding) {
-					currentStep = 0;
-					pgEoc.trigger();
-				}
-
-				if (gateMode == GM_TURING) {
-					turing = 0;
-					for (int i = 0; i < patternLength; i++) {
-						turing |= sequence[(currentStep + i) % patternLength + patternPadding];
-						turing <<= 1;
-					}
-				}
-				else {
-					bGateOn = false;
-					if (sequence[currentStep]) {
-						pgGate.trigger();
-						if (gateMode == GM_GATE) {
-							bGateOn = true;
-						}
-					}
-				}
-
-				bAccentOn = false;
-				if (patternAccent && accents.at(currentStep)) {
-					pgAccent.trigger();
-					if (gateMode == GM_GATE) {
-						bAccentOn = true;
-					}
-				}
-			}
-
-			bool bGatePulse = pgGate.process(1.0 / args.sampleRate);
-			bool bAccentPulse = pgAccent.process(1.0 / args.sampleRate);
-
-			if (gateMode == GM_TURING) {
-				outputs[OUTPUT_GATE].setVoltage(10.0 * (turing / pow(2., patternLength) - 1.));
-			}
-			else {
-				outputs[OUTPUT_GATE].setVoltage(bGateOn | bGatePulse ? 10.0 : 0.0);
-			}
-			outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0 : 0.0);
-
-			outputs[OUTPUT_EOC].setVoltage(pgEoc.process(1.0 / args.sampleRate) ? 10.0f : 0.f);
 
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
 				rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.0f, 0.f), 1.f, 32.f);
