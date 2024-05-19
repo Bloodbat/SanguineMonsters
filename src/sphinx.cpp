@@ -69,8 +69,7 @@ struct Sphinx : Module {
 	std::array<bool, MAXLEN * 2> accents;
 
 	bool bAccentOn;
-	bool bCalculate;
-	bool bFromReset;
+	bool bCalculate;	
 	bool bGateOn;
 
 	int patternFill = 4;
@@ -270,8 +269,7 @@ struct Sphinx : Module {
 			}
 		}
 
-		bCalculate = false;
-		bFromReset = true;
+		bCalculate = false;	
 	}
 
 	void process(const ProcessArgs& args) override {
