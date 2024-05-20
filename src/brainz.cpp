@@ -230,11 +230,11 @@ struct Brainz : Module {
 
 	void process(const ProcessArgs& args) override {
 		if (bInMetronome) {
-			if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
+			if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
 				handleResetTriggers();
 			}
 
-			if ((stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getVoltage()))
+			if ((stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0)))
 				&& moduleState != MODULE_STATE_DISABLED) {
 				handleRunTriggers();
 			}
@@ -247,11 +247,11 @@ struct Brainz : Module {
 				// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 				const float sampleTime = APP->engine->getSampleTime() * kClockDivider;
 
-				if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
+				if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
 					handleResetTriggers();
 				}
 
-				if ((stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getVoltage()))
+				if ((stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0)))
 					&& moduleState != MODULE_STATE_DISABLED) {
 					handleRunTriggers();
 				}
