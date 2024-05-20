@@ -233,9 +233,7 @@ struct Brainz : Module {
 	void process(const ProcessArgs& args) override {
 		if (bInMetronome) {
 			// Ensure only the correct step is lit.
-			lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.0f : 0.f, args.sampleTime);
-			lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.0f : 0.f, args.sampleTime);
-			lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.0f : 0.f, args.sampleTime);
+			handleStepLights(args.sampleTime);			
 			doMetronome(args);
 		}
 		else {
@@ -277,10 +275,7 @@ struct Brainz : Module {
 						}
 
 						if (moduleState > MODULE_STATE_ROUND_1_START) {
-							bStepStarted = false;
-							bStepTrigger = false;
-							bEnteredMetronome = false;
-							stepState = STEP_STATE_READY;
+							resetStep();
 						}
 						else {
 							moduleState = MODULE_STATE_ROUND_1_END;
@@ -325,10 +320,7 @@ struct Brainz : Module {
 						else {
 							moduleState = MODULE_STATE_ROUND_1_END;
 						}
-						bStepStarted = false;
-						bStepTrigger = false;
-						bEnteredMetronome = false;
-						stepState = STEP_STATE_READY;
+						resetStep();
 					}
 					break;
 				}
@@ -366,10 +358,7 @@ struct Brainz : Module {
 						else {
 							moduleState = MODULE_STATE_ROUND_1_END;
 						}
-						bStepStarted = false;
-						bStepTrigger = false;
-						bEnteredMetronome = false;
-						stepState = STEP_STATE_READY;
+						resetStep();
 					}
 					break;
 				}
@@ -414,10 +403,7 @@ struct Brainz : Module {
 									moduleStage = MODULE_STAGE_ONE_SHOT_END;
 								}
 							}
-							bStepStarted = false;
-							bStepTrigger = false;
-							bEnteredMetronome = false;
-							stepState = STEP_STATE_READY;
+							resetStep();
 						}
 					}
 					break;
@@ -477,10 +463,7 @@ struct Brainz : Module {
 						else {
 							moduleState = MODULE_STATE_ROUND_2_END;
 						}
-						bStepStarted = false;
-						bStepTrigger = false;
-						bEnteredMetronome = false;
-						stepState = STEP_STATE_READY;
+						resetStep();
 					}
 					break;
 				}
@@ -518,10 +501,7 @@ struct Brainz : Module {
 						else {
 							moduleState = MODULE_STATE_ROUND_2_END;
 						}
-						bStepStarted = false;
-						bStepTrigger = false;
-						bEnteredMetronome = false;
-						stepState = STEP_STATE_READY;
+						resetStep();
 					}
 					break;
 				}
@@ -554,10 +534,7 @@ struct Brainz : Module {
 
 					if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
 						moduleState = MODULE_STATE_ROUND_2_END;
-						bStepStarted = false;
-						bStepTrigger = false;
-						bEnteredMetronome = false;
-						stepState = STEP_STATE_READY;
+						resetStep();
 					}
 					break;
 				}
@@ -629,9 +606,7 @@ struct Brainz : Module {
 				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue(), sampleTime);
 				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue(), sampleTime);
 
-				lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.0f : 0.f, sampleTime);
-				lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.0f : 0.f, sampleTime);
-				lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.0f : 0.f, sampleTime);
+				handleStepLights(sampleTime);				
 				lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.0f : 0.f, sampleTime);
 
 				// TODO!!! Call reset when this is done?
@@ -656,11 +631,11 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void resetGlobalTriggers() {
+	void resetGlobalTriggers() {
 		memset(bTriggersDone, 0, sizeof(bool) * 4);
 	}
 
-	inline void doGlobalTriggers(const float sampleTime) {
+	void doGlobalTriggers(const float sampleTime) {
 		if (!bTriggersSent) {
 			for (int i = 0; i < 4; i++) {
 				if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
@@ -680,7 +655,7 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void doMetronome(const ProcessArgs& args) {
+	void doMetronome(const ProcessArgs& args) {
 		bEnteredMetronome = true;
 
 		metronomePeriod = 60.f * args.sampleRate / metronomeSpeed;
@@ -700,7 +675,7 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void setupMetronome(int* counterNumber) {
+	void setupMetronome(int* counterNumber) {
 		metronomeCounter = 0.f;
 		metronomePeriod = 0.f;
 		metronomeStepsDone = 0;
@@ -708,12 +683,12 @@ struct Brainz : Module {
 		bInMetronome = true;
 	}
 
-	inline void setupAfterMetronomeTriggers() {
+	void setupAfterMetronomeTriggers() {
 		bStepStarted = true;
 		bTriggersSent = false;
 	}
 
-	inline void handleAfterMetronomeTriggers(OutputIds output, const float sampleTime) {
+	void handleAfterMetronomeTriggers(OutputIds output, const float sampleTime) {
 		if (stepState < STEP_STATE_TRIGGER_SENT) {
 			if (outputs[output].isConnected()) {
 				pgTrigger.trigger();
@@ -730,7 +705,7 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void handleRunTriggers() {
+	void handleRunTriggers() {
 		// TODO Kill metronome also?
 		switch (moduleState)
 		{
@@ -782,7 +757,7 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void handleResetTriggers() {
+	void handleResetTriggers() {
 		killVoltages();
 		memset(currentCounters, 0, sizeof(int) * 3);
 		metronomeStepsDone = 0;
@@ -792,20 +767,20 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void killVoltages() {
+	void killVoltages() {
 		for (int i = 0; i < INPUTS_COUNT; i++) {
 			outputs[OUTPUT_METRONOME + i].setVoltage(0);
 		}
 	}
 
-	inline void setupStep(int delayTime) {
+	void setupStep(int delayTime) {
 		startTime = std::chrono::steady_clock::now();
 		bStepStarted = true;
 		bTriggersSent = false;
 		currentDelayTime = delayTime * 1000;
 	}
 
-	inline void doStepTrigger(OutputIds output, int* counter, const float sampleTime) {
+	void doStepTrigger(OutputIds output, int* counter, const float sampleTime) {
 		if (stepState < STEP_STATE_TRIGGER_SENT) {
 			std::chrono::time_point<std::chrono::steady_clock> currentTime = std::chrono::steady_clock::now();
 			int elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
@@ -827,7 +802,7 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void doEndOfStepTriggers(ParamIds checkParam, const float sampleTime) {
+	void doEndOfStepTriggers(ParamIds checkParam, const float sampleTime) {
 		if (bStepStarted && stepState == STEP_STATE_TRIGGER_DONE) {
 			if (!params[checkParam].getValue()) {
 				for (int i = 0; i < 4; i++) {
@@ -838,6 +813,19 @@ struct Brainz : Module {
 				doGlobalTriggers(sampleTime);
 			}
 		}
+	}
+
+	void resetStep() {
+		bStepStarted = false;
+		bStepTrigger = false;
+		bEnteredMetronome = false;
+		stepState = STEP_STATE_READY;
+	}
+
+	void handleStepLights(float sampleTime) {
+		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.0f : 0.f, sampleTime);
+		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.0f : 0.f, sampleTime);
+		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.0f : 0.f, sampleTime);
 	}
 };
 
