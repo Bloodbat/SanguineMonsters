@@ -274,18 +274,17 @@ struct Brainz : Module {
 						for (int i = 0; i < 4; i++)
 							bTriggersDone[i] = true;
 					}
-
+					
 					if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-						// TODO!!! FIX!!! This is not checking step direction!
-						for (int i = 0; i < 3; i++) {
-							if (bStepEnabled[i]) {
-								moduleState = ModuleStates(MODULE_STATE_ROUND_1_STEP_A + i);
-								break;
-							}
+						resetStep();
+						if (bStepEnabled[0]) {
+							moduleState = MODULE_STATE_ROUND_1_STEP_A;
 						}
-
-						if (moduleState > MODULE_STATE_ROUND_1_START) {
-							resetStep();
+						else if (stepDirections[0] < DIRECTION_BACKWARD && bStepEnabled[1]) {
+							moduleState = MODULE_STATE_ROUND_1_STEP_B;
+						}
+						else if (bStepEnabled[2] && stepDirections[1] < DIRECTION_BACKWARD) {
+							moduleState = MODULE_STATE_ROUND_1_STEP_C;
 						}
 						else {
 							moduleState = MODULE_STATE_ROUND_1_END;
@@ -427,6 +426,7 @@ struct Brainz : Module {
 				}
 
 				case MODULE_STATE_ROUND_2_START: {
+					resetStep();
 					if (bStepEnabled[2]) {
 						moduleState = MODULE_STATE_ROUND_2_STEP_C;
 					}
