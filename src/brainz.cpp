@@ -175,11 +175,11 @@ struct Brainz : Module {
 
 		configSwitch(PARAM_MODULE_DIRECTION, 0.f, 3.f, 0.f, "Module cycle", { "Bidirectional", "Forward", "Backward", "Disabled" });
 
-		configParam(PARAM_A_DELAY, 1.f, 99.f, 1.f, "Delay to trigger A", " seconds");
+		configParam(PARAM_A_DELAY, 1.f, 99.f, 1.f, "Trigger A delay", " seconds");
 		paramQuantities[PARAM_A_DELAY]->snapEnabled = true;
-		configParam(PARAM_B_DELAY, 1.f, 99.f, 1.f, "Delay to trigger B", " seconds");
+		configParam(PARAM_B_DELAY, 1.f, 99.f, 1.f, "Trigger B delay", " seconds");
 		paramQuantities[PARAM_B_DELAY]->snapEnabled = true;
-		configParam(PARAM_C_DELAY, 1.f, 99.f, 1.f, "Delay to trigger C", " seconds");
+		configParam(PARAM_C_DELAY, 1.f, 99.f, 1.f, "Trigger C delay", " seconds");
 		paramQuantities[PARAM_C_DELAY]->snapEnabled = true;
 		configParam(PARAM_METRONOME_SPEED, 15.f, 99.f, 60.f, "BPM", " quarter notes");
 		paramQuantities[PARAM_METRONOME_SPEED]->snapEnabled = true;
@@ -190,14 +190,14 @@ struct Brainz : Module {
 		configButton(PARAM_B_ENABLED, "Step B enabled");
 		configButton(PARAM_C_ENABLED, "Step C enabled");
 
-		configButton(PARAM_START_TRIGGERS, "Triggers on start");
+		configButton(PARAM_START_TRIGGERS, "Toggle global triggers on start");
 		params[PARAM_START_TRIGGERS].setValue(1);
-		configButton(PARAM_END_TRIGGERS, "Triggers on end");
+		configButton(PARAM_END_TRIGGERS, "Toggle global triggers on end");
 		params[PARAM_END_TRIGGERS].setValue(1);
 
-		configButton(PARAM_A_DO_TRIGGERS, "Send triggers at the end of coundown A");
-		configButton(PARAM_B_DO_TRIGGERS, "Send triggers at the end of coundown B");
-		configButton(PARAM_C_DO_TRIGGERS, "Send triggers at the end of coundown C");
+		configButton(PARAM_A_DO_TRIGGERS, "Send global triggers at the end of coundown A");
+		configButton(PARAM_B_DO_TRIGGERS, "Send global triggers at the end of coundown B");
+		configButton(PARAM_C_DO_TRIGGERS, "Send global triggers at the end of coundown C");
 
 		configButton(PARAM_A_IS_METRONOME, "Step A is metronome");
 		configButton(PARAM_B_IS_METRONOME, "Step B is metronome");
@@ -210,16 +210,16 @@ struct Brainz : Module {
 		configInput(INPUT_RESET, "Reset trigger");
 
 		configOutput(OUTPUT_METRONOME, "Metronome audio");
-		configOutput(OUTPUT_OUT_1, "Trigger 1");
-		configOutput(OUTPUT_OUT_2, "Trigger 2");
-		configOutput(OUTPUT_OUT_3, "Trigger 3");
-		configOutput(OUTPUT_OUT_4, "Trigger 4");
+		configOutput(OUTPUT_OUT_1, "Global trigger 1");
+		configOutput(OUTPUT_OUT_2, "Global trigger 2");
+		configOutput(OUTPUT_OUT_3, "Global trigger 3");
+		configOutput(OUTPUT_OUT_4, "Global trigger 4");
 
 		configOutput(OUTPUT_STAGE_A, "Stage A end of count");
 		configOutput(OUTPUT_STAGE_B, "Stage B end of count");
 		configOutput(OUTPUT_STAGE_C, "Stage C end of count");
 
-		configButton(PARAM_ONE_SHOT, "One shot");
+		configButton(PARAM_ONE_SHOT, "Toggle one-shot");
 		configButton(PARAM_PLAY_BUTTON, "Start/stop");
 		configButton(PARAM_RESET_BUTTON, "Reset");
 
