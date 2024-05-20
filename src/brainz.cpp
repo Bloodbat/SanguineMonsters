@@ -722,12 +722,14 @@ struct Brainz : Module {
 			if (outputs[output].isConnected()) {
 				pgTrigger.trigger();
 				outputs[output].setVoltage(pgTrigger.process(1.0f / sampleTime) ? 10.f : 0.f);
-				stepState = STEP_STATE_TRIGGER_SENT;
 			}
+			stepState = STEP_STATE_TRIGGER_SENT;
 		}
 		else {
 			bStepTrigger = pgTrigger.process(1.0f / sampleTime);
-			outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
+			if (outputs[output].isConnected()) {
+				outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
+			}
 			if (!bStepTrigger) {
 				stepState = STEP_STATE_TRIGGER_DONE;
 			}
@@ -826,13 +828,15 @@ struct Brainz : Module {
 				if (outputs[output].isConnected()) {
 					pgTrigger.trigger();
 					outputs[output].setVoltage(pgTrigger.process(1.0f / sampleTime) ? 10.f : 0.f);
-					stepState = STEP_STATE_TRIGGER_SENT;
 				}
+				stepState = STEP_STATE_TRIGGER_SENT;
 			}
 		}
 		else {
 			bStepTrigger = pgTrigger.process(1.0f / sampleTime);
-			outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
+			if (outputs[output].isConnected()) {
+				outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
+			}
 			if (!bStepTrigger) {
 				stepState = STEP_STATE_TRIGGER_DONE;
 			}
