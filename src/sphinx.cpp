@@ -68,9 +68,9 @@ struct Sphinx : Module {
 	std::array<bool, MAXLEN * 2> sequence;
 	std::array<bool, MAXLEN * 2> accents;
 
-	bool bAccentOn;
+	bool bAccentOn = false;
 	bool bCalculate;
-	bool bGateOn;
+	bool bGateOn = false;
 
 	int patternFill = 4;
 	int patternLength = 16;
