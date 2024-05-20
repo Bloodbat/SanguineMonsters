@@ -223,9 +223,7 @@ struct Brainz : Module {
 		configButton(PARAM_PLAY_BUTTON, "Start/stop");
 		configButton(PARAM_RESET_BUTTON, "Reset");
 
-		for (int i = 0; i < 4; i++) {
-			params[PARAM_A_ENABLED + i].setValue(1);
-		}
+		onReset();
 
 		clockDivider.setDivision(kClockDivider);
 	}
@@ -274,7 +272,7 @@ struct Brainz : Module {
 						for (int i = 0; i < 4; i++)
 							bTriggersDone[i] = true;
 					}
-					
+
 					if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
 						resetStep();
 						if (bStepEnabled[0]) {
@@ -650,6 +648,16 @@ struct Brainz : Module {
 				}
 			} // Clock divider
 		}
+	}
+
+	void onReset() override {
+		for (int i = 0; i < 3; i++) {
+			params[PARAM_A_ENABLED + i].setValue(1);
+			if (i < 2) {
+				params[PARAM_START_TRIGGERS + i].setValue(1);
+			}
+		}
+
 	}
 
 	void resetGlobalTriggers() {
