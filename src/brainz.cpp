@@ -264,14 +264,14 @@ struct Brainz : Module {
 							for (int i = 0; i < 4; i++) {
 								if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
 									pgOutTriggers[i].trigger();
-									outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(args.sampleTime) ? 10.f : 0.f);
+									outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(1.0f / sampleTime) ? 10.f : 0.f);
 								}
 							}
 							bTriggersSent = true;
 						}
 						else {
 							for (int i = 0; i < 4; i++) {
-								bTriggersDone[i] = !pgOutTriggers[i].process(args.sampleTime);
+								bTriggersDone[i] = !pgOutTriggers[i].process(1.0f / sampleTime);
 								if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
 									outputs[OUTPUT_OUT_1 + i].setVoltage(bTriggersDone[i] ? 0.f : 10.f);
 								}
@@ -314,9 +314,9 @@ struct Brainz : Module {
 								setupAfterMetronomeTriggers();
 							}
 							else {
-								handleAfterMetronomeTriggers(OUTPUT_STAGE_A, args);
+								handleAfterMetronomeTriggers(OUTPUT_STAGE_A, sampleTime);
 
-								doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, args);
+								doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, sampleTime);
 							}
 						}
 					}
@@ -325,8 +325,8 @@ struct Brainz : Module {
 							setupStep(maxCounters[0]);
 						}
 						else {
-							doStepTrigger(OUTPUT_STAGE_A, &currentCounters[0], args);
-							doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, args);
+							doStepTrigger(OUTPUT_STAGE_A, &currentCounters[0], sampleTime);
+							doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, sampleTime);
 						}
 					}
 
@@ -357,9 +357,9 @@ struct Brainz : Module {
 								setupAfterMetronomeTriggers();
 							}
 							else {
-								handleAfterMetronomeTriggers(OUTPUT_STAGE_B, args);
+								handleAfterMetronomeTriggers(OUTPUT_STAGE_B, sampleTime);
 
-								doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, args);
+								doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, sampleTime);
 							}
 						}
 					}
@@ -368,8 +368,8 @@ struct Brainz : Module {
 							setupStep(maxCounters[1]);
 						}
 						else {
-							doStepTrigger(OUTPUT_STAGE_B, &currentCounters[1], args);
-							doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, args);
+							doStepTrigger(OUTPUT_STAGE_B, &currentCounters[1], sampleTime);
+							doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, sampleTime);
 						}
 					}
 
@@ -397,9 +397,9 @@ struct Brainz : Module {
 								setupAfterMetronomeTriggers();
 							}
 							else {
-								handleAfterMetronomeTriggers(OUTPUT_STAGE_C, args);
+								handleAfterMetronomeTriggers(OUTPUT_STAGE_C, sampleTime);
 
-								doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, args);
+								doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, sampleTime);
 							}
 						}
 					}
@@ -408,8 +408,8 @@ struct Brainz : Module {
 							setupStep(maxCounters[2]);
 						}
 						else {
-							doStepTrigger(OUTPUT_STAGE_C, &currentCounters[2], args);
-							doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, args);
+							doStepTrigger(OUTPUT_STAGE_C, &currentCounters[2], sampleTime);
+							doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, sampleTime);
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
@@ -463,9 +463,9 @@ struct Brainz : Module {
 								setupAfterMetronomeTriggers();
 							}
 							else {
-								handleAfterMetronomeTriggers(OUTPUT_STAGE_C, args);
+								handleAfterMetronomeTriggers(OUTPUT_STAGE_C, sampleTime);
 
-								doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, args);
+								doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, sampleTime);
 							}
 						}
 					}
@@ -474,8 +474,8 @@ struct Brainz : Module {
 							setupStep(maxCounters[2]);
 						}
 						else {
-							doStepTrigger(OUTPUT_STAGE_C, &currentCounters[2], args);
-							doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, args);
+							doStepTrigger(OUTPUT_STAGE_C, &currentCounters[2], sampleTime);
+							doEndOfStepTriggers(PARAM_C_DO_TRIGGERS, sampleTime);
 						}
 					}
 
@@ -506,9 +506,9 @@ struct Brainz : Module {
 								setupAfterMetronomeTriggers();
 							}
 							else {
-								handleAfterMetronomeTriggers(OUTPUT_STAGE_B, args);
+								handleAfterMetronomeTriggers(OUTPUT_STAGE_B, sampleTime);
 
-								doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, args);
+								doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, sampleTime);
 							}
 						}
 					}
@@ -517,8 +517,8 @@ struct Brainz : Module {
 							setupStep(maxCounters[1]);
 						}
 						else {
-							doStepTrigger(OUTPUT_STAGE_B, &currentCounters[1], args);
-							doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, args);
+							doStepTrigger(OUTPUT_STAGE_B, &currentCounters[1], sampleTime);
+							doEndOfStepTriggers(PARAM_B_DO_TRIGGERS, sampleTime);
 						}
 					}
 
@@ -546,9 +546,9 @@ struct Brainz : Module {
 								setupAfterMetronomeTriggers();
 							}
 							else {
-								handleAfterMetronomeTriggers(OUTPUT_STAGE_A, args);
+								handleAfterMetronomeTriggers(OUTPUT_STAGE_A, sampleTime);
 
-								doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, args);
+								doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, sampleTime);
 							}
 						}
 					}
@@ -557,8 +557,8 @@ struct Brainz : Module {
 							setupStep(maxCounters[0]);
 						}
 						else {
-							doStepTrigger(OUTPUT_STAGE_A, &currentCounters[0], args);
-							doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, args);
+							doStepTrigger(OUTPUT_STAGE_A, &currentCounters[0], sampleTime);
+							doEndOfStepTriggers(PARAM_A_DO_TRIGGERS, sampleTime);
 						}
 					}
 
@@ -578,14 +578,14 @@ struct Brainz : Module {
 							for (int i = 0; i < 4; i++) {
 								if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
 									pgOutTriggers[i].trigger();
-									outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(args.sampleTime) ? 10.f : 0.f);
+									outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(1.0f / sampleTime) ? 10.f : 0.f);
 								}
 							}
 							bTriggersSent = true;
 						}
 						else {
 							for (int i = 0; i < 4; i++) {
-								bTriggersDone[i] = !pgOutTriggers[i].process(args.sampleTime);
+								bTriggersDone[i] = !pgOutTriggers[i].process(1.0f / sampleTime);
 								if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
 									outputs[OUTPUT_OUT_1 + i].setVoltage(bTriggersDone[i] ? 0.f : 10.f);
 								}
@@ -716,16 +716,16 @@ struct Brainz : Module {
 		bTriggersSent = false;
 	}
 
-	inline void handleAfterMetronomeTriggers(OutputIds output, const ProcessArgs& args) {
+	inline void handleAfterMetronomeTriggers(OutputIds output, const float sampleTime) {
 		if (stepState < STEP_STATE_TRIGGER_SENT) {
 			if (outputs[output].isConnected()) {
 				pgTrigger.trigger();
-				outputs[output].setVoltage(pgTrigger.process(args.sampleTime) ? 10.f : 0.f);
+				outputs[output].setVoltage(pgTrigger.process(1.0f / sampleTime) ? 10.f : 0.f);
 				stepState = STEP_STATE_TRIGGER_SENT;
 			}
 		}
 		else {
-			bStepTrigger = pgTrigger.process(args.sampleTime);
+			bStepTrigger = pgTrigger.process(1.0f / sampleTime);
 			outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
 			if (!bStepTrigger) {
 				stepState = STEP_STATE_TRIGGER_DONE;
@@ -801,33 +801,6 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void setupGlobalVoltages(ModuleStates initialState, ModuleStates finalState, ParamIds checkParam, const ProcessArgs& args) {
-		if (params[checkParam].getValue() == 1 && moduleState > initialState && moduleState < finalState) {
-			for (int i = 0; i < 4; i++) {
-				if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
-					pgOutTriggers[i].trigger();
-					outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(args.sampleTime) ? 10.f : 0.f);
-				}
-			}
-			memset(bTriggersDone, 0, sizeof(bool) * 4);
-			moduleState = finalState;
-		}
-	}
-
-	inline void processGlobalVoltages(ModuleStates initialState, ModuleStates finalState, const ProcessArgs& args) {
-		if (moduleState == initialState) {
-			for (int i = 0; i < 4; i++) {
-				bTriggersDone[i] = !pgOutTriggers[i].process(args.sampleTime);
-				if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
-					outputs[OUTPUT_OUT_1 + i].setVoltage(bTriggersDone[i] ? 0.f : 10.f);
-				}
-				if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-					moduleState = finalState;
-				}
-			}
-		}
-	}
-
 	inline void setupStep(int delayTime) {
 		startTime = std::chrono::steady_clock::now();
 		bStepStarted = true;
@@ -836,7 +809,7 @@ struct Brainz : Module {
 		currentDelayTime = delayTime * 1000;
 	}
 
-	inline void doStepTrigger(OutputIds output, int* counter, const ProcessArgs& args) {
+	inline void doStepTrigger(OutputIds output, int* counter, const float sampleTime) {
 		if (stepState < STEP_STATE_TRIGGER_SENT) {
 			std::chrono::time_point<std::chrono::steady_clock> currentTime = std::chrono::steady_clock::now();
 			int elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
@@ -844,13 +817,13 @@ struct Brainz : Module {
 			if (elapsedTime >= currentDelayTime) {
 				if (outputs[output].isConnected()) {
 					pgTrigger.trigger();
-					outputs[output].setVoltage(pgTrigger.process(args.sampleTime) ? 10.f : 0.f);
+					outputs[output].setVoltage(pgTrigger.process(1.0f / sampleTime) ? 10.f : 0.f);
 					stepState = STEP_STATE_TRIGGER_SENT;
 				}
 			}
 		}
 		else {
-			bStepTrigger = pgTrigger.process(args.sampleTime);
+			bStepTrigger = pgTrigger.process(1.0f / sampleTime);
 			outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
 			if (!bStepTrigger) {
 				stepState = STEP_STATE_TRIGGER_DONE;
@@ -858,7 +831,7 @@ struct Brainz : Module {
 		}
 	}
 
-	inline void doEndOfStepTriggers(ParamIds checkParam, const ProcessArgs& args) {
+	inline void doEndOfStepTriggers(ParamIds checkParam, const float sampleTime) {
 		if (bStepStarted && stepState == STEP_STATE_TRIGGER_DONE) {
 			if (!params[checkParam].getValue()) {
 				for (int i = 0; i < 4; i++) {
@@ -870,14 +843,14 @@ struct Brainz : Module {
 					for (int i = 0; i < 4; i++) {
 						if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
 							pgOutTriggers[i].trigger();
-							outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(args.sampleTime) ? 10.f : 0.f);
+							outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(1.0f / sampleTime) ? 10.f : 0.f);
 						}
 					}
 					bTriggersSent = true;
 				}
 				else {
 					for (int i = 0; i < 4; i++) {
-						bTriggersDone[i] = !pgOutTriggers[i].process(args.sampleTime);
+						bTriggersDone[i] = !pgOutTriggers[i].process(1.0f / sampleTime);
 						if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
 							outputs[OUTPUT_OUT_1 + i].setVoltage(bTriggersDone[i] ? 0.f : 10.f);
 						}
