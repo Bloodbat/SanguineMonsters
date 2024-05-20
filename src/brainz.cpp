@@ -13,19 +13,16 @@ enum ModuleStages {
 
 enum ModuleStates {
 	MODULE_STATE_READY,
-	MODULE_STATE_START_ROUND_1,
-	MODULE_STATE_ROUND_1_TRIGGERS_SENT,
-	MODULE_STATE_ROUND_1_TRIGGERS_DONE,
-	MODULE_STATE_ROUND_1_STEPS,
+	MODULE_STATE_ROUND_1_START,
 	MODULE_STATE_ROUND_1_STEP_A,
 	MODULE_STATE_ROUND_1_STEP_B,
 	MODULE_STATE_ROUND_1_STEP_C,
-	MODULE_STATE_END_ROUND_1,
-	MODULE_STATE_START_ROUND_2,
+	MODULE_STATE_ROUND_1_END,
+	MODULE_STATE_ROUND_2_START,
 	MODULE_STATE_ROUND_2_STEP_C,
 	MODULE_STATE_ROUND_2_STEP_B,
 	MODULE_STATE_ROUND_2_STEP_A,
-	MODULE_STATE_END_ROUND_2,	
+	MODULE_STATE_ROUND_2_END,
 	MODULE_STATE_WAIT_FOR_RESET,
 	MODULE_STATE_DISABLED
 };
@@ -246,7 +243,7 @@ struct Brainz : Module {
 				// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 				const float sampleTime = APP->engine->getSampleTime() * kClockDivider;
 
-				if (stReset.process(params[PARAM_RESET_BUTTON].getValue())|| stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
+				if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
 					handleResetTriggers();
 				}
 
@@ -255,33 +252,50 @@ struct Brainz : Module {
 					handleRunTriggers();
 				}
 
-				if (moduleState > MODULE_STATE_READY && moduleState < MODULE_STATE_ROUND_1_TRIGGERS_DONE && params[PARAM_START_TRIGGERS].getValue()) {
-					setupGlobalVoltages(MODULE_STATE_READY, MODULE_STATE_ROUND_1_TRIGGERS_SENT, PARAM_START_TRIGGERS, args);
-
-					processGlobalVoltages(MODULE_STATE_ROUND_1_TRIGGERS_SENT, MODULE_STATE_ROUND_1_TRIGGERS_DONE, args);
-				}
-				else if (moduleState > MODULE_STATE_READY && moduleState < MODULE_STATE_ROUND_1_TRIGGERS_DONE) {
-					moduleState = MODULE_STATE_ROUND_1_TRIGGERS_DONE;
-				}
-
-				if (moduleState == MODULE_STATE_ROUND_1_TRIGGERS_DONE) {
-					moduleState = MODULE_STATE_ROUND_1_STEPS;
-
-					for (int i = 0; i < 3; i++) {
-						if (bStepEnabled[i]) {
-							moduleState = ModuleStates(MODULE_STATE_ROUND_1_STEP_A + i);
-							break;
+				if (moduleState == MODULE_STATE_ROUND_1_START) {
+					if (params[PARAM_START_TRIGGERS].getValue()) {
+						if (!bTriggersSent) {
+							memset(bTriggersDone, 0, sizeof(bool) * 4);
+							for (int i = 0; i < 4; i++) {
+								if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
+									pgOutTriggers[i].trigger();
+									outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(args.sampleTime) ? 10.f : 0.f);
+								}
+							}
+							bTriggersSent = true;
+						}
+						else {
+							for (int i = 0; i < 4; i++) {
+								bTriggersDone[i] = !pgOutTriggers[i].process(args.sampleTime);
+								if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
+									outputs[OUTPUT_OUT_1 + i].setVoltage(bTriggersDone[i] ? 0.f : 10.f);
+								}
+							}
 						}
 					}
-
-					if (moduleState > MODULE_STATE_ROUND_1_STEPS) {
-						bStepStarted = false;
-						bStepTrigger = false;
-						bEnteredMetronome = false;
-						stepState = STEP_STATE_READY;
-					}
 					else {
-						moduleState = MODULE_STATE_END_ROUND_1;
+						for (int i = 0; i < 4; i++)
+							bTriggersDone[i] = true;
+					}
+
+					if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
+						for (int i = 0; i < 3; i++) {
+							if (bStepEnabled[i]) {
+								moduleState = ModuleStates(MODULE_STATE_ROUND_1_STEP_A + i);
+								break;
+							}
+						}
+
+						// TODO!!! FIX!!! This is not checking step direction!
+						if (moduleState > MODULE_STATE_ROUND_1_START) {
+							bStepStarted = false;
+							bStepTrigger = false;
+							bEnteredMetronome = false;
+							stepState = STEP_STATE_READY;
+						}
+						else {
+							moduleState = MODULE_STATE_ROUND_1_END;
+						}
 					}
 				}
 
@@ -319,7 +333,7 @@ struct Brainz : Module {
 							moduleState = MODULE_STATE_ROUND_1_STEP_C;
 						}
 						else {
-							moduleState = MODULE_STATE_END_ROUND_1;
+							moduleState = MODULE_STATE_ROUND_1_END;
 						}
 						bStepStarted = false;
 						bStepTrigger = false;
@@ -359,7 +373,7 @@ struct Brainz : Module {
 							moduleState = MODULE_STATE_ROUND_1_STEP_C;
 						}
 						else {
-							moduleState = MODULE_STATE_END_ROUND_1;
+							moduleState = MODULE_STATE_ROUND_1_END;
 						}
 						bStepStarted = false;
 						bStepTrigger = false;
@@ -395,7 +409,7 @@ struct Brainz : Module {
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
 							if (moduleDirection == DIRECTION_BIDIRECTIONAL) {
-								moduleState = MODULE_STATE_END_ROUND_1;
+								moduleState = MODULE_STATE_ROUND_1_END;
 								stepState = STEP_STATE_READY;
 							}
 							else {
@@ -416,7 +430,7 @@ struct Brainz : Module {
 					}
 				}
 
-				if (moduleState == MODULE_STATE_START_ROUND_2) {
+				if (moduleState == MODULE_STATE_ROUND_2_START) {
 					if (bStepEnabled[2]) {
 						moduleState = MODULE_STATE_ROUND_2_STEP_C;
 					}
@@ -427,7 +441,7 @@ struct Brainz : Module {
 						moduleState = MODULE_STATE_ROUND_2_STEP_A;
 					}
 					else {
-						moduleState = MODULE_STATE_END_ROUND_2;
+						moduleState = MODULE_STATE_ROUND_2_END;
 					}
 				}
 
@@ -465,7 +479,7 @@ struct Brainz : Module {
 							moduleState = MODULE_STATE_ROUND_2_STEP_A;
 						}
 						else {
-							moduleState = MODULE_STATE_END_ROUND_2;
+							moduleState = MODULE_STATE_ROUND_2_END;
 						}
 						bStepStarted = false;
 						bStepTrigger = false;
@@ -505,7 +519,7 @@ struct Brainz : Module {
 							moduleState = MODULE_STATE_ROUND_2_STEP_A;
 						}
 						else {
-							moduleState = MODULE_STATE_END_ROUND_2;
+							moduleState = MODULE_STATE_ROUND_2_END;
 						}
 						bStepStarted = false;
 						bStepTrigger = false;
@@ -541,7 +555,7 @@ struct Brainz : Module {
 					}
 
 					if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-						moduleState = MODULE_STATE_END_ROUND_2;
+						moduleState = MODULE_STATE_ROUND_2_END;
 						bStepStarted = false;
 						bStepTrigger = false;
 						bEnteredMetronome = false;
@@ -549,7 +563,7 @@ struct Brainz : Module {
 					}
 				}
 
-				if (moduleState == MODULE_STATE_END_ROUND_2) {
+				if (moduleState == MODULE_STATE_ROUND_2_END) {
 					if (params[PARAM_END_TRIGGERS].getValue()) {
 						if (!bTriggersSent) {
 							memset(bTriggersDone, 0, sizeof(bool) * 4);
@@ -708,20 +722,18 @@ struct Brainz : Module {
 		switch (moduleState)
 		{
 		case MODULE_STATE_READY: {
+			bTriggersSent = false;
 			if (moduleDirection < DIRECTION_BACKWARD) {
 				moduleStage = MODULE_STAGE_ROUND_1;
-				moduleState = MODULE_STATE_START_ROUND_1;
+				moduleState = MODULE_STATE_ROUND_1_START;
 			}
 			else if (moduleDirection == DIRECTION_BACKWARD) {
-				moduleState = MODULE_STATE_START_ROUND_2;
+				moduleState = MODULE_STATE_ROUND_2_START;
 				moduleStage = MODULE_STAGE_ROUND_2;
 			}
 			break;
 		}
-		case MODULE_STATE_START_ROUND_1:
-		case MODULE_STATE_ROUND_1_TRIGGERS_SENT:
-		case MODULE_STATE_ROUND_1_TRIGGERS_DONE:
-		case MODULE_STATE_ROUND_1_STEPS:
+		case MODULE_STATE_ROUND_1_START:		
 		case MODULE_STATE_ROUND_1_STEP_A:
 		case MODULE_STATE_ROUND_1_STEP_B:
 		case MODULE_STATE_ROUND_1_STEP_C: {
@@ -730,19 +742,19 @@ struct Brainz : Module {
 			moduleStage = MODULE_STAGE_INIT;
 			break;
 		}
-		case MODULE_STATE_END_ROUND_1: {
+		case MODULE_STATE_ROUND_1_END: {
 			if (moduleDirection == DIRECTION_BACKWARD || moduleDirection == DIRECTION_BIDIRECTIONAL) {
 				memset(currentCounters, 0, sizeof(int) * 3);
 				moduleStage = MODULE_STAGE_ROUND_2;
-				moduleState = MODULE_STATE_START_ROUND_2;
+				moduleState = MODULE_STATE_ROUND_2_START;
 			}
 			break;
 		}
-		case MODULE_STATE_START_ROUND_2:		
+		case MODULE_STATE_ROUND_2_START:
 		case MODULE_STATE_ROUND_2_STEP_A:
 		case MODULE_STATE_ROUND_2_STEP_B:
 		case MODULE_STATE_ROUND_2_STEP_C:
-		case MODULE_STATE_END_ROUND_2: {
+		case MODULE_STATE_ROUND_2_END: {
 			killVoltages();
 			moduleState = MODULE_STATE_READY;
 			moduleStage = MODULE_STAGE_INIT;
