@@ -232,8 +232,16 @@ struct Brainz : Module {
 
 	void process(const ProcessArgs& args) override {
 		if (bInMetronome) {
+			if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
+				handleResetTriggers();
+			}
+
+			if ((stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getVoltage()))
+				&& moduleState != MODULE_STATE_DISABLED) {
+				handleRunTriggers();
+			}
 			// Ensure only the correct step is lit.
-			handleStepLights(args.sampleTime);			
+			handleStepLights(args.sampleTime);
 			doMetronome(args);
 		}
 		else {
@@ -606,7 +614,7 @@ struct Brainz : Module {
 				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue(), sampleTime);
 				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue(), sampleTime);
 
-				handleStepLights(sampleTime);								
+				handleStepLights(sampleTime);
 
 				// TODO!!! Call reset when this is done?
 				if (moduleState == MODULE_STATE_READY || moduleState == MODULE_STATE_DISABLED) {
@@ -705,58 +713,66 @@ struct Brainz : Module {
 	}
 
 	void handleRunTriggers() {
-		// TODO Kill metronome also?
-		switch (moduleState)
-		{
-		case MODULE_STATE_READY: {
-			bTriggersSent = false;
-			if (moduleDirection < DIRECTION_BACKWARD) {
-				moduleStage = MODULE_STAGE_ROUND_1;
-				moduleState = MODULE_STATE_ROUND_1_START;
-			}
-			else if (moduleDirection == DIRECTION_BACKWARD) {
-				moduleState = MODULE_STATE_ROUND_2_START;
-				moduleStage = MODULE_STAGE_ROUND_2;
-			}
-			break;
-		}
-		case MODULE_STATE_ROUND_1_START:
-		case MODULE_STATE_ROUND_1_STEP_A:
-		case MODULE_STATE_ROUND_1_STEP_B:
-		case MODULE_STATE_ROUND_1_STEP_C: {
+		if (bInMetronome) {
+			bInMetronome = false;
 			killVoltages();
 			moduleState = MODULE_STATE_READY;
 			moduleStage = MODULE_STAGE_INIT;
-			break;
 		}
-		case MODULE_STATE_ROUND_1_END: {
-			if (moduleDirection == DIRECTION_BACKWARD || moduleDirection == DIRECTION_BIDIRECTIONAL) {
-				memset(currentCounters, 0, sizeof(int) * 3);
-				moduleStage = MODULE_STAGE_ROUND_2;
-				moduleState = MODULE_STATE_ROUND_2_START;
+		else {
+			switch (moduleState)
+			{
+			case MODULE_STATE_READY: {
+				bTriggersSent = false;
+				if (moduleDirection < DIRECTION_BACKWARD) {
+					moduleStage = MODULE_STAGE_ROUND_1;
+					moduleState = MODULE_STATE_ROUND_1_START;
+				}
+				else if (moduleDirection == DIRECTION_BACKWARD) {
+					moduleState = MODULE_STATE_ROUND_2_START;
+					moduleStage = MODULE_STAGE_ROUND_2;
+				}
+				break;
 			}
-			break;
-		}
-		case MODULE_STATE_ROUND_2_START:
-		case MODULE_STATE_ROUND_2_STEP_A:
-		case MODULE_STATE_ROUND_2_STEP_B:
-		case MODULE_STATE_ROUND_2_STEP_C:
-		case MODULE_STATE_ROUND_2_END: {
-			killVoltages();
-			moduleState = MODULE_STATE_READY;
-			moduleStage = MODULE_STAGE_INIT;
-			break;
-		}
-		case MODULE_STATE_WAIT_FOR_RESET: {
-			break;
-		}
-		case MODULE_STATE_DISABLED: {
-			break;
-		}
+			case MODULE_STATE_ROUND_1_START:
+			case MODULE_STATE_ROUND_1_STEP_A:
+			case MODULE_STATE_ROUND_1_STEP_B:
+			case MODULE_STATE_ROUND_1_STEP_C: {
+				killVoltages();
+				moduleState = MODULE_STATE_READY;
+				moduleStage = MODULE_STAGE_INIT;
+				break;
+			}
+			case MODULE_STATE_ROUND_1_END: {
+				if (moduleDirection == DIRECTION_BACKWARD || moduleDirection == DIRECTION_BIDIRECTIONAL) {
+					memset(currentCounters, 0, sizeof(int) * 3);
+					moduleStage = MODULE_STAGE_ROUND_2;
+					moduleState = MODULE_STATE_ROUND_2_START;
+				}
+				break;
+			}
+			case MODULE_STATE_ROUND_2_START:
+			case MODULE_STATE_ROUND_2_STEP_A:
+			case MODULE_STATE_ROUND_2_STEP_B:
+			case MODULE_STATE_ROUND_2_STEP_C:
+			case MODULE_STATE_ROUND_2_END: {
+				killVoltages();
+				moduleState = MODULE_STATE_READY;
+				moduleStage = MODULE_STAGE_INIT;
+				break;
+			}
+			case MODULE_STATE_WAIT_FOR_RESET: {
+				break;
+			}
+			case MODULE_STATE_DISABLED: {
+				break;
+			}
+			}
 		}
 	}
 
 	void handleResetTriggers() {
+		bInMetronome = false;
 		killVoltages();
 		memset(currentCounters, 0, sizeof(int) * 3);
 		metronomeStepsDone = 0;
