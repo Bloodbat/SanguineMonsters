@@ -103,17 +103,12 @@ struct Raiju : Module {
 						outputs[OUTPUT_VOLTAGE + i].setVoltage(voltages[i], j);
 					}
 				}
-				else {
-					outputs[OUTPUT_VOLTAGE + i].setChannels(0);
-				}
 			}
 
 			if (bPolyOutConnected) {
 				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
 				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
 			}
-			else
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(0);
 		}
 	}
 
