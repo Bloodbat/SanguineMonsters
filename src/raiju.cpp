@@ -27,7 +27,7 @@ struct Raiju : Module {
 	int lastSelectedVoltage = -1;
 	int selectedVoltage = 0;
 
-	static const int kClockDivision = 64;
+	static const int kClockDivision = 1024;
 
 	float voltages[kVoltagesCount];
 
