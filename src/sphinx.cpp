@@ -328,8 +328,8 @@ struct Sphinx : Module {
 			}
 		}
 
-		bool bGatePulse = pgGate.process(1.0 / args.sampleRate);
-		bool bAccentPulse = pgAccent.process(1.0 / args.sampleRate);
+		bool bGatePulse = pgGate.process(args.sampleTime);
+		bool bAccentPulse = pgAccent.process(args.sampleTime);
 
 		if (gateMode == GM_TURING) {
 			outputs[OUTPUT_GATE].setVoltage(10.0 * (turing / pow(2., patternLength) - 1.));
@@ -339,7 +339,7 @@ struct Sphinx : Module {
 		}
 		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0 : 0.0);
 
-		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(1.0 / args.sampleRate) ? 10.0f : 0.f);
+		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.0f : 0.f);
 
 		if (clockDivider.process()) {
 			// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
