@@ -606,8 +606,7 @@ struct Brainz : Module {
 				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue(), sampleTime);
 				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue(), sampleTime);
 
-				handleStepLights(sampleTime);				
-				lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.0f : 0.f, sampleTime);
+				handleStepLights(sampleTime);								
 
 				// TODO!!! Call reset when this is done?
 				if (moduleState == MODULE_STATE_READY || moduleState == MODULE_STATE_DISABLED) {
@@ -826,6 +825,7 @@ struct Brainz : Module {
 		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.0f : 0.f, sampleTime);
 		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.0f : 0.f, sampleTime);
 		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.0f : 0.f, sampleTime);
+		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.0f : 0.f, sampleTime);
 	}
 };
 
