@@ -252,7 +252,12 @@ struct Brainz : Module {
 					handleRunTriggers();
 				}
 
-				if (moduleState == MODULE_STATE_ROUND_1_START) {
+				switch (moduleState)
+				{
+				case MODULE_STATE_READY: {
+					break;
+				}
+				case MODULE_STATE_ROUND_1_START: {
 					if (params[PARAM_START_TRIGGERS].getValue()) {
 						if (!bTriggersSent) {
 							memset(bTriggersDone, 0, sizeof(bool) * 4);
@@ -297,9 +302,9 @@ struct Brainz : Module {
 							moduleState = MODULE_STATE_ROUND_1_END;
 						}
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_1_STEP_A) {
+				case MODULE_STATE_ROUND_1_STEP_A: {
 					if (params[PARAM_A_IS_METRONOME].getValue()) {
 						if (!bEnteredMetronome) {
 							setupMetronome(&currentCounters[0]);
@@ -340,9 +345,9 @@ struct Brainz : Module {
 						bEnteredMetronome = false;
 						stepState = STEP_STATE_READY;
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_1_STEP_B) {
+				case MODULE_STATE_ROUND_1_STEP_B: {
 					if (params[PARAM_B_IS_METRONOME].getValue()) {
 						if (!bEnteredMetronome) {
 							setupMetronome(&currentCounters[1]);
@@ -380,9 +385,9 @@ struct Brainz : Module {
 						bEnteredMetronome = false;
 						stepState = STEP_STATE_READY;
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_1_STEP_C) {
+				case MODULE_STATE_ROUND_1_STEP_C: {
 					if (params[PARAM_C_IS_METRONOME].getValue()) {
 						if (!bEnteredMetronome) {
 							setupMetronome(&currentCounters[2]);
@@ -428,9 +433,12 @@ struct Brainz : Module {
 							stepState = STEP_STATE_READY;
 						}
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_2_START) {
+				case MODULE_STATE_ROUND_1_END: {
+					break;
+				}
+				case MODULE_STATE_ROUND_2_START: {
 					if (bStepEnabled[2]) {
 						moduleState = MODULE_STATE_ROUND_2_STEP_C;
 					}
@@ -443,9 +451,9 @@ struct Brainz : Module {
 					else {
 						moduleState = MODULE_STATE_ROUND_2_END;
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_2_STEP_C) {
+				case MODULE_STATE_ROUND_2_STEP_C: {
 					if (params[PARAM_C_IS_METRONOME].getValue()) {
 						if (!bEnteredMetronome) {
 							setupMetronome(&currentCounters[2]);
@@ -486,9 +494,9 @@ struct Brainz : Module {
 						bEnteredMetronome = false;
 						stepState = STEP_STATE_READY;
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_2_STEP_B) {
+				case MODULE_STATE_ROUND_2_STEP_B: {
 					if (params[PARAM_B_IS_METRONOME].getValue()) {
 						if (!bEnteredMetronome) {
 							setupMetronome(&currentCounters[1]);
@@ -526,9 +534,9 @@ struct Brainz : Module {
 						bEnteredMetronome = false;
 						stepState = STEP_STATE_READY;
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_2_STEP_A) {
+				case MODULE_STATE_ROUND_2_STEP_A: {
 					if (params[PARAM_A_IS_METRONOME].getValue()) {
 						if (!bEnteredMetronome) {
 							setupMetronome(&currentCounters[0]);
@@ -561,9 +569,9 @@ struct Brainz : Module {
 						bEnteredMetronome = false;
 						stepState = STEP_STATE_READY;
 					}
+					break;
 				}
-
-				if (moduleState == MODULE_STATE_ROUND_2_END) {
+				case MODULE_STATE_ROUND_2_END: {
 					if (params[PARAM_END_TRIGGERS].getValue()) {
 						if (!bTriggersSent) {
 							memset(bTriggersDone, 0, sizeof(bool) * 4);
@@ -600,6 +608,14 @@ struct Brainz : Module {
 							moduleStage = MODULE_STAGE_ONE_SHOT_END;
 						}
 					}
+					break;
+				}
+				case MODULE_STATE_WAIT_FOR_RESET: {
+					break;
+				}
+				case MODULE_STATE_DISABLED: {
+					break;
+				}
 				}
 
 				metronomeSpeed = params[PARAM_METRONOME_SPEED].getValue();
@@ -733,7 +749,7 @@ struct Brainz : Module {
 			}
 			break;
 		}
-		case MODULE_STATE_ROUND_1_START:		
+		case MODULE_STATE_ROUND_1_START:
 		case MODULE_STATE_ROUND_1_STEP_A:
 		case MODULE_STATE_ROUND_1_STEP_B:
 		case MODULE_STATE_ROUND_1_STEP_C: {
