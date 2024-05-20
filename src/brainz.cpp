@@ -260,9 +260,11 @@ struct Brainz : Module {
 
 				switch (moduleState)
 				{
+
 				case MODULE_STATE_READY: {
 					break;
 				}
+
 				case MODULE_STATE_ROUND_1_START: {
 					resetGlobalTriggers();
 					if (params[PARAM_START_TRIGGERS].getValue()) {
@@ -291,6 +293,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_1_STEP_A: {
 					resetGlobalTriggers();
 					if (params[PARAM_A_IS_METRONOME].getValue()) {
@@ -332,6 +335,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_1_STEP_B: {
 					resetGlobalTriggers();
 					if (params[PARAM_B_IS_METRONOME].getValue()) {
@@ -370,6 +374,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_1_STEP_C: {
 					resetGlobalTriggers();
 					if (params[PARAM_C_IS_METRONOME].getValue()) {
@@ -416,9 +421,11 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_1_END: {
 					break;
 				}
+
 				case MODULE_STATE_ROUND_2_START: {
 					if (bStepEnabled[2]) {
 						moduleState = MODULE_STATE_ROUND_2_STEP_C;
@@ -434,6 +441,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_2_STEP_C: {
 					resetGlobalTriggers();
 					if (params[PARAM_C_IS_METRONOME].getValue()) {
@@ -475,6 +483,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_2_STEP_B: {
 					resetGlobalTriggers();
 					if (params[PARAM_B_IS_METRONOME].getValue()) {
@@ -513,6 +522,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_2_STEP_A: {
 					resetGlobalTriggers();
 					if (params[PARAM_A_IS_METRONOME].getValue()) {
@@ -546,6 +556,7 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_ROUND_2_END: {
 					resetGlobalTriggers();
 					if (params[PARAM_END_TRIGGERS].getValue()) {
@@ -569,9 +580,11 @@ struct Brainz : Module {
 					}
 					break;
 				}
+
 				case MODULE_STATE_WAIT_FOR_RESET: {
 					break;
 				}
+
 				case MODULE_STATE_DISABLED: {
 					break;
 				}
@@ -595,6 +608,7 @@ struct Brainz : Module {
 						lights[currentLight + 1].setBrightnessSmooth(stepDirectionsLightColors[stepDirections[i]].green, sampleTime);
 						lights[currentLight + 2].setBrightnessSmooth(stepDirectionsLightColors[stepDirections[i]].blue, sampleTime);
 					}
+
 					if (!params[PARAM_A_IS_METRONOME + i].getValue()) {
 						maxCounters[i] = params[PARAM_A_DELAY + i].getValue();
 					}
