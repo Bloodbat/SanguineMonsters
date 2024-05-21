@@ -813,8 +813,10 @@ struct Brainz : Module {
 			}
 		}
 		else {
-			bRunSent = true;
-			pgRun.trigger();
+			if (outputs[OUTPUT_RUN].isConnected()) {
+				bRunSent = true;
+				pgRun.trigger();
+			}
 		}
 	}
 
@@ -825,8 +827,10 @@ struct Brainz : Module {
 		metronomeStepsDone = 0;
 		moduleState = MODULE_STATE_READY;
 		moduleStage = MODULE_STAGE_INIT;
-		bResetSent = true;
-		pgReset.trigger();
+		if (outputs[OUTPUT_RESET].isConnected()) {
+			bResetSent = true;
+			pgReset.trigger();
+		}
 	}
 
 	void killVoltages() {
