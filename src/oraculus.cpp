@@ -223,9 +223,9 @@ struct OraculusWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(17.78, 18.643)), module, Oraculus::INPUT_POLYPHONIC));
+		addInput(createInputCentered<BananutGreen>(mm2px(Vec(6.452, 23.464)), module, Oraculus::INPUT_POLYPHONIC));
 
-		addInput(createInputCentered<BananutBlack>(mm2px(Vec(6.452, 38.204)), module, Oraculus::INPUT_CV_OFFSET));
+		addInput(createInputCentered<BananutBlack>(mm2px(Vec(22.734, 43.189)), module, Oraculus::INPUT_CV_OFFSET));
 
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.452, 55.801)), module, Oraculus::INPUT_INCREASE));
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(6.452, 68.984)), module, Oraculus::INPUT_DECREASE));
@@ -234,36 +234,39 @@ struct OraculusWidget : ModuleWidget {
 
 		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(17.78, 113.488)), module, Oraculus::OUTPUT_MONOPHONIC));
 
+		FramebufferWidget* oraculusFrameBuffer = new FramebufferWidget();
+		addChild(oraculusFrameBuffer);
+
 		SeqControlSwitch* btnIncrease = createParam<SeqControlSwitch>(mm2px(Vec(21.536, 51.886)),
 			module, Oraculus::PARAM_INCREASE);
 		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_off.svg")));
 		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_on.svg")));
-		addParam(btnIncrease);
+		oraculusFrameBuffer->addChild(btnIncrease);
+
 		SeqControlSwitch* btnDecrease = createParam<SeqControlSwitch>(mm2px(Vec(21.5361, 65.069)),
 			module, Oraculus::PARAM_DECREASE);
 		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_off.svg")));
 		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_on.svg")));
-		addParam(btnDecrease);
+		oraculusFrameBuffer->addChild(btnDecrease);
+
 		SeqControlSwitch* btnRandom = createParam<SeqControlSwitch>(mm2px(Vec(21.536, 78.253)),
 			module, Oraculus::PARAM_RANDOM);
 		btnRandom->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/random_off.svg")));
 		btnRandom->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/random_on.svg")));
-		addParam(btnRandom);
+		oraculusFrameBuffer->addChild(btnRandom);
+
 		SeqControlSwitch* btnReset = createParam<SeqControlSwitch>(mm2px(Vec(21.536, 91.436)),
 			module, Oraculus::PARAM_RESET);
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset);
+		oraculusFrameBuffer->addChild(btnReset);
 
-		FramebufferWidget* oraculusFrameBuffer = new FramebufferWidget();
-		addChild(oraculusFrameBuffer);
-
-		SanguineShapedLight* inMonoLight1 = new SanguineShapedLight();
-		inMonoLight1->box.pos = mm2px(Vec(14.486, 9.656));
-		inMonoLight1->wrap();
-		inMonoLight1->module = module;
-		inMonoLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_light.svg")));
-		oraculusFrameBuffer->addChild(inMonoLight1);
+		SanguineShapedLight* InPolyLight = new SanguineShapedLight();
+		InPolyLight->box.pos = mm2px(Vec(3.158, 12.721));
+		InPolyLight->wrap();
+		InPolyLight->module = module;
+		InPolyLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_light.svg")));
+		oraculusFrameBuffer->addChild(InPolyLight);
 
 		SanguineShapedLight* outPolyLight1 = new SanguineShapedLight();
 		outPolyLight1->box.pos = mm2px(Vec(14.486, 104.5));
@@ -272,46 +275,46 @@ struct OraculusWidget : ModuleWidget {
 		outPolyLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_mono_light.svg")));
 		oraculusFrameBuffer->addChild(outPolyLight1);
 
-		SanguineLightUpSwitch* switchNoRepeats = createParam<SanguineLightUpSwitch>(mm2px(Vec(30.004, 20.21)),
+		SanguineLightUpSwitch* switchNoRepeats = createParam<SanguineLightUpSwitch>(mm2px(Vec(9.454, 41.189)),
 			module, Oraculus::PARAM_NO_REPEATS);
 		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_off.svg")));
 		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_on.svg")));
 		switchNoRepeats->haloColorOff = nvgRGB(0, 0, 0);
 		switchNoRepeats->haloColorOn = nvgRGB(206, 61, 255);
 		switchNoRepeats->momentary = false;
-		addParam(switchNoRepeats);
+		oraculusFrameBuffer->addChild(switchNoRepeats);
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(27.431, 30.486)), module, Oraculus::LIGHT_CHANNEL + 0 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(23.734, 15.11)), module, Oraculus::LIGHT_CHANNEL + 0 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(30.141, 32.297)), module, Oraculus::LIGHT_CHANNEL + 1 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(26.931, 15.746)), module, Oraculus::LIGHT_CHANNEL + 1 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(31.952, 35.007)), module, Oraculus::LIGHT_CHANNEL + 2 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(29.641, 17.557)), module, Oraculus::LIGHT_CHANNEL + 2 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(32.588, 38.204)), module, Oraculus::LIGHT_CHANNEL + 3 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(31.452, 20.267)), module, Oraculus::LIGHT_CHANNEL + 3 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(31.952, 41.401)), module, Oraculus::LIGHT_CHANNEL + 4 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(32.088, 23.464)), module, Oraculus::LIGHT_CHANNEL + 4 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(30.141, 44.111)), module, Oraculus::LIGHT_CHANNEL + 5 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(31.452, 26.661)), module, Oraculus::LIGHT_CHANNEL + 5 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(27.431, 45.922)), module, Oraculus::LIGHT_CHANNEL + 6 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(29.641, 29.372)), module, Oraculus::LIGHT_CHANNEL + 6 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(24.234, 46.558)), module, Oraculus::LIGHT_CHANNEL + 7 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(26.931, 31.182)), module, Oraculus::LIGHT_CHANNEL + 7 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(21.037, 45.922)), module, Oraculus::LIGHT_CHANNEL + 8 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(23.734, 31.818)), module, Oraculus::LIGHT_CHANNEL + 8 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(18.327, 44.111)), module, Oraculus::LIGHT_CHANNEL + 9 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(20.537, 31.182)), module, Oraculus::LIGHT_CHANNEL + 9 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(16.516, 41.401)), module, Oraculus::LIGHT_CHANNEL + 10 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(17.827, 29.372)), module, Oraculus::LIGHT_CHANNEL + 10 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(15.88, 38.204)), module, Oraculus::LIGHT_CHANNEL + 11 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(16.016, 26.661)), module, Oraculus::LIGHT_CHANNEL + 11 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(16.516, 35.007)), module, Oraculus::LIGHT_CHANNEL + 12 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(15.38, 23.464)), module, Oraculus::LIGHT_CHANNEL + 12 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(18.327, 32.297)), module, Oraculus::LIGHT_CHANNEL + 13 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(16.016, 20.267)), module, Oraculus::LIGHT_CHANNEL + 13 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(21.037, 30.486)), module, Oraculus::LIGHT_CHANNEL + 14 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(17.827, 17.557)), module, Oraculus::LIGHT_CHANNEL + 14 * 3));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(24.234, 29.85)), module, Oraculus::LIGHT_CHANNEL + 15 * 3));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(20.537, 15.746)), module, Oraculus::LIGHT_CHANNEL + 15 * 3));
 	}
 };
 
