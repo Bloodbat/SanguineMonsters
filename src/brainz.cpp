@@ -975,7 +975,7 @@ struct BrainzWidget : ModuleWidget {
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
 		addParam(btnReset);
 
-		SanguineBezel8mm* btnModuleDirection = createLightParamCentered<LightButton<SanguineBezel8mm, SanguineBezelLight8mm<RedGreenBlueLight>>>(mm2px(Vec(81.319, 59.888)),
+		PB61303* btnModuleDirection = createLightParamCentered<LightButton<PB61303, PB61303Light<RedGreenBlueLight>>>(mm2px(Vec(81.319, 59.888)),
 			module, Brainz::PARAM_MODULE_DIRECTION, Brainz::LIGHT_MODULE_DIRECTION);
 		btnModuleDirection->momentary = false;
 		btnModuleDirection->latch = true;
