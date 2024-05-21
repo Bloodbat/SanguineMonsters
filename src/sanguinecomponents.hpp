@@ -137,6 +137,10 @@ struct SanguineBezel8mm : app::SvgSwitch {
 	SanguineBezel8mm();
 };
 
+struct Befaco2StepSwitch : app::SvgSwitch {
+	Befaco2StepSwitch();
+};
+
 // Lights
 template <typename TBase = GrayModuleLightWidget>
 struct TOrangeLight : TBase {

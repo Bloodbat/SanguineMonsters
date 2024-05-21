@@ -360,6 +360,11 @@ SanguineBezel8mm::SanguineBezel8mm() {
 	addFrame(Svg::load(asset::plugin(pluginInstance, "res/components/light_button_8mm.svg")));
 }
 
+Befaco2StepSwitch::Befaco2StepSwitch() {
+	addFrame(Svg::load(asset::system("res/ComponentLibrary/BefacoSwitch_0.svg")));
+	addFrame(Svg::load(asset::system("res/ComponentLibrary/BefacoSwitch_2.svg")));
+}
+
 // Decorations
 
 void SanguineShapedLight::draw(const DrawArgs& args) {
