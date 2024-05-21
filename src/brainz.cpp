@@ -87,7 +87,7 @@ struct Brainz : Module {
 	};
 
 	enum LightIds {
-		ENUMS(LIGHT_MODULE_DIRECTION, 1 * 3),
+		ENUMS(LIGHT_MODULE_DIRECTION, 3),
 		LIGHT_LOGIC_ENABLED,
 		LIGHT_STEP_A,
 		LIGHT_STEP_B,
@@ -103,9 +103,10 @@ struct Brainz : Module {
 		LIGHT_STEP_B_ENABLED,
 		LIGHT_STEP_C_ENABLED,
 		ENUMS(LIGHT_STEP_A_DIRECTION, 2 * 3),
-		ENUMS(LIGHT_MODULE_STAGE, 1 * 3),
+		ENUMS(LIGHT_MODULE_STAGE, 3),
 		LIGHT_START_TRIGGERS,
 		LIGHT_END_TRIGGERS,
+		ENUMS(LIGHT_OUT_ENABLED, 7),
 		LIGHTS_COUNT
 	};
 
@@ -653,6 +654,12 @@ struct Brainz : Module {
 				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue(), sampleTime);
 				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue(), sampleTime);
 
+				lights[LIGHT_OUT_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 0.f : 1.f, sampleTime);
+				lights[LIGHT_OUT_ENABLED + 1].setBrightnessSmooth(1.f, sampleTime);
+				for (int i = 2; i < 7; i++) {
+					lights[LIGHT_OUT_ENABLED + i].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
+				}
+
 				handleStepLights(sampleTime);
 
 				// TODO!!! Call reset when this is done?
@@ -1034,6 +1041,13 @@ struct BrainzWidget : ModuleWidget {
 		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(85.615, 76.144)), module, Brainz::LIGHT_STEP_C));
 		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(85.615, 25.114)), module, Brainz::LIGHT_METRONOME));
 
+		float currentX = 63.456;
+		float deltaX = 9.74;
+		for (int i = 0; i < 7; i++) {
+			addChild(createLightCentered<TinyLight<YellowLight>>(mm2px(Vec(currentX, 109.601)), module, Brainz::LIGHT_OUT_ENABLED + i));
+			currentX += deltaX;
+		}
+
 		SanguineLightUpSwitch* switchOneShot = createParam<SanguineLightUpSwitch>(mm2px(Vec(91.231, 57.888)),
 			module, Brainz::PARAM_ONE_SHOT);
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_off.svg")));
@@ -1132,13 +1146,6 @@ struct BrainzWidget : ModuleWidget {
 		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
 		brainzFrameBuffer->addChild(resetLight);
 
-		SanguineShapedLight* clockLight = new SanguineShapedLight();
-		clockLight->box.pos = mm2px(Vec(79.015, 107.701));
-		clockLight->wrap();
-		clockLight->module = module;
-		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
-		brainzFrameBuffer->addChild(clockLight);
-
 		SanguineShapedLight* metronomeStepsLight = new SanguineShapedLight();
 		metronomeStepsLight->box.pos = mm2px(Vec(120.006, 39.497));
 		metronomeStepsLight->wrap();
@@ -1223,42 +1230,49 @@ struct BrainzWidget : ModuleWidget {
 		brainzFrameBuffer->addChild(quarterNoteLightMetronome);
 
 		SanguineShapedLight* outPlayLight = new SanguineShapedLight();
-		outPlayLight->box.pos = mm2px(Vec(60.279, 107.701));
+		outPlayLight->box.pos = mm2px(Vec(58.789, 107.701));
 		outPlayLight->wrap();
 		outPlayLight->module = module;
 		outPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
 		brainzFrameBuffer->addChild(outPlayLight);
 
 		SanguineShapedLight* outResetLight = new SanguineShapedLight();
-		outResetLight->box.pos = mm2px(Vec(69.064, 108.157));
+		outResetLight->box.pos = mm2px(Vec(67.899, 108.157));
 		outResetLight->wrap();
 		outResetLight->module = module;
 		outResetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
 		brainzFrameBuffer->addChild(outResetLight);
 
+		SanguineShapedLight* outMetronomeLight = new SanguineShapedLight();
+		outMetronomeLight->box.pos = mm2px(Vec(77.858, 107.701));
+		outMetronomeLight->wrap();
+		outMetronomeLight->module = module;
+		outMetronomeLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
+		brainzFrameBuffer->addChild(outMetronomeLight);
+
 		SanguineShapedLight* outLight1 = new SanguineShapedLight();
-		outLight1->box.pos = mm2px(Vec(89.84, 108.589));
+		outLight1->box.pos = mm2px(Vec(88.295, 108.589));
 		outLight1->wrap();
 		outLight1->module = module;
 		outLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_1_yellow_lit.svg")));
 		brainzFrameBuffer->addChild(outLight1);
 
 		SanguineShapedLight* outLight2 = new SanguineShapedLight();
-		outLight2->box.pos = mm2px(Vec(99.351, 108.567));
+		outLight2->box.pos = mm2px(Vec(97.834, 108.567));
 		outLight2->wrap();
 		outLight2->module = module;
 		outLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_2_yellow_lit.svg")));
 		brainzFrameBuffer->addChild(outLight2);
 
 		SanguineShapedLight* outLight3 = new SanguineShapedLight();
-		outLight3->box.pos = mm2px(Vec(109.085, 108.567));
+		outLight3->box.pos = mm2px(Vec(107.504, 108.567));
 		outLight3->wrap();
 		outLight3->module = module;
 		outLight3->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_3_yellow_lit.svg")));
 		brainzFrameBuffer->addChild(outLight3);
 
 		SanguineShapedLight* outLight4 = new SanguineShapedLight();
-		outLight4->box.pos = mm2px(Vec(118.755, 108.589));
+		outLight4->box.pos = mm2px(Vec(117.015, 108.589));
 		outLight4->wrap();
 		outLight4->module = module;
 		outLight4->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_4_yellow_lit.svg")));
