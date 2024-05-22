@@ -68,7 +68,7 @@
     {
       "slug": "Sanguine-Monsters-Raiju",
       "name": "Sanguine Monsters Raiju",
-      "description": "A flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage",
+      "description": "A flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage.",
       "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Utility",
@@ -86,9 +86,12 @@
     {
       "slug": "Sanguine-Monsters-Brainz",
       "name": "Brainz",
-      "description": "FILL ME!!",
+      "description": "A master control center intended to make synchronizing audio and video files from different recorders easier.",
+	  "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
-        "Sequencer"
+        "Sequencer",
+		"Utility",
+		"Switch"
       ]
     }
   ]
