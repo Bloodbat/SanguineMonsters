@@ -172,12 +172,12 @@ struct Sphinx : Module {
 
 	void onReset() override {
 		if (lastPatternLength != patternLength) {
-			std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 			calculatedSequence.resize(patternLength + patternPadding);
+			std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 		}
 		if (lastPatternFill != patternFill) {
-			std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 			calculatedAccents.resize(patternFill);
+			std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 		}
 
 		switch (patternStyle) {
