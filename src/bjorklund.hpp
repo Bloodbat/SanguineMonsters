@@ -11,85 +11,78 @@
 
 struct Bjorklund {
 
-    Bjorklund() {};
-    Bjorklund(int step, int pulse) : lengthOfSeq(step), pulseAmt(pulse) {};
-    ~Bjorklund() {
-        reset();
-    };
+	Bjorklund() {};
+	Bjorklund(int step, int pulse) : lengthOfSeq(step), pulseAmt(pulse) {};
+	~Bjorklund() {
+		reset();
+	};
 
-    void reset() {
-        remainder.clear();
-        count.clear();
-        sequence.clear();
-    };
+	void reset() {
+		remainder.clear();
+		count.clear();
+		sequence.clear();
+	};
 
-    std::vector<int> remainder;
-    std::vector<int> count;
-    std::vector<bool> sequence;
+	std::vector<int> remainder;
+	std::vector<int> count;
+	std::vector<bool> sequence;
 
-    int lengthOfSeq;
-    int pulseAmt;
+	int lengthOfSeq;
+	int pulseAmt;
 
-    void init(int step, int pulse) {
-        lengthOfSeq = step;
-        pulseAmt = pulse;
-    }
-    int getSequence(int index) { return sequence.at(index); };
-    int size() { return (int)sequence.size(); };
+	void init(int step, int pulse) {
+		lengthOfSeq = step;
+		pulseAmt = pulse;
+	}
+	int getSequence(int index) { return sequence.at(index); };
+	int size() { return (int)sequence.size(); };
 
-    void iter() {
-        // Bjorklund algorithm
-        // Do E[k,n]. k is number of one's in sequence, and n is the length of sequence.
-        int divisor = lengthOfSeq - pulseAmt; //initial amount of zero's
+	void iter() {
+		// Bjorklund algorithm
+		// Do E[k,n]. k is number of one's in sequence, and n is the length of sequence.
+		int divisor = lengthOfSeq - pulseAmt; //initial amount of zero's
 
-        remainder.push_back(pulseAmt);
-        // Iteration
-        int index = 0; //we start algorithm from first index.
+		remainder.push_back(pulseAmt);
+		// Iteration
+		int index = 0; //we start algorithm from first index.
 
-        while (true) {
-            count.push_back(std::floor(divisor / remainder[index]));
-            remainder.push_back(divisor % remainder[index]);
-            divisor = remainder.at(index);
-            index += 1; //move to next step.
-            if (remainder[index] <= 1) {
-                break;
-            }
-        }
-        count.push_back(divisor);
-        buildSeq(index); //place one's and zero's
-        reverse(sequence.begin(), sequence.end());
+		while (true) {
+			count.push_back(std::floor(divisor / remainder[index]));
+			remainder.push_back(divisor % remainder[index]);
+			divisor = remainder.at(index);
+			index += 1; //move to next step.
+			if (remainder[index] <= 1) {
+				break;
+			}
+		}
+		count.push_back(divisor);
+		buildSeq(index); //place one's and zero's
+		reverse(sequence.begin(), sequence.end());
 
-        // Position correction. some of result of algorithm is one step rotated.
-        int zeroCount = 0;
-        if (sequence.at(0) != 1) {
-            do {
-                zeroCount++;
-            } while (sequence.at(zeroCount) == 0);
-            std::rotate(sequence.begin(), sequence.begin() + zeroCount, sequence.end());
-        }
-    }
+		// Position correction. some of result of algorithm is one step rotated.
+		int zeroCount = 0;
+		if (sequence.at(0) != 1) {
+			do {
+				zeroCount++;
+			} while (sequence.at(zeroCount) == 0);
+			std::rotate(sequence.begin(), sequence.begin() + zeroCount, sequence.end());
+		}
+	}
 
-    void buildSeq(int slot) {
-        // Construct a binary sequence of n bits with k one‚Äôs, such that the k one‚Äôs are distributed as evenly as possible among the zero‚Äôs
+	void buildSeq(int slot) {
+		// Construct a binary sequence of n bits with k one‚Äôs, such that the k one‚Äôs are distributed as evenly as possible among the zero‚Äôs
 
-        if (slot == -1) {
-            sequence.push_back(0);
-        }
-        else if (slot == -2) {
-            sequence.push_back(1);
-        }
-        else {
-            for (int i = 0; i < count[slot]; i++)
-                buildSeq(slot - 1);
-            if (remainder[slot] != 0)
-                buildSeq(slot - 2);
-        }
-    }
-    
-    void print() {
-        for (unsigned int i = 0; i != sequence.size(); i++) {
-            std::cout << sequence.at(i);
-        }
-        std::cout << '\n';       
-    }
+		if (slot == -1) {
+			sequence.push_back(0);
+		}
+		else if (slot == -2) {
+			sequence.push_back(1);
+		}
+		else {
+			for (int i = 0; i < count[slot]; i++)
+				buildSeq(slot - 1);
+			if (remainder[slot] != 0)
+				buildSeq(slot - 2);
+		}
+	}
 };
