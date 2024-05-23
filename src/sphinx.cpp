@@ -74,10 +74,10 @@ struct Sphinx : Module {
 
 	int patternFill = 4;
 	int patternLength = 16;
-	int patternRotation = 1;
-	int patternPadding = 1;
-	int patternShift = 1;
-	int patternAccent = 3;
+	int patternRotation = 0;
+	int patternPadding = 0;
+	int patternShift = 0;
+	int patternAccent = 0;
 
 	int patternChecksum;
 
