@@ -181,79 +181,81 @@ struct Sphinx : Module {
 			std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 		}
 
-		switch (patternStyle) {
-		case EUCLIDEAN_PATTERN: {
-			euclid.reset();
-			euclid.init(patternLength, patternFill);
-			euclid.iter();
+		if (lastPatternLength != patternLength || lastPatternFill != patternFill) {
+			switch (patternStyle) {
+			case EUCLIDEAN_PATTERN: {
+				euclid.reset();
+				euclid.init(patternLength, patternFill);
+				euclid.iter();
 
-			euclid2.reset();
-			if (patternAccent > 0) {
-				euclid2.init(patternFill, patternAccent);
-				euclid2.iter();
-			}
-			calculatedSequence = euclid.sequence;
-			calculatedAccents = euclid2.sequence;
-			break;
-		}
-
-		case RANDOM_PATTERN: {
-			if (lastPatternLength != patternLength || lastPatternFill != patternFill) {
-				int n = 0;
-				int f = 0;
-				while (f < patternFill) {
-					if (random::uniform() < (float)patternFill / (float)patternLength) {
-						calculatedSequence.at(n % patternLength) = 1;
-						f++;
-					}
-					n++;
+				euclid2.reset();
+				if (patternAccent > 0) {
+					euclid2.init(patternFill, patternAccent);
+					euclid2.iter();
 				}
+				calculatedSequence = euclid.sequence;
+				calculatedAccents = euclid2.sequence;
+				break;
 			}
-			if (patternAccent && (lastPatternAccent != patternAccent || lastPatternFill != patternFill)) {
-				int n = 0;
-				int nacc = 0;
-				while (nacc < patternAccent) {
-					if (random::uniform() < (float)patternAccent / (float)patternFill) {
-						calculatedAccents.at(n % patternFill) = 1;
-						nacc++;
+
+			case RANDOM_PATTERN: {
+				if (lastPatternLength != patternLength || lastPatternFill != patternFill) {
+					int n = 0;
+					int f = 0;
+					while (f < patternFill) {
+						if (random::uniform() < (float)patternFill / (float)patternLength) {
+							calculatedSequence.at(n % patternLength) = 1;
+							f++;
+						}
+						n++;
 					}
-					n++;
 				}
-			}
-			break;
-		}
-
-		case FIBONACCI_PATTERN: {
-			for (int k = 0; k < patternFill; k++) {
-				calculatedSequence.at(getFibonacci(k) % patternLength) = 1;
-			}
-
-			for (int a = 0; a < patternAccent; a++) {
-				calculatedAccents.at(getFibonacci(a) % patternFill) = 1;
-			}
-			break;
-		}
-
-		case LINEAR_PATTERN: {
-			for (int k = 0; k < patternFill; k++) {
-				calculatedSequence.at(patternLength * k / patternFill) = 1;
+				if (patternAccent && (lastPatternAccent != patternAccent || lastPatternFill != patternFill)) {
+					int n = 0;
+					int nacc = 0;
+					while (nacc < patternAccent) {
+						if (random::uniform() < (float)patternAccent / (float)patternFill) {
+							calculatedAccents.at(n % patternFill) = 1;
+							nacc++;
+						}
+						n++;
+					}
+				}
+				break;
 			}
 
-			for (int a = 0; a < patternAccent; a++) {
-				calculatedAccents.at(patternFill * a / patternAccent) = 1;
+			case FIBONACCI_PATTERN: {
+				for (int k = 0; k < patternFill; k++) {
+					calculatedSequence.at(getFibonacci(k) % patternLength) = 1;
+				}
+
+				for (int a = 0; a < patternAccent; a++) {
+					calculatedAccents.at(getFibonacci(a) % patternFill) = 1;
+				}
+				break;
 			}
-			break;
-		}
+
+			case LINEAR_PATTERN: {
+				for (int k = 0; k < patternFill; k++) {
+					calculatedSequence.at(patternLength * k / patternFill) = 1;
+				}
+
+				for (int a = 0; a < patternAccent; a++) {
+					calculatedAccents.at(patternFill * a / patternAccent) = 1;
+				}
+				break;
+			}
+			}
 		}
 
 		// Distribute accents on sequence
-		int j = patternFill - patternShift;		
+		int j = patternFill - patternShift;
 		for (int i = 0; i != int(calculatedSequence.size()); i++) {
-			int idx = (i + patternRotation) % (patternSize);
-			sequence[idx] = calculatedSequence.at(i);
-			accents[idx] = 0;
-			if (patternAccent && calculatedSequence.at(i)) {
-				accents[idx] = calculatedAccents.at(j % patternFill);
+			int index = (i + patternRotation) % patternSize;
+			sequence[index] = calculatedSequence[i];
+			accents[index] = 0;
+			if (patternAccent && calculatedSequence[i]) {
+				accents[index] = calculatedAccents[j % patternFill];
 				j++;
 			}
 		}
