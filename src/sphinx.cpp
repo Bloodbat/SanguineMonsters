@@ -262,6 +262,8 @@ struct Sphinx : Module {
 		}
 
 		// Distribute accents on sequence
+		sequence.fill(0);
+		accents.fill(0);
 		int j = patternFill - patternShift;
 		for (int i = 0; i != int(calculatedSequence.size()); i++) {
 			int index = (i + patternRotation) % patternSize;
