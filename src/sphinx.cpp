@@ -112,7 +112,7 @@ struct Sphinx : Module {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
 		configParam(PARAM_LENGTH, 1.f, 32.f, 16.f, "Length", "", 0.f, 1.f);
-		configParam(PARAM_STEPS, 0.f, 1.f, .25f, "Steps", "%", 0.f, 100.f);
+		configParam(PARAM_STEPS, 0.f, 1.f, 0.25f, "Steps", "%", 0.f, 100.f);
 		paramQuantities[PARAM_LENGTH]->snapEnabled = true;
 		configParam(PARAM_ROTATION, 0.f, 1.f, 0.f, "Rotation", "%", 0.f, 100.f);
 		configParam(PARAM_PADDING, 0.f, 1.f, 0.f, "Padding", "%", 0.f, 100.f);
@@ -320,12 +320,12 @@ struct Sphinx : Module {
 		bool bAccentPulse = pgAccent.process(args.sampleTime);
 
 		if (gateMode == GM_TURING) {
-			outputs[OUTPUT_GATE].setVoltage(10.0 * (turing / pow(2., patternLength) - 1.));
+			outputs[OUTPUT_GATE].setVoltage(10.0f * (turing / pow(2.f, patternLength) - 1.f));
 		}
 		else {
-			outputs[OUTPUT_GATE].setVoltage(bGateOn | bGatePulse ? 10.0 : 0.0);
+			outputs[OUTPUT_GATE].setVoltage(bGateOn | bGatePulse ? 10.0f : 0.f);
 		}
-		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0 : 0.0);
+		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0f : 0.f);
 
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.0f : 0.f);
 
@@ -334,26 +334,26 @@ struct Sphinx : Module {
 			const float sampleTime = APP->engine->getSampleTime() * kClockUpdateFrequency;
 
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
-				rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.0f, 0.f), 1.f, 32.f);
+				rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
 
-			patternPadding = abs((32. - patternLength) * clamp(params[PARAM_PADDING].getValue() +
-				inputs[INPUT_PADDING].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+			patternPadding = abs((32.f - patternLength) * clamp(params[PARAM_PADDING].getValue() +
+				inputs[INPUT_PADDING].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 
-			patternRotation = abs((patternLength + patternPadding - 1.) * clamp(params[PARAM_ROTATION].getValue() +
-				inputs[INPUT_ROTATION].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+			patternRotation = abs((patternLength + patternPadding - 1.f) * clamp(params[PARAM_ROTATION].getValue() +
+				inputs[INPUT_ROTATION].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 
-			patternFill = abs((1. + (patternLength - 1.) * clamp(params[PARAM_STEPS].getValue() +
-				inputs[INPUT_STEPS].getNormalVoltage(0.) / 9., 0.0f, 1.0f)));
+			patternFill = abs((1.f + (patternLength - 1.f) * clamp(params[PARAM_STEPS].getValue() +
+				inputs[INPUT_STEPS].getNormalVoltage(0.f) / 9.f, 0.f, 1.f)));
 
 			patternAccent = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
-				inputs[INPUT_ACCENT].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+				inputs[INPUT_ACCENT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 
 			if (patternAccent == 0) {
 				patternShift = 0;
 			}
 			else {
-				patternShift = abs((patternFill - 1.) * clamp(params[PARAM_SHIFT].getValue() +
-					inputs[INPUT_SHIFT].getNormalVoltage(0.) / 9., 0.0f, 1.0f));
+				patternShift = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
+					inputs[INPUT_SHIFT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 			}
 
 			// New sequence in case of parameter change.
@@ -418,16 +418,16 @@ struct SphinxDisplay : TransparentWidget {
 	void drawPolygon(NVGcontext* vg) {
 		Rect b = Rect(Vec(2, 2), box.size.minus(Vec(2, 2)));
 
-		float circleX = 0.5 * b.size.x + 1;
-		float circleY = 0.5 * b.size.y + 1;
-		const float radius1 = .45 * b.size.x;
-		const float radius2 = .35 * b.size.x;
+		float circleX = 0.5f * b.size.x + 1;
+		float circleY = 0.5f * b.size.y + 1;
+		const float radius1 = 0.45f * b.size.x;
+		const float radius2 = 0.35f * b.size.x;
 
 		// Circles
 		nvgBeginPath(vg);
 		nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
 		nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		nvgStrokeWidth(vg, 1.);
+		nvgStrokeWidth(vg, 1.f);
 		nvgCircle(vg, circleX, circleY, radius1);
 		nvgCircle(vg, circleX, circleY, radius2);
 		nvgStroke(vg);
@@ -443,14 +443,14 @@ struct SphinxDisplay : TransparentWidget {
 
 			if (!sequence->at(i)) {
 				float r = accents->at(i) ? radius1 : radius2;
-				float x = circleX + r * cosf(2. * M_PI * i / len - .5 * M_PI);
-				float y = circleY + r * sinf(2. * M_PI * i / len - .5 * M_PI);
+				float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
+				float y = circleY + r * sinf(2.f * M_PI * i / len - 0.5f * M_PI);
 
 				nvgBeginPath(vg);
 				nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
-				nvgStrokeWidth(vg, 1.);
+				nvgStrokeWidth(vg, 1.f);
 				nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
-				nvgCircle(vg, x, y, 2.);
+				nvgCircle(vg, x, y, 2.f);
 				nvgFill(vg);
 				nvgStroke(vg);
 			}
@@ -459,17 +459,17 @@ struct SphinxDisplay : TransparentWidget {
 		// Path
 		nvgBeginPath(vg);
 		nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		nvgStrokeWidth(vg, 1.);
+		nvgStrokeWidth(vg, 1.f);
 		for (unsigned int i = 0; i < len; i++) {
 			if (sequence->at(i)) {
 				float a = i / float(len);
 				float r = accents->at(i) ? radius1 : radius2;
-				float x = circleX + r * cosf(2. * M_PI * a - .5 * M_PI);
-				float y = circleY + r * sinf(2. * M_PI * a - .5 * M_PI);
+				float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
+				float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
 
 				Vec p(x, y);
 				if (*patternFill == 1)
-					nvgCircle(vg, x, y, 2.);
+					nvgCircle(vg, x, y, 2.f);
 				if (first) {
 					nvgMoveTo(vg, p.x, p.y);
 					first = false;
@@ -486,12 +486,12 @@ struct SphinxDisplay : TransparentWidget {
 		for (unsigned i = 0; i < len; i++) {
 			if (sequence->at(i)) {
 				float r = accents->at(i) ? radius1 : radius2;
-				float x = circleX + r * cosf(2. * M_PI * i / len - .5 * M_PI);
-				float y = circleY + r * sinf(2. * M_PI * i / len - .5 * M_PI);
+				float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
+				float y = circleY + r * sinf(2.f * M_PI * i / len - 0.5f * M_PI);
 
 				nvgBeginPath(vg);
 				nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
-				nvgStrokeWidth(vg, 1.);
+				nvgStrokeWidth(vg, 1.f);
 				nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
 				nvgCircle(vg, x, y, 2.f);
 				nvgFill(vg);
@@ -500,8 +500,8 @@ struct SphinxDisplay : TransparentWidget {
 		}
 
 		float r = accents->at(*currentStep) ? radius1 : radius2;
-		float x = circleX + r * cosf(2. * M_PI * *currentStep / len - .5 * M_PI);
-		float y = circleY + r * sinf(2. * M_PI * *currentStep / len - .5 * M_PI);
+		float x = circleX + r * cosf(2.f * M_PI * *currentStep / len - 0.5f * M_PI);
+		float y = circleY + r * sinf(2.f * M_PI * *currentStep / len - 0.5f * M_PI);
 		nvgBeginPath(vg);
 		nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
 		if (sequence->at(*currentStep)) {
@@ -511,7 +511,7 @@ struct SphinxDisplay : TransparentWidget {
 			nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
 		}
 		nvgCircle(vg, x, y, 2.);
-		nvgStrokeWidth(vg, 1.5);
+		nvgStrokeWidth(vg, 1.5f);
 		nvgFill(vg);
 		nvgStroke(vg);
 	}
@@ -523,8 +523,8 @@ struct SphinxDisplay : TransparentWidget {
 		}
 
 		nvgBeginPath(args.vg);
-		nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 5.0);
-		nvgStrokeWidth(args.vg, 1.5);
+		nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
+		nvgStrokeWidth(args.vg, 1.5f);
 		nvgStrokeColor(args.vg, nvgRGB(0x10, 0x10, 0x10));
 		nvgStroke(args.vg);
 
@@ -535,7 +535,7 @@ struct SphinxDisplay : TransparentWidget {
 		if (layer == 1) {
 			if (module && !module->isBypassed()) {
 				nvgBeginPath(args.vg);
-				nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 5.0);
+				nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
 				nvgFillColor(args.vg, arrayDisplayColors[*patternStyle].backgroundColor);
 				nvgFill(args.vg);
 
