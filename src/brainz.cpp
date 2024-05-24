@@ -618,9 +618,9 @@ struct Brainz : Module {
 						stepDirections[i] = StepDirections(params[PARAM_A_DIRECTION + i].getValue());
 
 						int currentLight = LIGHT_STEP_A_DIRECTION + i * 3;
-						lights[currentLight + 0].setBrightnessSmooth(stepDirectionsLightColors[stepDirections[i]].red, sampleTime);
-						lights[currentLight + 1].setBrightnessSmooth(stepDirectionsLightColors[stepDirections[i]].green, sampleTime);
-						lights[currentLight + 2].setBrightnessSmooth(stepDirectionsLightColors[stepDirections[i]].blue, sampleTime);
+						lights[currentLight + 0].setBrightness(stepDirectionsLightColors[stepDirections[i]].red);
+						lights[currentLight + 1].setBrightness(stepDirectionsLightColors[stepDirections[i]].green);
+						lights[currentLight + 2].setBrightness(stepDirectionsLightColors[stepDirections[i]].blue);
 					}
 
 					if (!params[PARAM_A_IS_METRONOME + i].getValue()) {
@@ -633,9 +633,9 @@ struct Brainz : Module {
 
 				lights[LIGHT_LOGIC_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
 
-				lights[LIGHT_MODULE_DIRECTION + 0].setBrightnessSmooth(stepDirectionsLightColors[moduleDirection].red, sampleTime);
-				lights[LIGHT_MODULE_DIRECTION + 1].setBrightnessSmooth(stepDirectionsLightColors[moduleDirection].green, sampleTime);
-				lights[LIGHT_MODULE_DIRECTION + 2].setBrightnessSmooth(stepDirectionsLightColors[moduleDirection].blue, sampleTime);
+				lights[LIGHT_MODULE_DIRECTION + 0].setBrightness(stepDirectionsLightColors[moduleDirection].red);
+				lights[LIGHT_MODULE_DIRECTION + 1].setBrightness(stepDirectionsLightColors[moduleDirection].green);
+				lights[LIGHT_MODULE_DIRECTION + 2].setBrightness(stepDirectionsLightColors[moduleDirection].blue);
 
 				if (params[PARAM_LOGIC_ENABLED].getValue()) {
 					lights[LIGHT_MODULE_STAGE + 0].setBrightnessSmooth(moduleStagesLightColors[moduleStage].red, sampleTime);
