@@ -172,16 +172,17 @@ struct Sphinx : Module {
 
 	void onReset() override {
 		int patternSize = patternLength + patternPadding;
-		if (lastPatternLength != patternLength) {
-			calculatedSequence.resize(patternSize);
-			std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-		}
-		if (lastPatternFill != patternFill) {
-			calculatedAccents.resize(patternFill);
-			std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-		}
 
-		if (lastPatternLength != patternLength || lastPatternFill != patternFill) {
+		if (lastPatternLength != patternLength || lastPatternFill || patternFill || lastPatternStyle != patternStyle) {
+			if (lastPatternLength != patternLength || lastPatternStyle != patternStyle) {
+				calculatedSequence.resize(patternSize);
+				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
+			}
+			if (lastPatternFill != patternFill || lastPatternStyle != patternStyle) {
+				calculatedAccents.resize(patternFill);
+				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
+			}
+
 			switch (patternStyle) {
 			case EUCLIDEAN_PATTERN: {
 				euclid.reset();
@@ -199,8 +200,10 @@ struct Sphinx : Module {
 			}
 
 			case RANDOM_PATTERN: {
-				if (lastPatternLength != patternLength || lastPatternFill != patternFill) {
+				if (lastPatternLength != patternLength || lastPatternFill != patternFill || lastPatternStyle != patternStyle) {
 					int n = 0;
+					calculatedSequence.resize(patternLength);
+					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 					int f = 0;
 					while (f < patternFill) {
 						if (random::uniform() < (float)patternFill / (float)patternLength) {
@@ -210,8 +213,10 @@ struct Sphinx : Module {
 						n++;
 					}
 				}
-				if (patternAccent && (lastPatternAccent != patternAccent || lastPatternFill != patternFill)) {
+				if (patternAccent && (lastPatternAccent != patternAccent || lastPatternFill != patternFill || patternStyle != lastPatternStyle)) {
 					int n = 0;
+					calculatedAccents.resize(patternFill);
+					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 					int nacc = 0;
 					while (nacc < patternAccent) {
 						if (random::uniform() < (float)patternAccent / (float)patternFill) {
@@ -225,10 +230,14 @@ struct Sphinx : Module {
 			}
 
 			case FIBONACCI_PATTERN: {
+				calculatedSequence.resize(patternLength);
+				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 				for (int k = 0; k < patternFill; k++) {
 					calculatedSequence.at(getFibonacci(k) % patternLength) = 1;
 				}
 
+				calculatedAccents.resize(patternFill);
+				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 				for (int a = 0; a < patternAccent; a++) {
 					calculatedAccents.at(getFibonacci(a) % patternFill) = 1;
 				}
@@ -236,10 +245,14 @@ struct Sphinx : Module {
 			}
 
 			case LINEAR_PATTERN: {
+				calculatedSequence.resize(patternLength);
+				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 				for (int k = 0; k < patternFill; k++) {
 					calculatedSequence.at(patternLength * k / patternFill) = 1;
 				}
 
+				calculatedAccents.resize(patternFill);
+				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 				for (int a = 0; a < patternAccent; a++) {
 					calculatedAccents.at(patternFill * a / patternAccent) = 1;
 				}
@@ -269,6 +282,7 @@ struct Sphinx : Module {
 			lastPatternFill = patternFill;
 			lastPatternLength = patternLength;
 			lastPatternAccent = patternAccent;
+			lastPatternStyle = patternStyle;
 		}
 
 		bool nextStep = false;
