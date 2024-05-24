@@ -186,7 +186,7 @@ struct Brainz : Module {
 		paramQuantities[PARAM_B_DELAY]->snapEnabled = true;
 		configParam(PARAM_C_DELAY, 1.f, 99.f, 1.f, "Trigger C delay", " seconds");
 		paramQuantities[PARAM_C_DELAY]->snapEnabled = true;
-		configParam(PARAM_METRONOME_SPEED, 15.f, 99.f, 60.f, "BPM", " quarter notes");
+		configParam(PARAM_METRONOME_SPEED, 15.f, 99.f, 60.f, "BPM", " beats");
 		paramQuantities[PARAM_METRONOME_SPEED]->snapEnabled = true;
 		configParam(PARAM_METRONOME_STEPS, 5.f, 99.f, 10.f, "Steps", "");
 		paramQuantities[PARAM_METRONOME_STEPS]->snapEnabled = true;
