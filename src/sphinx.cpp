@@ -65,8 +65,8 @@ struct Sphinx : Module {
 	std::vector<bool> calculatedAccents;
 
 	// Padded + rotated + distributed
-	std::array<bool, MAXLEN * 2> sequence;
-	std::array<bool, MAXLEN * 2> accents;
+	std::array<bool, MAXLEN * 2> finalSequence;
+	std::array<bool, MAXLEN * 2> finalAccents;
 
 	bool bAccentOn = false;
 	bool bCalculate;
@@ -77,13 +77,13 @@ struct Sphinx : Module {
 	int patternRotation = 0;
 	int patternPadding = 0;
 	int patternShift = 0;
-	int patternAccent = 0;
+	int patternAccents = 0;
 
 	int patternChecksum;
 
 	int lastPatternFill;
 	int lastPatternLength;
-	int lastPatternAccent;
+	int lastPatternAccents;
 
 	int currentStep = 0;
 	int turing = 0;
@@ -159,8 +159,8 @@ struct Sphinx : Module {
 		gateModeLightColorTable[2].green = false;
 		gateModeLightColorTable[2].blue = false;
 
-		sequence.fill(0);
-		accents.fill(0);
+		finalSequence.fill(0);
+		finalAccents.fill(0);
 		onReset();
 
 		clockDivider.setDivision(kClockUpdateFrequency);
@@ -190,8 +190,8 @@ struct Sphinx : Module {
 				euclid.iter();
 
 				euclid2.reset();
-				if (patternAccent > 0) {
-					euclid2.init(patternFill, patternAccent);
+				if (patternAccents > 0) {
+					euclid2.init(patternFill, patternAccents);
 					euclid2.iter();
 				}
 				calculatedSequence = euclid.sequence;
@@ -201,29 +201,29 @@ struct Sphinx : Module {
 
 			case RANDOM_PATTERN: {
 				if (lastPatternLength != patternLength || lastPatternFill != patternFill || lastPatternStyle != patternStyle) {
-					int n = 0;
+					int num = 0;
 					calculatedSequence.resize(patternLength);
 					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-					int f = 0;
-					while (f < patternFill) {
+					int fill = 0;
+					while (fill < patternFill) {
 						if (random::uniform() < (float)patternFill / (float)patternLength) {
-							calculatedSequence.at(n % patternLength) = 1;
-							f++;
+							calculatedSequence[num % patternLength] = 1;
+							fill++;
 						}
-						n++;
+						num++;
 					}
 				}
-				if (patternAccent && (lastPatternAccent != patternAccent || lastPatternFill != patternFill || patternStyle != lastPatternStyle)) {
-					int n = 0;
+				if (patternAccents && (lastPatternAccents != patternAccents || lastPatternFill != patternFill || patternStyle != lastPatternStyle)) {
+					int num = 0;
 					calculatedAccents.resize(patternFill);
 					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-					int nacc = 0;
-					while (nacc < patternAccent) {
-						if (random::uniform() < (float)patternAccent / (float)patternFill) {
-							calculatedAccents.at(n % patternFill) = 1;
-							nacc++;
+					int accentNum = 0;
+					while (accentNum < patternAccents) {
+						if (random::uniform() < (float)patternAccents / (float)patternFill) {
+							calculatedAccents[num % patternFill] = 1;
+							accentNum++;
 						}
-						n++;
+						num++;
 					}
 				}
 				break;
@@ -232,14 +232,14 @@ struct Sphinx : Module {
 			case FIBONACCI_PATTERN: {
 				calculatedSequence.resize(patternLength);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-				for (int k = 0; k < patternFill; k++) {
-					calculatedSequence.at(getFibonacci(k) % patternLength) = 1;
+				for (int num = 0; num < patternFill; num++) {
+					calculatedSequence[getFibonacci(num) % patternLength] = 1;
 				}
 
 				calculatedAccents.resize(patternFill);
 				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-				for (int a = 0; a < patternAccent; a++) {
-					calculatedAccents.at(getFibonacci(a) % patternFill) = 1;
+				for (int accent = 0; accent < patternAccents; accent++) {
+					calculatedAccents[getFibonacci(accent) % patternFill] = 1;
 				}
 				break;
 			}
@@ -247,14 +247,14 @@ struct Sphinx : Module {
 			case LINEAR_PATTERN: {
 				calculatedSequence.resize(patternLength);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-				for (int k = 0; k < patternFill; k++) {
-					calculatedSequence.at(patternLength * k / patternFill) = 1;
+				for (int num = 0; num < patternFill; num++) {
+					calculatedSequence[patternLength * num / patternFill] = 1;
 				}
 
 				calculatedAccents.resize(patternFill);
 				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-				for (int a = 0; a < patternAccent; a++) {
-					calculatedAccents.at(patternFill * a / patternAccent) = 1;
+				for (int accent = 0; accent < patternAccents; accent++) {
+					calculatedAccents[patternFill * accent / patternAccents] = 1;
 				}
 				break;
 			}
@@ -262,15 +262,15 @@ struct Sphinx : Module {
 		}
 
 		// Distribute accents on sequence
-		sequence.fill(0);
-		accents.fill(0);
+		finalSequence.fill(0);
+		finalAccents.fill(0);
 		int j = patternFill - patternShift;
 		for (int i = 0; i != int(calculatedSequence.size()); i++) {
 			int index = (i + patternRotation) % patternSize;
-			sequence[index] = calculatedSequence[i];
-			accents[index] = 0;
-			if (patternAccent && calculatedSequence[i]) {
-				accents[index] = calculatedAccents[j % patternFill];
+			finalSequence[index] = calculatedSequence[i];
+			finalAccents[index] = 0;
+			if (patternAccents && calculatedSequence[i]) {
+				finalAccents[index] = calculatedAccents[j % patternFill];
 				j++;
 			}
 		}
@@ -283,7 +283,7 @@ struct Sphinx : Module {
 			onReset();
 			lastPatternFill = patternFill;
 			lastPatternLength = patternLength;
-			lastPatternAccent = patternAccent;
+			lastPatternAccents = patternAccents;
 			lastPatternStyle = patternStyle;
 		}
 
@@ -312,13 +312,13 @@ struct Sphinx : Module {
 			if (gateMode == GM_TURING) {
 				turing = 0;
 				for (int i = 0; i < patternLength; i++) {
-					turing |= sequence[(currentStep + i) % patternLength + patternPadding];
+					turing |= finalSequence[(currentStep + i) % patternLength + patternPadding];
 					turing <<= 1;
 				}
 			}
 			else {
 				bGateOn = false;
-				if (sequence[currentStep]) {
+				if (finalSequence[currentStep]) {
 					pgGate.trigger();
 					if (gateMode == GM_GATE) {
 						bGateOn = true;
@@ -327,7 +327,7 @@ struct Sphinx : Module {
 			}
 
 			bAccentOn = false;
-			if (patternAccent && accents.at(currentStep)) {
+			if (patternAccents && finalAccents[currentStep]) {
 				pgAccent.trigger();
 				if (gateMode == GM_GATE) {
 					bAccentOn = true;
@@ -338,22 +338,26 @@ struct Sphinx : Module {
 		bool bGatePulse = pgGate.process(args.sampleTime);
 		bool bAccentPulse = pgAccent.process(args.sampleTime);
 
-		if (gateMode == GM_TURING) {
-			outputs[OUTPUT_GATE].setVoltage(10.0f * (turing / pow(2.f, patternLength) - 1.f));
-		}
-		else {
+		switch (gateMode)
+		{
+		case GM_TRIGGER:
+		case GM_GATE: {
 			outputs[OUTPUT_GATE].setVoltage(bGateOn | bGatePulse ? 10.0f : 0.f);
+			break;
 		}
+		case GM_TURING: {
+			outputs[OUTPUT_GATE].setVoltage(10.f * (turing / powf(2.f, patternLength) - 1.f));
+			break;
+		}
+		}
+
 		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0f : 0.f);
 
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.0f : 0.f);
 
 		if (clockDivider.process()) {
-			// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
-			const float sampleTime = APP->engine->getSampleTime() * kClockUpdateFrequency;
-
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
-				rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
+				math::rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
 
 			patternPadding = abs((32.f - patternLength) * clamp(params[PARAM_PADDING].getValue() +
 				inputs[INPUT_PADDING].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
@@ -364,10 +368,10 @@ struct Sphinx : Module {
 			patternFill = abs((1.f + (patternLength - 1.f) * clamp(params[PARAM_STEPS].getValue() +
 				inputs[INPUT_STEPS].getNormalVoltage(0.f) / 9.f, 0.f, 1.f)));
 
-			patternAccent = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
+			patternAccents = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
 				inputs[INPUT_ACCENT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 
-			if (patternAccent == 0) {
+			if (patternAccents == 0) {
 				patternShift = 0;
 			}
 			else {
@@ -376,8 +380,8 @@ struct Sphinx : Module {
 			}
 
 			// New sequence in case of parameter change.
-			if (patternLength + patternRotation + patternAccent + patternFill + patternPadding + patternShift != patternChecksum) {
-				patternChecksum = patternLength + patternRotation + patternAccent + patternFill + patternPadding + patternShift;
+			if (patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternShift != patternChecksum) {
+				patternChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternShift;
 				bCalculate = true;
 			}
 
@@ -389,13 +393,13 @@ struct Sphinx : Module {
 			gateMode = GateMode(params[PARAM_GATE_MODE].getValue());
 
 			// Update lights			
-			lights[LIGHT_PATTERN_STYLE + 0].setBrightnessSmooth(patternLightColorTable[patternStyle].red, sampleTime);
-			lights[LIGHT_PATTERN_STYLE + 1].setBrightnessSmooth(patternLightColorTable[patternStyle].green, sampleTime);
-			lights[LIGHT_PATTERN_STYLE + 2].setBrightnessSmooth(patternLightColorTable[patternStyle].blue, sampleTime);
+			lights[LIGHT_PATTERN_STYLE + 0].setBrightness(patternLightColorTable[patternStyle].red);
+			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green);
+			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue);
 
-			lights[LIGHT_GATE_MODE + 0].setBrightnessSmooth(gateModeLightColorTable[gateMode].red, sampleTime);
-			lights[LIGHT_GATE_MODE + 1].setBrightnessSmooth(gateModeLightColorTable[gateMode].green, sampleTime);
-			lights[LIGHT_GATE_MODE + 2].setBrightnessSmooth(gateModeLightColorTable[gateMode].blue, sampleTime);
+			lights[LIGHT_GATE_MODE + 0].setBrightness(gateModeLightColorTable[gateMode].red);
+			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green);
+			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue);
 		}
 	}
 };
@@ -596,8 +600,8 @@ struct SphinxWidget : ModuleWidget {
 		sphinxFrameBuffer->addChild(sphinxDisplay);
 
 		if (module) {
-			sphinxDisplay->sequence = &module->sequence;
-			sphinxDisplay->accents = &module->accents;
+			sphinxDisplay->sequence = &module->finalSequence;
+			sphinxDisplay->accents = &module->finalAccents;
 			sphinxDisplay->patternLength = &module->patternLength;
 			sphinxDisplay->patternPadding = &module->patternPadding;
 			sphinxDisplay->patternFill = &module->patternFill;
@@ -663,7 +667,7 @@ struct SphinxWidget : ModuleWidget {
 		sphinxFrameBuffer->addChild(displayAccent);
 
 		if (module)
-			displayAccent->values.numberValue = &module->patternAccent;
+			displayAccent->values.numberValue = &module->patternAccents;
 
 		SanguineTinyNumericDisplay* displayShift = new SanguineTinyNumericDisplay(2);
 		displayShift->box.pos = mm2px(Vec(38.964, 82.77));
