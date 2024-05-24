@@ -30,6 +30,7 @@ struct Raiju : Module {
 	static const int kClockDivision = 1024;
 
 	float voltages[kVoltagesCount];
+	float outputVoltages[16];
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
@@ -99,9 +100,8 @@ struct Raiju : Module {
 
 				if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
 					outputs[OUTPUT_VOLTAGE + i].setChannels(channelCounts[i]);
-					for (int j = 0; j < channelCounts[i]; j++) {
-						outputs[OUTPUT_VOLTAGE + i].setVoltage(voltages[i], j);
-					}
+					std::fill(outputVoltages, outputVoltages + 16, voltages[i]);
+					outputs[OUTPUT_VOLTAGE + i].writeVoltages(outputVoltages);
 				}
 			}
 
