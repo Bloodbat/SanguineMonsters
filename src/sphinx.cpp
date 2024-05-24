@@ -171,8 +171,9 @@ struct Sphinx : Module {
 	}
 
 	void onReset() override {
+		int patternSize = patternLength + patternPadding;
 		if (lastPatternLength != patternLength) {
-			calculatedSequence.resize(patternLength + patternPadding);
+			calculatedSequence.resize(patternSize);
 			std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 		}
 		if (lastPatternFill != patternFill) {
@@ -198,7 +199,7 @@ struct Sphinx : Module {
 
 		case RANDOM_PATTERN: {
 			if (lastPatternLength != patternLength || lastPatternFill != patternFill) {
-				int n = 0;				
+				int n = 0;
 				int f = 0;
 				while (f < patternFill) {
 					if (random::uniform() < (float)patternFill / (float)patternLength) {
@@ -209,7 +210,7 @@ struct Sphinx : Module {
 				}
 			}
 			if (patternAccent && (lastPatternAccent != patternAccent || lastPatternFill != patternFill)) {
-				int n = 0;			
+				int n = 0;
 				int nacc = 0;
 				while (nacc < patternAccent) {
 					if (random::uniform() < (float)patternAccent / (float)patternFill) {
@@ -222,22 +223,22 @@ struct Sphinx : Module {
 			break;
 		}
 
-		case FIBONACCI_PATTERN: {			
+		case FIBONACCI_PATTERN: {
 			for (int k = 0; k < patternFill; k++) {
 				calculatedSequence.at(getFibonacci(k) % patternLength) = 1;
 			}
-			
+
 			for (int a = 0; a < patternAccent; a++) {
 				calculatedAccents.at(getFibonacci(a) % patternFill) = 1;
 			}
 			break;
 		}
 
-		case LINEAR_PATTERN: {			
+		case LINEAR_PATTERN: {
 			for (int k = 0; k < patternFill; k++) {
 				calculatedSequence.at(patternLength * k / patternFill) = 1;
 			}
-			
+
 			for (int a = 0; a < patternAccent; a++) {
 				calculatedAccents.at(patternFill * a / patternAccent) = 1;
 			}
@@ -246,9 +247,9 @@ struct Sphinx : Module {
 		}
 
 		// Distribute accents on sequence
-		int j = patternFill - patternShift;
+		int j = patternFill - patternShift;		
 		for (int i = 0; i != int(calculatedSequence.size()); i++) {
-			int idx = (i + patternRotation) % (patternLength + patternPadding);
+			int idx = (i + patternRotation) % (patternSize);
 			sequence[idx] = calculatedSequence.at(i);
 			accents[idx] = 0;
 			if (patternAccent && calculatedSequence.at(i)) {
