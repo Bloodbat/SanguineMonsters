@@ -661,8 +661,7 @@ struct Brainz : Module {
 				}
 
 				handleStepLights(sampleTime);
-
-				// TODO!!! Call reset when this is done?
+				
 				if (moduleState == MODULE_STATE_READY) {
 					moduleDirection = StepDirections(params[PARAM_MODULE_DIRECTION].getValue());
 					if (moduleState < MODULE_STATE_WAIT_FOR_RESET) {
@@ -673,7 +672,7 @@ struct Brainz : Module {
 					}
 					moduleState = lastModuleState;
 				}
-			} // Clock divider
+			} // End clock divider.
 		}
 	}
 
