@@ -45,6 +45,8 @@ struct Sphinx : Module {
 	enum LightIds {
 		ENUMS(LIGHT_GATE_MODE, 1 * 3),
 		ENUMS(LIGHT_PATTERN_STYLE, 1 * 3),
+		LIGHT_EOC,
+		ENUMS(LIGHT_OUTPUT, 1 * 3),
 		LIGHTS_COUNT
 	};
 
@@ -91,7 +93,7 @@ struct Sphinx : Module {
 	PatternStyle lastPatternStyle = EUCLIDEAN_PATTERN;
 	PatternStyle patternStyle = EUCLIDEAN_PATTERN;
 
-	static const int kClockUpdateFrequency = 16;
+	static const int kClockDivider = 16;
 
 	dsp::SchmittTrigger stClockInput;
 	dsp::SchmittTrigger stResetInput;
@@ -163,7 +165,7 @@ struct Sphinx : Module {
 		finalAccents.fill(0);
 		onReset();
 
-		clockDivider.setDivision(kClockUpdateFrequency);
+		clockDivider.setDivision(kClockDivider);
 	}
 
 	int getFibonacci(int n) {
@@ -392,7 +394,14 @@ struct Sphinx : Module {
 
 			gateMode = GateMode(params[PARAM_GATE_MODE].getValue());
 
+			const float sampleTime = args.sampleTime * kClockDivider;
+
 			// Update lights			
+			float lightVoltage1;
+
+			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage() / 10.f;
+			lights[LIGHT_EOC].setBrightnessSmooth(lightVoltage1, sampleTime);
+
 			lights[LIGHT_PATTERN_STYLE + 0].setBrightness(patternLightColorTable[patternStyle].red);
 			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green);
 			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue);
@@ -400,6 +409,12 @@ struct Sphinx : Module {
 			lights[LIGHT_GATE_MODE + 0].setBrightness(gateModeLightColorTable[gateMode].red);
 			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green);
 			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue);
+
+			lightVoltage1 = outputs[OUTPUT_GATE].getVoltage() / 10.f;
+			float lightVoltage2 = outputs[OUTPUT_ACCENT].getVoltage() / 10.f;
+			lights[LIGHT_OUTPUT + 0].setBrightnessSmooth(-lightVoltage1, sampleTime);
+			lights[LIGHT_OUTPUT + 1].setBrightnessSmooth(lightVoltage1, sampleTime);
+			lights[LIGHT_OUTPUT + 2].setBrightnessSmooth(lightVoltage2, sampleTime);
 		}
 	}
 };
@@ -595,7 +610,7 @@ struct SphinxWidget : ModuleWidget {
 
 		SphinxDisplay* sphinxDisplay = new SphinxDisplay();
 		sphinxDisplay->module = module;
-		sphinxDisplay->box.pos = mm2px(Vec(19.726, 8.271));
+		sphinxDisplay->box.pos = mm2px(Vec(17.126, 8.271));
 		sphinxDisplay->box.size = mm2px(Vec(22.14, 22.14));
 		sphinxFrameBuffer->addChild(sphinxDisplay);
 
@@ -609,10 +624,9 @@ struct SphinxWidget : ModuleWidget {
 			sphinxDisplay->patternStyle = &module->patternStyle;
 		}
 
-		addChild(createParamCentered<TL1105Latch>(mm2px(Vec(49.822, 13.947)), module, Sphinx::PARAM_PATTERN_STYLE));
+		addChild(createLightParamCentered<VCVLightBezelLatch<RedGreenBlueLight>>(mm2px(Vec(48.472, 13.947)), module, Sphinx::PARAM_PATTERN_STYLE, Sphinx::LIGHT_PATTERN_STYLE));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(44.519, 13.947)), module, Sphinx::LIGHT_PATTERN_STYLE));
-
+		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(41.862, 26.411)), module, Sphinx::LIGHT_EOC));
 		addChild(createOutputCentered<BananutBlack>(mm2px(Vec(48.472, 26.411)), module, Sphinx::OUTPUT_EOC));
 
 		addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(10.386, 40.197)), module, Sphinx::PARAM_LENGTH));
@@ -684,6 +698,7 @@ struct SphinxWidget : ModuleWidget {
 		addChild(createParamCentered<TL1105Latch>(mm2px(Vec(27.9, 110.729)), module, Sphinx::PARAM_GATE_MODE));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(27.9, 104.625)), module, Sphinx::LIGHT_GATE_MODE));
 
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(42.496, 105.958)), module, Sphinx::LIGHT_OUTPUT));
 		addChild(createOutputCentered<BananutRed>(mm2px(Vec(36.543, 112.894)), module, Sphinx::OUTPUT_GATE));
 		addChild(createOutputCentered<BananutRed>(mm2px(Vec(48.448, 112.894)), module, Sphinx::OUTPUT_ACCENT));
 
