@@ -162,9 +162,9 @@ struct Brainz : Module {
 	float metronomeCounter = 0.f;
 	float metronomePeriod = 0.f;
 
-	dsp::SchmittTrigger stReset;
+	dsp::BooleanTrigger btReset;
+	dsp::BooleanTrigger btRun;
 	dsp::SchmittTrigger stResetInput;
-	dsp::SchmittTrigger stRun;
 	dsp::SchmittTrigger stRunInput;
 	dsp::PulseGenerator pgMetronone;
 	dsp::PulseGenerator pgReset;
@@ -237,11 +237,11 @@ struct Brainz : Module {
 
 	void process(const ProcessArgs& args) override {
 		if (bInMetronome) {
-			if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
+			if (btReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
 				handleResetTriggers();
 			}
 
-			if (stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0))) {
+			if (btRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0))) {
 				handleRunTriggers();
 			}
 			// Ensure only the correct step is lit.
@@ -256,11 +256,11 @@ struct Brainz : Module {
 				// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 				const float sampleTime = args.sampleTime * kClockDivider;
 
-				if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
+				if (btReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
 					handleResetTriggers();
 				}
 
-				if (stRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0))) {
+				if (btRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0))) {
 					handleRunTriggers();
 				}
 
@@ -661,7 +661,7 @@ struct Brainz : Module {
 				}
 
 				handleStepLights(sampleTime);
-				
+
 				if (moduleState == MODULE_STATE_READY) {
 					moduleDirection = StepDirections(params[PARAM_MODULE_DIRECTION].getValue());
 					if (moduleState < MODULE_STATE_WAIT_FOR_RESET) {

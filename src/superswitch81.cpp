@@ -47,15 +47,15 @@ struct SuperSwitch81 : Module {
 		OUTPUTS_COUNT
 	};
 
-	dsp::SchmittTrigger stDecrease;
-	dsp::SchmittTrigger stIncrease;
+	dsp::BooleanTrigger btDecrease;
+	dsp::BooleanTrigger btIncrease;
+	dsp::BooleanTrigger btRandom;
+	dsp::BooleanTrigger btReset;
+	dsp::BooleanTrigger btSteps[8];
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
 	dsp::SchmittTrigger stInputReset;
-	dsp::SchmittTrigger stRandom;
-	dsp::SchmittTrigger stReset;
-	dsp::SchmittTrigger stStep[8];
 	bool bClockReceived = false;
 	bool bLastOneShotValue = false;
 	bool bLastResetToFirstStepValue = true;
@@ -171,29 +171,29 @@ struct SuperSwitch81 : Module {
 		}
 
 		if ((inputs[INPUT_RESET].isConnected() && stInputReset.process(inputs[INPUT_RESET].getVoltage()))
-			|| stReset.process(params[PARAM_RESET].getValue())) {
+			|| btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
 		}
 
 		if (!bOneShot || (bOneShot && !bOneShotDone)) {
 			if ((inputs[INPUT_DECREASE].isConnected() && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage()))
-				|| stDecrease.process(params[PARAM_DECREASE].getValue())) {
+				|| btDecrease.process(params[PARAM_DECREASE].getValue())) {
 				doDecreaseTrigger();
 			}
 
 			if ((inputs[INPUT_INCREASE].isConnected() && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage()))
-				|| stIncrease.process(params[PARAM_INCREASE].getValue())) {
+				|| btIncrease.process(params[PARAM_INCREASE].getValue())) {
 				doIncreaseTrigger();
 			}
 
 			if ((inputs[INPUT_RANDOM].isConnected() && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage()))
-				|| stRandom.process(params[PARAM_RANDOM].getValue())) {
+				|| btRandom.process(params[PARAM_RANDOM].getValue())) {
 				doRandomTrigger();
 			}
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
 				for (int i = 0; i < stepCount; i++) {
-					if (stStep[i].process(params[PARAM_STEP1 + i].getValue()))
+					if (btSteps[i].process(params[PARAM_STEP1 + i].getValue()))
 						selectedIn = i;
 
 					while (selectedIn < 0)

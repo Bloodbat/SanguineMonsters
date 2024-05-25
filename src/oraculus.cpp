@@ -36,14 +36,14 @@ struct Oraculus : Module {
 
 	dsp::ClockDivider clockDivider;
 
-	dsp::SchmittTrigger stDecrease;
-	dsp::SchmittTrigger stIncrease;
+	dsp::BooleanTrigger btDecrease;
+	dsp::BooleanTrigger btIncrease;
+	dsp::BooleanTrigger btRandom;
+	dsp::BooleanTrigger btReset;
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
 	dsp::SchmittTrigger stInputReset;
-	dsp::SchmittTrigger stRandom;
-	dsp::SchmittTrigger stReset;
 
 	int channelCount = 0;
 	int finalChannel = -1;
@@ -124,24 +124,24 @@ struct Oraculus : Module {
 			doResetTrigger();
 		}
 
-		if (stReset.process(params[PARAM_RESET].getValue()))
+		if (btReset.process(params[PARAM_RESET].getValue()))
 		{
 			doResetTrigger();
 		}
 
 		if (channelCount > 0) {
 			if ((bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage()))
-				|| stIncrease.process(params[PARAM_INCREASE].getValue())) {
+				|| btIncrease.process(params[PARAM_INCREASE].getValue())) {
 				doIncreaseTrigger();
 			}
 
 			if ((bDecreaseConnected && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage()))
-				|| stDecrease.process(params[PARAM_DECREASE].getValue())) {
+				|| btDecrease.process(params[PARAM_DECREASE].getValue())) {
 				doDecreaseTrigger();
 			}
 
 			if ((bRandomConnected && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage()))
-				|| stRandom.process(params[PARAM_RANDOM].getValue())) {
+				|| btRandom.process(params[PARAM_RANDOM].getValue())) {
 				doRandomTrigger();
 			}
 
