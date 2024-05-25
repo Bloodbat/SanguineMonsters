@@ -34,7 +34,7 @@ struct Raiju : Module {
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
-	dsp::SchmittTrigger switches[kVoltagesCount];
+	dsp::BooleanTrigger switches[kVoltagesCount];
 
 	dsp::ClockDivider clockDivider;
 
