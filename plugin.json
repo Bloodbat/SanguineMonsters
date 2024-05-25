@@ -8,12 +8,12 @@
   "sourceUrl": "https://github.com/Bloodbat/SanguineMonsters",
   "description": "Monster modules for your everyday needs.",
   "changelogUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/CHANGELOG.md",
+  "manualUrl": "https://raw.githubusercontent.com/Bloodbat/SanguineModulesManuals/main/monsters_manual.pdf",
   "modules": [
     {
       "slug": "Sanguine-SuperSwitch81",
       "name": "Sanguine Hydra",
       "description": "An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
-      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Switch",
         "Random",
@@ -25,7 +25,6 @@
       "slug": "Sanguine-SuperSwitch18",
       "name": "Sanguine Gegenees",
       "description": "A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
-      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Switch",
         "Random",
@@ -37,7 +36,6 @@
       "slug": "Sanguine-Monsters-Blank",
       "name": "Sanguine Monsters Blank",
       "description": "Put a vampire and the Monsters logo on your rack!",
-      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Blank",
         "Visual"
@@ -47,7 +45,6 @@
       "slug": "Sanguine-Monsters-Dolly-X",
       "name": "Sanguine Monsters Dolly-X",
       "description": "Dual monophonic to polyphonic channel cloner.",
-      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Utility",
         "Polyphonic",
@@ -58,7 +55,6 @@
       "slug": "Sanguine-Monsters-Oraculus",
       "name": "Sanguine Monsters Oraculus",
       "description": "n to 1 switch/sequencer that takes a polyphonic cable input.",
-      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Utility",
         "Polyphonic",
@@ -69,7 +65,6 @@
       "slug": "Sanguine-Monsters-Raiju",
       "name": "Sanguine Monsters Raiju",
       "description": "A flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage.",
-      "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Utility",
         "Polyphonic"
@@ -87,7 +82,6 @@
       "slug": "Sanguine-Monsters-Brainz",
       "name": "Brainz",
       "description": "A master control center intended to make synchronizing audio and video files from different recorders easier.",
-	  "manualUrl": "https://github.com/Bloodbat/SanguineMonsters/blob/main/doc/monsters_manual.pdf",
       "tags": [
         "Sequencer",
 		"Utility",
