@@ -93,8 +93,8 @@ struct Sphinx : Module {
 
 	static const int kClockUpdateFrequency = 16;
 
-	dsp::SchmittTrigger stClock;
-	dsp::SchmittTrigger stReset;
+	dsp::SchmittTrigger stClockInput;
+	dsp::SchmittTrigger stResetInput;
 
 	dsp::PulseGenerator pgGate;
 	dsp::PulseGenerator pgAccent;
@@ -291,13 +291,13 @@ struct Sphinx : Module {
 
 		// Reset sequence.
 		if (inputs[INPUT_RESET].isConnected()) {
-			if (stReset.process(inputs[INPUT_RESET].getVoltage())) {
+			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
 				currentStep = patternLength + patternPadding;
 			}
 		}
 
 		if (inputs[INPUT_CLOCK].isConnected()) {
-			if (stClock.process(inputs[INPUT_CLOCK].getVoltage())) {
+			if (stClockInput.process(inputs[INPUT_CLOCK].getVoltage())) {
 				nextStep = true;
 			}
 		}
