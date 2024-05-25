@@ -50,7 +50,7 @@ struct DollyX : Module {
 		configInput(INPUT_MONO_IN1, "Mono 1");
 		configInput(INPUT_MONO_IN2, "Mono 2");
 		configInput(INPUT_CHANNELS1_CV, "Channels CV 1");
-		configInput(INPUT_CHANNELS2_CV, "Channels CV 2");		
+		configInput(INPUT_CHANNELS2_CV, "Channels CV 2");
 
 		clockDivider.setDivision(64);
 		onReset();
