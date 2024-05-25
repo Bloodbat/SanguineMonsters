@@ -254,7 +254,7 @@ struct Brainz : Module {
 		else {
 			if (clockDivider.process()) {
 				// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
-				const float sampleTime = APP->engine->getSampleTime() * kClockDivider;
+				const float sampleTime = args.sampleTime * kClockDivider;
 
 				if (stReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
 					handleResetTriggers();

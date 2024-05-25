@@ -117,7 +117,7 @@ struct Oraculus : Module {
 
 		if (clockDivider.process()) {
 			checkConnections();
-			updateLights();
+			updateLights(args);
 		}
 
 		if (bResetConnected && stInputReset.process(inputs[INPUT_RESET].getVoltage())) {
@@ -187,9 +187,9 @@ struct Oraculus : Module {
 		bOutputConnected = outputs[OUTPUT_MONOPHONIC].isConnected();
 	}
 
-	void updateLights() {
+	void updateLights(const ProcessArgs& args) {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
-		const float sampleTime = APP->engine->getSampleTime() * kClockUpdateFrequency;
+		const float sampleTime = args.sampleTime * kClockUpdateFrequency;
 
 		int currentLight;
 		for (int i = 0; i < 16; i++) {
