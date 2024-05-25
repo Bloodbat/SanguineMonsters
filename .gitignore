@@ -6,7 +6,5 @@
 build
 dep
 dist
-sources
 .vs
-/makeplugin.sh
-/move.sh
+/faceplate_sources
