@@ -34,7 +34,7 @@ struct Raiju : Module {
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
-	dsp::BooleanTrigger switches[kVoltagesCount];
+	dsp::BooleanTrigger btButtons[kVoltagesCount];
 
 	dsp::ClockDivider clockDivider;
 
@@ -58,7 +58,7 @@ struct Raiju : Module {
 
 	void pollSwitches() {
 		for (uint8_t i = 0; i < kVoltagesCount; i++) {
-			if (switches[i].process(params[PARAM_VOLTAGE_SELECTOR + i].getValue())) {
+			if (btButtons[i].process(params[PARAM_VOLTAGE_SELECTOR + i].getValue())) {
 				selectedVoltage = i;
 			}
 		}
