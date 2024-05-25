@@ -149,46 +149,40 @@ struct DollyXWidget : ModuleWidget {
 
 		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight();
 		amalgamLight1->box.pos = mm2px(Vec(7.337, 33.237));
-		amalgamLight1->wrap();
 		amalgamLight1->module = module;
 		amalgamLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amalgam_light.svg")));
-		dollyFrameBuffer->addChild(amalgamLight1);
+		addChild(amalgamLight1);
 
 		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight();
 		amalgamLight2->box.pos = mm2px(Vec(7.337, 87.908));
-		amalgamLight2->wrap();
 		amalgamLight2->module = module;
 		amalgamLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amalgam_light.svg")));
-		dollyFrameBuffer->addChild(amalgamLight2);
+		addChild(amalgamLight2);
 
 
 		SanguineShapedLight* inMonoLight1 = new SanguineShapedLight();
 		inMonoLight1->box.pos = Vec(19.42, 141.0);
-		inMonoLight1->wrap();
 		inMonoLight1->module = module;
 		inMonoLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_mono_light.svg")));
-		dollyFrameBuffer->addChild(inMonoLight1);
+		addChild(inMonoLight1);
 
 		SanguineShapedLight* inMonoLight2 = new SanguineShapedLight();
 		inMonoLight2->box.pos = Vec(19.42, 302.67);
-		inMonoLight2->wrap();
 		inMonoLight2->module = module;
 		inMonoLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_mono_light.svg")));
-		dollyFrameBuffer->addChild(inMonoLight2);
+		addChild(inMonoLight2);
 
 		SanguineShapedLight* outPolyLight1 = new SanguineShapedLight();
 		outPolyLight1->box.pos = mm2px(Vec(27.475, 47.678));
-		outPolyLight1->wrap();
 		outPolyLight1->module = module;
 		outPolyLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
-		dollyFrameBuffer->addChild(outPolyLight1);
+		addChild(outPolyLight1);
 
 		SanguineShapedLight* outPolyLight2 = new SanguineShapedLight();
 		outPolyLight2->box.pos = mm2px(Vec(27.475, 102.349));
-		outPolyLight2->wrap();
 		outPolyLight2->module = module;
 		outPolyLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
-		dollyFrameBuffer->addChild(outPolyLight2);
+		addChild(outPolyLight2);
 	}
 };
 

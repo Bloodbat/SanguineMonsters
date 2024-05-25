@@ -457,31 +457,28 @@ struct SuperSwitch18Widget : ModuleWidget {
 
 		SanguineShapedLight* stepsLight = new SanguineShapedLight();
 		stepsLight->box.pos = mm2px(Vec(23.285, 30.505));
-		stepsLight->wrap();
 		stepsLight->module = module;
 		stepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/light_steps.svg")));
-		switchFrameBuffer->addChild(stepsLight);
+		addChild(stepsLight);
 
 		SanguineShapedLight* inLight = new SanguineShapedLight();
 		inLight->box.pos = mm2px(Vec(6.943, 106.547));
-		inLight->wrap();
 		inLight->module = module;
 		inLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_light.svg")));
-		switchFrameBuffer->addChild(inLight);
+		addChild(inLight);
 
 		SanguineShapedLight* outLight = new SanguineShapedLight();
 		outLight->box.pos = mm2px(Vec(50.106, 13.049));
-		outLight->wrap();
 		outLight->module = module;
 		outLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
-		switchFrameBuffer->addChild(outLight);
+		addChild(outLight);
 
 		SanguineShapedLight* bloodLogo = new SanguineShapedLight();
 		bloodLogo->box.pos = mm2px(Vec(25.038, 110.39));
-		bloodLogo->box.size = mm2px(Vec(2.233, 4.634));
+		//bloodLogo->box.size = mm2px(Vec(2.233, 4.634));
 		bloodLogo->module = module;
 		bloodLogo->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy_small.svg")));
-		switchFrameBuffer->addChild(bloodLogo);
+		addChild(bloodLogo);
 	}
 };
 

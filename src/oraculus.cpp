@@ -263,17 +263,15 @@ struct OraculusWidget : ModuleWidget {
 
 		SanguineShapedLight* InPolyLight = new SanguineShapedLight();
 		InPolyLight->box.pos = mm2px(Vec(3.158, 12.721));
-		InPolyLight->wrap();
 		InPolyLight->module = module;
 		InPolyLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_light.svg")));
-		oraculusFrameBuffer->addChild(InPolyLight);
+		addChild(InPolyLight);
 
 		SanguineShapedLight* outPolyLight1 = new SanguineShapedLight();
 		outPolyLight1->box.pos = mm2px(Vec(14.486, 104.5));
-		outPolyLight1->wrap();
 		outPolyLight1->module = module;
 		outPolyLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_mono_light.svg")));
-		oraculusFrameBuffer->addChild(outPolyLight1);
+		addChild(outPolyLight1);
 
 		SanguineLightUpSwitch* switchNoRepeats = createParam<SanguineLightUpSwitch>(mm2px(Vec(9.454, 41.189)),
 			module, Oraculus::PARAM_NO_REPEATS);

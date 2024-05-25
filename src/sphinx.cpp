@@ -689,31 +689,27 @@ struct SphinxWidget : ModuleWidget {
 
 		SanguineShapedLight* clockLight = new SanguineShapedLight();
 		clockLight->box.pos = mm2px(Vec(5.642, 104.058));
-		clockLight->wrap();
 		clockLight->module = module;
 		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
-		sphinxFrameBuffer->addChild(clockLight);
+		addChild(clockLight);
 
 		SanguineShapedLight* resetLight = new SanguineShapedLight();
 		resetLight->box.pos = mm2px(Vec(17.331, 104.514));
-		resetLight->wrap();
 		resetLight->module = module;
 		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
-		sphinxFrameBuffer->addChild(resetLight);
+		addChild(resetLight);
 
 		SanguineShapedLight* gateLight = new SanguineShapedLight();
 		gateLight->box.pos = mm2px(Vec(34.643, 104.058));
-		gateLight->wrap();
 		gateLight->module = module;
 		gateLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/gate_lit_mono.svg")));
-		sphinxFrameBuffer->addChild(gateLight);
+		addChild(gateLight);
 
 		SanguineShapedLight* accentLight = new SanguineShapedLight();
 		accentLight->box.pos = mm2px(Vec(46.548, 104.058));
-		accentLight->wrap();
 		accentLight->module = module;
 		accentLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/accent_lit_mono.svg")));
-		sphinxFrameBuffer->addChild(accentLight);
+		addChild(accentLight);
 	}
 };
 

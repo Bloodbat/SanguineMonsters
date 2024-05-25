@@ -908,7 +908,6 @@ struct YellowGateLight : SanguineShapedLight {
 	YellowGateLight(Module* newModule) {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/gate_lit_mono.svg")));
 		module = newModule;
-		wrap();
 	}
 };
 
@@ -916,7 +915,6 @@ struct BluePowerLight : SanguineShapedLight {
 	BluePowerLight(Module* newModule) {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/power_blue_lit.svg")));
 		module = newModule;
-		wrap();
 	}
 };
 
@@ -924,7 +922,6 @@ struct BlueAdvancedClockLight : SanguineShapedLight {
 	BlueAdvancedClockLight(Module* newModule) {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_move_blue_lit.svg")));
 		module = newModule;
-		wrap();
 	}
 };
 
@@ -932,7 +929,6 @@ struct BlueInitialClockLight : SanguineShapedLight {
 	BlueInitialClockLight(Module* newModule) {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_still_blue_lit.svg")));
 		module = newModule;
-		wrap();
 	}
 };
 
@@ -940,7 +936,6 @@ struct BlueRightArrowLight : SanguineShapedLight {
 	BlueRightArrowLight(Module* newModule) {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/arrow_right_blue_lit.svg")));
 		module = newModule;
-		wrap();
 	}
 };
 
@@ -948,7 +943,6 @@ struct BlueQuarterNoteLight : SanguineShapedLight {
 	BlueQuarterNoteLight(Module* newModule) {
 		setSvg(Svg::load(asset::plugin(pluginInstance, "res/quarter_note_blue_lit.svg")));
 		module = newModule;
-		wrap();
 	}
 };
 
@@ -1133,163 +1127,151 @@ struct BrainzWidget : ModuleWidget {
 
 		SanguineShapedLight* inPlayLight = new SanguineShapedLight();
 		inPlayLight->box.pos = mm2px(Vec(6.452, 107.701));
-		inPlayLight->wrap();
 		inPlayLight->module = module;
 		inPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
-		brainzFrameBuffer->addChild(inPlayLight);
+		addChild(inPlayLight);
 
 		SanguineShapedLight* resetLight = new SanguineShapedLight();
 		resetLight->box.pos = mm2px(Vec(18.467, 108.157));
-		resetLight->wrap();
 		resetLight->module = module;
 		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
-		brainzFrameBuffer->addChild(resetLight);
+		addChild(resetLight);
 
 		SanguineShapedLight* metronomeStepsLight = new SanguineShapedLight();
 		metronomeStepsLight->box.pos = mm2px(Vec(120.006, 39.497));
-		metronomeStepsLight->wrap();
 		metronomeStepsLight->module = module;
 		metronomeStepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/numpad_lit_blue.svg")));
-		brainzFrameBuffer->addChild(metronomeStepsLight);
+		addChild(metronomeStepsLight);
 
 		YellowGateLight* gateLightA = new YellowGateLight(module);
 		gateLightA->box.pos = mm2px(Vec(37.554, 41.747));
-		brainzFrameBuffer->addChild(gateLightA);
+		addChild(gateLightA);
 
 		YellowGateLight* gateLightB = new YellowGateLight(module);
 		gateLightB->box.pos = mm2px(Vec(37.554, 92.777));
-		brainzFrameBuffer->addChild(gateLightB);
+		addChild(gateLightB);
 
 		YellowGateLight* gateLightC = new YellowGateLight(module);
 		gateLightC->box.pos = mm2px(Vec(109.541, 92.777));
-		brainzFrameBuffer->addChild(gateLightC);
+		addChild(gateLightC);
 
 		BluePowerLight* powerLightA = new BluePowerLight(module);
 		powerLightA->box.pos = mm2px(Vec(38.865, 23.214));
-		brainzFrameBuffer->addChild(powerLightA);
+		addChild(powerLightA);
 
 		BluePowerLight* powerLightB = new BluePowerLight(module);
 		powerLightB->box.pos = mm2px(Vec(38.865, 74.244));
-		brainzFrameBuffer->addChild(powerLightB);
+		addChild(powerLightB);
 
 		BluePowerLight* powerLightC = new BluePowerLight(module);
 		powerLightC->box.pos = mm2px(Vec(110.652, 74.244));
-		brainzFrameBuffer->addChild(powerLightC);
+		addChild(powerLightC);
 
 		BlueAdvancedClockLight* steppedClockLightA = new BlueAdvancedClockLight(module);
 		steppedClockLightA->box.pos = mm2px(Vec(4.301, 32.845));
-		brainzFrameBuffer->addChild(steppedClockLightA);
+		addChild(steppedClockLightA);
 
 		BlueAdvancedClockLight* steppedClockLightB = new BlueAdvancedClockLight(module);
 		steppedClockLightB->box.pos = mm2px(Vec(4.301, 83.875));
-		brainzFrameBuffer->addChild(steppedClockLightB);
+		addChild(steppedClockLightB);
 
 		BlueAdvancedClockLight* steppedClockLightC = new BlueAdvancedClockLight(module);
 		steppedClockLightC->box.pos = mm2px(Vec(76.251, 83.875));
-		brainzFrameBuffer->addChild(steppedClockLightC);
+		addChild(steppedClockLightC);
 
 		BlueInitialClockLight* initialClockLightA = new BlueInitialClockLight(module);
 		initialClockLightA->box.pos = mm2px(Vec(47.035, 33.01));
-		brainzFrameBuffer->addChild(initialClockLightA);
+		addChild(initialClockLightA);
 
 		BlueInitialClockLight* initialClockLightB = new BlueInitialClockLight(module);
 		initialClockLightB->box.pos = mm2px(Vec(47.035, 84.04));
-		brainzFrameBuffer->addChild(initialClockLightB);
+		addChild(initialClockLightB);
 
 		BlueInitialClockLight* initialClockLightC = new BlueInitialClockLight(module);
 		initialClockLightC->box.pos = mm2px(Vec(119.021, 84.04));
-		brainzFrameBuffer->addChild(initialClockLightC);
+		addChild(initialClockLightC);
 
 		BlueRightArrowLight* arrowLightA = new BlueRightArrowLight(module);
 		arrowLightA->box.pos = mm2px(Vec(11.571, 42.643));
-		brainzFrameBuffer->addChild(arrowLightA);
+		addChild(arrowLightA);
 
 		BlueRightArrowLight* arrowLightB = new BlueRightArrowLight(module);
 		arrowLightB->box.pos = mm2px(Vec(11.571, 93.673));
-		brainzFrameBuffer->addChild(arrowLightB);
+		addChild(arrowLightB);
 
 		BlueRightArrowLight* arrowLightC = new BlueRightArrowLight(module);
 		arrowLightC->box.pos = mm2px(Vec(83.526, 93.673));
-		brainzFrameBuffer->addChild(arrowLightC);
+		addChild(arrowLightC);
 
 		BlueQuarterNoteLight* quarterNoteLightA = new BlueQuarterNoteLight(module);
 		quarterNoteLightA->box.pos = mm2px(Vec(29.586, 41.747));
-		brainzFrameBuffer->addChild(quarterNoteLightA);
+		addChild(quarterNoteLightA);
 
 		BlueQuarterNoteLight* quarterNoteLightB = new BlueQuarterNoteLight(module);
 		quarterNoteLightB->box.pos = mm2px(Vec(29.586, 92.777));
-		brainzFrameBuffer->addChild(quarterNoteLightB);
+		addChild(quarterNoteLightB);
 
 		BlueQuarterNoteLight* quarterNoteLightC = new BlueQuarterNoteLight(module);
 		quarterNoteLightC->box.pos = mm2px(Vec(101.556, 92.777));
-		brainzFrameBuffer->addChild(quarterNoteLightC);
+		addChild(quarterNoteLightC);
 
 		BlueQuarterNoteLight* quarterNoteLightMetronome = new BlueQuarterNoteLight(module);
 		quarterNoteLightMetronome->box.pos = mm2px(Vec(120.34, 27.015));
-		brainzFrameBuffer->addChild(quarterNoteLightMetronome);
+		addChild(quarterNoteLightMetronome);
 
 		SanguineShapedLight* outPlayLight = new SanguineShapedLight();
 		outPlayLight->box.pos = mm2px(Vec(58.789, 107.701));
-		outPlayLight->wrap();
 		outPlayLight->module = module;
 		outPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
-		brainzFrameBuffer->addChild(outPlayLight);
+		addChild(outPlayLight);
 
 		SanguineShapedLight* outResetLight = new SanguineShapedLight();
 		outResetLight->box.pos = mm2px(Vec(67.899, 108.157));
-		outResetLight->wrap();
 		outResetLight->module = module;
 		outResetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
-		brainzFrameBuffer->addChild(outResetLight);
+		addChild(outResetLight);
 
 		SanguineShapedLight* outMetronomeLight = new SanguineShapedLight();
 		outMetronomeLight->box.pos = mm2px(Vec(77.858, 107.701));
-		outMetronomeLight->wrap();
 		outMetronomeLight->module = module;
 		outMetronomeLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
-		brainzFrameBuffer->addChild(outMetronomeLight);
+		addChild(outMetronomeLight);
 
 		SanguineShapedLight* outLight1 = new SanguineShapedLight();
 		outLight1->box.pos = mm2px(Vec(88.295, 108.589));
-		outLight1->wrap();
 		outLight1->module = module;
 		outLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_1_yellow_lit.svg")));
-		brainzFrameBuffer->addChild(outLight1);
+		addChild(outLight1);
 
 		SanguineShapedLight* outLight2 = new SanguineShapedLight();
 		outLight2->box.pos = mm2px(Vec(97.834, 108.567));
-		outLight2->wrap();
 		outLight2->module = module;
 		outLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_2_yellow_lit.svg")));
-		brainzFrameBuffer->addChild(outLight2);
+		addChild(outLight2);
 
 		SanguineShapedLight* outLight3 = new SanguineShapedLight();
 		outLight3->box.pos = mm2px(Vec(107.504, 108.567));
-		outLight3->wrap();
 		outLight3->module = module;
 		outLight3->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_3_yellow_lit.svg")));
-		brainzFrameBuffer->addChild(outLight3);
+		addChild(outLight3);
 
 		SanguineShapedLight* outLight4 = new SanguineShapedLight();
 		outLight4->box.pos = mm2px(Vec(117.015, 108.589));
-		outLight4->wrap();
 		outLight4->module = module;
 		outLight4->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_4_yellow_lit.svg")));
-		brainzFrameBuffer->addChild(outLight4);
+		addChild(outLight4);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
 		bloodLight->box.pos = mm2px(Vec(29.219, 105.975));
-		bloodLight->wrap();
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
-		brainzFrameBuffer->addChild(bloodLight);
+		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
 		monstersLight->box.pos = mm2px(Vec(36.541, 113.941));
-		monstersLight->wrap();
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
-		brainzFrameBuffer->addChild(monstersLight);
+		addChild(monstersLight);
 	}
 };
 

@@ -305,31 +305,27 @@ struct RaijuWidget : ModuleWidget {
 
 		SanguineShapedLight* channelsLight = new SanguineShapedLight();
 		channelsLight->box.pos = mm2px(Vec(125.219, 16.15));
-		channelsLight->wrap();
 		channelsLight->module = module;
 		channelsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/channels_lit.svg")));
-		raijuFrameBuffer->addChild(channelsLight);
+		addChild(channelsLight);
 
 		SanguineShapedLight* outLight = new SanguineShapedLight();
 		outLight->box.pos = mm2px(Vec(79.456, 102.594));
-		outLight->wrap();
 		outLight->module = module;
 		outLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
-		raijuFrameBuffer->addChild(outLight);
+		addChild(outLight);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
 		bloodLight->box.pos = mm2px(Vec(4.718, 105.882));
-		bloodLight->wrap();
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
-		raijuFrameBuffer->addChild(bloodLight);
+		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
 		monstersLight->box.pos = mm2px(Vec(12.04, 113.849));
-		monstersLight->wrap();
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
-		raijuFrameBuffer->addChild(monstersLight);
+		addChild(monstersLight);
 	}
 };
 
