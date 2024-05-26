@@ -175,7 +175,7 @@ struct Sphinx : Module {
 	void onReset() override {
 		int patternSize = patternLength + patternPadding;
 
-		if (lastPatternLength != patternLength || lastPatternFill || patternFill || lastPatternStyle != patternStyle) {
+		if (lastPatternLength != patternLength || lastPatternFill != patternFill || lastPatternStyle != patternStyle || lastPatternAccents != patternAccents) {
 			if (lastPatternLength != patternLength || lastPatternStyle != patternStyle) {
 				calculatedSequence.resize(patternSize);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
@@ -344,7 +344,7 @@ struct Sphinx : Module {
 		{
 		case GM_TRIGGER:
 		case GM_GATE: {
-			outputs[OUTPUT_GATE].setVoltage(bGateOn | bGatePulse ? 10.0f : 0.f);
+			outputs[OUTPUT_GATE].setVoltage(bGateOn || bGatePulse ? 10.0f : 0.f);
 			break;
 		}
 		case GM_TURING: {
@@ -353,7 +353,7 @@ struct Sphinx : Module {
 		}
 		}
 
-		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn | bAccentPulse ? 10.0f : 0.f);
+		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn || bAccentPulse ? 10.0f : 0.f);
 
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.0f : 0.f);
 
