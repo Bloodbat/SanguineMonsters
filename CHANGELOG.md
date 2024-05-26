@@ -1,2 +1,22 @@
 ### 2.0.0
 - First release.
+
+## 2.1.0
+
+- Add: Brainz: a utility to control multiple recorders and ease synchronizing their outputs in post.
+
+- Add Sphinx: a Euclidean sequencer.
+
+- Add Raiju: a fixed voltages source.
+
+- Add: Oraculus: a polyphonic to monophonic switch.
+
+- Add: Dolly-X: a monophonic to polyphonic channel cloner.
+
+- Move manual to manuals repository.
+
+- Mutants and Monsters can now be found under Sanguine Modules in the browser.
+
+- Add: disabled steps are now grayed out in Hydra and Gegenees.
+
+- Fix: animation should not play when clicking step buttons in Hydra and Gegenees.
