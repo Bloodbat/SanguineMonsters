@@ -84,8 +84,16 @@
       "description": "A master control center intended to make synchronizing audio and video files from different recorders easier.",
       "tags": [
         "Sequencer",
-		"Utility",
-		"Switch"
+        "Utility",
+        "Switch"
+      ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Bukavac",
+      "name": "Bukavac",
+      "description": "A noise generator with a plethora of colors... and Perlin",
+      "tags": [
+        "Noise"
       ]
     }
   ]

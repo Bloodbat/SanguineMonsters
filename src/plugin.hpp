@@ -13,3 +13,4 @@ extern Model* modelOraculus;
 extern Model* modelRaiju;
 extern Model* modelSphinx;
 extern Model* modelBrainz;
+extern Model* modelBukavac;

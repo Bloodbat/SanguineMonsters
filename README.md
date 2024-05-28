@@ -8,6 +8,10 @@
 
 A utility to control multiple recorders and ease synchronizing their outputs in post.
 
+## Sanguine Bukavac
+
+A noise generator with a plethora of colors... and Perlin.
+
 ## Sanguine Dolly-X
 
 A monophonic to polyphonic channel cloner.
