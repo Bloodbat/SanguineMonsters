@@ -555,16 +555,13 @@ struct SphinxDisplay : TransparentWidget {
 	}
 
 	void draw(const DrawArgs& args) override {
-
-		if (!module) {
-			return;
-		}
-
 		nvgBeginPath(args.vg);
 		nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
 		nvgStrokeWidth(args.vg, 1.5f);
-		nvgStrokeColor(args.vg, nvgRGB(0x10, 0x10, 0x10));
+		nvgStrokeColor(args.vg, nvgRGB(100, 100, 100));
 		nvgStroke(args.vg);
+		nvgFillColor(args.vg, nvgRGB(10, 10, 10));
+		nvgFill(args.vg);
 
 		Widget::draw(args);
 	}
