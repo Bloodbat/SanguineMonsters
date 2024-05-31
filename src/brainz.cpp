@@ -967,12 +967,12 @@ struct BrainzWidget : ModuleWidget {
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
 		addParam(btnReset);
-
-		PB61303* btnModuleDirection = createLightParamCentered<LightButton<PB61303, PB61303Light<RedGreenBlueLight>>>(mm2px(Vec(81.319, 59.888)),
-			module, Brainz::PARAM_MODULE_DIRECTION, Brainz::LIGHT_MODULE_DIRECTION);
+		
+		CKD6* btnModuleDirection = createParamCentered<CKD6>(mm2px(Vec(81.319, 59.888)), module, Brainz::PARAM_MODULE_DIRECTION);
 		btnModuleDirection->momentary = false;
 		btnModuleDirection->latch = true;
 		addParam(btnModuleDirection);
+		addChild(createLightCentered<CKD6Light<RedGreenBlueLight>>(mm2px(Vec(81.319, 59.888)), module, Brainz::LIGHT_MODULE_DIRECTION));
 
 		addChild(createLightCentered<LargeLight<RedGreenBlueLight>>(mm2px(Vec(119.637, 11.906)), module, Brainz::LIGHT_MODULE_STAGE));
 
