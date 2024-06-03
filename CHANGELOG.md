@@ -20,3 +20,17 @@
 - Add: disabled steps are now grayed out in Hydra and Gegenees.
 
 - Fix: animation should not play when clicking step buttons in Hydra and Gegenees.
+
+## 2.1.1
+
+- Sphinx Fix
+
+## 2.2.0
+
+- Add Bukavac: a monster with a plethora of noise colors... and Perlin.
+
+- Fix: Sphinx display not showing up in module browser or when module is bypassed.
+
+- Fix: light behavior.
+
+- Update: Brainz module direction button.
