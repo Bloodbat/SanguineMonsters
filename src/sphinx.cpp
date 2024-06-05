@@ -22,6 +22,7 @@ struct Sphinx : Module {
 		PARAM_ACCENT,
 		PARAM_PATTERN_STYLE,
 		PARAM_GATE_MODE,
+		PARAM_REVERSE,
 		PARAMS_COUNT
 	};
 	enum InputIds {
@@ -47,6 +48,7 @@ struct Sphinx : Module {
 		ENUMS(LIGHT_PATTERN_STYLE, 1 * 3),
 		LIGHT_EOC,
 		ENUMS(LIGHT_OUTPUT, 1 * 3),
+		LIGHT_REVERSE,
 		LIGHTS_COUNT
 	};
 
@@ -294,7 +296,12 @@ struct Sphinx : Module {
 		// Reset sequence.
 		if (inputs[INPUT_RESET].isConnected()) {
 			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
-				currentStep = patternLength + patternPadding;
+				if (!params[PARAM_REVERSE].getValue()) {
+					currentStep = patternLength + patternPadding;
+				}
+				else {
+					currentStep = 0;
+				}
 			}
 		}
 
@@ -305,11 +312,21 @@ struct Sphinx : Module {
 		}
 
 		if (nextStep) {
-			currentStep++;
-			if (currentStep >= patternLength + patternPadding) {
-				currentStep = 0;
-				pgEoc.trigger();
+			if (!params[PARAM_REVERSE].getValue()) {
+				currentStep++;
+				if (currentStep >= patternLength + patternPadding) {
+					currentStep = 0;
+					pgEoc.trigger();
+				}
 			}
+			else {
+				currentStep--;
+				if (currentStep < 0) {
+					currentStep = patternLength + patternPadding - 1;
+					pgEoc.trigger();
+				}
+			}
+
 
 			if (gateMode == GM_TURING) {
 				turing = 0;
@@ -399,12 +416,14 @@ struct Sphinx : Module {
 			// Update lights			
 			float lightVoltage1;
 
-			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage() / 10.f;
+			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage();
 			lights[LIGHT_EOC].setBrightnessSmooth(lightVoltage1, sampleTime);
 
 			lights[LIGHT_PATTERN_STYLE + 0].setBrightness(patternLightColorTable[patternStyle].red);
 			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green);
 			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue);
+
+			lights[LIGHT_REVERSE].setBrightnessSmooth(params[PARAM_REVERSE].getValue() ? 1.f : 0.f, sampleTime);
 
 			lights[LIGHT_GATE_MODE + 0].setBrightness(gateModeLightColorTable[gateMode].red);
 			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green);
@@ -640,6 +659,9 @@ struct SphinxWidget : ModuleWidget {
 		addChild(createInputCentered<BananutPurple>(mm2px(Vec(27.82, 73.871)), module, Sphinx::INPUT_ACCENT));
 		addChild(createInputCentered<BananutPurple>(mm2px(Vec(45.414, 73.871)), module, Sphinx::INPUT_SHIFT));
 
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(19.103, 68.695)), module, Sphinx::PARAM_REVERSE, Sphinx::LIGHT_REVERSE));
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(mm2px(Vec(36.617, 68.695)), module, Sphinx::PARAM_GATE_MODE, Sphinx::LIGHT_GATE_MODE));
+
 		SanguineTinyNumericDisplay* displayLength = new SanguineTinyNumericDisplay(2);
 		displayLength->box.pos = mm2px(Vec(3.936, 46.499));
 		displayLength->module = module;
@@ -691,9 +713,6 @@ struct SphinxWidget : ModuleWidget {
 
 		addChild(createInputCentered<BananutGreen>(mm2px(Vec(7.326, 112.894)), module, Sphinx::INPUT_CLOCK));
 		addChild(createInputCentered<BananutGreen>(mm2px(Vec(19.231, 112.894)), module, Sphinx::INPUT_RESET));
-
-		addChild(createParamCentered<TL1105Latch>(mm2px(Vec(27.9, 110.729)), module, Sphinx::PARAM_GATE_MODE));
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(27.9, 104.625)), module, Sphinx::LIGHT_GATE_MODE));
 
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(42.496, 105.958)), module, Sphinx::LIGHT_OUTPUT));
 		addChild(createOutputCentered<BananutRed>(mm2px(Vec(36.543, 112.894)), module, Sphinx::OUTPUT_GATE));
