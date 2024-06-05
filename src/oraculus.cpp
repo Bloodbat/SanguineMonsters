@@ -277,8 +277,8 @@ struct OraculusWidget : ModuleWidget {
 			module, Oraculus::PARAM_NO_REPEATS);
 		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_off.svg")));
 		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_on.svg")));
-		switchNoRepeats->haloColorOff = nvgRGB(0, 0, 0);
-		switchNoRepeats->haloColorOn = nvgRGB(206, 61, 255);
+		switchNoRepeats->addHalo(nvgRGB(0, 0, 0));
+		switchNoRepeats->addHalo(nvgRGB(206, 61, 255));
 		switchNoRepeats->momentary = false;
 		oraculusFrameBuffer->addChild(switchNoRepeats);
 

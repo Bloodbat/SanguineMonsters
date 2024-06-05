@@ -967,7 +967,7 @@ struct BrainzWidget : ModuleWidget {
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
 		addParam(btnReset);
-		
+
 		CKD6* btnModuleDirection = createParamCentered<CKD6>(mm2px(Vec(81.319, 59.888)), module, Brainz::PARAM_MODULE_DIRECTION);
 		btnModuleDirection->momentary = false;
 		btnModuleDirection->latch = true;
@@ -1045,8 +1045,8 @@ struct BrainzWidget : ModuleWidget {
 			module, Brainz::PARAM_ONE_SHOT);
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_off.svg")));
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_on.svg")));
-		switchOneShot->haloColorOff = nvgRGB(0, 0, 0);
-		switchOneShot->haloColorOn = nvgRGB(255, 11, 11);
+		switchOneShot->addHalo(nvgRGB(0, 0, 0));
+		switchOneShot->addHalo(nvgRGB(255, 11, 11));
 		switchOneShot->momentary = false;
 		addParam(switchOneShot);
 

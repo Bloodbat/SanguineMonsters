@@ -383,8 +383,8 @@ struct SuperSwitch18Widget : ModuleWidget {
 			module, SuperSwitch18::PARAM_NO_REPEATS);
 		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_off.svg")));
 		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_on.svg")));
-		switchNoRepeats->haloColorOff = nvgRGB(0, 0, 0);
-		switchNoRepeats->haloColorOn = nvgRGB(206, 61, 255);
+		switchNoRepeats->addHalo(nvgRGB(0, 0, 0));
+		switchNoRepeats->addHalo(nvgRGB(206, 61, 255));
 		switchNoRepeats->momentary = false;
 		addParam(switchNoRepeats);
 
@@ -392,8 +392,8 @@ struct SuperSwitch18Widget : ModuleWidget {
 			module, SuperSwitch18::PARAM_ONE_SHOT);
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_off.svg")));
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_on.svg")));
-		switchOneShot->haloColorOff = nvgRGB(0, 0, 0);
-		switchOneShot->haloColorOn = nvgRGB(255, 11, 11);
+		switchOneShot->addHalo(nvgRGB(0, 0, 0));
+		switchOneShot->addHalo(nvgRGB(255, 11, 11));
 		switchOneShot->momentary = false;
 		addParam(switchOneShot);
 
@@ -401,8 +401,8 @@ struct SuperSwitch18Widget : ModuleWidget {
 			module, SuperSwitch18::PARAM_RESET_TO_FIRST_STEP);
 		switchResetToFirstStep->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_to_one_off.svg")));
 		switchResetToFirstStep->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_to_one_on.svg")));
-		switchResetToFirstStep->haloColorOff = nvgRGB(0, 0, 0);
-		switchResetToFirstStep->haloColorOn = nvgRGB(230, 230, 230);
+		switchResetToFirstStep->addHalo(nvgRGB(0, 0, 0));
+		switchResetToFirstStep->addHalo(nvgRGB(230, 230, 230));
 		switchResetToFirstStep->momentary = false;
 		addParam(switchResetToFirstStep);
 
