@@ -75,6 +75,7 @@ struct Sphinx : Module {
 	bool bAccentOn = false;
 	bool bCalculate;
 	bool bGateOn = false;
+	bool bCycleReset = true;
 
 	int patternFill = 4;
 	int patternLength = 16;
@@ -302,6 +303,7 @@ struct Sphinx : Module {
 				else {
 					currentStep = 0;
 				}
+				bCycleReset = true;
 			}
 		}
 
@@ -316,17 +318,24 @@ struct Sphinx : Module {
 				currentStep++;
 				if (currentStep >= patternLength + patternPadding) {
 					currentStep = 0;
-					pgEoc.trigger();
+					if (!bCycleReset) {
+						pgEoc.trigger();
+					}
 				}
 			}
 			else {
 				currentStep--;
 				if (currentStep < 0) {
 					currentStep = patternLength + patternPadding - 1;
-					pgEoc.trigger();
+					if (!bCycleReset) {
+						pgEoc.trigger();
+					}
 				}
 			}
 
+			if (bCycleReset && currentStep != 0) {
+				bCycleReset = false;
+			}
 
 			if (gateMode == GM_TURING) {
 				turing = 0;
