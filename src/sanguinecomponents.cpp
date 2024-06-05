@@ -226,6 +226,7 @@ void SanguineLedNumberDisplay::drawLayer(const DrawArgs& args, int layer) {
 }
 
 SanguineTinyNumericDisplay::SanguineTinyNumericDisplay(uint32_t newCharacterCount) : SanguineLedNumberDisplay(newCharacterCount) {
+	displayType = DISPLAY_NUMERIC;
 	box.size = mm2px(Vec(newCharacterCount * 6.45, 8.f));
 	fontSize = 21.4;
 };
@@ -250,10 +251,20 @@ void SanguineTinyNumericDisplay::drawLayer(const DrawArgs& args, int layer) {
 
 				std::string displayValue = "";
 
-				if (values.numberValue) {
-					displayValue = std::to_string(*values.numberValue);
-					if (*values.numberValue < 10)
-						displayValue.insert(0, 1, '0');
+				switch (displayType)
+				{
+				case DISPLAY_NUMERIC: {
+					if (values.numberValue) {
+						displayValue = std::to_string(*values.numberValue);
+						if (*values.numberValue < 10)
+							displayValue.insert(0, 1, '0');
+					}
+					break;
+				}
+				case DISPLAY_STRING: {
+					displayValue = *values.displayText;
+					break;
+				}
 				}
 
 				nvgText(args.vg, textPos.x, textPos.y, displayValue.c_str(), NULL);

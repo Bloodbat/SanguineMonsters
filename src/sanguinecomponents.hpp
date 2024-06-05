@@ -99,6 +99,11 @@ struct Sanguine3PSRed : Rogan {
 
 // Displays
 
+enum DisplayType {
+	DISPLAY_NUMERIC,
+	DISPLAY_STRING
+};
+
 struct SanguineBaseSegmentDisplay : TransparentWidget {
 	Module* module;
 	std::shared_ptr<Font> font = nullptr;
@@ -113,6 +118,7 @@ struct SanguineBaseSegmentDisplay : TransparentWidget {
 
 	float fontSize;
 	unsigned char haloOpacity = 55;
+	DisplayType displayType = DISPLAY_STRING;
 	SanguineBaseSegmentDisplay(uint32_t newCharacterCount);
 	void draw(const DrawArgs& args) override;
 };
