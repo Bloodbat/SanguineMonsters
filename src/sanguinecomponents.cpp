@@ -524,7 +524,6 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 						if (myGradient->shapes->fill.type) {
 							switch (myGradient->shapes->fill.type) {
 							case NSVG_PAINT_COLOR: {
-								//NVGcolor color = nvgRGB(0, 250, 0);
 								nvgFillColor(args.vg, *innerColor);
 								break;
 							}
