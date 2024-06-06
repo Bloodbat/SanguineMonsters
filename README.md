@@ -16,6 +16,10 @@ A noise generator with a plethora of colors... and Perlin.
 
 A monophonic to polyphonic channel cloner.
 
+## Sanguine Dungeon
+
+A sample and hold; track and hold; hold and track, and white noise source.
+
 ## Sanguine Gegenees
 
 A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.

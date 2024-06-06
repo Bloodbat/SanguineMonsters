@@ -34,3 +34,11 @@
 - Fix: light behavior.
 
 - Update: Brainz module direction button.
+
+## 2.3.0
+
+- Add Dungeon: a sample and hold; track and hold; hold and track, and white noise source.
+
+- Sphinx can now run in reverse.
+
+- Fix: Sphinx won't output an EOC trigger on the first round after starting or reset.
