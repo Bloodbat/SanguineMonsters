@@ -1,7 +1,7 @@
 {
   "slug": "SanguineMonsters",
   "name": "Sanguine Modules",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "license": "GPL-3.0-or-later",
   "author": "Bloodbat",
   "pluginUrl": "https://github.com/Bloodbat/SanguineMonsters",
@@ -94,6 +94,16 @@
       "description": "A noise generator with a plethora of colors... and Perlin",
       "tags": [
         "Noise"
+      ]
+    },
+    {
+      "slug": "Sanguine-Monsters-Dungeon",
+      "name": "Dungeon",
+      "description": "A sample and hold, track and hold, hold and track and white noise source.",
+      "tags": [
+        "Noise",
+        "Sample and hold",
+        "Random"
       ]
     }
   ]

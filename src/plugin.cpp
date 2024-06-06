@@ -14,4 +14,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelSphinx);
 	p->addModel(modelBrainz);
 	p->addModel(modelBukavac);
+	p->addModel(modelDungeon);
 }
