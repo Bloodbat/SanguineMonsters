@@ -24,11 +24,7 @@ struct SlewFilter {
 	float process(float in, float slew) {
 		value += math::clamp(in - value, -slew, slew);
 		return value;
-	}
-	float jump(float in) {
-		value = in;
-		return value;
-	}
+	}	
 	float getValue() {
 		return value;
 	}
