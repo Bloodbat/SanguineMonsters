@@ -24,7 +24,7 @@ struct SlewFilter {
 	float process(float in, float slew) {
 		value += math::clamp(in - value, -slew, slew);
 		return value;
-	}	
+	}
 	float getValue() {
 		return value;
 	}
@@ -302,10 +302,9 @@ struct DungeonWidget : ModuleWidget {
 		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
 		addChild(clockLight);
 
-		SanguineShapedLight* inLight = new SanguineShapedLight();
+		SanguineMonoInputLight* inLight = new SanguineMonoInputLight();
 		inLight->box.pos = mm2px(Vec(5.468, 106.547));
 		inLight->module = module;
-		inLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_mono_light.svg")));
 		addChild(inLight);
 
 		SanguineShapedLight* noiseLight = new SanguineShapedLight();
@@ -314,10 +313,9 @@ struct DungeonWidget : ModuleWidget {
 		noiseLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/noise_lit.svg")));
 		addChild(noiseLight);
 
-		SanguineShapedLight* outLight = new SanguineShapedLight();
+		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight();
 		outLight->box.pos = mm2px(Vec(59.092, 106.247));
 		outLight->module = module;
-		outLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_mono_light.svg")));
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();

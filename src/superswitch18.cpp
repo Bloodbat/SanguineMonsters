@@ -461,16 +461,14 @@ struct SuperSwitch18Widget : ModuleWidget {
 		stepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/light_steps.svg")));
 		addChild(stepsLight);
 
-		SanguineShapedLight* inLight = new SanguineShapedLight();
+		SanguinePolyInputLight* inLight = new SanguinePolyInputLight();
 		inLight->box.pos = mm2px(Vec(6.943, 106.547));
-		inLight->module = module;
-		inLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_light.svg")));
+		inLight->module = module;		
 		addChild(inLight);
 
-		SanguineShapedLight* outLight = new SanguineShapedLight();
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
 		outLight->box.pos = mm2px(Vec(50.106, 13.049));
-		outLight->module = module;
-		outLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
+		outLight->module = module;		
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLogo = new SanguineShapedLight();

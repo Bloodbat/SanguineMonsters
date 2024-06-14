@@ -160,28 +160,24 @@ struct DollyXWidget : ModuleWidget {
 		addChild(amalgamLight2);
 
 
-		SanguineShapedLight* inMonoLight1 = new SanguineShapedLight();
+		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight();
 		inMonoLight1->box.pos = Vec(19.42, 141.0);
 		inMonoLight1->module = module;
-		inMonoLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_mono_light.svg")));
 		addChild(inMonoLight1);
 
-		SanguineShapedLight* inMonoLight2 = new SanguineShapedLight();
+		SanguineMonoInputLight* inMonoLight2 = new SanguineMonoInputLight();
 		inMonoLight2->box.pos = Vec(19.42, 302.67);
 		inMonoLight2->module = module;
-		inMonoLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/in_mono_light.svg")));
 		addChild(inMonoLight2);
 
-		SanguineShapedLight* outPolyLight1 = new SanguineShapedLight();
+		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight();
 		outPolyLight1->box.pos = mm2px(Vec(27.475, 47.678));
 		outPolyLight1->module = module;
-		outPolyLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
 		addChild(outPolyLight1);
 
-		SanguineShapedLight* outPolyLight2 = new SanguineShapedLight();
+		SanguinePolyOutputLight* outPolyLight2 = new SanguinePolyOutputLight();
 		outPolyLight2->box.pos = mm2px(Vec(27.475, 102.349));
 		outPolyLight2->module = module;
-		outPolyLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
 		addChild(outPolyLight2);
 	}
 };

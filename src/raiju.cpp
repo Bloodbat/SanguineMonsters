@@ -309,10 +309,9 @@ struct RaijuWidget : ModuleWidget {
 		channelsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/channels_lit.svg")));
 		addChild(channelsLight);
 
-		SanguineShapedLight* outLight = new SanguineShapedLight();
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
 		outLight->box.pos = mm2px(Vec(79.456, 102.594));
-		outLight->module = module;
-		outLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/out_light.svg")));
+		outLight->module = module;		
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
