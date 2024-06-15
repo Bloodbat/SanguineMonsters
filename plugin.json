@@ -105,6 +105,16 @@
         "Sample and hold",
         "Random"
       ]
+    },
+    {
+      "slug": "Sanguine-Kitsune",
+      "name": "Kitsune",
+      "description": "Attenuate; invert, and offset up to 4 voltages",
+      "tags": [
+        "Attenuator",
+        "Quad",
+        "Polyphonic"
+      ]
     }
   ]
 }

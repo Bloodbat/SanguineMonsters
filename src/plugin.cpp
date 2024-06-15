@@ -15,4 +15,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelBrainz);
 	p->addModel(modelBukavac);
 	p->addModel(modelDungeon);
+	p->addModel(modelKitsune);
 }
