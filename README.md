@@ -28,6 +28,10 @@ A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can
 
 An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
+## Sanguine Kitsune
+
+An attenuverter, offsetter and inverter with four channels.
+
 ## Sanguine Oraculus
 
 A polyphonic to monophonic switch.

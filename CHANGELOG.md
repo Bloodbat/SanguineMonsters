@@ -39,6 +39,8 @@
 
 - Add Dungeon: a sample and hold; track and hold; hold and track, and white noise source.
 
+- Add Kitsune: a quad attenuverter, offsetter and inverter.
+
 - Sphinx can now run in reverse.
 
 - Fix: Sphinx won't output an EOC trigger on the first round after starting or reset.
