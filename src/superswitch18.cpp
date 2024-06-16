@@ -71,7 +71,7 @@ struct SuperSwitch18 : Module {
 	int stepCount = 8;
 	int stepsDone = 0;
 
-	float_4 voltages[4] = {};
+	float_4 outVoltages[4] = {};
 
 	dsp::ClockDivider clockDivider;
 
@@ -154,7 +154,7 @@ struct SuperSwitch18 : Module {
 		{
 			channelCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-				voltages[channel / 4] = 0.F;
+				outVoltages[channel / 4] = 0.F;
 			}
 
 			for (int i = 0; i < 8; i++) {
@@ -217,7 +217,7 @@ struct SuperSwitch18 : Module {
 					channelCount = inputs[INPUT_IN].getChannels();
 
 					for (int channel = 0; channel < channelCount; channel += 4) {
-						voltages[channel / 4] = inputs[INPUT_IN].getVoltageSimd<float_4>(channel);
+						outVoltages[channel / 4] = inputs[INPUT_IN].getVoltageSimd<float_4>(channel);
 					}
 				}
 			}
@@ -241,7 +241,7 @@ struct SuperSwitch18 : Module {
 				if (outputs[OUTPUT_OUT1 + selectedOut].isConnected()) {
 					outputs[OUTPUT_OUT1 + selectedOut].setChannels(channelCount);
 					for (int channel = 0; channel < channelCount; channel += 4) {
-						outputs[OUTPUT_OUT1 + selectedOut].setVoltageSimd(voltages[channel / 4], channel);
+						outputs[OUTPUT_OUT1 + selectedOut].setVoltageSimd(outVoltages[channel / 4], channel);
 					}
 				}
 			}
@@ -267,7 +267,7 @@ struct SuperSwitch18 : Module {
 		else {
 			channelCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-				voltages[channel / 4] = 0.F;
+				outVoltages[channel / 4] = 0.F;
 			}
 
 			for (int i = 0; i < 8; i++) {
