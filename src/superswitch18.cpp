@@ -3,6 +3,8 @@
 #include "pcg_variants.h"
 #include "seqcomponents.hpp"
 
+using simd::float_4;
+
 struct SuperSwitch18 : Module {
 
 	enum ParamIds {
@@ -63,12 +65,13 @@ struct SuperSwitch18 : Module {
 	bool bOneShot = false;
 	bool bOneShotDone = false;
 	bool bResetToFirstStep = true;
-	float outVoltages[8 * PORT_MAX_CHANNELS] = {};
-	int outChannelsCounts[8] = {};
+	int channelCount = 0;
 	int randomNum;
 	int selectedOut = 0;
 	int stepCount = 8;
 	int stepsDone = 0;
+
+	float_4 voltages[4] = {};
 
 	dsp::ClockDivider clockDivider;
 
@@ -149,11 +152,13 @@ struct SuperSwitch18 : Module {
 			selectedOut = 0;
 		else
 		{
-			memset(outVoltages, 0, 8 * PORT_MAX_CHANNELS * sizeof(float));
-			memset(outChannelsCounts, 0, sizeof(int) * 8);
+			channelCount = 0;
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
+				voltages[channel / 4] = 0.F;
+			}
+
 			for (int i = 0; i < 8; i++) {
-				outputs[OUTPUT_OUT1 + i].setChannels(outChannelsCounts[i]);
-				outputs[OUTPUT_OUT1 + i].writeVoltages(outVoltages + i * PORT_MAX_CHANNELS);
+				outputs[OUTPUT_OUT1 + i].setChannels(0);
 			}
 			selectedOut = -1;
 			bClockReceived = false;
@@ -164,8 +169,6 @@ struct SuperSwitch18 : Module {
 	};
 
 	void process(const ProcessArgs& args) override {
-		memset(outVoltages, 0, 8 * PORT_MAX_CHANNELS * sizeof(float));
-
 		if (clockDivider.process()) {
 			if (inputs[INPUT_STEPS].isConnected())
 				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.0f, 8.0f));
@@ -195,36 +198,50 @@ struct SuperSwitch18 : Module {
 				doRandomTrigger();
 			}
 
-			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
+			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				for (int i = 0; i < stepCount; i++) {
-					if (btSteps[i].process(params[PARAM_STEP1 + i].getValue()))
+					if (btSteps[i].process(params[PARAM_STEP1 + i].getValue())) {
+						if (selectedOut > -1) {
+							outputs[OUTPUT_OUT1 + selectedOut].setChannels(0);
+						}
 						selectedOut = i;
+					}
 
 					while (selectedOut < 0)
 						selectedOut += stepCount;
 					while (selectedOut >= stepCount)
 						selectedOut -= stepCount;
+				}
 
-					if (inputs[INPUT_IN].isConnected()) {
-						inputs[INPUT_IN].readVoltages(outVoltages + selectedOut * PORT_MAX_CHANNELS);
-						outChannelsCounts[selectedOut] = inputs[INPUT_IN].getChannels();
+				if (inputs[INPUT_IN].isConnected()) {
+					channelCount = inputs[INPUT_IN].getChannels();
+
+					for (int channel = 0; channel < channelCount; channel += 4) {
+						voltages[channel / 4] = inputs[INPUT_IN].getVoltageSimd<float_4>(channel);
 					}
 				}
+			}
 
 			for (int i = 0; i < 8; i++)
 			{
 				if (i < stepCount) {
 					params[PARAM_STEP1 + i].setValue(i == selectedOut ? 1 : 0);
+					if (i != selectedOut) {
+						outputs[OUTPUT_OUT1 + i].setChannels(0);
+					}
 				}
 				else
 				{
 					params[PARAM_STEP1 + i].setValue(2);
+					outputs[OUTPUT_OUT1 + i].setChannels(0);
 				}
+			}
 
-				if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-					if (outputs[OUTPUT_OUT1 + i].isConnected()) {
-						outputs[OUTPUT_OUT1 + i].setChannels(outChannelsCounts[i]);
-						outputs[OUTPUT_OUT1 + i].writeVoltages(outVoltages + i * PORT_MAX_CHANNELS);
+			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
+				if (outputs[OUTPUT_OUT1 + selectedOut].isConnected()) {
+					outputs[OUTPUT_OUT1 + selectedOut].setChannels(channelCount);
+					for (int channel = 0; channel < channelCount; channel += 4) {
+						outputs[OUTPUT_OUT1 + selectedOut].setVoltageSimd(voltages[channel / 4], channel);
 					}
 				}
 			}
@@ -248,12 +265,19 @@ struct SuperSwitch18 : Module {
 		if (bResetToFirstStep)
 			selectedOut = 0;
 		else {
+			channelCount = 0;
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
+				voltages[channel / 4] = 0.F;
+			}
+
+			for (int i = 0; i < 8; i++) {
+				outputs[OUTPUT_OUT1 + i].setChannels(0);
+			}
+
 			selectedOut = -1;
 			bClockReceived = false;
 		}
 		stepCount = 8;
-		memset(outChannelsCounts, 0, sizeof(int) * 8);
-		memset(outVoltages, 0, 8 * PORT_MAX_CHANNELS * sizeof(float));
 	}
 
 	void onRandomize() override {
@@ -463,12 +487,12 @@ struct SuperSwitch18Widget : ModuleWidget {
 
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight();
 		inLight->box.pos = mm2px(Vec(6.943, 106.547));
-		inLight->module = module;		
+		inLight->module = module;
 		addChild(inLight);
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
 		outLight->box.pos = mm2px(Vec(50.106, 13.049));
-		outLight->module = module;		
+		outLight->module = module;
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLogo = new SanguineShapedLight();
