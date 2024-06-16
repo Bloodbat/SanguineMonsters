@@ -3,6 +3,8 @@
 #include "pcg_variants.h"
 #include "seqcomponents.hpp"
 
+using simd::float_4;
+
 struct SuperSwitch81 : Module {
 
 	enum ParamIds {
@@ -68,7 +70,7 @@ struct SuperSwitch81 : Module {
 	int selectedIn = 0;
 	int stepCount = 8;
 	int stepsDone = 0;
-	float outVoltages[PORT_MAX_CHANNELS];
+	float_4 outVoltages[4] = {};
 
 	dsp::ClockDivider clockDivider;
 
@@ -150,9 +152,10 @@ struct SuperSwitch81 : Module {
 		else {
 			selectedIn = -1;
 			bClockReceived = false;
-			memset(outVoltages, 0, PORT_MAX_CHANNELS * sizeof(float));
 			outputs[OUTPUT_OUT].setChannels(0);
-			outputs[OUTPUT_OUT].writeVoltages(outVoltages);
+			for (int i = 0; i < PORT_MAX_CHANNELS; i += 4) {
+				outVoltages[i / 4] = 0.f;
+			}
 		}
 		stepsDone = 0;
 		if (bOneShot)
@@ -160,8 +163,6 @@ struct SuperSwitch81 : Module {
 	};
 
 	void process(const ProcessArgs& args) override {
-		memset(outVoltages, 0, PORT_MAX_CHANNELS * sizeof(float));
-
 		if (clockDivider.process()) {
 			if (inputs[INPUT_STEPS].isConnected())
 				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.0f, 8.0f));
@@ -203,7 +204,9 @@ struct SuperSwitch81 : Module {
 
 					if (inputs[INPUT_IN1 + selectedIn].isConnected()) {
 						inChannelCount = inputs[INPUT_IN1 + selectedIn].getChannels();
-						inputs[INPUT_IN1 + selectedIn].readVoltages(outVoltages);
+						for (int channel = 0; channel < inChannelCount; channel += 4) {
+							outVoltages[channel / 4] = inputs[INPUT_IN1 + selectedIn].getVoltageSimd<float_4>(channel);
+						}
 					}
 				}
 
@@ -220,7 +223,9 @@ struct SuperSwitch81 : Module {
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				if (outputs[OUTPUT_OUT].isConnected()) {
 					outputs[OUTPUT_OUT].setChannels(inChannelCount);
-					outputs[OUTPUT_OUT].writeVoltages(outVoltages);
+					for (int channel = 0; channel < inChannelCount; channel += 4) {
+						outputs[OUTPUT_OUT].setVoltageSimd(outVoltages[channel / 4], channel);
+					}
 				}
 
 				if (bOneShot && stepsDone == stepCount)
