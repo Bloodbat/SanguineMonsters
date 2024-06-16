@@ -48,3 +48,7 @@
 - Fix: Sphinx won't output an EOC trigger on the first round after starting or reset.
 
 - Change: use float_4 for Dolly-X voltages.
+
+- Change: use float_4 for Gegenees voltages.
+
+- Change: use float_4 for Hydra voltages.
