@@ -25,8 +25,8 @@ struct Oubliette : Module {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
 		for (int i = 0; i < 16; i++) {
-			configInput(INPUT_NULL + i, string::f("Null input %d", i + 1));
-			configOutput(OUTPUT_NULL + i, string::f("Null output %d", i + 1));
+			configInput(INPUT_NULL + i, string::f("Null %d", i + 1));
+			configOutput(OUTPUT_NULL + i, string::f("Null %d", i + 1));
 		}
 	}
 };
