@@ -41,6 +41,10 @@
 
 - Add Kitsune: a quad attenuverter, offsetter and inverter.
 
+- Add: Oubliette: a null sink and cable parking for your wires. Also works as a null voltage source.
+
 - Sphinx can now run in reverse.
 
 - Fix: Sphinx won't output an EOC trigger on the first round after starting or reset.
+
+- Change: use float_4 for Dolly-X voltages.

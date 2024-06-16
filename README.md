@@ -36,6 +36,10 @@ An attenuverter, offsetter and inverter with four channels.
 
 A polyphonic to monophonic switch.
 
+## Oubliette
+
+A null sink and cable parking for your wires. Also works as a null voltage source.
+
 ## SanguineRaiju
 
 A fixed voltages source.
