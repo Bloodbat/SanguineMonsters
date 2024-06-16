@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "pcg_variants.h"
 
+using simd::float_4;
+
 struct DollyX : Module {
 
 	enum ParamIds {
@@ -64,8 +66,9 @@ struct DollyX : Module {
 
 		for (int i = 0; i < kSUBMODULES; i++) {
 			if (bOutputConnected[i] && bInputConnected[i]) {
-				for (int j = 0; j < cloneCounts[i]; j++) {
-					outputs[OUTPUT_POLYOUT_1 + i].setVoltage(inputs[INPUT_MONO_IN1 + i].getVoltage(), j);
+				for (int channel = 0; channel < cloneCounts[i]; channel += 4) {
+					float_4 voltages = inputs[INPUT_MONO_IN1 + i].getVoltage();
+					outputs[OUTPUT_POLYOUT_1 + i].setVoltageSimd(voltages, channel);
 				}
 			}
 			else
