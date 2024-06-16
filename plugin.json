@@ -115,6 +115,14 @@
         "Quad",
         "Polyphonic"
       ]
+    },
+    {
+      "slug": "Sanguine-Oubliette",
+      "name": "Oubliette",
+      "description": "A null sink and cable holder for your input and output wires. Also works as a null voltage source.",
+      "tags": [
+        "Utility"
+      ]
     }
   ]
 }

@@ -16,4 +16,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelBukavac);
 	p->addModel(modelDungeon);
 	p->addModel(modelKitsune);
+	p->addModel(modelOubliette);
 }
