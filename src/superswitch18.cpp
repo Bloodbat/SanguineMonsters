@@ -182,6 +182,10 @@ struct SuperSwitch18 : Module {
 			doResetTrigger();
 		}
 
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
+			outVoltages[channel / 4] = 0.f;
+		}
+
 		if (!bOneShot || (bOneShot && !bOneShotDone)) {
 			if ((inputs[INPUT_DECREASE].isConnected() && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage()))
 				|| btDecrease.process(params[PARAM_DECREASE].getValue())) {

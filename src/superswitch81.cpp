@@ -171,6 +171,10 @@ struct SuperSwitch81 : Module {
 			}
 		}
 
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
+			outVoltages[channel / 4] = 0.f;
+		}
+
 		if ((inputs[INPUT_RESET].isConnected() && stInputReset.process(inputs[INPUT_RESET].getVoltage()))
 			|| btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
