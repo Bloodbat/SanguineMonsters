@@ -160,7 +160,7 @@ struct KitsuneWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(19.599, 55.888)), module, Kitsune::OUTPUT_VOLTAGE1));
 
 		// Section 2
-		addParam(createParamCentered<Davies1900hBlackKnob>(mm2px(Vec(38.099, 11.198)), module, Kitsune::PARAM_ATTENUATOR2));
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(38.099, 11.198)), module, Kitsune::PARAM_ATTENUATOR2));
 		addParam(createParamCentered<Davies1900hRedKnob>(mm2px(Vec(38.099, 30.085)), module, Kitsune::PARAM_OFFSET2));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(38.1, 41.9)), module, Kitsune::LIGHT_VOLTAGE2));		
 
@@ -180,7 +180,7 @@ struct KitsuneWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(44.998, 55.888)), module, Kitsune::OUTPUT_VOLTAGE2));		
 
 		// Section 3
-		addParam(createParamCentered<Davies1900hBlackKnob>(mm2px(Vec(12.7, 73.732)), module, Kitsune::PARAM_ATTENUATOR3));
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(12.7, 73.732)), module, Kitsune::PARAM_ATTENUATOR3));
 		addParam(createParamCentered<Davies1900hRedKnob>(mm2px(Vec(12.7, 92.618)), module, Kitsune::PARAM_OFFSET3));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(12.701, 104.433)), module, Kitsune::LIGHT_VOLTAGE3));
 
