@@ -17,3 +17,4 @@ extern Model* modelBukavac;
 extern Model* modelDungeon;
 extern Model* modelKitsune;
 extern Model* modelOubliette;
+extern Model* modelMedusa;
