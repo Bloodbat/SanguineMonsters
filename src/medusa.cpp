@@ -4,6 +4,22 @@ using simd::float_4;
 
 #define MEDUSA_MAX_PORTS 32
 
+struct RGBLightValue {
+	float red;
+	float green;
+	float blue;
+};
+
+static const std::vector<RGBLightValue> paletteMedusaLights{
+	{ 1.f, 1.f, 1.f },
+	{ 1.f, 0.f, 0.f },
+	{ 0.f, 1.f, 0.f },
+	{ 0.f, 0.f, 1.f },
+	{ 1.f, 1.f, 0.f },
+	{ 1.f, 0.f, 1.f },
+	{ 0.f, 1.f, 1.f }
+};
+
 struct Medusa : Module {
 
 	enum ParamIds {
@@ -23,14 +39,6 @@ struct Medusa : Module {
 	enum LightIds {
 		ENUMS(LIGHT_NORMALLED_PORT, MEDUSA_MAX_PORTS * 3),
 		LIGHTS_COUNT
-	};
-
-	enum Colors {
-		YELLOW,
-		RED,
-		GREEN,
-		BLUE,
-		PURPLE
 	};
 
 	const int kLightFrequency = 1024;
@@ -80,73 +88,20 @@ struct Medusa : Module {
 		}
 
 		if (lightDivider.process()) {
-			const float sampleTime = kLightFrequency * args.sampleTime;
-			float voltageSum = 0.f;
-			Colors ledColor = RED;
+			const float sampleTime = kLightFrequency * args.sampleTime;			
+			int currentPalette = 0;
 
 			if (inputsConnected > 0) {
 				for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
 					if (inputs[INPUT_VOLTAGE + i].isConnected()) {
-						voltageSum = clamp(inputs[INPUT_VOLTAGE + i].getVoltageSum(), -10.f, 10.f);
-					}
-
-					if (voltageSum <= -7) {
-						ledColor = YELLOW;
-					}
-					else if (voltageSum >= -6.99 && voltageSum <= -3) {
-						ledColor = RED;
-					}
-					else if (voltageSum >= -2.99 && voltageSum <= 1) {
-						ledColor = GREEN;
-					}
-					else if (voltageSum > 1 && voltageSum <= 5.99) {
-						ledColor = BLUE;
-					}
-					else {
-						ledColor = PURPLE;
+						currentPalette = (currentPalette + 1) % 7;
 					}
 
 					int currentLight = LIGHT_NORMALLED_PORT + i * 3;
 
-					float rescaledValue;
-					switch (ledColor)
-					{
-					case YELLOW:
-					{
-						rescaledValue = math::rescale(voltageSum, -10, -7, 0.1f, 1.f);
-						lights[currentLight + 0].setBrightnessSmooth(rescaledValue, sampleTime);
-						lights[currentLight + 1].setBrightnessSmooth(rescaledValue, sampleTime);
-						lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-						break;
-					}
-					case RED:
-					{
-						lights[currentLight + 0].setBrightnessSmooth(math::rescale(voltageSum, -6.99, -3, 0.1f, 1.f), sampleTime);
-						lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-						break;
-					}
-					case GREEN: {
-						lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-						lights[currentLight + 1].setBrightnessSmooth(math::rescale(voltageSum, -2.99, 1, 0.1f, 1.f), sampleTime);
-						lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-						break;
-					}
-					case BLUE: {
-						lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-						lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[currentLight + 2].setBrightnessSmooth(math::rescale(voltageSum, 1.01, 5.99, 0.1f, 1.f), sampleTime);
-						break;
-					}
-					case PURPLE:
-					{
-						rescaledValue = math::rescale(voltageSum, 6, 10, 0.1f, 1.f);
-						lights[currentLight + 0].setBrightnessSmooth(rescaledValue, sampleTime);
-						lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[currentLight + 2].setBrightnessSmooth(rescaledValue, sampleTime);
-						break;
-					}
-					}
+					lights[currentLight + 0].setBrightnessSmooth(paletteMedusaLights[currentPalette].red, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(paletteMedusaLights[currentPalette].green, sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(paletteMedusaLights[currentPalette].blue, sampleTime);
 				}
 			}
 			else {
