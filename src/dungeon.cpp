@@ -115,12 +115,12 @@ struct Dungeon : Module {
 		float slewParam = params[PARAM_SLEW].getValue();
 		bool gateButton = params[PARAM_TRIGGER].getValue() > 0.f;
 
-		whiteNoise = random::normal();
+		if (outputs[OUTPUT_NOISE].isConnected() || (outputs[OUTPUT_VOLTAGE].isConnected() && !inputs[INPUT_VOLTAGE].isConnected())) {
+			whiteNoise = random::normal();
+		}
 
 		if (outputs[OUTPUT_NOISE].isConnected()) {
-			if (outputs[OUTPUT_NOISE].isConnected()) {
-				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
-			}
+			outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 		}
 
 		if (inputs[INPUT_VOLTAGE].isConnected()) {
