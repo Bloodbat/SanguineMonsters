@@ -13,11 +13,9 @@ struct RGBLightValue {
 static const std::vector<RGBLightValue> paletteMedusaLights{
 	{ 1.f, 1.f, 1.f },
 	{ 1.f, 0.f, 0.f },
-	{ 0.f, 1.f, 0.f },
-	{ 0.f, 0.f, 1.f },
 	{ 1.f, 1.f, 0.f },
-	{ 1.f, 0.f, 1.f },
-	{ 0.f, 1.f, 1.f }
+	{ 0.f, 0.f, 1.f },
+	{ 0.f, 1.f, 0.f }
 };
 
 struct Medusa : Module {
@@ -42,7 +40,6 @@ struct Medusa : Module {
 	};
 
 	const int kLightFrequency = 1024;
-	int inputsConnected = 0;
 
 	dsp::ClockDivider lightDivider;
 
@@ -58,56 +55,47 @@ struct Medusa : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
-		inputsConnected = 0;
+		int connectedCount = 0;
+
+		int channelCount = 0;
+		int activePort = 0;
+
+		int currentPalette = 0;
+
+		bool lightsTurn = lightDivider.process();
 
 		for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
 			if (inputs[INPUT_VOLTAGE + i].isConnected()) {
-				inputsConnected++;
-			}
-		}
+				channelCount = inputs[INPUT_VOLTAGE + i].getChannels();
+				activePort = i;
+				currentPalette = (currentPalette + 1);
 
-		if (inputsConnected > 0) {
-			int channelCount = 0;
-			int activePort = 0;
-
-			for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
-				if (inputs[INPUT_VOLTAGE + i].isConnected()) {
-					channelCount = inputs[INPUT_VOLTAGE + i].getChannels();
-					activePort = i;
+				if (currentPalette > 4) {
+					currentPalette = 0;
 				}
 
-				if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
-					outputs[i].setChannels(channelCount);
+				connectedCount++;
+			}
 
-					for (int channel = 0; channel < channelCount; channel += 4) {
-						float_4 voltages = inputs[activePort].getVoltageSimd<float_4>(channel);
-						outputs[OUTPUT_VOLTAGE + i].setVoltageSimd(voltages, channel);
-					}
+			if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
+				outputs[i].setChannels(channelCount);
+
+				for (int channel = 0; channel < channelCount; channel += 4) {
+					float_4 voltages = inputs[activePort].getVoltageSimd<float_4>(channel);
+					outputs[OUTPUT_VOLTAGE + i].setVoltageSimd(voltages, channel);
 				}
 			}
-		}
 
-		if (lightDivider.process()) {
-			const float sampleTime = kLightFrequency * args.sampleTime;			
-			int currentPalette = 0;
+			if (lightsTurn) {
+				const float sampleTime = kLightFrequency * args.sampleTime;
 
-			if (inputsConnected > 0) {
-				for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
-					if (inputs[INPUT_VOLTAGE + i].isConnected()) {
-						currentPalette = (currentPalette + 1) % 7;
-					}
-
-					int currentLight = LIGHT_NORMALLED_PORT + i * 3;
-
+				int currentLight = LIGHT_NORMALLED_PORT + i * 3;
+				if (connectedCount > 0) {
 					lights[currentLight + 0].setBrightnessSmooth(paletteMedusaLights[currentPalette].red, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(paletteMedusaLights[currentPalette].green, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(paletteMedusaLights[currentPalette].blue, sampleTime);
 				}
-			}
-			else {
-				for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
-					int currentLight = LIGHT_NORMALLED_PORT + i * 3;
-
+				else {
 					lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
