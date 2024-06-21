@@ -204,6 +204,28 @@ struct Aion : Module {
 			}
 		}
 	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+
+		json_t* timersStartedJ = json_array();
+		for (int i = 0; i < 4; i++) {
+			json_t* timerJ = json_boolean(timerStarted[i]);
+			json_array_append_new(timersStartedJ, timerJ);
+		}
+		json_object_set_new(rootJ, "timersStarted", timersStartedJ);
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		json_t* timersStartedJ = json_object_get(rootJ, "timersStarted");
+		size_t idx;
+		json_t* timerJ;
+		json_array_foreach(timersStartedJ, idx, timerJ) {
+			timerStarted[idx] = json_boolean_value(timerJ);
+		}
+	}
 };
 
 struct AionWidget : ModuleWidget {
