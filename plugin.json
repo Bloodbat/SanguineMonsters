@@ -132,6 +132,16 @@
         "Multiple",
         "Polyphonic"
       ]
+    },
+    {
+      "slug": "Sanguine-Aion",
+      "name": "Aion",
+      "description": "Four counters that can be advanced by triggers or their internal clock",
+      "tags": [
+        "Quad",
+        "Utility",
+        "Clock modulator"
+      ]
     }
   ]
 }
