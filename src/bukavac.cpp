@@ -1,11 +1,19 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#include "pcg_variants.h"
 
 /** Based on "The Voss algorithm"
 http://www.firstpr.com.au/dsp/pink-noise/
 */
 template <int QUALITY = 8>
 struct PinkNoiseGenerator {
+private:
+	pcg32_random_t pinkRng;
+public:
+	void init() {
+		pcg32_srandom_r(&pinkRng, std::round(system::getUnixTime()), (intptr_t)&pinkRng);
+	}
+
 	int frame = -1;
 	float values[QUALITY] = {};
 
@@ -19,7 +27,7 @@ struct PinkNoiseGenerator {
 		float sum = 0.f;
 		for (int i = 0; i < QUALITY; i++) {
 			if (diff & (1 << i)) {
-				values[i] = random::uniform() - 0.5f;
+				values[i] = (ldexpf(pcg32_random_r(&pinkRng), -32)) - 0.5f;
 			}
 			sum += values[i];
 		}
@@ -149,6 +157,8 @@ struct Bukavac : Module {
 	float* noise;
 	const float maxTime = 511; //FLT_MAX-1000; <-- this needs some more love
 
+	pcg32_random_t pcgRng;
+
 	Bukavac() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 		configOutput(OUTPUT_WHITE, "White noise");
@@ -192,6 +202,9 @@ struct Bukavac : Module {
 		redFilter.setCoefficients(b, a);
 
 		noise = new float[kPerlinOctaves];
+
+		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pinkNoiseGenerator.init();
 	}
 
 	~Bukavac() {
@@ -245,8 +258,8 @@ struct Bukavac : Module {
 		/* Note: Black noise was the original definition, made up by VCV.
 		   Ammended by me to be Prism(for light ring convenience)... also completely made up. */
 		if (outputs[OUTPUT_PRISM].isConnected()) {
-			float u = random::uniform();
-			outputs[OUTPUT_PRISM].setVoltage(u * 10.f - 5.f);
+			float uniformNoise = ldexpf(pcg32_random_r(&pcgRng), -32);
+			outputs[OUTPUT_PRISM].setVoltage(uniformNoise * 10.f - 5.f);
 		}
 
 		if (outputs[OUTPUT_PERLIN_NOISE_MIX].isConnected() || outputs[OUTPUT_PERLIN_NOISE0].isConnected() || outputs[OUTPUT_PERLIN_NOISE1].isConnected()
