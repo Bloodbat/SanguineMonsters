@@ -2,6 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "bjorklund.hpp"
 #include <array>
+#include "pcg_variants.h"
 
 #define MAXLEN 32
 
@@ -107,6 +108,8 @@ struct Sphinx : Module {
 
 	dsp::ClockDivider clockDivider;
 
+	pcg32_random_t pcgRng;
+
 	enum GateMode {
 		GM_TRIGGER,
 		GM_GATE,
@@ -169,6 +172,8 @@ struct Sphinx : Module {
 		onReset();
 
 		clockDivider.setDivision(kClockDivider);
+
+		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
 	}
 
 	int getFibonacci(int n) {
@@ -211,7 +216,7 @@ struct Sphinx : Module {
 					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 					int fill = 0;
 					while (fill < patternFill) {
-						if (random::uniform() < (float)patternFill / (float)patternLength) {
+						if (ldexpf(pcg32_random_r(&pcgRng), -32) < (float)patternFill / (float)patternLength) {
 							calculatedSequence[num % patternLength] = 1;
 							fill++;
 						}
@@ -224,7 +229,7 @@ struct Sphinx : Module {
 					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 					int accentNum = 0;
 					while (accentNum < patternAccents) {
-						if (random::uniform() < (float)patternAccents / (float)patternFill) {
+						if (ldexpf(pcg32_random_r(&pcgRng), -32) < (float)patternAccents / (float)patternFill) {
 							calculatedAccents[num % patternFill] = 1;
 							accentNum++;
 						}
