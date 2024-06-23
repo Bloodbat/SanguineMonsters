@@ -231,7 +231,9 @@ struct Aion : Module {
 struct AionWidget : ModuleWidget {
 	AionWidget(Aion* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/aion.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_22hp_purple.svg", "res/aion.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

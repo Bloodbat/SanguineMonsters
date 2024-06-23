@@ -216,7 +216,9 @@ struct Oraculus : Module {
 struct OraculusWidget : ModuleWidget {
 	OraculusWidget(Oraculus* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/oraculus.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_7hp_purple.svg", "res/oraculus.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

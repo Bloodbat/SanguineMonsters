@@ -108,7 +108,9 @@ struct Medusa : Module {
 struct MedusaWidget : ModuleWidget {
 	MedusaWidget(Medusa* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/medusa.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_27hp_purple.svg", "res/medusa.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

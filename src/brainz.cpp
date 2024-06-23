@@ -949,7 +949,9 @@ struct BlueQuarterNoteLight : SanguineShapedLight {
 struct BrainzWidget : ModuleWidget {
 	BrainzWidget(Brainz* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/brainz.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_25hp_purple.svg", "res/brainz.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

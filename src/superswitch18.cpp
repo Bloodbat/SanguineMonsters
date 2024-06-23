@@ -320,7 +320,9 @@ struct SuperSwitch18 : Module {
 struct SuperSwitch18Widget : ModuleWidget {
 	SuperSwitch18Widget(SuperSwitch18* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/switch1-8.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_13hp_purple.svg", "res/switch1-8.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

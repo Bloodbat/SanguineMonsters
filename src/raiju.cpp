@@ -138,7 +138,9 @@ struct Raiju : Module {
 struct RaijuWidget : ModuleWidget {
 	RaijuWidget(Raiju* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/raiju.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_27hp_purple.svg", "res/raiju.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
@@ -311,7 +313,7 @@ struct RaijuWidget : ModuleWidget {
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
 		outLight->box.pos = mm2px(Vec(79.456, 102.594));
-		outLight->module = module;		
+		outLight->module = module;
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();

@@ -256,7 +256,9 @@ struct Dungeon : Module {
 struct DungeonWidget : ModuleWidget {
 	DungeonWidget(Dungeon* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/dungeon.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_14hp_purple.svg", "res/dungeon.svg");
+		setPanel(panel);
 
 		FramebufferWidget* dungeonFrameBuffer = new FramebufferWidget();
 		addChild(dungeonFrameBuffer);

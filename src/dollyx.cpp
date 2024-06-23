@@ -112,7 +112,9 @@ struct DollyX : Module {
 struct DollyXWidget : ModuleWidget {
 	DollyXWidget(DollyX* module) {
 		setModule(module);
-		setPanel(Svg::load(asset::plugin(pluginInstance, "res/dolly-x.svg")));
+
+		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_8hp_purple.svg", "res/dolly-x.svg");
+		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
