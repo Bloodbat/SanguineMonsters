@@ -59,15 +59,13 @@ struct Kitsune : Module {
 			int channelCount = inputs[INPUT_VOLTAGE1 + i].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + i].getChannels() : 1;
 
 			for (int channel = 0; channel < channelCount; channel += 4) {
-				uint8_t currentChannel = channel >> 2;
+				float_4 voltages = {};
 
-				float_4 voltages[4] = {};
-
-				voltages[currentChannel] = clamp(inputs[INPUT_VOLTAGE1 + i].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + i].getValue() +
+				voltages = clamp(inputs[INPUT_VOLTAGE1 + i].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + i].getValue() +
 					params[PARAM_OFFSET1 + i].getValue(), -10.f, 10.f);
 
 				outputs[OUTPUT_VOLTAGE1 + i].setChannels(channelCount);
-				outputs[OUTPUT_VOLTAGE1 + i].setVoltageSimd(voltages[currentChannel], channel);
+				outputs[OUTPUT_VOLTAGE1 + i].setVoltageSimd(voltages, channel);
 			}
 
 			int currentLight;
