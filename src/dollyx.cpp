@@ -65,14 +65,22 @@ struct DollyX : Module {
 		}
 
 		for (int i = 0; i < kSUBMODULES; i++) {
-			if (bOutputConnected[i] && bInputConnected[i]) {
+			float_4 voltages[4] = {};
+
+			if (bOutputConnected[i]) {
 				for (int channel = 0; channel < cloneCounts[i]; channel += 4) {
-					float_4 voltages = inputs[INPUT_MONO_IN1 + i].getVoltage();
-					outputs[OUTPUT_POLYOUT_1 + i].setVoltageSimd(voltages, channel);
+					uint8_t currentChannel = channel >> 2;
+
+					if (bInputConnected[i]) {
+						voltages[currentChannel] = inputs[INPUT_MONO_IN1 + i].getVoltage();
+					}
+					outputs[OUTPUT_POLYOUT_1 + i].setVoltageSimd(voltages[currentChannel], channel);
 				}
 			}
 			else
+			{
 				outputs[OUTPUT_POLYOUT_1 + i].setChannels(0);
+			}
 		}
 	}
 
