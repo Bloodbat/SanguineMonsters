@@ -55,66 +55,28 @@ struct Kitsune : Module {
 	void process(const ProcessArgs& args) override {
 		using simd::float_4;
 
-		float_4 voltages1[4] = {};
-		float_4 voltages2[4] = {};
-		float_4 voltages3[4] = {};
-		float_4 voltages4[4] = {};
-
-		int channelCounts[4];
-
 		for (int i = 0; i < 4; i++) {
-			channelCounts[i] = inputs[INPUT_VOLTAGE1 + i].getChannels();
-			channelCounts[i] = channelCounts[i] > 0 ? channelCounts[i] : 1;
-		}
+			int channelCount = inputs[INPUT_VOLTAGE1 + i].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + i].getChannels() : 1;
 
-		for (int channel = 0; channel < channelCounts[0]; channel += 4) {
-			voltages1[channel / 4] = clamp(inputs[INPUT_VOLTAGE1].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1].getValue() +
-				params[PARAM_OFFSET1].getValue(), -10.f, 10.f);
-		}
+			for (int channel = 0; channel < channelCount; channel += 4) {
+				uint8_t currentChannel = channel >> 2;
 
-		for (int channel = 0; channel < channelCounts[1]; channel += 4) {
-			voltages2[channel / 4] = clamp(inputs[INPUT_VOLTAGE2].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR2].getValue() +
-				params[PARAM_OFFSET2].getValue(), -10.f, 10.f);
-		}
+				float_4 voltages[4] = {};
 
-		for (int channel = 0; channel < channelCounts[2]; channel += 4) {
-			voltages3[channel / 4] = clamp(inputs[INPUT_VOLTAGE3].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR3].getValue() +
-				params[PARAM_OFFSET3].getValue(), -10.f, 10.f);
-		}
+				voltages[currentChannel] = clamp(inputs[INPUT_VOLTAGE1 + i].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + i].getValue() +
+					params[PARAM_OFFSET1 + i].getValue(), -10.f, 10.f);
 
-		for (int channel = 0; channel < channelCounts[3]; channel += 4) {
-			voltages4[channel / 4] = clamp(inputs[INPUT_VOLTAGE4].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR4].getValue() +
-				params[PARAM_OFFSET4].getValue(), -10.f, 10.f);
-		}
+				outputs[OUTPUT_VOLTAGE1 + i].setChannels(channelCount);
+				outputs[OUTPUT_VOLTAGE1 + i].setVoltageSimd(voltages[currentChannel], channel);
+			}
 
-		for (int i = 0; i < 4; i++) {
-			outputs[OUTPUT_VOLTAGE1 + i].setChannels(channelCounts[i]);
-		}
+			int currentLight;
 
-		for (int channel = 0; channel < channelCounts[0]; channel += 4) {
-			outputs[OUTPUT_VOLTAGE1].setVoltageSimd(voltages1[channel / 4], channel);
-		}
-
-		for (int channel = 0; channel < channelCounts[1]; channel += 4) {
-			outputs[OUTPUT_VOLTAGE2].setVoltageSimd(voltages2[channel / 4], channel);
-		}
-
-		for (int channel = 0; channel < channelCounts[2]; channel += 4) {
-			outputs[OUTPUT_VOLTAGE3].setVoltageSimd(voltages3[channel / 4], channel);
-		}
-
-		for (int channel = 0; channel < channelCounts[3]; channel += 4) {
-			outputs[OUTPUT_VOLTAGE4].setVoltageSimd(voltages4[channel / 4], channel);
-		}
-
-		int currentLight;
-
-		for (int i = 0; i < 4; i++) {
-			float lightValue = outputs[OUTPUT_VOLTAGE1 + i].getVoltageSum() / channelCounts[i];
+			float lightValue = outputs[OUTPUT_VOLTAGE1 + i].getVoltageSum() / channelCount;
 
 			currentLight = LIGHT_VOLTAGE1 + i * 3;
 
-			if (channelCounts[i] == 1) {
+			if (channelCount == 1) {
 				lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), args.sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f), args.sampleTime);
 				lights[currentLight + 2].setBrightnessSmooth(0.0f, args.sampleTime);
