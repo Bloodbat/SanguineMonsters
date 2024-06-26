@@ -113,7 +113,7 @@ struct Dungeon : Module {
 
 	void process(const ProcessArgs& args) override {
 		float slewParam = params[PARAM_SLEW].getValue();
-		bool gateButton = params[PARAM_TRIGGER].getValue() > 0.f;
+		bool bGateButton = params[PARAM_TRIGGER].getValue() > 0.f;
 
 		if (outputs[OUTPUT_NOISE].isConnected() || (outputs[OUTPUT_VOLTAGE].isConnected() && !inputs[INPUT_VOLTAGE].isConnected())) {
 			whiteNoise = random::normal();
@@ -133,14 +133,14 @@ struct Dungeon : Module {
 		case Dungeon::MODE_SAMPLE_AND_HOLD: {
 			// Gate trigger/untrigger
 			if (!engine.state) {
-				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || gateButton) {
+				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || bGateButton) {
 					// Triggered
 					engine.state = true;
 					engine.voltage = inVoltage;
 				}
 			}
 			else {
-				if (!stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) && !gateButton) {
+				if (!stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) && !bGateButton) {
 					// Untriggered
 					engine.state = false;
 				}
@@ -152,14 +152,14 @@ struct Dungeon : Module {
 		case Dungeon::MODE_TRACK_AND_HOLD: {
 			// Gate trigger/untrigger
 			if (!engine.state) {
-				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || gateButton) {
+				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || bGateButton) {
 					// Triggered
 					engine.state = true;
 					engine.voltage = inVoltage;
 				}
 			}
 			else {
-				if (gateButton <= 0.1f && !gateButton) {
+				if (bGateButton <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
 					// Track and hold
@@ -174,14 +174,14 @@ struct Dungeon : Module {
 		case Dungeon::MODE_HOLD_AND_TRACK: {
 			// Gate trigger/untrigger
 			if (!engine.state) {
-				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || gateButton) {
+				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || bGateButton) {
 					// Triggered
 					engine.state = true;
 					engine.voltage = inVoltage;
 				}
 			}
 			else {
-				if (gateButton <= 0.1f && !gateButton) {
+				if (bGateButton <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
 					// Track and hold
