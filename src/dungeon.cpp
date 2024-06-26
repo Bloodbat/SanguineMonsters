@@ -118,7 +118,7 @@ struct Dungeon : Module {
 		}
 		else {
 			if (!bHaveWhiteNoise) {
-				whiteNoise = random::normal();
+				whiteNoise = 2.f * random::normal();
 			}
 			inVoltage = whiteNoise;
 		}
