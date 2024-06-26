@@ -117,6 +117,7 @@ struct Dungeon : Module {
 
 		if (outputs[OUTPUT_NOISE].isConnected() || (outputs[OUTPUT_VOLTAGE].isConnected() && !inputs[INPUT_VOLTAGE].isConnected())) {
 			whiteNoise = random::normal();
+			inVoltage = whiteNoise;
 		}
 
 		if (outputs[OUTPUT_NOISE].isConnected()) {
@@ -125,9 +126,6 @@ struct Dungeon : Module {
 
 		if (inputs[INPUT_VOLTAGE].isConnected()) {
 			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
-		}
-		else {
-			inVoltage = whiteNoise;
 		}
 
 		switch (moduleMode)
