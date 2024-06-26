@@ -110,21 +110,29 @@ struct Dungeon : Module {
 		clockDivider.division = kClockDividerFrequency;
 	}
 
+	inline void getNewVoltage(bool bHaveWhiteNoise, bool bHaveInVoltage) {
+		if (bHaveInVoltage) {
+			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
+		}
+		else {
+			if (!bHaveWhiteNoise) {
+				whiteNoise = random::normal();
+			}
+			inVoltage = whiteNoise;
+		}
+	}
+
 	void process(const ProcessArgs& args) override {
 		float slewParam = params[PARAM_SLEW].getValue();
 		bool bGateButton = params[PARAM_TRIGGER].getValue() > 0.f;
+		bool bHaveWhiteNoise = outputs[OUTPUT_NOISE].isConnected();
+		bool bHaveInVoltage = inputs[INPUT_VOLTAGE].isConnected();
 
-		if (outputs[OUTPUT_NOISE].isConnected() || (outputs[OUTPUT_VOLTAGE].isConnected() && !inputs[INPUT_VOLTAGE].isConnected())) {
+		if (bHaveWhiteNoise) {
 			whiteNoise = random::normal();
-			inVoltage = whiteNoise;
-		}
-
-		if (outputs[OUTPUT_NOISE].isConnected()) {
-			outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
-		}
-
-		if (inputs[INPUT_VOLTAGE].isConnected()) {
-			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
+			if (outputs[OUTPUT_NOISE].isConnected()) {
+				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
+			}
 		}
 
 		switch (moduleMode)
@@ -135,6 +143,7 @@ struct Dungeon : Module {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.state = true;
+					getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 					engine.voltage = inVoltage;
 				}
 			}
@@ -149,12 +158,13 @@ struct Dungeon : Module {
 			break;
 		}
 		case Dungeon::MODE_TRACK_AND_HOLD: {
+			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
+
 			// Gate trigger/untrigger
 			if (!engine.state) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.state = true;
-					engine.voltage = inVoltage;
 				}
 			}
 			else {
@@ -171,12 +181,13 @@ struct Dungeon : Module {
 			break;
 		}
 		case Dungeon::MODE_HOLD_AND_TRACK: {
+			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
+
 			// Gate trigger/untrigger
 			if (!engine.state) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.state = true;
-					engine.voltage = inVoltage;
 				}
 			}
 			else {
