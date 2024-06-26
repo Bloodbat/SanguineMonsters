@@ -83,7 +83,6 @@ struct Dungeon : Module {
 	std::string modeLabel = dungeonModeLabels[0];
 
 	dsp::ClockDivider clockDivider;
-	dsp::SchmittTrigger stInputTrigger;
 
 	Dungeon() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -133,14 +132,14 @@ struct Dungeon : Module {
 		case Dungeon::MODE_SAMPLE_AND_HOLD: {
 			// Gate trigger/untrigger
 			if (!engine.state) {
-				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || bGateButton) {
+				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.state = true;
 					engine.voltage = inVoltage;
 				}
 			}
 			else {
-				if (!stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) && !bGateButton) {
+				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
 				}
@@ -152,14 +151,14 @@ struct Dungeon : Module {
 		case Dungeon::MODE_TRACK_AND_HOLD: {
 			// Gate trigger/untrigger
 			if (!engine.state) {
-				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || bGateButton) {
+				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.state = true;
 					engine.voltage = inVoltage;
 				}
 			}
 			else {
-				if (bGateButton <= 0.1f && !bGateButton) {
+				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
 					// Track and hold
@@ -174,14 +173,14 @@ struct Dungeon : Module {
 		case Dungeon::MODE_HOLD_AND_TRACK: {
 			// Gate trigger/untrigger
 			if (!engine.state) {
-				if (stInputTrigger.process(inputs[INPUT_CLOCK].getNormalVoltage(0)) || bGateButton) {
+				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.state = true;
 					engine.voltage = inVoltage;
 				}
 			}
 			else {
-				if (bGateButton <= 0.1f && !bGateButton) {
+				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
 					// Track and hold
