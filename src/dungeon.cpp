@@ -80,6 +80,8 @@ struct Dungeon : Module {
 	float inVoltage = 0;
 	float whiteNoise;
 
+	bool bStoreVoltageInPatch = true;
+
 	std::string modeLabel = dungeonModeLabels[0];
 
 	dsp::ClockDivider clockDivider;
@@ -259,6 +261,32 @@ struct Dungeon : Module {
 			}
 		}
 	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+
+		if (bStoreVoltageInPatch) {
+			json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
+			json_object_set_new(rootJ, "heldVoltage", json_real(engine.voltage));
+		}
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		json_t* storeVoltageInPatchJ = json_object_get(rootJ, "storeVoltageInPatch");
+		if (storeVoltageInPatchJ) {
+			bStoreVoltageInPatch = json_boolean_value(storeVoltageInPatchJ);
+			if (bStoreVoltageInPatch) {
+				json_t* heldVoltageJ = json_object_get(rootJ, "heldVoltage");
+				if (heldVoltageJ) {
+					engine.voltage = json_number_value(heldVoltageJ);
+					outputs[OUTPUT_VOLTAGE].setChannels(1);
+					outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
+				}
+			}
+		}
+	}
 };
 
 struct DungeonWidget : ModuleWidget {
@@ -339,6 +367,16 @@ struct DungeonWidget : ModuleWidget {
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
 		addChild(monstersLight);
+	}
+
+	void appendContextMenu(Menu* menu) override {
+		Dungeon* module = dynamic_cast<Dungeon*>(this->module);
+
+		menu->addChild(new MenuSeparator);
+
+		menu->addChild(createCheckMenuItem("Store held voltage in patch", "",
+			[=]() {return module->bStoreVoltageInPatch; },
+			[=]() {module->bStoreVoltageInPatch = !module->bStoreVoltageInPatch; }));
 	}
 };
 
