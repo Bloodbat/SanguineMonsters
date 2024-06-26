@@ -4,13 +4,7 @@ using simd::float_4;
 
 #define MEDUSA_MAX_PORTS 32
 
-struct RGBLightValue {
-	float red;
-	float green;
-	float blue;
-};
-
-static const std::vector<RGBLightValue> paletteMedusaLights{
+static const std::vector<RGBLightColor> paletteMedusaLights{
 	{ 1.f, 1.f, 1.f },
 	{ 1.f, 0.f, 0.f },
 	{ 1.f, 1.f, 0.f },

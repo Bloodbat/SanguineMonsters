@@ -110,20 +110,14 @@ struct Brainz : Module {
 		LIGHTS_COUNT
 	};
 
-	struct RGBColor {
-		float red;
-		float green;
-		float blue;
-	};
-
-	const RGBColor moduleStagesLightColors[MODULE_STAGE_STATES_COUNT]{
+	const RGBLightColor moduleStagesLightColors[MODULE_STAGE_STATES_COUNT]{
 		{0.f, 1.f, 0.f},
 		{1.f, 1.f, 0.f},
 		{0.f, 0.f, 1.f},
 		{1.f, 0.0f, 0.f},
 	};
 
-	const RGBColor stepDirectionsLightColors[DIRECTIONS_COUNT]{
+	const RGBLightColor stepDirectionsLightColors[DIRECTIONS_COUNT]{
 		{1.f, 0.f, 1.f},
 		{1.f, 0.f, 0.f},
 		{0.f, 0.f, 1.f},
