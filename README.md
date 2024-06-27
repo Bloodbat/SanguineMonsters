@@ -4,6 +4,10 @@
 
 ![alt text](pics/monster_modules.png)
 
+## Sanguine Aion
+
+A quad timer/counter that can be triggered externally or has an internal seconds clock.
+
 ## Sanguine Brainz
 
 A utility to control multiple recorders and ease synchronizing their outputs in post.
@@ -32,19 +36,23 @@ An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; ca
 
 An attenuverter, offsetter and inverter with four channels.
 
+## Sanguine Medusa
+
+A normalled, polyphonic mega multiple with 32 inputs and outputs.
+
 ## Sanguine Oraculus
 
 A polyphonic to monophonic switch.
 
-## Oubliette
+## Sanguine Oubliette
 
 A null sink and cable parking for your wires. Also works as a null voltage source.
 
-## SanguineRaiju
+## Sanguine Raiju
 
 A fixed voltages source.
 
-## SanguineSphinx
+## Sanguine Sphinx
 
 A Euclidean sequencer.
 

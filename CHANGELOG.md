@@ -43,6 +43,10 @@
 
 - Add: Oubliette: a null sink and cable parking for your wires. Also works as a null voltage source.
 
+- Add: Medusa: A normalled polyphonic mega multiple with 32 inputs and outputs.
+
+- Add: Aion: a quad timer/counter that can be triggered externally or has an internal seconds clock.
+
 - Sphinx can now run in reverse.
 
 - Fix: Sphinx won't output an EOC trigger on the first round after starting or reset.
@@ -52,3 +56,5 @@
 - Change: use float_4 for Gegenees voltages.
 
 - Change: use float_4 for Hydra voltages.
+
+- Fix: switches output 0V when their input is disconnected.
