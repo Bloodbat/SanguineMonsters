@@ -131,7 +131,7 @@ struct Dungeon : Module {
 		bool bHaveInVoltage = inputs[INPUT_VOLTAGE].isConnected();
 
 		if (bHaveWhiteNoise) {
-			whiteNoise = random::normal();
+			whiteNoise = 2.f * random::normal();
 			if (outputs[OUTPUT_NOISE].isConnected()) {
 				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 			}
