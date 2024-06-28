@@ -54,8 +54,8 @@ struct Werewolf : Module {
 		bool leftInConnected = inputs[INPUT_LEFT].isConnected();
 		bool rightInConnected = inputs[INPUT_RIGHT].isConnected();
 
-		fold = params[PARAM_FOLD].getValue() + clamp(inputs[INPUT_FOLD].getNormalVoltage(0.f), 0.f, 10.f);
-		gain = params[PARAM_GAIN].getValue() + clamp(inputs[INPUT_GAIN].getNormalVoltage(0.f), 0.f, 10.f);
+		fold = clamp(params[PARAM_FOLD].getValue() + inputs[INPUT_FOLD].getVoltage(), 0.f, 10.f);
+		gain = clamp(params[PARAM_GAIN].getValue() + inputs[INPUT_GAIN].getVoltage(), 0.f, 20.f);
 
 		if (leftInConnected) {
 			voltageLeft = inputs[INPUT_LEFT].getVoltage() * gain;
