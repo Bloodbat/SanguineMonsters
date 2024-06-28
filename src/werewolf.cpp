@@ -24,13 +24,11 @@ struct Werewolf : Module {
 	};
 
 	enum LightIds {
-		LIGHT_EYE_1,
-		LIGHT_EYE_2,
+		ENUMS(LIGHT_EYE_1, 3),
+		ENUMS(LIGHT_EYE_2, 3),
 		LIGHTS_COUNT
 	};
 
-	float voltageLeft = 0.f;
-	float voltageRight = 0.f;
 	float fold;
 	float gain;
 
@@ -53,29 +51,77 @@ struct Werewolf : Module {
 	void process(const ProcessArgs& args) override {
 		bool leftInConnected = inputs[INPUT_LEFT].isConnected();
 		bool rightInConnected = inputs[INPUT_RIGHT].isConnected();
+		bool normalled = true;
 
-		fold = clamp(params[PARAM_FOLD].getValue() + inputs[INPUT_FOLD].getVoltage(), 0.f, 10.f);
-		gain = clamp(params[PARAM_GAIN].getValue() + inputs[INPUT_GAIN].getVoltage(), 0.f, 20.f);
+		float voltageLeft = 0.f;
+		float voltageRight = 0.f;
+		float voltageSumLeft = 0.f;
+		float voltageSumRight = 0.f;
 
-		if (leftInConnected) {
-			voltageLeft = inputs[INPUT_LEFT].getVoltage() * gain;
-			voltageRight = inputs[INPUT_RIGHT].getVoltage() * gain;
-		}
-		if (rightInConnected) {
-			voltageRight = inputs[INPUT_RIGHT].getVoltage() * gain;
-		}
+		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
-		// Distortion
-		if (leftInConnected) {
-			doDistortion(voltageLeft, OUTPUT_LEFT, LIGHT_EYE_1, true, INPUT_RIGHT, OUTPUT_RIGHT, LIGHT_EYE_2);
-		}
+		if (channelCount > 0) {
+			fold = clamp(params[PARAM_FOLD].getValue() + inputs[INPUT_FOLD].getVoltage(), 0.f, 10.f);
+			gain = clamp(params[PARAM_GAIN].getValue() + inputs[INPUT_GAIN].getVoltage(), 0.f, 20.f);
 
-		if (rightInConnected) {
-			doDistortion(voltageRight, OUTPUT_RIGHT, LIGHT_EYE_2);
+			for (int channel = 0; channel < channelCount; channel++) {
+				if (leftInConnected) {
+					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * gain;
+					voltageLeft = newVoltage;
+					voltageRight = newVoltage;
+					outputs[OUTPUT_LEFT].setChannels(channelCount);
+					outputs[OUTPUT_RIGHT].setChannels(channelCount);
+				}
+				if (rightInConnected) {
+					normalled = false;
+					voltageRight = inputs[INPUT_RIGHT].getVoltage(channel) * gain;
+				}
+
+				// Distortion
+				if (leftInConnected) {
+					doDistortion(voltageLeft, OUTPUT_LEFT, channel, voltageSumLeft, voltageSumRight, normalled, OUTPUT_RIGHT);
+				}
+
+				if (rightInConnected) {
+					doDistortion(voltageRight, OUTPUT_RIGHT, channel, voltageSumRight, voltageSumRight);
+				}
+			}
+			if (channelCount < 2) {
+				lights[LIGHT_EYE_1 + 0].setBrightness(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f));
+				lights[LIGHT_EYE_1 + 1].setBrightness(0.f);
+				lights[LIGHT_EYE_1 + 2].setBrightness(0.f);
+				if (normalled) {
+					lights[LIGHT_EYE_2].setBrightness(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f));
+					lights[LIGHT_EYE_2 + 1].setBrightness(0.f);
+					lights[LIGHT_EYE_2 + 2].setBrightness(0.f);
+				}
+				else {
+					lights[LIGHT_EYE_2].setBrightness(math::rescale(voltageSumRight, 0.f, 5.f, 0.f, 1.f));
+					lights[LIGHT_EYE_2 + 1].setBrightness(0.f);
+					lights[LIGHT_EYE_2 + 2].setBrightness(0.f);
+				}
+			}
+			else {
+				float rescaled = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
+				lights[LIGHT_EYE_1 + 0].setBrightness(0.f);
+				lights[LIGHT_EYE_1 + 1].setBrightness(0.f);
+				lights[LIGHT_EYE_1 + 2].setBrightness(rescaled);
+				if (normalled) {
+					lights[LIGHT_EYE_2].setBrightness(0.f);
+					lights[LIGHT_EYE_2 + 1].setBrightness(0.f);
+					lights[LIGHT_EYE_2 + 2].setBrightness(rescaled);
+				}
+				else {
+					rescaled = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
+					lights[LIGHT_EYE_2].setBrightness(0.f);
+					lights[LIGHT_EYE_2 + 1].setBrightness(0.f);
+					lights[LIGHT_EYE_2 + 2].setBrightness(rescaled);
+				}
+			}
 		}
 	}
 
-	inline void doDistortion(float inVoltage, int mainOutput, int light, bool normalOutput = false, int altInput = -1, int altOutput = -1, int altLight = -1) {
+	inline void doDistortion(float inVoltage, int mainOutput, int channelNum, float& voltageSum1, float& voltageSum2, bool normalOutput = false, int altOutput = -1) {
 		for (int i = 0; i < 100; i++) {
 			if (inVoltage < -5.f) {
 				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
@@ -92,16 +138,17 @@ struct Werewolf : Module {
 				inVoltage = 0.f;
 			}
 		}
-		if (outputs[mainOutput].isConnected()) {
-			outputs[mainOutput].setVoltage(inVoltage);
-		}
-		lights[light].setBrightness(math::rescale(inVoltage, 0.f, 5.f, 0.f, 1.f));
+		voltageSum1 += inVoltage;
 
-		if (normalOutput && !inputs[altInput].isConnected()) {
+		if (outputs[mainOutput].isConnected()) {
+			outputs[mainOutput].setVoltage(inVoltage, channelNum);
+		}
+
+		if (normalOutput) {
 			if (outputs[altOutput].isConnected()) {
-				outputs[OUTPUT_RIGHT].setVoltage(inVoltage);
+				outputs[OUTPUT_RIGHT].setVoltage(inVoltage, channelNum);
 			}
-			lights[altLight].setBrightness(math::rescale(inVoltage, 0.f, 5.f, 0.f, 1.f));
+			voltageSum2 += inVoltage;
 		}
 	}
 };
@@ -118,8 +165,8 @@ struct WerewolfWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(22.879, 39.583)), module, Werewolf::LIGHT_EYE_1));
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(38.602, 39.583)), module, Werewolf::LIGHT_EYE_2));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(22.879, 39.583)), module, Werewolf::LIGHT_EYE_1));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(38.602, 39.583)), module, Werewolf::LIGHT_EYE_2));
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(8.947, 83.56)), module, Werewolf::PARAM_GAIN));
 		addParam(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(51.908, 83.56)), module, Werewolf::PARAM_FOLD));
@@ -133,12 +180,12 @@ struct WerewolfWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(39.083, 112.894)), module, Werewolf::OUTPUT_LEFT));
 		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(50.988, 112.894)), module, Werewolf::OUTPUT_RIGHT));
 
-		SanguineMonoInputLight* inLight = new SanguineMonoInputLight();
+		SanguinePolyInputLight* inLight = new SanguinePolyInputLight();
 		inLight->box.pos = mm2px(Vec(12.525, 104.387));
 		inLight->module = module;
 		addChild(inLight);
 
-		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight();
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
 		outLight->box.pos = mm2px(Vec(41.742, 103.987));
 		outLight->module = module;
 		addChild(outLight);
