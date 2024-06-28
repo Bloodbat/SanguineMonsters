@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "pcg_variants.h"
+#include "sanguinehelpers.hpp"
 
 /** Based on "The Voss algorithm"
 http://www.firstpr.com.au/dsp/pink-noise/
@@ -359,109 +360,109 @@ struct BukavacWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		SanguineShapedLight* speedLight = new SanguineShapedLight();
-		speedLight->box.pos = mm2px(Vec(2.299, 25.581));
+		speedLight->box.pos = millimetersToPixelsVec(2.299, 25.581);
 		speedLight->module = module;
 		speedLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/speed_lit.svg")));
 		addChild(speedLight);
 
-		addInput(createInputCentered<BananutBlack>(mm2px(Vec(10.941, 26.802)), module, Bukavac::INPUT_PERLIN_SPEED));
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(23.184, 26.802)), module, Bukavac::PARAM_PERLIN_SPEED_CV));
-		addParam(createParamCentered<Davies1900hRedKnob>(mm2px(Vec(37.527, 26.802)), module, Bukavac::PARAM_PERLIN_SPEED));
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 26.802), module, Bukavac::INPUT_PERLIN_SPEED));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(23.184, 26.802), module, Bukavac::PARAM_PERLIN_SPEED_CV));
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(37.527, 26.802), module, Bukavac::PARAM_PERLIN_SPEED));
 
 		SanguineShapedLight* amplifierLight = new SanguineShapedLight();
-		amplifierLight->box.pos = mm2px(Vec(2.299, 43.862));
+		amplifierLight->box.pos = millimetersToPixelsVec(2.299, 43.862);
 		amplifierLight->module = module;
 		amplifierLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amplifier_lit.svg")));
 		addChild(amplifierLight);
 
-		addInput(createInputCentered<BananutBlack>(mm2px(Vec(10.941, 44.898)), module, Bukavac::INPUT_PERLIN_AMP));
-		addParam(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(23.184, 44.898)), module, Bukavac::PARAM_PERLIN_AMP_CV));
-		addParam(createParamCentered<Davies1900hBlackKnob>(mm2px(Vec(37.527, 44.898)), module, Bukavac::PARAM_PERLIN_AMP));
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 44.898), module, Bukavac::INPUT_PERLIN_AMP));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(23.184, 44.898), module, Bukavac::PARAM_PERLIN_AMP_CV));
+		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(37.527, 44.898), module, Bukavac::PARAM_PERLIN_AMP));
 
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(5.976, 59.623)), module, Bukavac::PARAM_PERLIN_WEIGHT0));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(17.588, 59.623)), module, Bukavac::OUTPUT_PERLIN_NOISE0));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(5.976, 71.787)), module, Bukavac::PARAM_PERLIN_WEIGHT1));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(17.588, 71.787)), module, Bukavac::OUTPUT_PERLIN_NOISE1));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(39.73, 59.623)), module, Bukavac::PARAM_PERLIN_WEIGHT2));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(28.132, 59.623)), module, Bukavac::OUTPUT_PERLIN_NOISE2));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(39.73, 71.787)), module, Bukavac::PARAM_PERLIN_WEIGHT3));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(28.132, 71.787)), module, Bukavac::OUTPUT_PERLIN_NOISE3));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(5.976, 59.623), module, Bukavac::PARAM_PERLIN_WEIGHT0));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.588, 59.623), module, Bukavac::OUTPUT_PERLIN_NOISE0));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(5.976, 71.787), module, Bukavac::PARAM_PERLIN_WEIGHT1));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.588, 71.787), module, Bukavac::OUTPUT_PERLIN_NOISE1));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(39.73, 59.623), module, Bukavac::PARAM_PERLIN_WEIGHT2));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 59.623), module, Bukavac::OUTPUT_PERLIN_NOISE2));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(39.73, 71.787), module, Bukavac::PARAM_PERLIN_WEIGHT3));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 71.787), module, Bukavac::OUTPUT_PERLIN_NOISE3));
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = mm2px(Vec(11.199, 82.493));
+		bloodLight->box.pos = millimetersToPixelsVec(11.199, 82.493);
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
 		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = mm2px(Vec(18.52, 90.459));
+		monstersLight->box.pos = millimetersToPixelsVec(18.52, 90.459);
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
 		addChild(monstersLight);
 
 		SanguineShapedLight* whiteLight = new SanguineShapedLight();
-		whiteLight->box.pos = mm2px(Vec(2.04, 101.724));
+		whiteLight->box.pos = millimetersToPixelsVec(2.04, 101.724);
 		whiteLight->module = module;
 		whiteLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/white_ring_lit.svg")));
 		addChild(whiteLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(7.04, 106.724)), module, Bukavac::OUTPUT_WHITE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 106.724), module, Bukavac::OUTPUT_WHITE));
 
 		SanguineShapedLight* pinkLight = new SanguineShapedLight();
-		pinkLight->box.pos = mm2px(Vec(12.584, 101.724));
+		pinkLight->box.pos = millimetersToPixelsVec(12.584, 101.724);
 		pinkLight->module = module;
 		pinkLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/pink_ring_lit.svg")));
 		addChild(pinkLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(17.583, 106.724)), module, Bukavac::OUTPUT_PINK));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 106.724), module, Bukavac::OUTPUT_PINK));
 
 		SanguineShapedLight* redLight = new SanguineShapedLight();
-		redLight->box.pos = mm2px(Vec(23.127, 101.724));
+		redLight->box.pos = millimetersToPixelsVec(23.127, 101.724);
 		redLight->module = module;
 		redLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/red_ring_lit.svg")));
 		addChild(redLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(28.127, 106.724)), module, Bukavac::OUTPUT_RED));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 106.724), module, Bukavac::OUTPUT_RED));
 
 		SanguineShapedLight* purpleLight = new SanguineShapedLight();
-		purpleLight->box.pos = mm2px(Vec(33.67, 101.724));
+		purpleLight->box.pos = millimetersToPixelsVec(33.67, 101.724);
 		purpleLight->module = module;
 		purpleLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/purple_ring_lit.svg")));
 		addChild(purpleLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(38.67, 106.724)), module, Bukavac::OUTPUT_VIOLET));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 106.724), module, Bukavac::OUTPUT_VIOLET));
 
 		SanguineShapedLight* blueLight = new SanguineShapedLight();
-		blueLight->box.pos = mm2px(Vec(2.04, 112.456));
+		blueLight->box.pos = millimetersToPixelsVec(2.04, 112.456);
 		blueLight->module = module;
 		blueLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blue_ring_lit.svg")));
 		addChild(blueLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(7.04, 117.456)), module, Bukavac::OUTPUT_BLUE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 117.456), module, Bukavac::OUTPUT_BLUE));
 
 		SanguineShapedLight* grayLight = new SanguineShapedLight();
-		grayLight->box.pos = mm2px(Vec(12.584, 112.456));
+		grayLight->box.pos = millimetersToPixelsVec(12.584, 112.456);
 		grayLight->module = module;
 		grayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/gray_ring_lit.svg")));
 		addChild(grayLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(17.583, 117.456)), module, Bukavac::OUTPUT_GRAY));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 117.456), module, Bukavac::OUTPUT_GRAY));
 
 		SanguineShapedLight* randomLight = new SanguineShapedLight();
-		randomLight->box.pos = mm2px(Vec(23.127, 112.456));
+		randomLight->box.pos = millimetersToPixelsVec(23.127, 112.456);
 		randomLight->module = module;
 		randomLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/random_ring_lit.svg")));
 		addChild(randomLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(28.127, 117.456)), module, Bukavac::OUTPUT_PRISM));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 117.456), module, Bukavac::OUTPUT_PRISM));
 
 		SanguineShapedLight* perlinLight = new SanguineShapedLight();
-		perlinLight->box.pos = mm2px(Vec(33.67, 112.456));
+		perlinLight->box.pos = millimetersToPixelsVec(33.67, 112.456);
 		perlinLight->module = module;
 		perlinLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/perlin_ring_lit.svg")));
 		addChild(perlinLight);
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(38.67, 117.456)), module, Bukavac::OUTPUT_PERLIN_NOISE_MIX));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 117.456), module, Bukavac::OUTPUT_PERLIN_NOISE_MIX));
 	}
 };
 

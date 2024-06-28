@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#include "sanguinehelpers.hpp"
 
 struct Oubliette : Module {
 
@@ -56,8 +57,8 @@ struct OublietteWidget : ModuleWidget {
 
 		for (int y = 0; y < 4; y++) {
 			for (int x = 0; x < 4; x++) {
-				addInput(createInputCentered<BananutGreen>(mm2px(Vec(currentX, currentInputsY)), module, Oubliette::INPUT_NULL + x + (y * 4)));
-				addOutput(createOutputCentered<BananutRed>(mm2px(Vec(currentX, currentOutputsY)), module, Oubliette::OUTPUT_NULL + x + (y * 4)));
+				addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(currentX, currentInputsY), module, Oubliette::INPUT_NULL + x + (y * 4)));
+				addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, currentOutputsY), module, Oubliette::OUTPUT_NULL + x + (y * 4)));
 				currentX += xDelta;
 			}
 			currentX = xBase;

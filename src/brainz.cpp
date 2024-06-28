@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "seqcomponents.hpp"
+#include "sanguinehelpers.hpp"
 
 enum ModuleStages {
 	MODULE_STAGE_INIT,
@@ -952,92 +953,92 @@ struct BrainzWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		SeqControlSwitch* btnPlay = createParamCentered<SeqControlSwitch>(mm2px(Vec(93.474, 7.954)),
+		SeqControlSwitch* btnPlay = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(93.474, 7.954),
 			module, Brainz::PARAM_PLAY_BUTTON);
 		btnPlay->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_off.svg")));
 		btnPlay->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_on.svg")));
 		addParam(btnPlay);
 
-		SeqControlSwitch* btnReset = createParamCentered<SeqControlSwitch>(mm2px(Vec(105.641, 7.954)),
+		SeqControlSwitch* btnReset = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(105.641, 7.954),
 			module, Brainz::PARAM_RESET_BUTTON);
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
 		addParam(btnReset);
 
-		CKD6* btnModuleDirection = createParamCentered<CKD6>(mm2px(Vec(81.319, 59.888)), module, Brainz::PARAM_MODULE_DIRECTION);
+		CKD6* btnModuleDirection = createParamCentered<CKD6>(millimetersToPixelsVec(81.319, 59.888), module, Brainz::PARAM_MODULE_DIRECTION);
 		btnModuleDirection->momentary = false;
 		btnModuleDirection->latch = true;
 		addParam(btnModuleDirection);
-		addChild(createLightCentered<CKD6Light<RedGreenBlueLight>>(mm2px(Vec(81.319, 59.888)), module, Brainz::LIGHT_MODULE_DIRECTION));
+		addChild(createLightCentered<CKD6Light<RedGreenBlueLight>>(millimetersToPixelsVec(81.319, 59.888), module, Brainz::LIGHT_MODULE_DIRECTION));
 
-		addChild(createLightCentered<LargeLight<RedGreenBlueLight>>(mm2px(Vec(119.637, 11.906)), module, Brainz::LIGHT_MODULE_STAGE));
+		addChild(createLightCentered<LargeLight<RedGreenBlueLight>>(millimetersToPixelsVec(119.637, 11.906), module, Brainz::LIGHT_MODULE_STAGE));
 
-		Befaco2StepSwitch* switchLogicEnabled = createParamCentered<Befaco2StepSwitch>(mm2px(Vec(63.5, 28.771)), module, Brainz::PARAM_LOGIC_ENABLED);
+		Befaco2StepSwitch* switchLogicEnabled = createParamCentered<Befaco2StepSwitch>(millimetersToPixelsVec(63.5, 28.771), module, Brainz::PARAM_LOGIC_ENABLED);
 		switchLogicEnabled->momentary = false;
 		addParam(switchLogicEnabled);
-		addChild(createLightCentered<LargeLight<RedLight>>(mm2px(Vec(63.5, 38.373)), module, Brainz::LIGHT_LOGIC_ENABLED));
+		addChild(createLightCentered<LargeLight<RedLight>>(millimetersToPixelsVec(63.5, 38.373), module, Brainz::LIGHT_LOGIC_ENABLED));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(27.568, 25.114)), module, Brainz::PARAM_A_DELAY));
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(27.568, 76.144)), module, Brainz::PARAM_B_DELAY));
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(99.539, 76.144)), module, Brainz::PARAM_C_DELAY));
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(95.045, 28.914)), module, Brainz::PARAM_METRONOME_SPEED));
-		addParam(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(81.488, 40.647)), module, Brainz::PARAM_METRONOME_STEPS));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(27.568, 25.114), module, Brainz::PARAM_A_DELAY));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(27.568, 76.144), module, Brainz::PARAM_B_DELAY));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(99.539, 76.144), module, Brainz::PARAM_C_DELAY));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(95.045, 28.914), module, Brainz::PARAM_METRONOME_SPEED));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(81.488, 40.647), module, Brainz::PARAM_METRONOME_STEPS));
 
-		addParam(createLightParamCentered<VCVLightBezelLatch<OrangeLight>>(mm2px(Vec(47.535, 25.114)), module, Brainz::PARAM_A_ENABLED, Brainz::LIGHT_STEP_A_ENABLED));
-		addParam(createLightParamCentered<VCVLightBezelLatch<OrangeLight>>(mm2px(Vec(47.535, 76.144)), module, Brainz::PARAM_B_ENABLED, Brainz::LIGHT_STEP_B_ENABLED));
-		addParam(createLightParamCentered<VCVLightBezelLatch<OrangeLight>>(mm2px(Vec(119.321, 76.144)), module, Brainz::PARAM_C_ENABLED, Brainz::LIGHT_STEP_C_ENABLED));
+		addParam(createLightParamCentered<VCVLightBezelLatch<OrangeLight>>(millimetersToPixelsVec(47.535, 25.114), module, Brainz::PARAM_A_ENABLED, Brainz::LIGHT_STEP_A_ENABLED));
+		addParam(createLightParamCentered<VCVLightBezelLatch<OrangeLight>>(millimetersToPixelsVec(47.535, 76.144), module, Brainz::PARAM_B_ENABLED, Brainz::LIGHT_STEP_B_ENABLED));
+		addParam(createLightParamCentered<VCVLightBezelLatch<OrangeLight>>(millimetersToPixelsVec(119.321, 76.144), module, Brainz::PARAM_C_ENABLED, Brainz::LIGHT_STEP_C_ENABLED));
 
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<BlueLight>>>(mm2px(Vec(7.301, 43.647)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<BlueLight>>>(millimetersToPixelsVec(7.301, 43.647),
 			module, Brainz::PARAM_A_DO_TRIGGERS, Brainz::LIGHT_STEP_A_TRIGGERS));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(mm2px(Vec(25.177, 43.647)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(25.177, 43.647),
 			module, Brainz::PARAM_A_IS_METRONOME, Brainz::LIGHT_STEP_A_METRONOME));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<BlueLight>>>(mm2px(Vec(7.301, 94.677)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<BlueLight>>>(millimetersToPixelsVec(7.301, 94.677),
 			module, Brainz::PARAM_B_DO_TRIGGERS, Brainz::LIGHT_STEP_B_TRIGGERS));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(mm2px(Vec(25.177, 94.677)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(25.177, 94.677),
 			module, Brainz::PARAM_B_IS_METRONOME, Brainz::LIGHT_STEP_B_METRONOME));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<BlueLight>>>(mm2px(Vec(79.288, 94.677)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<BlueLight>>>(millimetersToPixelsVec(79.288, 94.677),
 			module, Brainz::PARAM_C_DO_TRIGGERS, Brainz::LIGHT_STEP_C_TRIGGERS));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(mm2px(Vec(97.148, 94.677)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(97.148, 94.677),
 			module, Brainz::PARAM_C_IS_METRONOME, Brainz::LIGHT_STEP_C_METRONOME));
 
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(mm2px(Vec(108.308, 54.211)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(108.308, 54.211),
 			module, Brainz::PARAM_START_TRIGGERS, Brainz::LIGHT_START_TRIGGERS));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(mm2px(Vec(108.308, 65.543)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(108.308, 65.543),
 			module, Brainz::PARAM_END_TRIGGERS, Brainz::LIGHT_END_TRIGGERS));
 
-		addOutput(createOutputCentered<BananutBlack>(mm2px(Vec(46.835, 43.647)), module, Brainz::OUTPUT_STAGE_A));
-		addOutput(createOutputCentered<BananutBlack>(mm2px(Vec(46.835, 94.677)), module, Brainz::OUTPUT_STAGE_B));
-		addOutput(createOutputCentered<BananutBlack>(mm2px(Vec(118.821, 94.677)), module, Brainz::OUTPUT_STAGE_C));
+		addOutput(createOutputCentered<BananutBlack>(millimetersToPixelsVec(46.835, 43.647), module, Brainz::OUTPUT_STAGE_A));
+		addOutput(createOutputCentered<BananutBlack>(millimetersToPixelsVec(46.835, 94.677), module, Brainz::OUTPUT_STAGE_B));
+		addOutput(createOutputCentered<BananutBlack>(millimetersToPixelsVec(118.821, 94.677), module, Brainz::OUTPUT_STAGE_C));
 
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(mm2px(Vec(27.522, 59.903)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(millimetersToPixelsVec(27.522, 59.903),
 			module, Brainz::PARAM_A_DIRECTION, Brainz::LIGHT_STEP_A_DIRECTION + 0 * 3));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(mm2px(Vec(63.5, 85.403)),
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(millimetersToPixelsVec(63.5, 85.403),
 			module, Brainz::PARAM_B_DIRECTION, Brainz::LIGHT_STEP_A_DIRECTION + 1 * 3));
 
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(7.402, 116.807)), module, Brainz::INPUT_TRIGGER));
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(20.367, 116.807)), module, Brainz::INPUT_RESET));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.402, 116.807), module, Brainz::INPUT_TRIGGER));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(20.367, 116.807), module, Brainz::INPUT_RESET));
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(61.229, 116.807)), module, Brainz::OUTPUT_RUN));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(70.964, 116.807)), module, Brainz::OUTPUT_RESET));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(80.698, 116.807)), module, Brainz::OUTPUT_METRONOME));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(90.433, 116.807)), module, Brainz::OUTPUT_OUT_1));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(100.168, 116.807)), module, Brainz::OUTPUT_OUT_2));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(109.903, 116.807)), module, Brainz::OUTPUT_OUT_3));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(119.637, 116.807)), module, Brainz::OUTPUT_OUT_4));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(61.229, 116.807), module, Brainz::OUTPUT_RUN));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(70.964, 116.807), module, Brainz::OUTPUT_RESET));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(80.698, 116.807), module, Brainz::OUTPUT_METRONOME));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(90.433, 116.807), module, Brainz::OUTPUT_OUT_1));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(100.168, 116.807), module, Brainz::OUTPUT_OUT_2));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(109.903, 116.807), module, Brainz::OUTPUT_OUT_3));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(119.637, 116.807), module, Brainz::OUTPUT_OUT_4));
 
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(13.628, 25.114)), module, Brainz::LIGHT_STEP_A));
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(13.628, 76.144)), module, Brainz::LIGHT_STEP_B));
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(85.615, 76.144)), module, Brainz::LIGHT_STEP_C));
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(85.615, 25.114)), module, Brainz::LIGHT_METRONOME));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(13.628, 25.114), module, Brainz::LIGHT_STEP_A));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(13.628, 76.144), module, Brainz::LIGHT_STEP_B));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(85.615, 76.144), module, Brainz::LIGHT_STEP_C));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(85.615, 25.114), module, Brainz::LIGHT_METRONOME));
 
 		float currentX = 63.456;
 		float deltaX = 9.74;
 		for (int i = 0; i < 7; i++) {
-			addChild(createLightCentered<TinyLight<YellowLight>>(mm2px(Vec(currentX, 109.601)), module, Brainz::LIGHT_OUT_ENABLED + i));
+			addChild(createLightCentered<TinyLight<YellowLight>>(millimetersToPixelsVec(currentX, 109.601), module, Brainz::LIGHT_OUT_ENABLED + i));
 			currentX += deltaX;
 		}
 
-		SanguineLightUpSwitch* switchOneShot = createParam<SanguineLightUpSwitch>(mm2px(Vec(91.231, 57.888)),
+		SanguineLightUpSwitch* switchOneShot = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(91.231, 57.888),
 			module, Brainz::PARAM_ONE_SHOT);
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_off.svg")));
 		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_on.svg")));
@@ -1050,7 +1051,7 @@ struct BrainzWidget : ModuleWidget {
 		addChild(brainzFrameBuffer);
 
 		SanguineTinyNumericDisplay* displayStepsACurrent = new SanguineTinyNumericDisplay(2);
-		displayStepsACurrent->box.pos = mm2px(Vec(12.479, 30.908));
+		displayStepsACurrent->box.pos = millimetersToPixelsVec(12.479, 30.908);
 		displayStepsACurrent->module = module;
 		brainzFrameBuffer->addChild(displayStepsACurrent);
 
@@ -1058,7 +1059,7 @@ struct BrainzWidget : ModuleWidget {
 			displayStepsACurrent->values.numberValue = &module->currentCounters[0];
 
 		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2);
-		displayStepsATotal->box.pos = mm2px(Vec(29.757, 30.908));
+		displayStepsATotal->box.pos = millimetersToPixelsVec(29.757, 30.908);
 		displayStepsATotal->module = module;
 		brainzFrameBuffer->addChild(displayStepsATotal);
 
@@ -1066,7 +1067,7 @@ struct BrainzWidget : ModuleWidget {
 			displayStepsATotal->values.numberValue = &module->maxCounters[0];
 
 		SanguineTinyNumericDisplay* displayStepsBCurrent = new SanguineTinyNumericDisplay(2);
-		displayStepsBCurrent->box.pos = mm2px(Vec(12.479, 81.938));
+		displayStepsBCurrent->box.pos = millimetersToPixelsVec(12.479, 81.938);
 		displayStepsBCurrent->module = module;
 		brainzFrameBuffer->addChild(displayStepsBCurrent);
 
@@ -1074,7 +1075,7 @@ struct BrainzWidget : ModuleWidget {
 			displayStepsBCurrent->values.numberValue = &module->currentCounters[1];
 
 		SanguineTinyNumericDisplay* displayStepsBTotal = new SanguineTinyNumericDisplay(2);
-		displayStepsBTotal->box.pos = mm2px(Vec(29.757, 81.938));
+		displayStepsBTotal->box.pos = millimetersToPixelsVec(29.757, 81.938);
 		displayStepsBTotal->module = module;
 		brainzFrameBuffer->addChild(displayStepsBTotal);
 
@@ -1082,7 +1083,7 @@ struct BrainzWidget : ModuleWidget {
 			displayStepsBTotal->values.numberValue = &module->maxCounters[1];
 
 		SanguineTinyNumericDisplay* displayStepsCCurrent = new SanguineTinyNumericDisplay(2);
-		displayStepsCCurrent->box.pos = mm2px(Vec(84.441, 81.938));
+		displayStepsCCurrent->box.pos = millimetersToPixelsVec(84.441, 81.938);
 		displayStepsCCurrent->module = module;
 		brainzFrameBuffer->addChild(displayStepsCCurrent);
 
@@ -1090,7 +1091,7 @@ struct BrainzWidget : ModuleWidget {
 			displayStepsCCurrent->values.numberValue = &module->currentCounters[2];
 
 		SanguineTinyNumericDisplay* displayStepsCTotal = new SanguineTinyNumericDisplay(2);
-		displayStepsCTotal->box.pos = mm2px(Vec(101.731, 81.938));
+		displayStepsCTotal->box.pos = millimetersToPixelsVec(101.731, 81.938);
 		displayStepsCTotal->module = module;
 		brainzFrameBuffer->addChild(displayStepsCTotal);
 
@@ -1098,7 +1099,7 @@ struct BrainzWidget : ModuleWidget {
 			displayStepsCTotal->values.numberValue = &module->maxCounters[2];
 
 		SanguineTinyNumericDisplay* displayMetronomeSpeed = new SanguineTinyNumericDisplay(2);
-		displayMetronomeSpeed->box.pos = mm2px(Vec(104.407, 24.914));
+		displayMetronomeSpeed->box.pos = millimetersToPixelsVec(104.407, 24.914);
 		displayMetronomeSpeed->module = module;
 		brainzFrameBuffer->addChild(displayMetronomeSpeed);
 
@@ -1106,7 +1107,7 @@ struct BrainzWidget : ModuleWidget {
 			displayMetronomeSpeed->values.numberValue = &module->metronomeSpeed;
 
 		SanguineTinyNumericDisplay* displayMetronomeCurrentStep = new SanguineTinyNumericDisplay(2);
-		displayMetronomeCurrentStep->box.pos = mm2px(Vec(88.595, 36.647));
+		displayMetronomeCurrentStep->box.pos = millimetersToPixelsVec(88.595, 36.647);
 		displayMetronomeCurrentStep->module = module;
 		brainzFrameBuffer->addChild(displayMetronomeCurrentStep);
 
@@ -1114,7 +1115,7 @@ struct BrainzWidget : ModuleWidget {
 			displayMetronomeCurrentStep->values.numberValue = &module->metronomeStepsDone;
 
 		SanguineTinyNumericDisplay* displayMetronomeSteps = new SanguineTinyNumericDisplay(2);
-		displayMetronomeSteps->box.pos = mm2px(Vec(104.407, 36.647));
+		displayMetronomeSteps->box.pos = millimetersToPixelsVec(104.407, 36.647);
 		displayMetronomeSteps->module = module;
 		brainzFrameBuffer->addChild(displayMetronomeSteps);
 
@@ -1122,149 +1123,149 @@ struct BrainzWidget : ModuleWidget {
 			displayMetronomeSteps->values.numberValue = &module->metronomeSteps;
 
 		SanguineShapedLight* inPlayLight = new SanguineShapedLight();
-		inPlayLight->box.pos = mm2px(Vec(6.452, 107.701));
+		inPlayLight->box.pos = millimetersToPixelsVec(6.452, 107.701);
 		inPlayLight->module = module;
 		inPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
 		addChild(inPlayLight);
 
 		SanguineShapedLight* resetLight = new SanguineShapedLight();
-		resetLight->box.pos = mm2px(Vec(18.467, 108.157));
+		resetLight->box.pos = millimetersToPixelsVec(18.467, 108.157);
 		resetLight->module = module;
 		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
 		addChild(resetLight);
 
 		SanguineShapedLight* metronomeStepsLight = new SanguineShapedLight();
-		metronomeStepsLight->box.pos = mm2px(Vec(120.006, 39.497));
+		metronomeStepsLight->box.pos = millimetersToPixelsVec(120.006, 39.497);
 		metronomeStepsLight->module = module;
 		metronomeStepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/numpad_lit_blue.svg")));
 		addChild(metronomeStepsLight);
 
 		YellowGateLight* gateLightA = new YellowGateLight(module);
-		gateLightA->box.pos = mm2px(Vec(37.554, 41.747));
+		gateLightA->box.pos = millimetersToPixelsVec(37.554, 41.747);
 		addChild(gateLightA);
 
 		YellowGateLight* gateLightB = new YellowGateLight(module);
-		gateLightB->box.pos = mm2px(Vec(37.554, 92.777));
+		gateLightB->box.pos = millimetersToPixelsVec(37.554, 92.777);
 		addChild(gateLightB);
 
 		YellowGateLight* gateLightC = new YellowGateLight(module);
-		gateLightC->box.pos = mm2px(Vec(109.541, 92.777));
+		gateLightC->box.pos = millimetersToPixelsVec(109.541, 92.777);
 		addChild(gateLightC);
 
 		BluePowerLight* powerLightA = new BluePowerLight(module);
-		powerLightA->box.pos = mm2px(Vec(38.865, 23.214));
+		powerLightA->box.pos = millimetersToPixelsVec(38.865, 23.214);
 		addChild(powerLightA);
 
 		BluePowerLight* powerLightB = new BluePowerLight(module);
-		powerLightB->box.pos = mm2px(Vec(38.865, 74.244));
+		powerLightB->box.pos = millimetersToPixelsVec(38.865, 74.244);
 		addChild(powerLightB);
 
 		BluePowerLight* powerLightC = new BluePowerLight(module);
-		powerLightC->box.pos = mm2px(Vec(110.652, 74.244));
+		powerLightC->box.pos = millimetersToPixelsVec(110.652, 74.244);
 		addChild(powerLightC);
 
 		BlueAdvancedClockLight* steppedClockLightA = new BlueAdvancedClockLight(module);
-		steppedClockLightA->box.pos = mm2px(Vec(4.301, 32.845));
+		steppedClockLightA->box.pos = millimetersToPixelsVec(4.301, 32.845);
 		addChild(steppedClockLightA);
 
 		BlueAdvancedClockLight* steppedClockLightB = new BlueAdvancedClockLight(module);
-		steppedClockLightB->box.pos = mm2px(Vec(4.301, 83.875));
+		steppedClockLightB->box.pos = millimetersToPixelsVec(4.301, 83.875);
 		addChild(steppedClockLightB);
 
 		BlueAdvancedClockLight* steppedClockLightC = new BlueAdvancedClockLight(module);
-		steppedClockLightC->box.pos = mm2px(Vec(76.251, 83.875));
+		steppedClockLightC->box.pos = millimetersToPixelsVec(76.251, 83.875);
 		addChild(steppedClockLightC);
 
 		BlueInitialClockLight* initialClockLightA = new BlueInitialClockLight(module);
-		initialClockLightA->box.pos = mm2px(Vec(47.035, 33.01));
+		initialClockLightA->box.pos = millimetersToPixelsVec(47.035, 33.01);
 		addChild(initialClockLightA);
 
 		BlueInitialClockLight* initialClockLightB = new BlueInitialClockLight(module);
-		initialClockLightB->box.pos = mm2px(Vec(47.035, 84.04));
+		initialClockLightB->box.pos = millimetersToPixelsVec(47.035, 84.04);
 		addChild(initialClockLightB);
 
 		BlueInitialClockLight* initialClockLightC = new BlueInitialClockLight(module);
-		initialClockLightC->box.pos = mm2px(Vec(119.021, 84.04));
+		initialClockLightC->box.pos = millimetersToPixelsVec(119.021, 84.04);
 		addChild(initialClockLightC);
 
 		BlueRightArrowLight* arrowLightA = new BlueRightArrowLight(module);
-		arrowLightA->box.pos = mm2px(Vec(11.571, 42.643));
+		arrowLightA->box.pos = millimetersToPixelsVec(11.571, 42.643);
 		addChild(arrowLightA);
 
 		BlueRightArrowLight* arrowLightB = new BlueRightArrowLight(module);
-		arrowLightB->box.pos = mm2px(Vec(11.571, 93.673));
+		arrowLightB->box.pos = millimetersToPixelsVec(11.571, 93.673);
 		addChild(arrowLightB);
 
 		BlueRightArrowLight* arrowLightC = new BlueRightArrowLight(module);
-		arrowLightC->box.pos = mm2px(Vec(83.526, 93.673));
+		arrowLightC->box.pos = millimetersToPixelsVec(83.526, 93.673);
 		addChild(arrowLightC);
 
 		BlueQuarterNoteLight* quarterNoteLightA = new BlueQuarterNoteLight(module);
-		quarterNoteLightA->box.pos = mm2px(Vec(29.586, 41.747));
+		quarterNoteLightA->box.pos = millimetersToPixelsVec(29.586, 41.747);
 		addChild(quarterNoteLightA);
 
 		BlueQuarterNoteLight* quarterNoteLightB = new BlueQuarterNoteLight(module);
-		quarterNoteLightB->box.pos = mm2px(Vec(29.586, 92.777));
+		quarterNoteLightB->box.pos = millimetersToPixelsVec(29.586, 92.777);
 		addChild(quarterNoteLightB);
 
 		BlueQuarterNoteLight* quarterNoteLightC = new BlueQuarterNoteLight(module);
-		quarterNoteLightC->box.pos = mm2px(Vec(101.556, 92.777));
+		quarterNoteLightC->box.pos = millimetersToPixelsVec(101.556, 92.777);
 		addChild(quarterNoteLightC);
 
 		BlueQuarterNoteLight* quarterNoteLightMetronome = new BlueQuarterNoteLight(module);
-		quarterNoteLightMetronome->box.pos = mm2px(Vec(120.34, 27.015));
+		quarterNoteLightMetronome->box.pos = millimetersToPixelsVec(120.34, 27.015);
 		addChild(quarterNoteLightMetronome);
 
 		SanguineShapedLight* outPlayLight = new SanguineShapedLight();
-		outPlayLight->box.pos = mm2px(Vec(58.789, 107.701));
+		outPlayLight->box.pos = millimetersToPixelsVec(58.789, 107.701);
 		outPlayLight->module = module;
 		outPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
 		addChild(outPlayLight);
 
 		SanguineShapedLight* outResetLight = new SanguineShapedLight();
-		outResetLight->box.pos = mm2px(Vec(67.899, 108.157));
+		outResetLight->box.pos = millimetersToPixelsVec(67.899, 108.157);
 		outResetLight->module = module;
 		outResetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
 		addChild(outResetLight);
 
 		SanguineShapedLight* outMetronomeLight = new SanguineShapedLight();
-		outMetronomeLight->box.pos = mm2px(Vec(77.858, 107.701));
+		outMetronomeLight->box.pos = millimetersToPixelsVec(77.858, 107.701);
 		outMetronomeLight->module = module;
 		outMetronomeLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
 		addChild(outMetronomeLight);
 
 		SanguineShapedLight* outLight1 = new SanguineShapedLight();
-		outLight1->box.pos = mm2px(Vec(88.295, 108.589));
+		outLight1->box.pos = millimetersToPixelsVec(88.295, 108.589);
 		outLight1->module = module;
 		outLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_1_yellow_lit.svg")));
 		addChild(outLight1);
 
 		SanguineShapedLight* outLight2 = new SanguineShapedLight();
-		outLight2->box.pos = mm2px(Vec(97.834, 108.567));
+		outLight2->box.pos = millimetersToPixelsVec(97.834, 108.567);
 		outLight2->module = module;
 		outLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_2_yellow_lit.svg")));
 		addChild(outLight2);
 
 		SanguineShapedLight* outLight3 = new SanguineShapedLight();
-		outLight3->box.pos = mm2px(Vec(107.504, 108.567));
+		outLight3->box.pos = millimetersToPixelsVec(107.504, 108.567);
 		outLight3->module = module;
 		outLight3->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_3_yellow_lit.svg")));
 		addChild(outLight3);
 
 		SanguineShapedLight* outLight4 = new SanguineShapedLight();
-		outLight4->box.pos = mm2px(Vec(117.015, 108.589));
+		outLight4->box.pos = millimetersToPixelsVec(117.015, 108.589);
 		outLight4->module = module;
 		outLight4->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_4_yellow_lit.svg")));
 		addChild(outLight4);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = mm2px(Vec(29.219, 105.975));
+		bloodLight->box.pos = millimetersToPixelsVec(29.219, 105.975);
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
 		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = mm2px(Vec(36.541, 113.941));
+		monstersLight->box.pos = millimetersToPixelsVec(36.541, 113.941);
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
 		addChild(monstersLight);

@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "pcg_variants.h"
+#include "sanguinehelpers.hpp"
 
 using simd::float_4;
 
@@ -129,23 +130,23 @@ struct DollyXWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(29.945, 21.843)), module, DollyX::PARAM_CHANNELS1));
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(29.945, 76.514)), module, DollyX::PARAM_CHANNELS2));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 21.843), module, DollyX::PARAM_CHANNELS1));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 76.514), module, DollyX::PARAM_CHANNELS2));
 
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(9.871, 56.666)), module, DollyX::INPUT_MONO_IN1));
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(9.871, 111.337)), module, DollyX::INPUT_MONO_IN2));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.871, 56.666), module, DollyX::INPUT_MONO_IN1));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.871, 111.337), module, DollyX::INPUT_MONO_IN2));
 
-		addInput(createInputCentered<BananutBlack>(mm2px(Vec(29.945, 36.856)), module, DollyX::INPUT_CHANNELS1_CV));
-		addInput(createInputCentered<BananutBlack>(mm2px(Vec(29.945, 91.526)), module, DollyX::INPUT_CHANNELS2_CV));
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(29.945, 36.856), module, DollyX::INPUT_CHANNELS1_CV));
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(29.945, 91.526), module, DollyX::INPUT_CHANNELS2_CV));
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(30.769, 56.666)), module, DollyX::OUTPUT_POLYOUT_1));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(30.769, 111.337)), module, DollyX::OUTPUT_POLYOUT_2));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.769, 56.666), module, DollyX::OUTPUT_POLYOUT_1));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.769, 111.337), module, DollyX::OUTPUT_POLYOUT_2));
 
 		FramebufferWidget* dollyFrameBuffer = new FramebufferWidget();
 		addChild(dollyFrameBuffer);
 
 		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay(2);
-		displayCloner1->box.pos = mm2px(Vec(6.475, 17.493));
+		displayCloner1->box.pos = millimetersToPixelsVec(6.475, 17.493);
 		displayCloner1->module = module;
 		dollyFrameBuffer->addChild(displayCloner1);
 
@@ -153,7 +154,7 @@ struct DollyXWidget : ModuleWidget {
 			displayCloner1->values.numberValue = (&module->cloneCounts[0]);
 
 		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay(2);
-		displayCloner2->box.pos = mm2px(Vec(6.475, 72.164));
+		displayCloner2->box.pos = millimetersToPixelsVec(6.475, 72.164);
 		displayCloner2->module = module;
 		dollyFrameBuffer->addChild(displayCloner2);
 
@@ -161,13 +162,13 @@ struct DollyXWidget : ModuleWidget {
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
 
 		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight();
-		amalgamLight1->box.pos = mm2px(Vec(7.337, 33.237));
+		amalgamLight1->box.pos = millimetersToPixelsVec(7.337, 33.237);
 		amalgamLight1->module = module;
 		amalgamLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amalgam_light.svg")));
 		addChild(amalgamLight1);
 
 		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight();
-		amalgamLight2->box.pos = mm2px(Vec(7.337, 87.908));
+		amalgamLight2->box.pos = millimetersToPixelsVec(7.337, 87.908);
 		amalgamLight2->module = module;
 		amalgamLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amalgam_light.svg")));
 		addChild(amalgamLight2);
@@ -184,12 +185,12 @@ struct DollyXWidget : ModuleWidget {
 		addChild(inMonoLight2);
 
 		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight();
-		outPolyLight1->box.pos = mm2px(Vec(27.475, 47.678));
+		outPolyLight1->box.pos = millimetersToPixelsVec(27.475, 47.678);
 		outPolyLight1->module = module;
 		addChild(outPolyLight1);
 
 		SanguinePolyOutputLight* outPolyLight2 = new SanguinePolyOutputLight();
-		outPolyLight2->box.pos = mm2px(Vec(27.475, 102.349));
+		outPolyLight2->box.pos = millimetersToPixelsVec(27.475, 102.349);
 		outPolyLight2->module = module;
 		addChild(outPolyLight2);
 	}

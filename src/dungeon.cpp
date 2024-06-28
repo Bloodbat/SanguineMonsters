@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#include "sanguinehelpers.hpp"
 
 struct GradientColors {
 	NVGcolor innerColor;
@@ -300,7 +301,7 @@ struct DungeonWidget : ModuleWidget {
 		addChild(dungeonFrameBuffer);
 
 		SanguineMultiColoredShapedLight* moonLight = new SanguineMultiColoredShapedLight();
-		moonLight->box.pos = mm2px(Vec(3.361, 27.351));
+		moonLight->box.pos = millimetersToPixelsVec(3.361, 27.351);
 		moonLight->module = module;
 		moonLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_light.svg")));
 		moonLight->svgGradient = Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_gradient.svg"));
@@ -311,13 +312,13 @@ struct DungeonWidget : ModuleWidget {
 			moonLight->outerColor = &module->outerMoon;
 		}
 
-		addParam(createParamCentered<CKD6>(mm2px(Vec(62.386, 12.334)), module, Dungeon::PARAM_TRIGGER));
-		addChild(createLightCentered<CKD6Light<RedLight>>(mm2px(Vec(62.386, 12.334)), module, Dungeon::LIGHT_TRIGGER));
+		addParam(createParamCentered<CKD6>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::PARAM_TRIGGER));
+		addChild(createLightCentered<CKD6Light<RedLight>>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::LIGHT_TRIGGER));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(10.027, 12.334)), module, Dungeon::PARAM_MODE));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(10.027, 12.334), module, Dungeon::PARAM_MODE));
 
 		SanguineTinyNumericDisplay* displayMode = new SanguineTinyNumericDisplay(2);
-		displayMode->box.pos = mm2px(Vec(29.11, 12.934));
+		displayMode->box.pos = millimetersToPixelsVec(29.11, 12.934);
 		displayMode->module = module;
 		displayMode->displayType = DISPLAY_STRING;
 		dungeonFrameBuffer->addChild(displayMode);
@@ -325,45 +326,45 @@ struct DungeonWidget : ModuleWidget {
 		if (module)
 			displayMode->values.displayText = &module->modeLabel;
 
-		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(mm2px(Vec(36.76, 73.316)), module, Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
-		addInput(createInputCentered<BananutPurple>(mm2px(Vec(36.76, 95.874)), module, Dungeon::INPUT_SLEW));
+		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module, Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(36.76, 95.874), module, Dungeon::INPUT_SLEW));
 
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(8.762, 100.733)), module, Dungeon::INPUT_CLOCK));
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(8.762, 116.011)), module, Dungeon::INPUT_VOLTAGE));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(8.762, 100.733), module, Dungeon::INPUT_CLOCK));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(8.762, 116.011), module, Dungeon::INPUT_VOLTAGE));
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(62.386, 100.733)), module, Dungeon::OUTPUT_NOISE));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(62.386, 116.011)), module, Dungeon::OUTPUT_VOLTAGE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 100.733), module, Dungeon::OUTPUT_NOISE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 116.011), module, Dungeon::OUTPUT_VOLTAGE));
 
 		SanguineShapedLight* clockLight = new SanguineShapedLight();
-		clockLight->box.pos = mm2px(Vec(7.078, 91.346));
+		clockLight->box.pos = millimetersToPixelsVec(7.078, 91.346);
 		clockLight->module = module;
 		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
 		addChild(clockLight);
 
 		SanguineMonoInputLight* inLight = new SanguineMonoInputLight();
-		inLight->box.pos = mm2px(Vec(5.468, 106.547));
+		inLight->box.pos = millimetersToPixelsVec(5.468, 106.547);
 		inLight->module = module;
 		addChild(inLight);
 
 		SanguineShapedLight* noiseLight = new SanguineShapedLight();
-		noiseLight->box.pos = mm2px(Vec(59.092, 91.72));
+		noiseLight->box.pos = millimetersToPixelsVec(59.092, 91.72);
 		noiseLight->module = module;
 		noiseLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/noise_lit.svg")));
 		addChild(noiseLight);
 
 		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight();
-		outLight->box.pos = mm2px(Vec(59.092, 106.247));
+		outLight->box.pos = millimetersToPixelsVec(59.092, 106.247);
 		outLight->module = module;
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = mm2px(Vec(23.899, 105.766));
+		bloodLight->box.pos = millimetersToPixelsVec(23.899, 105.766);
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
 		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = mm2px(Vec(31.221, 113.733));
+		monstersLight->box.pos = millimetersToPixelsVec(31.221, 113.733);
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
 		addChild(monstersLight);

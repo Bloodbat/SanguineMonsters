@@ -2,6 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include <iomanip>
 #include "seqcomponents.hpp"
+#include "sanguinehelpers.hpp"
 
 struct Raiju : Module {
 	static const int kVoltagesCount = 8;
@@ -147,35 +148,35 @@ struct RaijuWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(127.365, 10.997)), module, Raiju::PARAM_CHANNEL_COUNT));
+		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(127.365, 10.997), module, Raiju::PARAM_CHANNEL_COUNT));
 
 		float yDistance = 19.688;
 		float currentY = 32.982;
 
 		for (int i = 0; i < 4; i++) {
-			addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(19.21, currentY)), module, Raiju::PARAM_VOLTAGE + i));
+			addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(19.21, currentY), module, Raiju::PARAM_VOLTAGE + i));
 			currentY += yDistance;
 		}
 
 		currentY = 32.982;
 		for (int i = 4; i < 8; i++) {
-			addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(117.942, currentY)), module, Raiju::PARAM_VOLTAGE + i));
+			addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(117.942, currentY), module, Raiju::PARAM_VOLTAGE + i));
 			currentY += yDistance;
 		}
 
 		float currentX = 37.073;
 		float xDistance = 12.136;
 		for (int i = 0; i < 4; i++) {
-			addChild(createOutputCentered<BananutRed>(mm2px(Vec(currentX, 111.758)), module, Raiju::OUTPUT_VOLTAGE + i));
+			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758), module, Raiju::OUTPUT_VOLTAGE + i));
 			currentX += xDistance;
 		}
 		currentX = 92.018;
 		for (int i = 4; i < 8; i++) {
-			addChild(createOutputCentered<BananutRed>(mm2px(Vec(currentX, 111.758)), module, Raiju::OUTPUT_VOLTAGE + i));
+			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758), module, Raiju::OUTPUT_VOLTAGE + i));
 			currentX += xDistance;
 		}
 
-		addChild(createOutputCentered<BananutRed>(mm2px(Vec(82.75, 118.393)), module, Raiju::OUTPUT_EIGHT_CHANNELS));
+		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(82.75, 118.393), module, Raiju::OUTPUT_EIGHT_CHANNELS));
 
 		FramebufferWidget* raijuFrameBuffer = new FramebufferWidget();
 		addChild(raijuFrameBuffer);
@@ -183,25 +184,25 @@ struct RaijuWidget : ModuleWidget {
 		currentY = 29.182f;
 		yDistance = 19.689f;
 
-		SeqStepSwitch* step1 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+		SeqStepSwitch* step1 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0);
 		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_off.svg")));
 		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_on.svg")));
 		addParam(step1);
 		currentY += yDistance;
-		SeqStepSwitch* step2 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+		SeqStepSwitch* step2 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 1);
 		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_off.svg")));
 		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_on.svg")));
 		addParam(step2);
 		currentY += yDistance;
-		SeqStepSwitch* step3 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+		SeqStepSwitch* step3 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 2);
 		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_off.svg")));
 		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_on.svg")));
 		addParam(step3);
 		currentY += yDistance;
-		SeqStepSwitch* step4 = createParam<SeqStepSwitch>(mm2px(Vec(4.012, currentY)),
+		SeqStepSwitch* step4 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 3);
 		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_off.svg")));
 		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_on.svg")));
@@ -209,32 +210,32 @@ struct RaijuWidget : ModuleWidget {
 
 		currentY = 29.182f;
 		yDistance = 19.689f;
-		SeqStepSwitch* step5 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+		SeqStepSwitch* step5 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 4);
 		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_off.svg")));
 		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_on.svg")));
 		addParam(step5);
 		currentY += yDistance;
-		SeqStepSwitch* step6 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+		SeqStepSwitch* step6 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 5);
 		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_off.svg")));
 		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_on.svg")));
 		addParam(step6);
 		currentY += yDistance;
-		SeqStepSwitch* step7 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+		SeqStepSwitch* step7 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 6);
 		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_off.svg")));
 		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_on.svg")));
 		addParam(step7);
 		currentY += yDistance;
-		SeqStepSwitch* step8 = createParam<SeqStepSwitch>(mm2px(Vec(125.548, currentY)),
+		SeqStepSwitch* step8 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 7);
 		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_off.svg")));
 		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_on.svg")));
 		addParam(step8);
 
 		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2);
-		displayChannelCount->box.pos = mm2px(Vec(104.581, 6.497));
+		displayChannelCount->box.pos = millimetersToPixelsVec(104.581, 6.497);
 		displayChannelCount->module = module;
 		raijuFrameBuffer->addChild(displayChannelCount);
 
@@ -242,7 +243,7 @@ struct RaijuWidget : ModuleWidget {
 			displayChannelCount->values.numberValue = (&module->currentChannelCount);
 
 		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7);
-		displayVoltage1->box.pos = mm2px(Vec(25.703, 27.902));
+		displayVoltage1->box.pos = millimetersToPixelsVec(25.703, 27.902);
 		displayVoltage1->module = module;
 		raijuFrameBuffer->addChild(displayVoltage1);
 
@@ -250,7 +251,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage1->values.displayText = &module->strVoltages[0];
 
 		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7);
-		displayVoltage2->box.pos = mm2px(Vec(25.703, 47.591));
+		displayVoltage2->box.pos = millimetersToPixelsVec(25.703, 47.591);
 		displayVoltage2->module = module;
 		raijuFrameBuffer->addChild(displayVoltage2);
 
@@ -258,7 +259,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage2->values.displayText = &module->strVoltages[1];
 
 		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7);
-		displayVoltage3->box.pos = mm2px(Vec(25.703, 67.279));
+		displayVoltage3->box.pos = millimetersToPixelsVec(25.703, 67.279);
 		displayVoltage3->module = module;
 		raijuFrameBuffer->addChild(displayVoltage3);
 
@@ -266,7 +267,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage3->values.displayText = &module->strVoltages[2];
 
 		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7);
-		displayVoltage4->box.pos = mm2px(Vec(25.703, 86.968));
+		displayVoltage4->box.pos = millimetersToPixelsVec(25.703, 86.968);
 		displayVoltage4->module = module;
 		raijuFrameBuffer->addChild(displayVoltage4);
 
@@ -274,7 +275,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage4->values.displayText = &module->strVoltages[3];
 
 		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7);
-		displayVoltage5->box.pos = mm2px(Vec(71.536, 27.902));
+		displayVoltage5->box.pos = millimetersToPixelsVec(71.536, 27.902);
 		displayVoltage5->module = module;
 		raijuFrameBuffer->addChild(displayVoltage5);
 
@@ -282,7 +283,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage5->values.displayText = &module->strVoltages[4];
 
 		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7);
-		displayVoltage6->box.pos = mm2px(Vec(71.536, 47.591));
+		displayVoltage6->box.pos = millimetersToPixelsVec(71.536, 47.591);
 		displayVoltage6->module = module;
 		raijuFrameBuffer->addChild(displayVoltage6);
 
@@ -290,7 +291,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage6->values.displayText = &module->strVoltages[5];
 
 		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7);
-		displayVoltage7->box.pos = mm2px(Vec(71.536, 67.279));
+		displayVoltage7->box.pos = millimetersToPixelsVec(71.536, 67.279);
 		displayVoltage7->module = module;
 		raijuFrameBuffer->addChild(displayVoltage7);
 
@@ -298,7 +299,7 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage7->values.displayText = &module->strVoltages[6];
 
 		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7);
-		displayVoltage8->box.pos = mm2px(Vec(71.536, 86.968));
+		displayVoltage8->box.pos = millimetersToPixelsVec(71.536, 86.968);
 		displayVoltage8->module = module;
 		raijuFrameBuffer->addChild(displayVoltage8);
 
@@ -306,24 +307,24 @@ struct RaijuWidget : ModuleWidget {
 			displayVoltage8->values.displayText = &module->strVoltages[7];
 
 		SanguineShapedLight* channelsLight = new SanguineShapedLight();
-		channelsLight->box.pos = mm2px(Vec(125.219, 16.15));
+		channelsLight->box.pos = millimetersToPixelsVec(125.219, 16.15);
 		channelsLight->module = module;
 		channelsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/channels_lit.svg")));
 		addChild(channelsLight);
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
-		outLight->box.pos = mm2px(Vec(79.456, 102.594));
+		outLight->box.pos = millimetersToPixelsVec(79.456, 102.594);
 		outLight->module = module;
 		addChild(outLight);
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = mm2px(Vec(4.718, 105.882));
+		bloodLight->box.pos = millimetersToPixelsVec(4.718, 105.882);
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
 		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = mm2px(Vec(12.04, 113.849));
+		monstersLight->box.pos = millimetersToPixelsVec(12.04, 113.849);
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
 		addChild(monstersLight);

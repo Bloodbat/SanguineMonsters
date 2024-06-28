@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#include "sanguinehelpers.hpp"
 using simd::float_4;
 
 #define MEDUSA_MAX_PORTS 32
@@ -112,12 +113,12 @@ struct MedusaWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight;
-		lightInput1->box.pos = mm2px(Vec(4.825, 20.098));
+		lightInput1->box.pos = millimetersToPixelsVec(4.825, 20.098);
 		lightInput1->module = module;
 		addChild(lightInput1);
 
 		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight;
-		lightOutput1->box.pos = mm2px(Vec(21.331, 20.098));
+		lightOutput1->box.pos = millimetersToPixelsVec(21.331, 20.098);
 		lightOutput1->module = module;
 		addChild(lightOutput1);
 
@@ -136,22 +137,22 @@ struct MedusaWidget : ModuleWidget {
 		int portOffset = 0;
 
 		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreen>(mm2px(Vec(xInputs, currentPortY)), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(mm2px(Vec(xOutputs, currentPortY)), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(xLights, currentLightY)), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
 		}
 
 		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight;
-		lightInput2->box.pos = mm2px(Vec(39.618, 20.098));
+		lightInput2->box.pos = millimetersToPixelsVec(39.618, 20.098);
 		lightInput2->module = module;
 		addChild(lightInput2);
 
 		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight;
-		lightOutput2->box.pos = mm2px(Vec(56.124, 20.098));
+		lightOutput2->box.pos = millimetersToPixelsVec(56.124, 20.098);
 		lightOutput2->module = module;
 		addChild(lightOutput2);
 
@@ -165,22 +166,22 @@ struct MedusaWidget : ModuleWidget {
 		portOffset = 10;
 
 		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreen>(mm2px(Vec(xInputs, currentPortY)), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(mm2px(Vec(xOutputs, currentPortY)), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(xLights, currentLightY)), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
 		}
 
 		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight;
-		lightInput3->box.pos = mm2px(Vec(74.448, 20.098));
+		lightInput3->box.pos = millimetersToPixelsVec(74.448, 20.098);
 		lightInput3->module = module;
 		addChild(lightInput3);
 
 		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight;
-		lightOutput3->box.pos = mm2px(Vec(90.954, 20.098));
+		lightOutput3->box.pos = millimetersToPixelsVec(90.954, 20.098);
 		lightOutput3->module = module;
 		addChild(lightOutput3);
 
@@ -194,22 +195,22 @@ struct MedusaWidget : ModuleWidget {
 		portOffset = 16;
 
 		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreen>(mm2px(Vec(xInputs, currentPortY)), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(mm2px(Vec(xOutputs, currentPortY)), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(xLights, currentLightY)), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
 		}
 
 		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight;
-		lightInput4->box.pos = mm2px(Vec(109.241, 20.098));
+		lightInput4->box.pos = millimetersToPixelsVec(109.241, 20.098);
 		lightInput4->module = module;
 		addChild(lightInput4);
 
 		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight;
-		lightOutput4->box.pos = mm2px(Vec(125.747, 20.098));
+		lightOutput4->box.pos = millimetersToPixelsVec(125.747, 20.098);
 		lightOutput4->module = module;
 		addChild(lightOutput4);
 
@@ -223,23 +224,23 @@ struct MedusaWidget : ModuleWidget {
 		portOffset = 22;
 
 		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreen>(mm2px(Vec(xInputs, currentPortY)), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(mm2px(Vec(xOutputs, currentPortY)), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(xLights, currentLightY)), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
 		}
 
 		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = mm2px(Vec(56.919, 106.265));
+		bloodLight->box.pos = millimetersToPixelsVec(56.919, 106.265);
 		bloodLight->module = module;
 		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
 		addChild(bloodLight);
 
 		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = mm2px(Vec(64.24, 114.231));
+		monstersLight->box.pos = millimetersToPixelsVec(64.24, 114.231);
 		monstersLight->module = module;
 		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
 		addChild(monstersLight);

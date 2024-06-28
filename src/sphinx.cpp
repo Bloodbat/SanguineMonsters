@@ -3,6 +3,7 @@
 #include "bjorklund.hpp"
 #include <array>
 #include "pcg_variants.h"
+#include "sanguinehelpers.hpp"
 
 #define MAXLEN 32
 
@@ -642,8 +643,8 @@ struct SphinxWidget : ModuleWidget {
 
 		SphinxDisplay* sphinxDisplay = new SphinxDisplay();
 		sphinxDisplay->module = module;
-		sphinxDisplay->box.pos = mm2px(Vec(17.126, 8.271));
-		sphinxDisplay->box.size = mm2px(Vec(22.14, 22.14));
+		sphinxDisplay->box.pos = millimetersToPixelsVec(17.126, 8.271);
+		sphinxDisplay->box.size = millimetersToPixelsVec(22.14, 22.14);
 		sphinxFrameBuffer->addChild(sphinxDisplay);
 
 		if (module) {
@@ -656,30 +657,33 @@ struct SphinxWidget : ModuleWidget {
 			sphinxDisplay->patternStyle = &module->patternStyle;
 		}
 
-		addChild(createLightParamCentered<VCVLightBezelLatch<RedGreenBlueLight>>(mm2px(Vec(48.472, 13.947)), module, Sphinx::PARAM_PATTERN_STYLE, Sphinx::LIGHT_PATTERN_STYLE));
+		addChild(createLightParamCentered<VCVLightBezelLatch<RedGreenBlueLight>>(millimetersToPixelsVec(48.472, 13.947),
+			module, Sphinx::PARAM_PATTERN_STYLE, Sphinx::LIGHT_PATTERN_STYLE));
 
-		addChild(createLightCentered<SmallLight<RedLight>>(mm2px(Vec(41.862, 26.411)), module, Sphinx::LIGHT_EOC));
-		addChild(createOutputCentered<BananutBlack>(mm2px(Vec(48.472, 26.411)), module, Sphinx::OUTPUT_EOC));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(41.862, 26.411), module, Sphinx::LIGHT_EOC));
+		addChild(createOutputCentered<BananutBlack>(millimetersToPixelsVec(48.472, 26.411), module, Sphinx::OUTPUT_EOC));
 
-		addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(10.386, 40.197)), module, Sphinx::PARAM_LENGTH));
-		addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(27.82, 40.197)), module, Sphinx::PARAM_STEPS));
-		addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(45.414, 40.197)), module, Sphinx::PARAM_ROTATION));
-		addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(10.386, 97.059)), module, Sphinx::PARAM_PADDING));
-		addChild(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(27.82, 97.059)), module, Sphinx::PARAM_ACCENT));
-		addChild(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(45.414, 97.059)), module, Sphinx::PARAM_SHIFT));
+		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(10.386, 40.197), module, Sphinx::PARAM_LENGTH));
+		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(27.82, 40.197), module, Sphinx::PARAM_STEPS));
+		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(45.414, 40.197), module, Sphinx::PARAM_ROTATION));
+		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(10.386, 97.059), module, Sphinx::PARAM_PADDING));
+		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(27.82, 97.059), module, Sphinx::PARAM_ACCENT));
+		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(45.414, 97.059), module, Sphinx::PARAM_SHIFT));
 
-		addChild(createInputCentered<BananutPurple>(mm2px(Vec(10.386, 63.519)), module, Sphinx::INPUT_LENGTH));
-		addChild(createInputCentered<BananutPurple>(mm2px(Vec(27.82, 63.519)), module, Sphinx::INPUT_STEPS));
-		addChild(createInputCentered<BananutPurple>(mm2px(Vec(45.414, 63.519)), module, Sphinx::INPUT_ROTATION));
-		addChild(createInputCentered<BananutPurple>(mm2px(Vec(10.386, 73.871)), module, Sphinx::INPUT_PADDING));
-		addChild(createInputCentered<BananutPurple>(mm2px(Vec(27.82, 73.871)), module, Sphinx::INPUT_ACCENT));
-		addChild(createInputCentered<BananutPurple>(mm2px(Vec(45.414, 73.871)), module, Sphinx::INPUT_SHIFT));
+		addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(10.386, 63.519), module, Sphinx::INPUT_LENGTH));
+		addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(27.82, 63.519), module, Sphinx::INPUT_STEPS));
+		addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(45.414, 63.519), module, Sphinx::INPUT_ROTATION));
+		addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(10.386, 73.871), module, Sphinx::INPUT_PADDING));
+		addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(27.82, 73.871), module, Sphinx::INPUT_ACCENT));
+		addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(45.414, 73.871), module, Sphinx::INPUT_SHIFT));
 
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(19.103, 68.695)), module, Sphinx::PARAM_REVERSE, Sphinx::LIGHT_REVERSE));
-		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(mm2px(Vec(36.617, 68.695)), module, Sphinx::PARAM_GATE_MODE, Sphinx::LIGHT_GATE_MODE));
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(millimetersToPixelsVec(19.103, 68.695),
+			module, Sphinx::PARAM_REVERSE, Sphinx::LIGHT_REVERSE));
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(millimetersToPixelsVec(36.617, 68.695),
+			module, Sphinx::PARAM_GATE_MODE, Sphinx::LIGHT_GATE_MODE));
 
 		SanguineTinyNumericDisplay* displayLength = new SanguineTinyNumericDisplay(2);
-		displayLength->box.pos = mm2px(Vec(3.936, 46.499));
+		displayLength->box.pos = millimetersToPixelsVec(3.936, 46.499);
 		displayLength->module = module;
 		sphinxFrameBuffer->addChild(displayLength);
 
@@ -687,7 +691,7 @@ struct SphinxWidget : ModuleWidget {
 			displayLength->values.numberValue = &module->patternLength;
 
 		SanguineTinyNumericDisplay* displayFill = new SanguineTinyNumericDisplay(2);
-		displayFill->box.pos = mm2px(Vec(21.369, 46.499));
+		displayFill->box.pos = millimetersToPixelsVec(21.369, 46.499);
 		displayFill->module = module;
 		sphinxFrameBuffer->addChild(displayFill);
 
@@ -695,7 +699,7 @@ struct SphinxWidget : ModuleWidget {
 			displayFill->values.numberValue = &module->patternFill;
 
 		SanguineTinyNumericDisplay* displayRotation = new SanguineTinyNumericDisplay(2);
-		displayRotation->box.pos = mm2px(Vec(38.964, 46.499));
+		displayRotation->box.pos = millimetersToPixelsVec(38.964, 46.499);
 		displayRotation->module = module;
 		sphinxFrameBuffer->addChild(displayRotation);
 
@@ -703,7 +707,7 @@ struct SphinxWidget : ModuleWidget {
 			displayRotation->values.numberValue = &module->patternRotation;
 
 		SanguineTinyNumericDisplay* displayPadding = new SanguineTinyNumericDisplay(2);
-		displayPadding->box.pos = mm2px(Vec(3.936, 82.77));
+		displayPadding->box.pos = millimetersToPixelsVec(3.936, 82.77);
 		displayPadding->module = module;
 		sphinxFrameBuffer->addChild(displayPadding);
 
@@ -711,7 +715,7 @@ struct SphinxWidget : ModuleWidget {
 			displayPadding->values.numberValue = &module->patternPadding;
 
 		SanguineTinyNumericDisplay* displayAccent = new SanguineTinyNumericDisplay(2);
-		displayAccent->box.pos = mm2px(Vec(21.369, 82.77));
+		displayAccent->box.pos = millimetersToPixelsVec(21.369, 82.77);
 		displayAccent->module = module;
 		sphinxFrameBuffer->addChild(displayAccent);
 
@@ -719,7 +723,7 @@ struct SphinxWidget : ModuleWidget {
 			displayAccent->values.numberValue = &module->patternAccents;
 
 		SanguineTinyNumericDisplay* displayShift = new SanguineTinyNumericDisplay(2);
-		displayShift->box.pos = mm2px(Vec(38.964, 82.77));
+		displayShift->box.pos = millimetersToPixelsVec(38.964, 82.77);
 		displayShift->module = module;
 		sphinxFrameBuffer->addChild(displayShift);
 
@@ -727,33 +731,33 @@ struct SphinxWidget : ModuleWidget {
 			displayShift->values.numberValue = &module->patternShift;
 
 
-		addChild(createInputCentered<BananutGreen>(mm2px(Vec(7.326, 112.894)), module, Sphinx::INPUT_CLOCK));
-		addChild(createInputCentered<BananutGreen>(mm2px(Vec(19.231, 112.894)), module, Sphinx::INPUT_RESET));
+		addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.326, 112.894), module, Sphinx::INPUT_CLOCK));
+		addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(19.231, 112.894), module, Sphinx::INPUT_RESET));
 
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(mm2px(Vec(42.496, 105.958)), module, Sphinx::LIGHT_OUTPUT));
-		addChild(createOutputCentered<BananutRed>(mm2px(Vec(36.543, 112.894)), module, Sphinx::OUTPUT_GATE));
-		addChild(createOutputCentered<BananutRed>(mm2px(Vec(48.448, 112.894)), module, Sphinx::OUTPUT_ACCENT));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(42.496, 105.958), module, Sphinx::LIGHT_OUTPUT));
+		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.543, 112.894), module, Sphinx::OUTPUT_GATE));
+		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(48.448, 112.894), module, Sphinx::OUTPUT_ACCENT));
 
 		SanguineShapedLight* clockLight = new SanguineShapedLight();
-		clockLight->box.pos = mm2px(Vec(5.642, 104.058));
+		clockLight->box.pos = millimetersToPixelsVec(5.642, 104.058);
 		clockLight->module = module;
 		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
 		addChild(clockLight);
 
 		SanguineShapedLight* resetLight = new SanguineShapedLight();
-		resetLight->box.pos = mm2px(Vec(17.331, 104.514));
+		resetLight->box.pos = millimetersToPixelsVec(17.331, 104.514);
 		resetLight->module = module;
 		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
 		addChild(resetLight);
 
 		SanguineShapedLight* gateLight = new SanguineShapedLight();
-		gateLight->box.pos = mm2px(Vec(34.643, 104.058));
+		gateLight->box.pos = millimetersToPixelsVec(34.643, 104.058);
 		gateLight->module = module;
 		gateLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/gate_lit_mono.svg")));
 		addChild(gateLight);
 
 		SanguineShapedLight* accentLight = new SanguineShapedLight();
-		accentLight->box.pos = mm2px(Vec(46.548, 104.058));
+		accentLight->box.pos = millimetersToPixelsVec(46.548, 104.058);
 		accentLight->module = module;
 		accentLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/accent_lit_mono.svg")));
 		addChild(accentLight);
