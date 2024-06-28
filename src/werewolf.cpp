@@ -53,8 +53,6 @@ struct Werewolf : Module {
 	void process(const ProcessArgs& args) override {
 		bool leftInConnected = inputs[INPUT_LEFT].isConnected();
 		bool rightInConnected = inputs[INPUT_RIGHT].isConnected();
-		bool leftOutConnected = outputs[OUTPUT_LEFT].isConnected();
-		bool rightOutConnected = outputs[OUTPUT_RIGHT].isConnected();
 
 		fold = params[PARAM_FOLD].getValue() + clamp(inputs[INPUT_FOLD].getNormalVoltage(0.f), 0.f, 10.f);
 		gain = params[PARAM_GAIN].getValue() + clamp(inputs[INPUT_GAIN].getNormalVoltage(0.f), 0.f, 10.f);
@@ -69,57 +67,41 @@ struct Werewolf : Module {
 
 		// Distortion
 		if (leftInConnected) {
-			for (int i = 0; i < 100; i++) {
-				if (voltageLeft < -5.f) {
-					voltageLeft = -5.f + (-voltageLeft - 5.f) * fold / 5.f;
-				}
-				if (voltageLeft > 5.f) {
-					voltageLeft = 5.f - (voltageLeft - 5.f) * fold / 5.f;
-				}
-
-				if (voltageLeft >= -5.f && voltageLeft <= 5.f) {
-					break;
-				}
-
-				if (i == 99) {
-					voltageLeft = 0.f;
-				}
-			}
-			if (leftOutConnected) {
-				outputs[OUTPUT_LEFT].setVoltage(voltageLeft);
-			}
-			lights[LIGHT_EYE_1].setBrightness(math::rescale(voltageLeft, 0.f, 5.f, 0.f, 1.f));
-
-			if (!rightInConnected) {
-				if (rightOutConnected) {
-					outputs[OUTPUT_RIGHT].setVoltage(voltageLeft);
-				}
-				lights[LIGHT_EYE_2].setBrightness(math::rescale(voltageLeft, 0.f, 5.f, 0.f, 1.f));
-			}
+			doDistortion(voltageLeft, OUTPUT_LEFT, LIGHT_EYE_1, true, INPUT_RIGHT, OUTPUT_RIGHT, LIGHT_EYE_2);
 		}
 
 		if (rightInConnected) {
-			for (int i = 0; i < 100; i++) {
-				if (voltageRight < -5.f) {
-					voltageRight = -5.f + (-voltageRight - 5.f) * fold / 5.f;
-				}
-				if (voltageRight > 5.f) {
-					voltageRight = 5.f - (voltageRight - 5.f) * fold / 5.f;
-				}
+			doDistortion(voltageRight, OUTPUT_RIGHT, LIGHT_EYE_2);
+		}
+	}
 
-				if (voltageRight >= -5.f && voltageRight <= 5.f) {
-					break;
-				}
-
-				if (i == 99) {
-					voltageRight = 0.f;
-				}
+	inline void doDistortion(float inVoltage, int mainOutput, int light, bool normalOutput = false, int altInput = -1, int altOutput = -1, int altLight = -1) {
+		for (int i = 0; i < 100; i++) {
+			if (inVoltage < -5.f) {
+				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
+			}
+			if (inVoltage > 5.f) {
+				inVoltage = 5.f - (inVoltage - 5.f) * fold / 5.f;
 			}
 
-			if (rightOutConnected) {
-				outputs[OUTPUT_RIGHT].setVoltage(voltageRight);
+			if (inVoltage >= -5.f && inVoltage <= 5.f) {
+				break;
 			}
-			lights[LIGHT_EYE_2].setBrightness(math::rescale(voltageRight, 0.f, 5.f, 0.f, 1.f));
+
+			if (i == 99) {
+				inVoltage = 0.f;
+			}
+		}
+		if (outputs[mainOutput].isConnected()) {
+			outputs[mainOutput].setVoltage(inVoltage);
+		}
+		lights[light].setBrightness(math::rescale(inVoltage, 0.f, 5.f, 0.f, 1.f));
+
+		if (normalOutput && !inputs[altInput].isConnected()) {
+			if (outputs[altOutput].isConnected()) {
+				outputs[OUTPUT_RIGHT].setVoltage(inVoltage);
+			}
+			lights[altLight].setBrightness(math::rescale(inVoltage, 0.f, 5.f, 0.f, 1.f));
 		}
 	}
 };
@@ -154,7 +136,7 @@ struct WerewolfWidget : ModuleWidget {
 		SanguineMonoInputLight* inLight = new SanguineMonoInputLight();
 		inLight->box.pos = mm2px(Vec(12.525, 104.387));
 		inLight->module = module;
-		addChild(inLight);		
+		addChild(inLight);
 
 		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight();
 		outLight->box.pos = mm2px(Vec(41.742, 103.987));
