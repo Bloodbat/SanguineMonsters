@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#include "sanguinehelpers.hpp"
 
 struct Werewolf : Module {
 
@@ -181,32 +182,30 @@ struct WerewolfWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(22.879, 39.583)), module, Werewolf::LIGHT_EYE_1));
-		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(38.602, 39.583)), module, Werewolf::LIGHT_EYE_2));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(22.879, 39.583), module, Werewolf::LIGHT_EYE_1));
+		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.602, 39.583), module, Werewolf::LIGHT_EYE_2));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(8.947, 83.56)), module, Werewolf::PARAM_GAIN));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(8.947, 83.56), module, Werewolf::PARAM_GAIN));
 
-		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(8.947, 90.978)), module, Werewolf::LIGHT_GAIN));
-		addChild(createLightCentered<MediumLight<YellowLight>>(mm2px(Vec(51.908, 90.978)), module, Werewolf::LIGHT_FOLD));
+		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(8.947, 90.978), module, Werewolf::LIGHT_GAIN));
+		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(51.908, 90.978), module, Werewolf::LIGHT_FOLD));
 
-		addParam(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(51.908, 83.56)), module, Werewolf::PARAM_FOLD));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(51.908, 83.56), module, Werewolf::PARAM_FOLD));
 
-		addInput(createInputCentered<BananutPurple>(mm2px(Vec(23.04, 98.047)), module, Werewolf::INPUT_GAIN));
-		addInput(createInputCentered<BananutPurple>(mm2px(Vec(37.814, 98.047)), module, Werewolf::INPUT_FOLD));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(23.04, 98.047), module, Werewolf::INPUT_GAIN));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(37.814, 98.047), module, Werewolf::INPUT_FOLD));
 
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(9.866, 112.894)), module, Werewolf::INPUT_LEFT));
-		addInput(createInputCentered<BananutGreen>(mm2px(Vec(21.771, 112.894)), module, Werewolf::INPUT_RIGHT));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.866, 112.894), module, Werewolf::INPUT_LEFT));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(21.771, 112.894), module, Werewolf::INPUT_RIGHT));
 
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(39.083, 112.894)), module, Werewolf::OUTPUT_LEFT));
-		addOutput(createOutputCentered<BananutRed>(mm2px(Vec(50.988, 112.894)), module, Werewolf::OUTPUT_RIGHT));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(39.083, 112.894), module, Werewolf::OUTPUT_LEFT));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(50.988, 112.894), module, Werewolf::OUTPUT_RIGHT));
 
-		SanguinePolyInputLight* inLight = new SanguinePolyInputLight();
-		inLight->box.pos = mm2px(Vec(12.525, 104.387));
+		SanguinePolyInputLight* inLight = createWidgetCentered<SanguinePolyInputLight>(millimetersToPixelsVec(15.819, 106.451));
 		inLight->module = module;
 		addChild(inLight);
 
-		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
-		outLight->box.pos = mm2px(Vec(41.742, 103.987));
+		SanguinePolyOutputLight* outLight = createWidgetCentered<SanguinePolyOutputLight>(millimetersToPixelsVec(45.036, 106.051));
 		outLight->module = module;
 		addChild(outLight);
 	}
