@@ -146,7 +146,7 @@ struct Werewolf : Module {
 
 		if (normalOutput) {
 			if (outputs[altOutput].isConnected()) {
-				outputs[OUTPUT_RIGHT].setVoltage(inVoltage, channelNum);
+				outputs[altOutput].setVoltage(inVoltage, channelNum);
 			}
 			voltageSum2 += inVoltage;
 		}
