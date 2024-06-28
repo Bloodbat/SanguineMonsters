@@ -148,7 +148,8 @@
       "name": "Werewolf",
       "description": "Dirty stereo distortion",
       "tags": [
-        "Distortion"
+        "Distortion",
+        "Polyphonic"
       ]
     }
   ]
