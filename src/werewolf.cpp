@@ -26,6 +26,8 @@ struct Werewolf : Module {
 	enum LightIds {
 		ENUMS(LIGHT_EYE_1, 3),
 		ENUMS(LIGHT_EYE_2, 3),
+		LIGHT_GAIN,
+		LIGHT_FOLD,
 		LIGHTS_COUNT
 	};
 
@@ -118,6 +120,8 @@ struct Werewolf : Module {
 					lights[LIGHT_EYE_2 + 2].setBrightness(rescaled);
 				}
 			}
+			lights[LIGHT_GAIN].setBrightness(math::rescale(gain, 0.f, 20.f, 0.f, 1.f));
+			lights[LIGHT_FOLD].setBrightness(math::rescale(fold, 0.f, 10.f, 0.f, 1.f));
 		}
 	}
 
@@ -169,6 +173,10 @@ struct WerewolfWidget : ModuleWidget {
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(mm2px(Vec(38.602, 39.583)), module, Werewolf::LIGHT_EYE_2));
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(mm2px(Vec(8.947, 83.56)), module, Werewolf::PARAM_GAIN));
+
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(8.947, 90.978)), module, Werewolf::LIGHT_GAIN));
+		addChild(createLightCentered<MediumLight<YellowLight>>(mm2px(Vec(51.908, 90.978)), module, Werewolf::LIGHT_FOLD));
+
 		addParam(createParamCentered<BefacoTinyKnobBlack>(mm2px(Vec(51.908, 83.56)), module, Werewolf::PARAM_FOLD));
 
 		addInput(createInputCentered<BananutPurple>(mm2px(Vec(23.04, 98.047)), module, Werewolf::INPUT_GAIN));
