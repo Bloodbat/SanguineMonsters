@@ -391,7 +391,7 @@ struct Sphinx : Module {
 
 		if (clockDivider.process()) {
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
-				math::rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
+				math::rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.f), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
 
 			patternPadding = abs((32.f - patternLength) * clamp(params[PARAM_PADDING].getValue() +
 				inputs[INPUT_PADDING].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
