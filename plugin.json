@@ -151,6 +151,15 @@
         "Distortion",
         "Polyphonic"
       ]
+    },
+    {
+      "slug": "Sanguine-Alchemist",
+      "name": "Alchemist",
+      "description": "Mix up to 16 channels from a polyphonic cable to a single monophonic output or a mixed polyphonic cable",
+      "tags": [
+        "Mixer",
+        "Polyphonic"
+      ]
     }
   ]
 }

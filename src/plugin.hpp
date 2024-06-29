@@ -20,3 +20,4 @@ extern Model* modelOubliette;
 extern Model* modelMedusa;
 extern Model* modelAion;
 extern Model* modelWerewolf;
+extern Model* modelAlchemist;
