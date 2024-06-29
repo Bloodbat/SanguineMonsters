@@ -48,8 +48,8 @@ struct Alchemist : Module {
 			configInput(INPUT_GAIN_CV + i, string::f("Channel %d gain CV", i + 1));
 		}
 
-		configParam(PARAM_MIX, 0.f, 1.f, 1.f, "Master", "%", 0.f, 100.f);
-		configInput(INPUT_MIX_CV, "Master CV");
+		configParam(PARAM_MIX, 0.f, 1.f, 1.f, "Master mix", "%", 0.f, 100.f);
+		configInput(INPUT_MIX_CV, "Master mix CV");
 
 		configInput(INPUT_POLYPHONIC, "Polyphonic");
 
@@ -108,8 +108,8 @@ struct Alchemist : Module {
 				vuMetersGain[i].process(sampleTime, outVoltages[i] / 10.f);
 
 				int currentLight = LIGHT_GAIN + i * 2;
-				float redValue = vuMetersGain[i].getBrightness(-3.f, 0.f);
-				float yellowValue = vuMetersGain[i].getBrightness(-6.f, -3.f);
+				float redValue = vuMetersGain[i].getBrightness(-1.f, 0.f);
+				float yellowValue = vuMetersGain[i].getBrightness(-6.f, -1.f);
 				float greenValue = vuMetersGain[i].getBrightness(-38.f, -6.f);
 				bool isRed = redValue > 0;
 				bool isYellow = yellowValue > 0;
@@ -130,8 +130,8 @@ struct Alchemist : Module {
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
 			lights[LIGHT_VU + 1].setBrightness(vuMeterMix.getBrightness(-19.f, -6.f));
-			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-6.f, -3.f));
-			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(-3.f, 0.f));
+			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-6.f, -1.f));
+			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(-1.f, 0.f));
 		}
 	}
 };
@@ -176,7 +176,7 @@ struct AlchemistWidget : ModuleWidget {
 			currentCVInputX += deltaX;
 		}
 
-		SanguinePolyInputLight* inLight = createWidgetCentered<SanguinePolyInputLight>(millimetersToPixelsVec(7.876, 110.216));
+		SanguinePolyInputLight* inLight = createWidgetCentered<SanguinePolyInputLight>(millimetersToPixelsVec(7.876, 108.473));
 		inLight->module = module;
 		addChild(inLight);
 
@@ -195,30 +195,30 @@ struct AlchemistWidget : ModuleWidget {
 		SanguineShapedLight* sumLight = new SanguineShapedLight();
 		sumLight->module = module;
 		sumLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/sum_light_on.svg")));
-		sumLight->box.pos = centerWidgetInMillimeters(sumLight, 54.673, 108.602);
+		sumLight->box.pos = centerWidgetInMillimeters(sumLight, 62.155, 108.473);
 		addChild(sumLight);
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(66.657, 108.602), module, Alchemist::PARAM_MIX));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(53.657, 113.594), module, Alchemist::INPUT_MIX_CV));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(79.964, 108.602), module, Alchemist::INPUT_MIX_CV));
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(72.754, 113.594), module, Alchemist::PARAM_MIX));		
 
-		SanguinePolyOutputLight* outPolyLight = createWidgetCentered<SanguinePolyOutputLight>(millimetersToPixelsVec(95.442, 109.673));
+		SanguinePolyOutputLight* outPolyLight = createWidgetCentered<SanguinePolyOutputLight>(millimetersToPixelsVec(95.442, 108.473));
 		outPolyLight->module = module;
 		addChild(outPolyLight);
 
-		SanguineMonoOutputLight* outMonoLight = createWidgetCentered<SanguineMonoOutputLight>(millimetersToPixelsVec(108.963, 109.673));
+		SanguineMonoOutputLight* outMonoLight = createWidgetCentered<SanguineMonoOutputLight>(millimetersToPixelsVec(108.963, 108.473));
 		outMonoLight->module = module;
 		addChild(outMonoLight);
 
-		addChild(createLightCentered<LargeLight<GreenLight>>(millimetersToPixelsVec(53.772, 118.436), module, Alchemist::LIGHT_VU));
-		addChild(createLightCentered<LargeLight<GreenLight>>(millimetersToPixelsVec(63.184, 118.436), module, Alchemist::LIGHT_VU + 1));
-		addChild(createLightCentered<LargeLight<YellowLight>>(millimetersToPixelsVec(72.596, 118.436), module, Alchemist::LIGHT_VU + 2));
-		addChild(createLightCentered<LargeLight<RedLight>>(millimetersToPixelsVec(82.007, 118.436), module, Alchemist::LIGHT_VU + 3));
+		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 119.511), module, Alchemist::LIGHT_VU));
+		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 115.455), module, Alchemist::LIGHT_VU + 1));
+		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(84.329, 111.378), module, Alchemist::LIGHT_VU + 2));
+		addChild(createLightCentered<MediumLight<RedLight>>(millimetersToPixelsVec(84.329, 107.276), module, Alchemist::LIGHT_VU + 3));
 
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.876, 117.569), module, Alchemist::INPUT_POLYPHONIC));
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.876, 116.269), module, Alchemist::INPUT_POLYPHONIC));
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(95.442, 117.569), module, Alchemist::OUTPUT_POLYPHONIC_MIX));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(108.963, 117.569), module, Alchemist::OUTPUT_MONO_MIX));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(95.442, 116.269), module, Alchemist::OUTPUT_POLYPHONIC_MIX));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(108.963, 116.269), module, Alchemist::OUTPUT_MONO_MIX));
 	}
 };
 
