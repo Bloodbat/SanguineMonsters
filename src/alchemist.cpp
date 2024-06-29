@@ -56,6 +56,8 @@ struct Alchemist : Module {
 		configOutput(OUTPUT_POLYPHONIC_MIX, "Polyphonic mix");
 		configOutput(OUTPUT_MONO_MIX, "Monophonic mix");
 
+		configBypass(INPUT_POLYPHONIC, OUTPUT_POLYPHONIC_MIX);
+
 		lightsDivider.setDivision(kLightFrequency);
 	}
 
