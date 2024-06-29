@@ -108,9 +108,9 @@ struct Alchemist : Module {
 				vuMetersGain[i].process(sampleTime, outVoltages[i] / 10.f);
 
 				int currentLight = LIGHT_GAIN + i * 2;
-				float redValue = vuMetersGain[i].getBrightness(-1.f, 0.f);
-				float yellowValue = vuMetersGain[i].getBrightness(-6.f, -1.f);
-				float greenValue = vuMetersGain[i].getBrightness(-38.f, -6.f);
+				float redValue = vuMetersGain[i].getBrightness(0.f, 0.f);
+				float yellowValue = vuMetersGain[i].getBrightness(-3.f, -1.f);
+				float greenValue = vuMetersGain[i].getBrightness(-38.f, -3.f);
 				bool isRed = redValue > 0;
 				bool isYellow = yellowValue > 0;
 
@@ -129,9 +129,9 @@ struct Alchemist : Module {
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
-			lights[LIGHT_VU + 1].setBrightness(vuMeterMix.getBrightness(-19.f, -6.f));
-			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-6.f, -1.f));
-			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(-1.f, 0.f));
+			lights[LIGHT_VU + 1].setBrightness(vuMeterMix.getBrightness(-19.f, -3.f));
+			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
+			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 		}
 	}
 };
