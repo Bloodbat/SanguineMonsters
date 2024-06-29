@@ -62,8 +62,10 @@ struct Werewolf : Module {
 		bool rightInConnected = inputs[INPUT_RIGHT].isConnected();
 		bool normalled = true;
 
-		float voltageLeft = 0.f;
-		float voltageRight = 0.f;
+		float voltageInLeft = 0.f;
+		float voltageInRight = 0.f;
+		float voltageOutLeft = 0.f;
+		float voltageOutRight = 0.f;
 		float voltageSumLeft = 0.f;
 		float voltageSumRight = 0.f;
 
@@ -79,23 +81,42 @@ struct Werewolf : Module {
 			for (int channel = 0; channel < channelCount; channel++) {
 				if (leftInConnected) {
 					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * gain;
-					voltageLeft = newVoltage;
-					voltageRight = newVoltage;
+					voltageInLeft = newVoltage;
+					voltageInRight = newVoltage;
 					outputs[OUTPUT_LEFT].setChannels(channelCount);
 					outputs[OUTPUT_RIGHT].setChannels(channelCount);
 				}
 				if (rightInConnected) {
 					normalled = false;
-					voltageRight = inputs[INPUT_RIGHT].getVoltage(channel) * gain;
+					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * gain;
 				}
 
 				// Distortion
 				if (leftInConnected) {
-					doDistortion(voltageLeft, OUTPUT_LEFT, channel, voltageSumLeft, voltageSumRight, normalled, OUTPUT_RIGHT);
+					doDistortion(voltageInLeft, voltageOutLeft);
 				}
 
 				if (rightInConnected) {
-					doDistortion(voltageRight, OUTPUT_RIGHT, channel, voltageSumRight, voltageSumRight);
+					doDistortion(voltageInRight, voltageOutRight);
+				}
+
+				voltageSumLeft += voltageOutLeft;
+
+				if (outputs[OUTPUT_LEFT].isConnected()) {
+					outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
+				}
+
+				if (normalled) {
+					if (outputs[OUTPUT_RIGHT].isConnected()) {
+						outputs[OUTPUT_RIGHT].setVoltage(voltageOutLeft, channel);
+					}
+					voltageSumRight += voltageOutLeft;
+				}
+				else {
+					if (outputs[OUTPUT_RIGHT].isConnected()) {
+						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
+					}
+					voltageSumRight += voltageOutRight;
 				}
 			}
 
@@ -138,7 +159,7 @@ struct Werewolf : Module {
 		}
 	}
 
-	inline void doDistortion(float inVoltage, int mainOutput, int channelNum, float& voltageSum1, float& voltageSum2, bool normalOutput = false, int altOutput = -1) {
+	inline void doDistortion(float inVoltage, float& outVoltage) {
 		for (int i = 0; i < 100; i++) {
 			if (inVoltage < -5.f) {
 				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
@@ -155,18 +176,7 @@ struct Werewolf : Module {
 				inVoltage = 0.f;
 			}
 		}
-		voltageSum1 += inVoltage;
-
-		if (outputs[mainOutput].isConnected()) {
-			outputs[mainOutput].setVoltage(inVoltage, channelNum);
-		}
-
-		if (normalOutput) {
-			if (outputs[altOutput].isConnected()) {
-				outputs[altOutput].setVoltage(inVoltage, channelNum);
-			}
-			voltageSum2 += inVoltage;
-		}
+		outVoltage = inVoltage;
 	}
 };
 
