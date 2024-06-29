@@ -65,7 +65,7 @@ struct Alchemist : Module {
 		float monoMix = 0.f;
 		float outVoltages[16] = {};
 		float masterOutVoltages[16] = {};
-		float mixModulation = params[PARAM_MIX].getValue() + clamp(inputs[INPUT_MIX_CV].getVoltage(), -5.f, 5.f) / 5.f;
+		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 		bool bIsLightsTurn = lightsDivider.process();
@@ -73,7 +73,7 @@ struct Alchemist : Module {
 		for (int i = 0; i < channelCount; i++) {
 			outVoltages[i] = inputs[INPUT_POLYPHONIC].getPolyVoltage(i);
 
-			outVoltages[i] = outVoltages[i] * (params[PARAM_GAIN + i].getValue() + clamp(inputs[INPUT_GAIN_CV + i].getVoltage(), -5.f, 5.f) / 5.f);
+			outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() + inputs[INPUT_GAIN_CV + i].getVoltage() / 5.f, 0.f, 2.f);
 
 			if (outVoltages[i] <= -9.5f || outVoltages[i] >= 9.5f) {
 				outVoltages[i] = saturatorFloat.next(outVoltages[i]);
