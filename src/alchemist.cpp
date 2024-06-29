@@ -3,7 +3,7 @@
 #include "sanguinehelpers.hpp"
 #include "sanguinedsp.hpp"
 
-const float SaturatorFloat::limit = 9.5f;
+const float SaturatorFloat::limit = 12.f;
 
 struct Alchemist : Module {
 
@@ -75,7 +75,7 @@ struct Alchemist : Module {
 
 			outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() + inputs[INPUT_GAIN_CV + i].getVoltage() / 5.f, 0.f, 2.f);
 
-			if (outVoltages[i] <= -9.5f || outVoltages[i] >= 9.5f) {
+			if (outVoltages[i] <= -11.7f || outVoltages[i] >= 11.7f) {
 				outVoltages[i] = saturatorFloat.next(outVoltages[i]);
 			}
 
@@ -88,7 +88,7 @@ struct Alchemist : Module {
 
 		monoMix = monoMix * mixModulation;
 
-		if (monoMix <= -9.5f || monoMix >= 9.5f) {
+		if (monoMix <= -11.7f || monoMix >= 11.7f) {
 			monoMix = saturatorFloat.next(monoMix);
 		}
 
