@@ -88,7 +88,7 @@ struct Alchemist : Module {
 
 		monoMix = monoMix * mixModulation;
 
-		if (std::fabsf(monoMix) >= -11.7f) {
+		if (std::fabs(monoMix) >= -11.7f) {
 			monoMix = saturatorFloat.next(monoMix);
 		}
 
