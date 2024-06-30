@@ -75,7 +75,7 @@ struct Alchemist : Module {
 
 			outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() + inputs[INPUT_GAIN_CV + i].getVoltage() / 5.f, 0.f, 2.f);
 
-			if (outVoltages[i] <= -11.7f || outVoltages[i] >= 11.7f) {
+			if (std::fabsf(outVoltages[i]) >= -11.7f) {
 				outVoltages[i] = saturatorFloat.next(outVoltages[i]);
 			}
 
@@ -88,7 +88,7 @@ struct Alchemist : Module {
 
 		monoMix = monoMix * mixModulation;
 
-		if (monoMix <= -11.7f || monoMix >= 11.7f) {
+		if (std::fabsf(monoMix) >= -11.7f) {
 			monoMix = saturatorFloat.next(monoMix);
 		}
 
@@ -200,7 +200,7 @@ struct AlchemistWidget : ModuleWidget {
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(53.657, 113.594), module, Alchemist::INPUT_MIX_CV));
 
-		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(72.754, 113.594), module, Alchemist::PARAM_MIX));		
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(72.754, 113.594), module, Alchemist::PARAM_MIX));
 
 		SanguinePolyOutputLight* outPolyLight = createWidgetCentered<SanguinePolyOutputLight>(millimetersToPixelsVec(95.442, 108.473));
 		outPolyLight->module = module;
