@@ -83,7 +83,7 @@ struct Sphinx : Module {
 	int patternLength = 16;
 	int patternRotation = 0;
 	int patternPadding = 0;
-	int patternShift = 0;
+	int patternAccentRotation = 0;
 	int patternAccents = 0;
 
 	int patternChecksum;
@@ -275,7 +275,7 @@ struct Sphinx : Module {
 		// Distribute accents on sequence
 		finalSequence.fill(0);
 		finalAccents.fill(0);
-		int j = patternFill - patternShift;
+		int j = patternFill - patternAccentRotation;
 		for (int i = 0; i != int(calculatedSequence.size()); i++) {
 			int index = (i + patternRotation) % patternSize;
 			finalSequence[index] = calculatedSequence[i];
@@ -406,16 +406,16 @@ struct Sphinx : Module {
 				inputs[INPUT_ACCENT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 
 			if (patternAccents == 0) {
-				patternShift = 0;
+				patternAccentRotation = 0;
 			}
 			else {
-				patternShift = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
+				patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
 					inputs[INPUT_SHIFT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 			}
 
 			// New sequence in case of parameter change.
-			if (patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternShift != patternChecksum) {
-				patternChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternShift;
+			if (patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternAccentRotation != patternChecksum) {
+				patternChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternAccentRotation;
 				bCalculate = true;
 			}
 
@@ -682,53 +682,41 @@ struct SphinxWidget : ModuleWidget {
 		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(millimetersToPixelsVec(36.617, 68.695),
 			module, Sphinx::PARAM_GATE_MODE, Sphinx::LIGHT_GATE_MODE));
 
-		SanguineTinyNumericDisplay* displayLength = new SanguineTinyNumericDisplay(2);
-		displayLength->box.pos = millimetersToPixelsVec(3.936, 46.499);
-		displayLength->module = module;
+		SanguineTinyNumericDisplay* displayLength = new SanguineTinyNumericDisplay(2, module, 10.386, 50.499);
 		sphinxFrameBuffer->addChild(displayLength);
 
 		if (module)
 			displayLength->values.numberValue = &module->patternLength;
 
-		SanguineTinyNumericDisplay* displayFill = new SanguineTinyNumericDisplay(2);
-		displayFill->box.pos = millimetersToPixelsVec(21.369, 46.499);
-		displayFill->module = module;
+		SanguineTinyNumericDisplay* displayFill = new SanguineTinyNumericDisplay(2, module, 27.82, 50.499);
 		sphinxFrameBuffer->addChild(displayFill);
 
 		if (module)
 			displayFill->values.numberValue = &module->patternFill;
 
-		SanguineTinyNumericDisplay* displayRotation = new SanguineTinyNumericDisplay(2);
-		displayRotation->box.pos = millimetersToPixelsVec(38.964, 46.499);
-		displayRotation->module = module;
+		SanguineTinyNumericDisplay* displayRotation = new SanguineTinyNumericDisplay(2, module, 45.414, 50.499);
 		sphinxFrameBuffer->addChild(displayRotation);
 
 		if (module)
 			displayRotation->values.numberValue = &module->patternRotation;
 
-		SanguineTinyNumericDisplay* displayPadding = new SanguineTinyNumericDisplay(2);
-		displayPadding->box.pos = millimetersToPixelsVec(3.936, 82.77);
-		displayPadding->module = module;
+		SanguineTinyNumericDisplay* displayPadding = new SanguineTinyNumericDisplay(2, module, 10.386, 86.77);
 		sphinxFrameBuffer->addChild(displayPadding);
 
 		if (module)
 			displayPadding->values.numberValue = &module->patternPadding;
 
-		SanguineTinyNumericDisplay* displayAccent = new SanguineTinyNumericDisplay(2);
-		displayAccent->box.pos = millimetersToPixelsVec(21.369, 82.77);
-		displayAccent->module = module;
+		SanguineTinyNumericDisplay* displayAccent = new SanguineTinyNumericDisplay(2, module, 27.82, 86.77);
 		sphinxFrameBuffer->addChild(displayAccent);
 
 		if (module)
 			displayAccent->values.numberValue = &module->patternAccents;
 
-		SanguineTinyNumericDisplay* displayShift = new SanguineTinyNumericDisplay(2);
-		displayShift->box.pos = millimetersToPixelsVec(38.964, 82.77);
-		displayShift->module = module;
-		sphinxFrameBuffer->addChild(displayShift);
+		SanguineTinyNumericDisplay* displayAccentRotation = new SanguineTinyNumericDisplay(2, module, 45.414, 86.77);
+		sphinxFrameBuffer->addChild(displayAccentRotation);
 
 		if (module)
-			displayShift->values.numberValue = &module->patternShift;
+			displayAccentRotation->values.numberValue = &module->patternAccentRotation;
 
 
 		addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.326, 112.894), module, Sphinx::INPUT_CLOCK));

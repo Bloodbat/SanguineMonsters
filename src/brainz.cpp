@@ -1050,77 +1050,59 @@ struct BrainzWidget : ModuleWidget {
 		FramebufferWidget* brainzFrameBuffer = new FramebufferWidget();
 		addChild(brainzFrameBuffer);
 
-		SanguineTinyNumericDisplay* displayStepsACurrent = new SanguineTinyNumericDisplay(2);
-		displayStepsACurrent->box.pos = millimetersToPixelsVec(12.479, 30.908);
-		displayStepsACurrent->module = module;
+		SanguineTinyNumericDisplay* displayStepsACurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 34.908);		
 		brainzFrameBuffer->addChild(displayStepsACurrent);
 
 		if (module)
 			displayStepsACurrent->values.numberValue = &module->currentCounters[0];
 
-		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2);
-		displayStepsATotal->box.pos = millimetersToPixelsVec(29.757, 30.908);
-		displayStepsATotal->module = module;
+		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2, module, 36.207, 34.908);		
 		brainzFrameBuffer->addChild(displayStepsATotal);
 
 		if (module)
 			displayStepsATotal->values.numberValue = &module->maxCounters[0];
 
-		SanguineTinyNumericDisplay* displayStepsBCurrent = new SanguineTinyNumericDisplay(2);
-		displayStepsBCurrent->box.pos = millimetersToPixelsVec(12.479, 81.938);
-		displayStepsBCurrent->module = module;
+		SanguineTinyNumericDisplay* displayStepsBCurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 85.938);		
 		brainzFrameBuffer->addChild(displayStepsBCurrent);
 
 		if (module)
 			displayStepsBCurrent->values.numberValue = &module->currentCounters[1];
 
-		SanguineTinyNumericDisplay* displayStepsBTotal = new SanguineTinyNumericDisplay(2);
-		displayStepsBTotal->box.pos = millimetersToPixelsVec(29.757, 81.938);
-		displayStepsBTotal->module = module;
+		SanguineTinyNumericDisplay* displayStepsBTotal = new SanguineTinyNumericDisplay(2, module, 36.207, 85.938);
 		brainzFrameBuffer->addChild(displayStepsBTotal);
 
 		if (module)
 			displayStepsBTotal->values.numberValue = &module->maxCounters[1];
 
-		SanguineTinyNumericDisplay* displayStepsCCurrent = new SanguineTinyNumericDisplay(2);
-		displayStepsCCurrent->box.pos = millimetersToPixelsVec(84.441, 81.938);
-		displayStepsCCurrent->module = module;
+		SanguineTinyNumericDisplay* displayStepsCCurrent = new SanguineTinyNumericDisplay(2, module, 90.891, 85.938);
 		brainzFrameBuffer->addChild(displayStepsCCurrent);
 
 		if (module)
 			displayStepsCCurrent->values.numberValue = &module->currentCounters[2];
 
-		SanguineTinyNumericDisplay* displayStepsCTotal = new SanguineTinyNumericDisplay(2);
-		displayStepsCTotal->box.pos = millimetersToPixelsVec(101.731, 81.938);
-		displayStepsCTotal->module = module;
+		SanguineTinyNumericDisplay* displayStepsCTotal = new SanguineTinyNumericDisplay(2, module, 108.181, 85.938);
 		brainzFrameBuffer->addChild(displayStepsCTotal);
 
 		if (module)
 			displayStepsCTotal->values.numberValue = &module->maxCounters[2];
 
-		SanguineTinyNumericDisplay* displayMetronomeSpeed = new SanguineTinyNumericDisplay(2);
-		displayMetronomeSpeed->box.pos = millimetersToPixelsVec(104.407, 24.914);
-		displayMetronomeSpeed->module = module;
+		SanguineTinyNumericDisplay* displayMetronomeSpeed = new SanguineTinyNumericDisplay(2, module, 110.857, 28.914);
 		brainzFrameBuffer->addChild(displayMetronomeSpeed);
 
 		if (module)
 			displayMetronomeSpeed->values.numberValue = &module->metronomeSpeed;
 
-		SanguineTinyNumericDisplay* displayMetronomeCurrentStep = new SanguineTinyNumericDisplay(2);
-		displayMetronomeCurrentStep->box.pos = millimetersToPixelsVec(88.595, 36.647);
-		displayMetronomeCurrentStep->module = module;
+		SanguineTinyNumericDisplay* displayMetronomeCurrentStep = new SanguineTinyNumericDisplay(2, module, 95.045, 40.647);
 		brainzFrameBuffer->addChild(displayMetronomeCurrentStep);
 
 		if (module)
 			displayMetronomeCurrentStep->values.numberValue = &module->metronomeStepsDone;
 
-		SanguineTinyNumericDisplay* displayMetronomeSteps = new SanguineTinyNumericDisplay(2);
-		displayMetronomeSteps->box.pos = millimetersToPixelsVec(104.407, 36.647);
-		displayMetronomeSteps->module = module;
-		brainzFrameBuffer->addChild(displayMetronomeSteps);
+		SanguineTinyNumericDisplay* displayMetronomeTotalSteps = new SanguineTinyNumericDisplay(2, module, 110.857, 40.647);
+		brainzFrameBuffer->addChild(displayMetronomeTotalSteps);
 
 		if (module)
-			displayMetronomeSteps->values.numberValue = &module->metronomeSteps;
+			displayMetronomeTotalSteps->values.numberValue = &module->metronomeSteps;
 
 		SanguineShapedLight* inPlayLight = new SanguineShapedLight();
 		inPlayLight->box.pos = millimetersToPixelsVec(6.452, 107.701);

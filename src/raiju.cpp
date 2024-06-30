@@ -234,73 +234,55 @@ struct RaijuWidget : ModuleWidget {
 		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_on.svg")));
 		addParam(step8);
 
-		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2);
-		displayChannelCount->box.pos = millimetersToPixelsVec(104.581, 6.497);
-		displayChannelCount->module = module;
+		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2, module, 112.331, 13.997);
 		raijuFrameBuffer->addChild(displayChannelCount);
 
 		if (module)
 			displayChannelCount->values.numberValue = (&module->currentChannelCount);
 
-		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7);
-		displayVoltage1->box.pos = millimetersToPixelsVec(25.703, 27.902);
-		displayVoltage1->module = module;
+		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7, module, 45.663, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage1);
 
 		if (module)
 			displayVoltage1->values.displayText = &module->strVoltages[0];
 
-		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7);
-		displayVoltage2->box.pos = millimetersToPixelsVec(25.703, 47.591);
-		displayVoltage2->module = module;
+		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7, module, 45.663, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage2);
 
 		if (module)
 			displayVoltage2->values.displayText = &module->strVoltages[1];
 
-		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7);
-		displayVoltage3->box.pos = millimetersToPixelsVec(25.703, 67.279);
-		displayVoltage3->module = module;
+		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7, module, 45.663, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage3);
 
 		if (module)
 			displayVoltage3->values.displayText = &module->strVoltages[2];
 
-		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7);
-		displayVoltage4->box.pos = millimetersToPixelsVec(25.703, 86.968);
-		displayVoltage4->module = module;
+		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7, module, 45.663, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage4);
 
 		if (module)
 			displayVoltage4->values.displayText = &module->strVoltages[3];
 
-		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7);
-		displayVoltage5->box.pos = millimetersToPixelsVec(71.536, 27.902);
-		displayVoltage5->module = module;
+		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7, module, 91.495, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage5);
 
 		if (module)
 			displayVoltage5->values.displayText = &module->strVoltages[4];
 
-		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7);
-		displayVoltage6->box.pos = millimetersToPixelsVec(71.536, 47.591);
-		displayVoltage6->module = module;
+		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7, module, 91.495, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage6);
 
 		if (module)
 			displayVoltage6->values.displayText = &module->strVoltages[5];
 
-		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7);
-		displayVoltage7->box.pos = millimetersToPixelsVec(71.536, 67.279);
-		displayVoltage7->module = module;
+		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7, module, 91.495, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage7);
 
 		if (module)
 			displayVoltage7->values.displayText = &module->strVoltages[6];
 
-		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7);
-		displayVoltage8->box.pos = millimetersToPixelsVec(71.536, 86.968);
-		displayVoltage8->module = module;
+		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7, module, 91.495, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage8);
 
 		if (module)

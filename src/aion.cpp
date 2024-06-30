@@ -248,9 +248,7 @@ struct AionWidget : ModuleWidget {
 
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(9.3, 26.424), module, Aion::LIGHT_TIMER_1));
 
-		SanguineTinyNumericDisplay* displayTimer1 = new SanguineTinyNumericDisplay(2);
-		displayTimer1->box.pos = millimetersToPixelsVec(15.226, 23.047);
-		displayTimer1->module = module;
+		SanguineTinyNumericDisplay* displayTimer1 = new SanguineTinyNumericDisplay(2, module, 21.675, 27.047);
 		aionFramebuffer->addChild(displayTimer1);
 
 		if (module)
@@ -313,9 +311,7 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(73.316, 27.047), module, Aion::PARAM_TIMER_2));
 
-		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2);
-		displayTimer2->box.pos = millimetersToPixelsVec(83.554, 23.047);
-		displayTimer2->module = module;
+		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 90.004, 27.047);
 		aionFramebuffer->addChild(displayTimer2);
 
 		if (module)
@@ -358,9 +354,7 @@ struct AionWidget : ModuleWidget {
 
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(9.3, 73.246), module, Aion::LIGHT_TIMER_3));
 
-		SanguineTinyNumericDisplay* displayTimer3 = new SanguineTinyNumericDisplay(2);
-		displayTimer3->box.pos = millimetersToPixelsVec(15.226, 69.246);
-		displayTimer3->module = module;
+		SanguineTinyNumericDisplay* displayTimer3 = new SanguineTinyNumericDisplay(2, module, 21.675, 73.246);
 		aionFramebuffer->addChild(displayTimer3);
 
 		if (module)
@@ -423,9 +417,7 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(73.316, 73.246), module, Aion::PARAM_TIMER_4));
 
-		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2);
-		displayTimer4->box.pos = millimetersToPixelsVec(83.554, 69.246);
-		displayTimer4->module = module;
+		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 90.004, 73.246);
 		aionFramebuffer->addChild(displayTimer4);
 
 		if (module)

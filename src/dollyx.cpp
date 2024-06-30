@@ -145,21 +145,16 @@ struct DollyXWidget : ModuleWidget {
 		FramebufferWidget* dollyFrameBuffer = new FramebufferWidget();
 		addChild(dollyFrameBuffer);
 
-		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay(2);
-		displayCloner1->box.pos = millimetersToPixelsVec(6.475, 17.493);
-		displayCloner1->module = module;
+		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay(2, module, 13.713, 24.498);
 		dollyFrameBuffer->addChild(displayCloner1);
 
-		if (module)
-			displayCloner1->values.numberValue = (&module->cloneCounts[0]);
-
-		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay(2);
-		displayCloner2->box.pos = millimetersToPixelsVec(6.475, 72.164);
-		displayCloner2->module = module;
+		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay(2, module, 13.713, 79.168);
 		dollyFrameBuffer->addChild(displayCloner2);
 
-		if (module)
+		if (module) {
+			displayCloner1->values.numberValue = (&module->cloneCounts[0]);
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
+		}
 
 		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight();
 		amalgamLight1->box.pos = millimetersToPixelsVec(7.337, 33.237);

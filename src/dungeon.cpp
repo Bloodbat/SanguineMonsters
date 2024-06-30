@@ -317,9 +317,7 @@ struct DungeonWidget : ModuleWidget {
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(10.027, 12.334), module, Dungeon::PARAM_MODE));
 
-		SanguineTinyNumericDisplay* displayMode = new SanguineTinyNumericDisplay(2);
-		displayMode->box.pos = millimetersToPixelsVec(29.11, 12.934);
-		displayMode->module = module;
+		SanguineTinyNumericDisplay* displayMode = new SanguineTinyNumericDisplay(2, module, 35.56, 16.934);
 		displayMode->displayType = DISPLAY_STRING;
 		dungeonFrameBuffer->addChild(displayMode);
 
