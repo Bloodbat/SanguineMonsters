@@ -75,7 +75,7 @@ struct Alchemist : Module {
 
 			outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() + inputs[INPUT_GAIN_CV + i].getVoltage() / 5.f, 0.f, 2.f);
 
-			if (std::fabsf(outVoltages[i]) >= -11.7f) {
+			if (std::fabs(outVoltages[i]) >= -11.7f) {
 				outVoltages[i] = saturatorFloat.next(outVoltages[i]);
 			}
 
