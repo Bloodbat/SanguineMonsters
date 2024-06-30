@@ -296,7 +296,7 @@ struct SuperSwitch81Widget : ModuleWidget {
 	SuperSwitch81Widget(SuperSwitch81* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_13hp_purple.svg", "res/switch8-1.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_13hp_purple.svg", "res/switch8-1.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -451,32 +451,22 @@ struct SuperSwitch81Widget : ModuleWidget {
 		FramebufferWidget* switchFrameBuffer = new FramebufferWidget();
 		addChild(switchFrameBuffer);
 
-		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay(2, module, 39.397, 24.472);
+		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay(2, module, 39.397, 21.472);
 		switchFrameBuffer->addChild(display);
 
 		if (module)
 			display->values.numberValue = (&module->stepCount);
 
-		SanguineShapedLight* stepsLight = new SanguineShapedLight();
-		stepsLight->box.pos = millimetersToPixelsVec(35.296, 30.505);
-		stepsLight->module = module;
-		stepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/light_steps.svg")));
+		SanguineShapedLight* stepsLight = new SanguineShapedLight(module, "res/seqs/light_steps.svg", 39.026, 34.372);
 		addChild(stepsLight);
 
-		SanguinePolyInputLight* inLight = new SanguinePolyInputLight();
-		inLight->box.pos = Vec(27.78, 40.36);
-		inLight->module = module;
+		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 13.041, 15.714);
 		addChild(inLight);
 
-		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
-		outLight->box.pos = millimetersToPixelsVec(52.509, 106.247);
-		outLight->module = module;
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 55.803, 108.311);
 		addChild(outLight);
 
-		SanguineShapedLight* bloodLogo = new SanguineShapedLight();
-		bloodLogo->box.pos = Vec(102.20, 326);
-		bloodLogo->module = module;
-		bloodLogo->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy_small.svg")));
+		SanguineShapedLight* bloodLogo = new SanguineShapedLight(module, "res/blood_glowy_small.svg", 35.585, 112.707);
 		addChild(bloodLogo);
 	}
 };

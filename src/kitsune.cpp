@@ -95,7 +95,7 @@ struct KitsuneWidget : ModuleWidget {
 	KitsuneWidget(Kitsune* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_10hp_purple.svg", "res/kitsune.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_10hp_purple.svg", "res/kitsune.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -108,16 +108,12 @@ struct KitsuneWidget : ModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(12.7, 30.085), module, Kitsune::PARAM_OFFSET1));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(12.701, 41.9), module, Kitsune::LIGHT_VOLTAGE1));
 
-		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight;
-		lightInput1->box.pos = millimetersToPixelsVec(2.194, 46.335);
-		lightInput1->module = module;
+		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight(module, 5.488, 48.4);		
 		addChild(lightInput1);
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(5.488, 55.888), module, Kitsune::INPUT_VOLTAGE1));
 
-		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight;
-		lightOutput1->box.pos = millimetersToPixelsVec(16.305, 45.935);
-		lightOutput1->module = module;
+		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight(module, 19.599, 47.999);		
 		addChild(lightOutput1);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(19.599, 55.888), module, Kitsune::OUTPUT_VOLTAGE1));
@@ -127,17 +123,13 @@ struct KitsuneWidget : ModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.099, 30.085), module, Kitsune::PARAM_OFFSET2));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.1, 41.9), module, Kitsune::LIGHT_VOLTAGE2));
 
-		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight;
-		lightInput2->box.pos = millimetersToPixelsVec(2.194, 108.869);
-		lightInput2->module = module;
+		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight(module, 30.887, 48.4);
 		addChild(lightInput2);
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(30.887, 55.888), module, Kitsune::INPUT_VOLTAGE2));
 
 
-		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight;
-		lightOutput2->box.pos = millimetersToPixelsVec(16.305, 108.469);
-		lightOutput2->module = module;
+		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 44.998, 47.999);
 		addChild(lightOutput2);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(44.998, 55.888), module, Kitsune::OUTPUT_VOLTAGE2));
@@ -147,16 +139,12 @@ struct KitsuneWidget : ModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(12.7, 92.618), module, Kitsune::PARAM_OFFSET3));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(12.701, 104.433), module, Kitsune::LIGHT_VOLTAGE3));
 
-		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight;
-		lightInput3->box.pos = millimetersToPixelsVec(27.593, 46.335);
-		lightInput3->module = module;
+		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight(module, 5.488, 110.933);
 		addChild(lightInput3);
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(5.488, 118.422), module, Kitsune::INPUT_VOLTAGE3));
 
-		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight;
-		lightOutput3->box.pos = millimetersToPixelsVec(41.704, 45.935);
-		lightOutput3->module = module;
+		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight(module, 19.599, 110.533);
 		addChild(lightOutput3);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(19.599, 118.422), module, Kitsune::OUTPUT_VOLTAGE3));
@@ -166,16 +154,12 @@ struct KitsuneWidget : ModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.099, 92.618), module, Kitsune::PARAM_OFFSET4));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.1, 104.433), module, Kitsune::LIGHT_VOLTAGE4));
 
-		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight;
-		lightInput4->box.pos = millimetersToPixelsVec(27.593, 108.869);
-		lightInput4->module = module;
+		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight(module, 30.887, 110.933);
 		addChild(lightInput4);
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(30.887, 118.422), module, Kitsune::INPUT_VOLTAGE4));
 
-		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight;
-		lightOutput4->box.pos = millimetersToPixelsVec(41.704, 108.469);
-		lightOutput4->module = module;
+		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight(module, 44.998, 110.533);
 		addChild(lightOutput4);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(44.998, 118.422), module, Kitsune::OUTPUT_VOLTAGE4));

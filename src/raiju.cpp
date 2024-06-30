@@ -140,7 +140,7 @@ struct RaijuWidget : ModuleWidget {
 	RaijuWidget(Raiju* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_27hp_purple.svg", "res/raiju.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_27hp_purple.svg", "res/raiju.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -288,27 +288,16 @@ struct RaijuWidget : ModuleWidget {
 		if (module)
 			displayVoltage8->values.displayText = &module->strVoltages[7];
 
-		SanguineShapedLight* channelsLight = new SanguineShapedLight();
-		channelsLight->box.pos = millimetersToPixelsVec(125.219, 16.15);
-		channelsLight->module = module;
-		channelsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/channels_lit.svg")));
+		SanguineShapedLight* channelsLight = new SanguineShapedLight(module, "res/channels_lit.svg", 127.365, 18.999);
 		addChild(channelsLight);
 
-		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
-		outLight->box.pos = millimetersToPixelsVec(79.456, 102.594);
-		outLight->module = module;
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 82.75, 104.658);
 		addChild(outLight);
 
-		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = millimetersToPixelsVec(4.718, 105.882);
-		bloodLight->module = module;
-		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 6.615, 109.819);
 		addChild(bloodLight);
 
-		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = millimetersToPixelsVec(12.04, 113.849);
-		monstersLight->module = module;
-		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
+		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 19.747, 116.774);
 		addChild(monstersLight);
 	}
 };

@@ -218,7 +218,7 @@ struct OraculusWidget : ModuleWidget {
 	OraculusWidget(Oraculus* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_7hp_purple.svg", "res/oraculus.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_7hp_purple.svg", "res/oraculus.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -264,14 +264,10 @@ struct OraculusWidget : ModuleWidget {
 		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
 		oraculusFrameBuffer->addChild(btnReset);
 
-		SanguinePolyInputLight* InPolyLight = new SanguinePolyInputLight();
-		InPolyLight->box.pos = millimetersToPixelsVec(3.158, 12.721);
-		InPolyLight->module = module;
+		SanguinePolyInputLight* InPolyLight = new SanguinePolyInputLight(module, 6.452, 14.785);
 		addChild(InPolyLight);
 
-		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight();
-		outMonoLight->box.pos = millimetersToPixelsVec(14.486, 104.5);
-		outMonoLight->module = module;
+		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight(module, 17.78, 106.565);
 		addChild(outMonoLight);
 
 		SanguineLightUpSwitch* switchNoRepeats = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(9.454, 41.189),

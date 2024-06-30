@@ -140,7 +140,7 @@ struct AlchemistWidget : ModuleWidget {
 	AlchemistWidget(Alchemist* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_23hp_purple.svg", "res/alchemist.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_23hp_purple.svg", "res/alchemist.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -176,38 +176,26 @@ struct AlchemistWidget : ModuleWidget {
 			currentCVInputX += deltaX;
 		}
 
-		SanguinePolyInputLight* inLight = createWidgetCentered<SanguinePolyInputLight>(millimetersToPixelsVec(7.876, 108.473));
-		inLight->module = module;
+		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 7.876, 108.473);
 		addChild(inLight);
 
-		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
-		bloodLight->module = module;
-		bloodLight->box.pos = centerWidgetInMillimeters(bloodLight, 22.43f, 110.15f);
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 22.43, 110.15);
 		addChild(bloodLight);
 
-		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->module = module;
-		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
-		monstersLight->box.pos = centerWidgetInMillimeters(monstersLight, 35.563f, 117.106f);
+		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 35.563, 117.106);
 		addChild(monstersLight);
 
-		SanguineShapedLight* sumLight = new SanguineShapedLight();
-		sumLight->module = module;
-		sumLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/sum_light_on.svg")));
-		sumLight->box.pos = centerWidgetInMillimeters(sumLight, 62.155, 108.473);
+		SanguineShapedLight* sumLight = new SanguineShapedLight(module, "res/sum_light_on.svg", 62.155, 108.473);
 		addChild(sumLight);
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(53.657, 113.594), module, Alchemist::INPUT_MIX_CV));
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(72.754, 113.594), module, Alchemist::PARAM_MIX));
 
-		SanguinePolyOutputLight* outPolyLight = createWidgetCentered<SanguinePolyOutputLight>(millimetersToPixelsVec(95.442, 108.473));
-		outPolyLight->module = module;
+		SanguinePolyOutputLight* outPolyLight = new SanguinePolyOutputLight(module, 95.442, 108.473);
 		addChild(outPolyLight);
 
-		SanguineMonoOutputLight* outMonoLight = createWidgetCentered<SanguineMonoOutputLight>(millimetersToPixelsVec(108.963, 108.473));
-		outMonoLight->module = module;
+		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight(module, 108.963, 108.473);
 		addChild(outMonoLight);
 
 		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 119.511), module, Alchemist::LIGHT_VU));

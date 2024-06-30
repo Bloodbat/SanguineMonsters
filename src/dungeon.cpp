@@ -294,7 +294,7 @@ struct DungeonWidget : ModuleWidget {
 	DungeonWidget(Dungeon* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_14hp_purple.svg", "res/dungeon.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_14hp_purple.svg", "res/dungeon.svg");
 		setPanel(panel);
 
 		FramebufferWidget* dungeonFrameBuffer = new FramebufferWidget();
@@ -333,38 +333,22 @@ struct DungeonWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 100.733), module, Dungeon::OUTPUT_NOISE));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 116.011), module, Dungeon::OUTPUT_VOLTAGE));
 
-		SanguineShapedLight* clockLight = new SanguineShapedLight();
-		clockLight->box.pos = millimetersToPixelsVec(7.078, 91.346);
-		clockLight->module = module;
-		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
+		SanguineShapedLight* clockLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 8.762, 93.246);		
 		addChild(clockLight);
 
-		SanguineMonoInputLight* inLight = new SanguineMonoInputLight();
-		inLight->box.pos = millimetersToPixelsVec(5.468, 106.547);
-		inLight->module = module;
+		SanguineMonoInputLight* inLight = new SanguineMonoInputLight(module, 8.762, 108.611);		
 		addChild(inLight);
 
-		SanguineShapedLight* noiseLight = new SanguineShapedLight();
-		noiseLight->box.pos = millimetersToPixelsVec(59.092, 91.72);
-		noiseLight->module = module;
-		noiseLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/noise_lit.svg")));
+		SanguineShapedLight* noiseLight = new SanguineShapedLight(module, "res/noise_lit.svg", 62.386, 93.246);		
 		addChild(noiseLight);
 
-		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight();
-		outLight->box.pos = millimetersToPixelsVec(59.092, 106.247);
-		outLight->module = module;
+		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight(module, 62.386, 108.311);		
 		addChild(outLight);
 
-		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = millimetersToPixelsVec(23.899, 105.766);
-		bloodLight->module = module;
-		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 25.796, 109.702);
 		addChild(bloodLight);
 
-		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = millimetersToPixelsVec(31.221, 113.733);
-		monstersLight->module = module;
-		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
+		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 38.928, 116.658);
 		addChild(monstersLight);
 	}
 

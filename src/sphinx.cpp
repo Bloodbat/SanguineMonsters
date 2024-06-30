@@ -630,7 +630,7 @@ struct SphinxWidget : ModuleWidget {
 	SphinxWidget(Sphinx* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_11hp_purple.svg", "res/sphinx.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_11hp_purple.svg", "res/sphinx.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -726,28 +726,16 @@ struct SphinxWidget : ModuleWidget {
 		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.543, 112.894), module, Sphinx::OUTPUT_GATE));
 		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(48.448, 112.894), module, Sphinx::OUTPUT_ACCENT));
 
-		SanguineShapedLight* clockLight = new SanguineShapedLight();
-		clockLight->box.pos = millimetersToPixelsVec(5.642, 104.058);
-		clockLight->module = module;
-		clockLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
+		SanguineShapedLight* clockLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 7.326, 105.958);
 		addChild(clockLight);
 
-		SanguineShapedLight* resetLight = new SanguineShapedLight();
-		resetLight->box.pos = millimetersToPixelsVec(17.331, 104.514);
-		resetLight->module = module;
-		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
+		SanguineShapedLight* resetLight = new SanguineShapedLight(module, "res/reset_buttonless_lit_mono.svg", 19.231, 105.958);
 		addChild(resetLight);
 
-		SanguineShapedLight* gateLight = new SanguineShapedLight();
-		gateLight->box.pos = millimetersToPixelsVec(34.643, 104.058);
-		gateLight->module = module;
-		gateLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/gate_lit_mono.svg")));
+		SanguineShapedLight* gateLight = new SanguineShapedLight(module, "res/gate_lit_mono.svg", 36.543, 105.958);
 		addChild(gateLight);
 
-		SanguineShapedLight* accentLight = new SanguineShapedLight();
-		accentLight->box.pos = millimetersToPixelsVec(46.548, 104.058);
-		accentLight->module = module;
-		accentLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/accent_lit_mono.svg")));
+		SanguineShapedLight* accentLight = new SanguineShapedLight(module, "res/accent_lit_mono.svg", 48.448, 105.958);
 		addChild(accentLight);
 	}
 };

@@ -322,7 +322,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 	SuperSwitch18Widget(SuperSwitch18* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_13hp_purple.svg", "res/switch1-8.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_13hp_purple.svg", "res/switch1-8.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -483,26 +483,16 @@ struct SuperSwitch18Widget : ModuleWidget {
 		if (module)
 			display->values.numberValue = (&module->stepCount);
 
-		SanguineShapedLight* stepsLight = new SanguineShapedLight();
-		stepsLight->box.pos = millimetersToPixelsVec(23.285, 30.505);
-		stepsLight->module = module;
-		stepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/seqs/light_steps.svg")));
+		SanguineShapedLight* stepsLight = new SanguineShapedLight(module, "res/seqs/light_steps.svg", 27.015, 34.372);
 		addChild(stepsLight);
 
-		SanguinePolyInputLight* inLight = new SanguinePolyInputLight();
-		inLight->box.pos = millimetersToPixelsVec(6.943, 106.547);
-		inLight->module = module;
+		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 10.237, 108.611);
 		addChild(inLight);
 
-		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight();
-		outLight->box.pos = millimetersToPixelsVec(50.106, 13.049);
-		outLight->module = module;
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 53.4, 15.114);
 		addChild(outLight);
 
-		SanguineShapedLight* bloodLogo = new SanguineShapedLight();
-		bloodLogo->box.pos = millimetersToPixelsVec(25.038, 110.39);
-		bloodLogo->module = module;
-		bloodLogo->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy_small.svg")));
+		SanguineShapedLight* bloodLogo = new SanguineShapedLight(module, "res/blood_glowy_small.svg", 26.154, 112.707);
 		addChild(bloodLogo);
 	}
 };

@@ -233,7 +233,7 @@ struct AionWidget : ModuleWidget {
 	AionWidget(Aion* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_22hp_purple.svg", "res/aion.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_22hp_purple.svg", "res/aion.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -290,9 +290,7 @@ struct AionWidget : ModuleWidget {
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.161, 51.545), module, Aion::INPUT_RESET_1));
 
-		SanguineMonoOutputLight* lightOutput1 = new SanguineMonoOutputLight;
-		lightOutput1->box.pos = millimetersToPixelsVec(44.576, 42.482);
-		lightOutput1->module = module;
+		SanguineMonoOutputLight* lightOutput1 = new SanguineMonoOutputLight(module, 47.869, 44.546);		
 		addChild(lightOutput1);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(47.87, 51.545), module, Aion::OUTPUT_TRIGGER_1));
@@ -343,9 +341,7 @@ struct AionWidget : ModuleWidget {
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(91.424, 51.545), module, Aion::INPUT_TRIGGER_2));
 
-		SanguineMonoOutputLight* lightOutput2 = new SanguineMonoOutputLight;
-		lightOutput2->box.pos = millimetersToPixelsVec(101.722, 42.482);
-		lightOutput2->module = module;
+		SanguineMonoOutputLight* lightOutput2 = new SanguineMonoOutputLight(module, 105.016, 44.546);		
 		addChild(lightOutput2);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(105.016, 51.545), module, Aion::OUTPUT_TRIGGER_2));
@@ -396,9 +392,7 @@ struct AionWidget : ModuleWidget {
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.261, 97.748), module, Aion::INPUT_RESET_3));
 
-		SanguineMonoOutputLight* lightOutput3 = new SanguineMonoOutputLight;
-		lightOutput3->box.pos = millimetersToPixelsVec(44.576, 88.684);
-		lightOutput3->module = module;
+		SanguineMonoOutputLight* lightOutput3 = new SanguineMonoOutputLight(module, 47.869, 90.749);
 		addChild(lightOutput3);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(47.87, 97.748), module, Aion::OUTPUT_TRIGGER_3));
@@ -449,25 +443,17 @@ struct AionWidget : ModuleWidget {
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(91.242, 97.748), module, Aion::INPUT_TRIGGER_4));
 
-		SanguineMonoOutputLight* lightOutput4 = new SanguineMonoOutputLight;
-		lightOutput4->box.pos = millimetersToPixelsVec(101.722, 88.684);
-		lightOutput4->module = module;
+		SanguineMonoOutputLight* lightOutput4 = new SanguineMonoOutputLight(module, 105.016, 90.749);
 		addChild(lightOutput4);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(105.046, 97.748), module, Aion::OUTPUT_TRIGGER_4));
 
 		// Sanguine logo lights
 
-		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = millimetersToPixelsVec(44.219, 109.544);
-		bloodLight->module = module;
-		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 46.116, 113.48);		
 		addChild(bloodLight);
 
-		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = millimetersToPixelsVec(51.541, 117.51);
-		monstersLight->module = module;
-		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
+		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 59.248, 120.435);
 		addChild(monstersLight);
 	}
 };

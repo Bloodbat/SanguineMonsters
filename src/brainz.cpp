@@ -900,44 +900,38 @@ struct Brainz : Module {
 };
 
 struct YellowGateLight : SanguineShapedLight {
-	YellowGateLight(Module* newModule) {
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/gate_lit_mono.svg")));
-		module = newModule;
+	YellowGateLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
+		SanguineShapedLight(theModule, "res/gate_lit_mono.svg", X, Y, createCentered) {
 	}
 };
 
 struct BluePowerLight : SanguineShapedLight {
-	BluePowerLight(Module* newModule) {
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/power_blue_lit.svg")));
-		module = newModule;
+	BluePowerLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
+		SanguineShapedLight(theModule, "res/power_blue_lit.svg", X, Y, createCentered) {
 	}
 };
 
 struct BlueAdvancedClockLight : SanguineShapedLight {
-	BlueAdvancedClockLight(Module* newModule) {
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_move_blue_lit.svg")));
-		module = newModule;
+	BlueAdvancedClockLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
+		SanguineShapedLight(theModule, "res/clock_move_blue_lit.svg", X, Y, createCentered) {
 	}
 };
 
 struct BlueInitialClockLight : SanguineShapedLight {
-	BlueInitialClockLight(Module* newModule) {
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_still_blue_lit.svg")));
-		module = newModule;
+	BlueInitialClockLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
+		SanguineShapedLight(theModule, "res/clock_still_blue_lit.svg", X, Y, createCentered) {
 	}
 };
 
 struct BlueRightArrowLight : SanguineShapedLight {
-	BlueRightArrowLight(Module* newModule) {
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/arrow_right_blue_lit.svg")));
-		module = newModule;
+	BlueRightArrowLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
+		SanguineShapedLight(theModule, "res/arrow_right_blue_lit.svg", X, Y, createCentered) {
 	}
 };
 
 struct BlueQuarterNoteLight : SanguineShapedLight {
-	BlueQuarterNoteLight(Module* newModule) {
-		setSvg(Svg::load(asset::plugin(pluginInstance, "res/quarter_note_blue_lit.svg")));
-		module = newModule;
+	BlueQuarterNoteLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
+		SanguineShapedLight(theModule, "res/quarter_note_blue_lit.svg", X, Y, createCentered) {
 	}
 };
 
@@ -945,7 +939,7 @@ struct BrainzWidget : ModuleWidget {
 	BrainzWidget(Brainz* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_25hp_purple.svg", "res/brainz.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_25hp_purple.svg", "res/brainz.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -1050,19 +1044,19 @@ struct BrainzWidget : ModuleWidget {
 		FramebufferWidget* brainzFrameBuffer = new FramebufferWidget();
 		addChild(brainzFrameBuffer);
 
-		SanguineTinyNumericDisplay* displayStepsACurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 34.908);		
+		SanguineTinyNumericDisplay* displayStepsACurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 34.908);
 		brainzFrameBuffer->addChild(displayStepsACurrent);
 
 		if (module)
 			displayStepsACurrent->values.numberValue = &module->currentCounters[0];
 
-		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2, module, 36.207, 34.908);		
+		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2, module, 36.207, 34.908);
 		brainzFrameBuffer->addChild(displayStepsATotal);
 
 		if (module)
 			displayStepsATotal->values.numberValue = &module->maxCounters[0];
 
-		SanguineTinyNumericDisplay* displayStepsBCurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 85.938);		
+		SanguineTinyNumericDisplay* displayStepsBCurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 85.938);
 		brainzFrameBuffer->addChild(displayStepsBCurrent);
 
 		if (module)
@@ -1104,152 +1098,97 @@ struct BrainzWidget : ModuleWidget {
 		if (module)
 			displayMetronomeTotalSteps->values.numberValue = &module->metronomeSteps;
 
-		SanguineShapedLight* inPlayLight = new SanguineShapedLight();
-		inPlayLight->box.pos = millimetersToPixelsVec(6.452, 107.701);
-		inPlayLight->module = module;
-		inPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
+		SanguineShapedLight* inPlayLight = new SanguineShapedLight(module, "res/yellow_play_lit.svg", 7.402, 109.601);
 		addChild(inPlayLight);
 
-		SanguineShapedLight* resetLight = new SanguineShapedLight();
-		resetLight->box.pos = millimetersToPixelsVec(18.467, 108.157);
-		resetLight->module = module;
-		resetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
+		SanguineShapedLight* resetLight = new SanguineShapedLight(module, "res/reset_buttonless_lit_mono.svg", 20.367, 109.601);
 		addChild(resetLight);
 
-		SanguineShapedLight* metronomeStepsLight = new SanguineShapedLight();
-		metronomeStepsLight->box.pos = millimetersToPixelsVec(120.006, 39.497);
-		metronomeStepsLight->module = module;
-		metronomeStepsLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/numpad_lit_blue.svg")));
+		SanguineShapedLight* metronomeStepsLight = new SanguineShapedLight(module, "res/numpad_lit_blue.svg", 120.921, 40.647);
 		addChild(metronomeStepsLight);
 
-		YellowGateLight* gateLightA = new YellowGateLight(module);
-		gateLightA->box.pos = millimetersToPixelsVec(37.554, 41.747);
+		YellowGateLight* gateLightA = new YellowGateLight(module, 39.454, 43.647);
 		addChild(gateLightA);
 
-		YellowGateLight* gateLightB = new YellowGateLight(module);
-		gateLightB->box.pos = millimetersToPixelsVec(37.554, 92.777);
+		YellowGateLight* gateLightB = new YellowGateLight(module, 39.454, 94.677);
 		addChild(gateLightB);
 
-		YellowGateLight* gateLightC = new YellowGateLight(module);
-		gateLightC->box.pos = millimetersToPixelsVec(109.541, 92.777);
+		YellowGateLight* gateLightC = new YellowGateLight(module, 111.441, 94.677);
 		addChild(gateLightC);
 
-		BluePowerLight* powerLightA = new BluePowerLight(module);
-		powerLightA->box.pos = millimetersToPixelsVec(38.865, 23.214);
+		BluePowerLight* powerLightA = new BluePowerLight(module, 40.675, 25.114);
 		addChild(powerLightA);
 
-		BluePowerLight* powerLightB = new BluePowerLight(module);
-		powerLightB->box.pos = millimetersToPixelsVec(38.865, 74.244);
+		BluePowerLight* powerLightB = new BluePowerLight(module, 40.675, 76.144);
 		addChild(powerLightB);
 
-		BluePowerLight* powerLightC = new BluePowerLight(module);
-		powerLightC->box.pos = millimetersToPixelsVec(110.652, 74.244);
+		BluePowerLight* powerLightC = new BluePowerLight(module, 112.461, 76.144);
 		addChild(powerLightC);
 
-		BlueAdvancedClockLight* steppedClockLightA = new BlueAdvancedClockLight(module);
-		steppedClockLightA->box.pos = millimetersToPixelsVec(4.301, 32.845);
+		BlueAdvancedClockLight* steppedClockLightA = new BlueAdvancedClockLight(module, 6.201, 34.743);
 		addChild(steppedClockLightA);
 
-		BlueAdvancedClockLight* steppedClockLightB = new BlueAdvancedClockLight(module);
-		steppedClockLightB->box.pos = millimetersToPixelsVec(4.301, 83.875);
+		BlueAdvancedClockLight* steppedClockLightB = new BlueAdvancedClockLight(module, 6.201, 85.773);
 		addChild(steppedClockLightB);
 
-		BlueAdvancedClockLight* steppedClockLightC = new BlueAdvancedClockLight(module);
-		steppedClockLightC->box.pos = millimetersToPixelsVec(76.251, 83.875);
+		BlueAdvancedClockLight* steppedClockLightC = new BlueAdvancedClockLight(module, 78.151, 85.773);
 		addChild(steppedClockLightC);
 
-		BlueInitialClockLight* initialClockLightA = new BlueInitialClockLight(module);
-		initialClockLightA->box.pos = millimetersToPixelsVec(47.035, 33.01);
+		BlueInitialClockLight* initialClockLightA = new BlueInitialClockLight(module, 48.935, 34.908);
 		addChild(initialClockLightA);
 
-		BlueInitialClockLight* initialClockLightB = new BlueInitialClockLight(module);
-		initialClockLightB->box.pos = millimetersToPixelsVec(47.035, 84.04);
+		BlueInitialClockLight* initialClockLightB = new BlueInitialClockLight(module, 48.935, 85.938);
 		addChild(initialClockLightB);
 
-		BlueInitialClockLight* initialClockLightC = new BlueInitialClockLight(module);
-		initialClockLightC->box.pos = millimetersToPixelsVec(119.021, 84.04);
+		BlueInitialClockLight* initialClockLightC = new BlueInitialClockLight(module, 120.921, 85.938);
 		addChild(initialClockLightC);
 
-		BlueRightArrowLight* arrowLightA = new BlueRightArrowLight(module);
-		arrowLightA->box.pos = millimetersToPixelsVec(11.571, 42.643);
+		BlueRightArrowLight* arrowLightA = new BlueRightArrowLight(module, 13.471, 43.647);
 		addChild(arrowLightA);
 
-		BlueRightArrowLight* arrowLightB = new BlueRightArrowLight(module);
-		arrowLightB->box.pos = millimetersToPixelsVec(11.571, 93.673);
+		BlueRightArrowLight* arrowLightB = new BlueRightArrowLight(module, 13.471, 94.677);
 		addChild(arrowLightB);
 
-		BlueRightArrowLight* arrowLightC = new BlueRightArrowLight(module);
-		arrowLightC->box.pos = millimetersToPixelsVec(83.526, 93.673);
+		BlueRightArrowLight* arrowLightC = new BlueRightArrowLight(module, 85.426, 94.677);
 		addChild(arrowLightC);
 
-		BlueQuarterNoteLight* quarterNoteLightA = new BlueQuarterNoteLight(module);
-		quarterNoteLightA->box.pos = millimetersToPixelsVec(29.586, 41.747);
+		BlueQuarterNoteLight* quarterNoteLightA = new BlueQuarterNoteLight(module, 30.167, 43.647);
 		addChild(quarterNoteLightA);
 
-		BlueQuarterNoteLight* quarterNoteLightB = new BlueQuarterNoteLight(module);
-		quarterNoteLightB->box.pos = millimetersToPixelsVec(29.586, 92.777);
+		BlueQuarterNoteLight* quarterNoteLightB = new BlueQuarterNoteLight(module, 30.167, 94.677);
 		addChild(quarterNoteLightB);
 
-		BlueQuarterNoteLight* quarterNoteLightC = new BlueQuarterNoteLight(module);
-		quarterNoteLightC->box.pos = millimetersToPixelsVec(101.556, 92.777);
+		BlueQuarterNoteLight* quarterNoteLightC = new BlueQuarterNoteLight(module, 102.138, 94.677);
 		addChild(quarterNoteLightC);
 
-		BlueQuarterNoteLight* quarterNoteLightMetronome = new BlueQuarterNoteLight(module);
-		quarterNoteLightMetronome->box.pos = millimetersToPixelsVec(120.34, 27.015);
+		BlueQuarterNoteLight* quarterNoteLightMetronome = new BlueQuarterNoteLight(module, 120.921, 28.914);
 		addChild(quarterNoteLightMetronome);
 
-		SanguineShapedLight* outPlayLight = new SanguineShapedLight();
-		outPlayLight->box.pos = millimetersToPixelsVec(58.789, 107.701);
-		outPlayLight->module = module;
-		outPlayLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/yellow_play_lit.svg")));
+		SanguineShapedLight* outPlayLight = new SanguineShapedLight(module, "res/yellow_play_lit.svg", 59.739, 109.601);
 		addChild(outPlayLight);
 
-		SanguineShapedLight* outResetLight = new SanguineShapedLight();
-		outResetLight->box.pos = millimetersToPixelsVec(67.899, 108.157);
-		outResetLight->module = module;
-		outResetLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/reset_buttonless_lit_mono.svg")));
+		SanguineShapedLight* outResetLight = new SanguineShapedLight(module, "res/reset_buttonless_lit_mono.svg", 69.799, 109.601);
 		addChild(outResetLight);
 
-		SanguineShapedLight* outMetronomeLight = new SanguineShapedLight();
-		outMetronomeLight->box.pos = millimetersToPixelsVec(77.858, 107.701);
-		outMetronomeLight->module = module;
-		outMetronomeLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/clock_lit_mono.svg")));
+		SanguineShapedLight* outMetronomeLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 79.541, 109.601);
 		addChild(outMetronomeLight);
 
-		SanguineShapedLight* outLight1 = new SanguineShapedLight();
-		outLight1->box.pos = millimetersToPixelsVec(88.295, 108.589);
-		outLight1->module = module;
-		outLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_1_yellow_lit.svg")));
+		SanguineShapedLight* outLight1 = new SanguineShapedLight(module, "res/number_1_yellow_lit.svg", 88.888, 109.601);
 		addChild(outLight1);
 
-		SanguineShapedLight* outLight2 = new SanguineShapedLight();
-		outLight2->box.pos = millimetersToPixelsVec(97.834, 108.567);
-		outLight2->module = module;
-		outLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_2_yellow_lit.svg")));
+		SanguineShapedLight* outLight2 = new SanguineShapedLight(module, "res/number_2_yellow_lit.svg", 98.652, 109.601);
 		addChild(outLight2);
 
-		SanguineShapedLight* outLight3 = new SanguineShapedLight();
-		outLight3->box.pos = millimetersToPixelsVec(107.504, 108.567);
-		outLight3->module = module;
-		outLight3->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_3_yellow_lit.svg")));
+		SanguineShapedLight* outLight3 = new SanguineShapedLight(module, "res/number_3_yellow_lit.svg", 108.321, 109.601);
 		addChild(outLight3);
 
-		SanguineShapedLight* outLight4 = new SanguineShapedLight();
-		outLight4->box.pos = millimetersToPixelsVec(117.015, 108.589);
-		outLight4->module = module;
-		outLight4->setSvg(Svg::load(asset::plugin(pluginInstance, "res/number_4_yellow_lit.svg")));
+		SanguineShapedLight* outLight4 = new SanguineShapedLight(module, "res/number_4_yellow_lit.svg", 117.898, 109.601);
 		addChild(outLight4);
 
-		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = millimetersToPixelsVec(29.219, 105.975);
-		bloodLight->module = module;
-		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 31.116, 109.911);
 		addChild(bloodLight);
 
-		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = millimetersToPixelsVec(36.541, 113.941);
-		monstersLight->module = module;
-		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
+		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 44.248, 116.867);
 		addChild(monstersLight);
 	}
 };

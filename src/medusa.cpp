@@ -104,7 +104,7 @@ struct MedusaWidget : ModuleWidget {
 	MedusaWidget(Medusa* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_27hp_purple.svg", "res/medusa.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_27hp_purple.svg", "res/medusa.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -112,14 +112,10 @@ struct MedusaWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight;
-		lightInput1->box.pos = millimetersToPixelsVec(4.825, 20.098);
-		lightInput1->module = module;
+		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight(module, 8.119, 22.162);
 		addChild(lightInput1);
 
-		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight;
-		lightOutput1->box.pos = millimetersToPixelsVec(21.331, 20.098);
-		lightOutput1->module = module;
+		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight(module, 24.625, 22.162);
 		addChild(lightOutput1);
 
 		float xInputs = 8.119;
@@ -146,14 +142,10 @@ struct MedusaWidget : ModuleWidget {
 			currentLightY += yDelta;
 		}
 
-		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight;
-		lightInput2->box.pos = millimetersToPixelsVec(39.618, 20.098);
-		lightInput2->module = module;
+		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight(module, 42.912, 22.162);
 		addChild(lightInput2);
 
-		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight;
-		lightOutput2->box.pos = millimetersToPixelsVec(56.124, 20.098);
-		lightOutput2->module = module;
+		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 59.418, 22.162);
 		addChild(lightOutput2);
 
 		xInputs = 42.912;
@@ -175,14 +167,10 @@ struct MedusaWidget : ModuleWidget {
 			currentLightY += yDelta;
 		}
 
-		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight;
-		lightInput3->box.pos = millimetersToPixelsVec(74.448, 20.098);
-		lightInput3->module = module;
+		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight(module, 77.742, 22.162);
 		addChild(lightInput3);
 
-		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight;
-		lightOutput3->box.pos = millimetersToPixelsVec(90.954, 20.098);
-		lightOutput3->module = module;
+		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight(module, 94.248, 22.162);
 		addChild(lightOutput3);
 
 		xInputs = 77.742;
@@ -204,14 +192,10 @@ struct MedusaWidget : ModuleWidget {
 			currentLightY += yDelta;
 		}
 
-		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight;
-		lightInput4->box.pos = millimetersToPixelsVec(109.241, 20.098);
-		lightInput4->module = module;
+		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight(module, 112.535, 22.162);
 		addChild(lightInput4);
 
-		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight;
-		lightOutput4->box.pos = millimetersToPixelsVec(125.747, 20.098);
-		lightOutput4->module = module;
+		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight(module, 129.041, 22.162);
 		addChild(lightOutput4);
 
 		xInputs = 112.535;
@@ -233,16 +217,10 @@ struct MedusaWidget : ModuleWidget {
 			currentLightY += yDelta;
 		}
 
-		SanguineShapedLight* bloodLight = new SanguineShapedLight();
-		bloodLight->box.pos = millimetersToPixelsVec(56.919, 106.265);
-		bloodLight->module = module;
-		bloodLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/blood_glowy.svg")));
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 58.816, 110.201);
 		addChild(bloodLight);
 
-		SanguineShapedLight* monstersLight = new SanguineShapedLight();
-		monstersLight->box.pos = millimetersToPixelsVec(64.24, 114.231);
-		monstersLight->module = module;
-		monstersLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/monsters_lit.svg")));
+		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 71.948, 117.156);
 		addChild(monstersLight);
 	}
 };

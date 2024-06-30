@@ -184,7 +184,7 @@ struct WerewolfWidget : ModuleWidget {
 	WerewolfWidget(Werewolf* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_12hp_purple.svg", "res/werewolf.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_12hp_purple.svg", "res/werewolf.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -211,12 +211,10 @@ struct WerewolfWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(39.083, 112.894), module, Werewolf::OUTPUT_LEFT));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(50.988, 112.894), module, Werewolf::OUTPUT_RIGHT));
 
-		SanguinePolyInputLight* inLight = createWidgetCentered<SanguinePolyInputLight>(millimetersToPixelsVec(15.819, 106.451));
-		inLight->module = module;
+		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 15.819, 106.451);
 		addChild(inLight);
 
-		SanguinePolyOutputLight* outLight = createWidgetCentered<SanguinePolyOutputLight>(millimetersToPixelsVec(45.036, 106.051));
-		outLight->module = module;
+		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 45.036, 106.051);
 		addChild(outLight);
 	}
 };

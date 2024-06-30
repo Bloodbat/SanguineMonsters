@@ -122,7 +122,7 @@ struct DollyXWidget : ModuleWidget {
 	DollyXWidget(DollyX* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_8hp_purple.svg", "res/dolly-x.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_8hp_purple.svg", "res/dolly-x.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
@@ -156,37 +156,23 @@ struct DollyXWidget : ModuleWidget {
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
 		}
 
-		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight();
-		amalgamLight1->box.pos = millimetersToPixelsVec(7.337, 33.237);
-		amalgamLight1->module = module;
-		amalgamLight1->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amalgam_light.svg")));
+		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 36.856);		
 		addChild(amalgamLight1);
 
-		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight();
-		amalgamLight2->box.pos = millimetersToPixelsVec(7.337, 87.908);
-		amalgamLight2->module = module;
-		amalgamLight2->setSvg(Svg::load(asset::plugin(pluginInstance, "res/amalgam_light.svg")));
+		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 91.526);		
 		addChild(amalgamLight2);
 
 
-		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight();
-		inMonoLight1->box.pos = Vec(19.42, 141.0);
-		inMonoLight1->module = module;
+		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight(module, 9.871, 49.743);		
 		addChild(inMonoLight1);
 
-		SanguineMonoInputLight* inMonoLight2 = new SanguineMonoInputLight();
-		inMonoLight2->box.pos = Vec(19.42, 302.67);
-		inMonoLight2->module = module;
+		SanguineMonoInputLight* inMonoLight2 = new SanguineMonoInputLight(module, 9.871, 104.413);		
 		addChild(inMonoLight2);
 
-		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight();
-		outPolyLight1->box.pos = millimetersToPixelsVec(27.475, 47.678);
-		outPolyLight1->module = module;
+		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight(module,30.769, 49.743);
 		addChild(outPolyLight1);
 
-		SanguinePolyOutputLight* outPolyLight2 = new SanguinePolyOutputLight();
-		outPolyLight2->box.pos = millimetersToPixelsVec(27.475, 102.349);
-		outPolyLight2->module = module;
+		SanguinePolyOutputLight* outPolyLight2 = new SanguinePolyOutputLight(module, 30.769, 104.413);
 		addChild(outPolyLight2);
 	}
 };

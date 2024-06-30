@@ -36,7 +36,7 @@ struct OublietteWidget : ModuleWidget {
 	OublietteWidget(Oubliette* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel(pluginInstance, "res/backplate_8hp_purple.svg", "res/oubliette.svg");
+		SanguinePanel* panel = new SanguinePanel("res/backplate_8hp_purple.svg", "res/oubliette.svg");
 		setPanel(panel);
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
