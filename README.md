@@ -8,6 +8,10 @@
 
 A quad timer/counter that can be triggered externally or has an internal seconds clock.
 
+## Sanguine Alchemist
+
+A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
+
 ## Sanguine Brainz
 
 A utility to control multiple recorders and ease synchronizing their outputs in post.
@@ -40,6 +44,10 @@ An attenuverter, offsetter and inverter with four channels.
 
 A normalled, polyphonic mega multiple with 32 inputs and outputs.
 
+# Sanguine Monsters Blank
+
+Put a vampire and the Monsters logo in your rack!
+
 ## Sanguine Oraculus
 
 A polyphonic to monophonic switch.
@@ -56,6 +64,6 @@ A fixed voltages source.
 
 A Euclidean sequencer.
 
-# Sanguine Monsters Blank
+## Sanguine Werewolf
 
-Put a vampire and the Monsters logo in your rack!
+A polyphonic, stereo, dirty distortion.

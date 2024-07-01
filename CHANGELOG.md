@@ -47,6 +47,10 @@
 
 - Add: Aion: a quad timer/counter that can be triggered externally or has an internal seconds clock.
 
+- Add: Werewolf: A polyphonic, stereo, dirty distortion.
+
+- Add: Alchemist: A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
+
 - Sphinx can now run in reverse.
 
 - Fix: Sphinx won't output an EOC trigger on the first round after starting or reset.
