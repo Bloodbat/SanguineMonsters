@@ -27,13 +27,10 @@ struct Werewolf : Module {
 	enum LightIds {
 		ENUMS(LIGHT_EYE_1, 3),
 		ENUMS(LIGHT_EYE_2, 3),
-		LIGHT_GAIN,
-		LIGHT_FOLD,
+		ENUMS(LIGHT_GAIN, 3),
+		ENUMS(LIGHT_FOLD, 3),
 		LIGHTS_COUNT
 	};
-
-	float fold;
-	float gain;
 
 	dsp::ClockDivider lightDivider;
 
@@ -68,6 +65,10 @@ struct Werewolf : Module {
 		float voltageOutRight = 0.f;
 		float voltageSumLeft = 0.f;
 		float voltageSumRight = 0.f;
+		float fold = 0.f;
+		float gain = 0.f;
+		float foldSum = 0.f;
+		float gainSum = 0.f;
 
 		bool lightsTurn = lightDivider.process();
 		const float sampleTime = args.sampleTime * kLightFrequency;
@@ -75,12 +76,18 @@ struct Werewolf : Module {
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
 		if (channelCount > 0) {
-			fold = clamp(params[PARAM_FOLD].getValue() + inputs[INPUT_FOLD].getVoltage(), 0.f, 10.f);
-			gain = clamp(params[PARAM_GAIN].getValue() + inputs[INPUT_GAIN].getVoltage(), 0.f, 20.f);
+			fold = params[PARAM_FOLD].getValue();
+			gain = params[PARAM_GAIN].getValue();
 
 			for (int channel = 0; channel < channelCount; channel++) {
+				float channelFold = clamp(fold + inputs[INPUT_FOLD].getVoltage(), 0.f, 10.f);
+				float channelGain = clamp(gain + inputs[INPUT_GAIN].getVoltage(), 0.f, 20.f);
+
+				gainSum += channelGain;
+				foldSum += channelFold;
+
 				if (leftInConnected) {
-					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * gain;
+					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
 					voltageInLeft = newVoltage;
 					voltageInRight = newVoltage;
 					outputs[OUTPUT_LEFT].setChannels(channelCount);
@@ -88,16 +95,16 @@ struct Werewolf : Module {
 				}
 				if (rightInConnected) {
 					normalled = false;
-					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * gain;
+					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
 				}
 
 				// Distortion
 				if (leftInConnected) {
-					doDistortion(voltageInLeft, voltageOutLeft);
+					doDistortion(voltageInLeft, voltageOutLeft, channelFold);
 				}
 
 				if (rightInConnected) {
-					doDistortion(voltageInRight, voltageOutRight);
+					doDistortion(voltageInRight, voltageOutRight, channelFold);
 				}
 
 				voltageSumLeft += voltageOutLeft;
@@ -136,30 +143,46 @@ struct Werewolf : Module {
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
+
+				lights[LIGHT_GAIN + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_GAIN + 1].setBrightnessSmooth(math::rescale(gainSum, 0.f, 20.f, 0.f, 1.f), sampleTime);
+				lights[LIGHT_GAIN + 2].setBrightnessSmooth(0.f, sampleTime);
+
+				float rescaledLight = math::rescale(foldSum, 0.f, 10.f, 0.f, 1.f);
+				lights[LIGHT_FOLD + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_FOLD + 1].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_FOLD + 2].setBrightnessSmooth(0.f, sampleTime);
 			}
 			else {
-				float rescaled = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
+				float rescaledLight = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
-				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaled, sampleTime);
+				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 				if (normalled) {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
-					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaled, sampleTime);
+					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 				}
 				else {
-					rescaled = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
+					rescaledLight = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
-					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaled, sampleTime);
+					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 				}
+				rescaledLight = math::rescale(gainSum / channelCount, 0.f, 20.f, 0.f, 1.f);
+				lights[LIGHT_GAIN + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_GAIN + 1].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_GAIN + 2].setBrightnessSmooth(rescaledLight, sampleTime);
+
+				rescaledLight = math::rescale(foldSum / channelCount, 0.f, 10.f, 0.f, 1.f);
+				lights[LIGHT_FOLD + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_FOLD + 1].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_FOLD + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 			}
-			lights[LIGHT_GAIN].setBrightnessSmooth(math::rescale(gain, 0.f, 20.f, 0.f, 1.f), sampleTime);
-			lights[LIGHT_FOLD].setBrightnessSmooth(math::rescale(fold, 0.f, 10.f, 0.f, 1.f), sampleTime);
 		}
 	}
 
-	inline void doDistortion(float inVoltage, float& outVoltage) {
+	inline void doDistortion(float inVoltage, float& outVoltage, const float fold) {
 		for (int i = 0; i < 100; i++) {
 			if (inVoltage < -5.f) {
 				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
@@ -197,8 +220,8 @@ struct WerewolfWidget : ModuleWidget {
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(8.947, 83.56), module, Werewolf::PARAM_GAIN));
 
-		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(8.947, 90.978), module, Werewolf::LIGHT_GAIN));
-		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(51.908, 90.978), module, Werewolf::LIGHT_FOLD));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(8.947, 90.978), module, Werewolf::LIGHT_GAIN));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(51.908, 90.978), module, Werewolf::LIGHT_FOLD));
 
 		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(51.908, 83.56), module, Werewolf::PARAM_FOLD));
 
