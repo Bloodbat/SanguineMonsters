@@ -119,43 +119,43 @@ struct Werewolf : Module {
 					voltageSumRight += voltageOutRight;
 				}
 			}
+		}
 
-			if (lightsTurn) {
-				if (channelCount < 2) {
-					lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
-					lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
-					lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(0.f, sampleTime);
-					if (normalled) {
-						lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
-						lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
-					}
-					else {
-						lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumRight, 0.f, 5.f, 0.f, 1.f), sampleTime);
-						lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
-					}
+		if (lightsTurn) {
+			if (channelCount < 2) {
+				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
+				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(0.f, sampleTime);
+				if (normalled) {
+					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
+					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
 				else {
-					float rescaled = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
-					lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
-					lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
-					lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaled, sampleTime);
-					if (normalled) {
-						lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
-						lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaled, sampleTime);
-					}
-					else {
-						rescaled = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
-						lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
-						lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
-						lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaled, sampleTime);
-					}
+					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumRight, 0.f, 5.f, 0.f, 1.f), sampleTime);
+					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
-				lights[LIGHT_GAIN].setBrightnessSmooth(math::rescale(gain, 0.f, 20.f, 0.f, 1.f), sampleTime);
-				lights[LIGHT_FOLD].setBrightnessSmooth(math::rescale(fold, 0.f, 10.f, 0.f, 1.f), sampleTime);
 			}
+			else {
+				float rescaled = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
+				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaled, sampleTime);
+				if (normalled) {
+					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaled, sampleTime);
+				}
+				else {
+					rescaled = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
+					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaled, sampleTime);
+				}
+			}
+			lights[LIGHT_GAIN].setBrightnessSmooth(math::rescale(gain, 0.f, 20.f, 0.f, 1.f), sampleTime);
+			lights[LIGHT_FOLD].setBrightnessSmooth(math::rescale(fold, 0.f, 10.f, 0.f, 1.f), sampleTime);
 		}
 	}
 
