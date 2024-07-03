@@ -29,6 +29,7 @@ struct DollyX : Module {
 
 	static const int kSUBMODULES = 2;
 	static const int kDEFAULT_CLONES = 16;
+	static const int kClockDivision = 64;
 
 	int cloneCounts[kSUBMODULES];
 
@@ -41,21 +42,20 @@ struct DollyX : Module {
 	DollyX() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
-		configParam(PARAM_CHANNELS1, 1.0f, 16.0f, 16.0f, "Clone count 1", "", 0.0f, 1.0f, 0.0f);
-		paramQuantities[PARAM_CHANNELS1]->snapEnabled = true;
+		for (int i = 0; i < kSUBMODULES; i++) {
+			int componentOffset = i + 1;
 
-		configParam(PARAM_CHANNELS2, 1.0f, 16.0f, 16.0f, "Clone count 2", "", 0.0f, 1.0f, 0.0f);
-		paramQuantities[PARAM_CHANNELS2]->snapEnabled = true;
+			configParam(PARAM_CHANNELS1 + i, 1.0f, 16.0f, 16.0f, string::f("Clone count %d", componentOffset));
+			paramQuantities[PARAM_CHANNELS1]->snapEnabled = true;
 
-		configOutput(OUTPUT_POLYOUT_1, "Cloned 1");
-		configOutput(OUTPUT_POLYOUT_2, "Cloned 2");
+			configOutput(OUTPUT_POLYOUT_1 + i, string::f("Cloned %d", componentOffset));
 
-		configInput(INPUT_MONO_IN1, "Mono 1");
-		configInput(INPUT_MONO_IN2, "Mono 2");
-		configInput(INPUT_CHANNELS1_CV, "Channels CV 1");
-		configInput(INPUT_CHANNELS2_CV, "Channels CV 2");
+			configInput(INPUT_MONO_IN1 + i, string::f("Mono %d", componentOffset));
 
-		clockDivider.setDivision(64);
+			configInput(INPUT_CHANNELS1_CV + i, string::f("Channels CV %d", componentOffset));
+		}
+
+		clockDivider.setDivision(kClockDivision);
 		onReset();
 	};
 
@@ -156,20 +156,19 @@ struct DollyXWidget : ModuleWidget {
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
 		}
 
-		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 36.856);		
+		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 36.856);
 		addChild(amalgamLight1);
 
-		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 91.526);		
+		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 91.526);
 		addChild(amalgamLight2);
 
-
-		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight(module, 9.871, 49.743);		
+		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight(module, 9.871, 49.743);
 		addChild(inMonoLight1);
 
-		SanguineMonoInputLight* inMonoLight2 = new SanguineMonoInputLight(module, 9.871, 104.413);		
+		SanguineMonoInputLight* inMonoLight2 = new SanguineMonoInputLight(module, 9.871, 104.413);
 		addChild(inMonoLight2);
 
-		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight(module,30.769, 49.743);
+		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight(module, 30.769, 49.743);
 		addChild(outPolyLight1);
 
 		SanguinePolyOutputLight* outPolyLight2 = new SanguinePolyOutputLight(module, 30.769, 104.413);
