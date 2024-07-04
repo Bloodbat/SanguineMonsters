@@ -1,5 +1,9 @@
 # Sanguine Modules Monsters
 
+A collection of useful modules.
+
+You can find the manual [here](https://raw.githubusercontent.com/Bloodbat/SanguineModulesManuals/main/monsters_manual.pdf).
+
 ## Modules
 
 ![alt text](pics/monster_modules.png)
