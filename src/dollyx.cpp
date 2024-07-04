@@ -28,7 +28,6 @@ struct DollyX : Module {
 	};
 
 	static const int kSUBMODULES = 2;
-	static const int kDEFAULT_CLONES = 16;
 	static const int kClockDivision = 64;
 
 	int cloneCounts[kSUBMODULES];
@@ -45,7 +44,7 @@ struct DollyX : Module {
 		for (int i = 0; i < kSUBMODULES; i++) {
 			int componentOffset = i + 1;
 
-			configParam(PARAM_CHANNELS1 + i, 1.0f, 16.0f, 16.0f, string::f("Clone count %d", componentOffset));
+			configParam(PARAM_CHANNELS1 + i, 1.0f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
 			paramQuantities[PARAM_CHANNELS1]->snapEnabled = true;
 
 			configOutput(OUTPUT_POLYOUT_1 + i, string::f("Cloned %d", componentOffset));
@@ -105,7 +104,7 @@ struct DollyX : Module {
 
 	void onReset() override {
 		for (int i = 0; i < kSUBMODULES; i++) {
-			cloneCounts[i] = kDEFAULT_CLONES;
+			cloneCounts[i] = PORT_MAX_CHANNELS;
 		}
 	}
 
