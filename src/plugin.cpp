@@ -21,4 +21,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelAion);
 	p->addModel(modelWerewolf);
 	p->addModel(modelAlchemist);
+	p->addModel(modelAlembic);
 }

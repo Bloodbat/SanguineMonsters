@@ -160,6 +160,14 @@
         "Mixer",
         "Polyphonic"
       ]
+    },
+    {
+      "slug": "Sanguine-Alembic",
+      "name": "Alembic",
+      "description": "An expander for Alchemist providing gain CV control for every channel and individual post-fader channel outputs",
+      "tags": [        
+        "Expander"
+      ]
     }
   ]
 }
