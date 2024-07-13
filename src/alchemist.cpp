@@ -110,21 +110,16 @@ struct Alchemist : Module {
 				int currentLight = LIGHT_GAIN + i * 2;
 				float redValue = vuMetersGain[i].getBrightness(0.f, 0.f);
 				float yellowValue = vuMetersGain[i].getBrightness(-3.f, -1.f);
-				float greenValue = vuMetersGain[i].getBrightness(-38.f, -3.f);
+				float greenValue = vuMetersGain[i].getBrightness(-38.f, -1.f);
 				bool isRed = redValue > 0;
-				bool isYellow = yellowValue > 0;
 
 				if (isRed) {
 					lights[currentLight + 0].setBrightness(0.f);
 					lights[currentLight + 1].setBrightness(redValue);
 				}
-				else if (isYellow) {
-					lights[currentLight + 0].setBrightness(yellowValue);
-					lights[currentLight + 1].setBrightness(yellowValue);
-				}
 				else {
 					lights[currentLight + 0].setBrightness(greenValue);
-					lights[currentLight + 1].setBrightness(0.f);
+					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
