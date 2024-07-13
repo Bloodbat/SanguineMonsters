@@ -12,7 +12,7 @@
   "modules": [
     {
       "slug": "Sanguine-SuperSwitch81",
-      "name": "Sanguine Hydra",
+      "name": "Hydra",
       "description": "An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
       "tags": [
         "Switch",
@@ -23,7 +23,7 @@
     },
     {
       "slug": "Sanguine-SuperSwitch18",
-      "name": "Sanguine Gegenees",
+      "name": "Gegenees",
       "description": "A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
       "tags": [
         "Switch",
@@ -43,7 +43,7 @@
     },
     {
       "slug": "Sanguine-Monsters-Dolly-X",
-      "name": "Sanguine Monsters Dolly-X",
+      "name": "Dolly-X",
       "description": "Dual monophonic to polyphonic channel cloner.",
       "tags": [
         "Utility",
@@ -53,7 +53,7 @@
     },
     {
       "slug": "Sanguine-Monsters-Oraculus",
-      "name": "Sanguine Monsters Oraculus",
+      "name": "Oraculus",
       "description": "n to 1 switch/sequencer that takes a polyphonic cable input.",
       "tags": [
         "Utility",
@@ -63,7 +63,7 @@
     },
     {
       "slug": "Sanguine-Monsters-Raiju",
-      "name": "Sanguine Monsters Raiju",
+      "name": "Raiju",
       "description": "A flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage.",
       "tags": [
         "Utility",
