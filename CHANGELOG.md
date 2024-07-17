@@ -44,6 +44,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 
 - Better changelog layout.
 
+- Drop prefix from module names in browser.
+
 ## Fixes
 
 - Switches output 0V when their input is disconnected.
