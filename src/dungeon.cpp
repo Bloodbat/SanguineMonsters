@@ -248,7 +248,7 @@ struct Dungeon : Module {
 				innerMoon.g = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.g, moonColors[2].innerColor.g);
 				innerMoon.b = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.b, moonColors[2].innerColor.b);
 			}
-			else if (inVoltage >= -0.99f && inVoltage <= 99.f) {
+			else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
 				outerMoon = moonColors[1].outerColor;
 				innerMoon.r = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.r, moonColors[1].innerColor.r);
 				innerMoon.g = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.g, moonColors[1].innerColor.g);
