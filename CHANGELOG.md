@@ -52,6 +52,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 
 - Sphinx won't output an EOC trigger on the first round after starting or reset.
 
+- Brainz CV trigger detection.
+
 
 # 2.2.0
 
