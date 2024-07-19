@@ -247,32 +247,21 @@ struct Brainz : Module {
 			}
 		}
 		else {
+			if (btReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
+				handleResetTriggers();
+			}
+
+			if (btRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getVoltage())) {
+				handleRunTriggers();
+			}
+
 			if (clockDivider.process()) {
 				// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 				const float sampleTime = args.sampleTime * kClockDivider;
 
-				if (btReset.process(params[PARAM_RESET_BUTTON].getValue()) || stResetInput.process(inputs[INPUT_RESET].getNormalVoltage(0))) {
-					handleResetTriggers();
-				}
-
-				if (btRun.process(params[PARAM_PLAY_BUTTON].getValue()) || stRunInput.process(inputs[INPUT_TRIGGER].getNormalVoltage(0))) {
-					handleRunTriggers();
-				}
-
-				if (bRunSent) {
-					bRunSent = pgRun.process(1.0f / sampleTime);
-					outputs[OUTPUT_RUN].setVoltage(bRunSent ? 10.f : 0.f);
-				}
-
-				if (bResetSent) {
-					bResetSent = pgReset.process(1.0f / sampleTime);
-					outputs[OUTPUT_RESET].setVoltage(bResetSent ? 10.f : 0.f);
-				}
-
 				if (params[PARAM_LOGIC_ENABLED].getValue()) {
 					switch (moduleState)
 					{
-
 					case MODULE_STATE_READY: {
 						break;
 					}
@@ -668,6 +657,16 @@ struct Brainz : Module {
 					moduleState = lastModuleState;
 				}
 			} // End clock divider.
+
+			if (bRunSent) {
+				bRunSent = pgRun.process(args.sampleTime);
+				outputs[OUTPUT_RUN].setVoltage(bRunSent ? 10.f : 0.f);
+			}
+
+			if (bResetSent) {
+				bResetSent = pgReset.process(args.sampleTime);
+				outputs[OUTPUT_RESET].setVoltage(bResetSent ? 10.f : 0.f);
+			}
 		}
 	}
 
