@@ -93,7 +93,7 @@ struct Aion : Module {
 			paramQuantities[PARAM_TIMER_1 + i]->snapEnabled = true;
 
 			configButton(PARAM_RESTART_1 + i, string::f("Auto restart timer %d on timer end", currentNumber));
-			configButton(PARAM_START_1 + i, string::f("Start timer %d", currentNumber));
+			configButton(PARAM_START_1 + i, string::f("Start/stop timer %d", currentNumber));
 			configButton(PARAM_TRIGGER_1 + i, string::f("Advance timer %d", currentNumber));
 			configButton(PARAM_RESET_1 + i, string::f("Reset timer %d", currentNumber));
 
