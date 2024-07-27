@@ -93,16 +93,16 @@ struct Kitsune : Module {
 			if (isLightsTurn) {
 				int currentLight;
 
-				float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltageSum() / channelCount;
-
 				currentLight = LIGHT_VOLTAGE1 + section * 3;
 
 				if (channelCount == 1) {
+					float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltage();
 					lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.0f, sampleTime);
 				}
 				else {
+					float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltageSum() / channelCount;
 					float redValue = math::rescale(-lightValue, 0.f, 10.f, 0.f, 1.f);
 					float greenValue = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
 					lights[currentLight + 0].setBrightnessSmooth(redValue, sampleTime);
