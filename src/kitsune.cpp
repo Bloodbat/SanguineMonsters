@@ -40,6 +40,9 @@ struct Kitsune : Module {
 		LIGHTS_COUNT
 	};
 
+	dsp::ClockDivider lightsDivider;
+	const int kLightDivisor = 64;
+
 	Kitsune() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
@@ -50,11 +53,21 @@ struct Kitsune : Module {
 			configInput(INPUT_VOLTAGE1 + i, string::f("Channel %d", i + 1));
 
 			configBypass(INPUT_VOLTAGE1 + i, OUTPUT_VOLTAGE1 + i);
+
+			lightsDivider.setDivision(kLightDivisor);
 		}
 	}
 
 	void process(const ProcessArgs& args) override {
 		using simd::float_4;
+
+		float sampleTime;
+
+		bool isLightsTurn = lightsDivider.process();
+
+		if (isLightsTurn) {
+			sampleTime = kLightDivisor * args.sampleTime;
+		}
 
 		for (int i = 0; i < 4; i++) {
 			int channelSource = i;
@@ -75,23 +88,25 @@ struct Kitsune : Module {
 				outputs[OUTPUT_VOLTAGE1 + i].setVoltageSimd(voltages, channel);
 			}
 
-			int currentLight;
+			if (isLightsTurn) {
+				int currentLight;
 
-			float lightValue = outputs[OUTPUT_VOLTAGE1 + i].getVoltageSum() / channelCount;
+				float lightValue = outputs[OUTPUT_VOLTAGE1 + i].getVoltageSum() / channelCount;
 
-			currentLight = LIGHT_VOLTAGE1 + i * 3;
+				currentLight = LIGHT_VOLTAGE1 + i * 3;
 
-			if (channelCount == 1) {
-				lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), args.sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f), args.sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.0f, args.sampleTime);
-			}
-			else {
-				float redValue = math::rescale(-lightValue, 0.f, 10.f, 0.f, 1.f);
-				float greenValue = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
-				lights[currentLight + 0].setBrightnessSmooth(redValue, args.sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(greenValue, args.sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? redValue : greenValue, args.sampleTime);
+				if (channelCount == 1) {
+					lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(0.0f, sampleTime);
+				}
+				else {
+					float redValue = math::rescale(-lightValue, 0.f, 10.f, 0.f, 1.f);
+					float greenValue = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
+					lights[currentLight + 0].setBrightnessSmooth(redValue, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(greenValue, sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? redValue : greenValue, sampleTime);
+				}
 			}
 		}
 	}
