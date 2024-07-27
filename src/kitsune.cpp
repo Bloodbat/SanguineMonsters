@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
+static const int kMaxSections = 4;
+
 struct Kitsune : Module {
 
 	enum ParamIds {
@@ -46,13 +48,13 @@ struct Kitsune : Module {
 	Kitsune() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < 4; i++) {
-			configParam(PARAM_ATTENUATOR1 + i, -1.f, 1.f, 0.f, string::f("Channel %d gain", i + 1), "%", 0, 100);
-			configParam(PARAM_OFFSET1 + i, -10.f, 10.f, 0.f, string::f("Channel %d offset", i + 1), " V");
-			configOutput(OUTPUT_VOLTAGE1 + i, string::f("Channel %d", i + 1));
-			configInput(INPUT_VOLTAGE1 + i, string::f("Channel %d", i + 1));
+		for (int section = 0; section < kMaxSections; section++) {
+			configParam(PARAM_ATTENUATOR1 + section, -1.f, 1.f, 0.f, string::f("Channel %d gain", section + 1), "%", 0, 100);
+			configParam(PARAM_OFFSET1 + section, -10.f, 10.f, 0.f, string::f("Channel %d offset", section + 1), " V");
+			configOutput(OUTPUT_VOLTAGE1 + section, string::f("Channel %d", section + 1));
+			configInput(INPUT_VOLTAGE1 + section, string::f("Channel %d", section + 1));
 
-			configBypass(INPUT_VOLTAGE1 + i, OUTPUT_VOLTAGE1 + i);
+			configBypass(INPUT_VOLTAGE1 + section, OUTPUT_VOLTAGE1 + section);
 
 			lightsDivider.setDivision(kLightDivisor);
 		}
@@ -69,11 +71,11 @@ struct Kitsune : Module {
 			sampleTime = kLightDivisor * args.sampleTime;
 		}
 
-		for (int i = 0; i < 4; i++) {
-			int channelSource = i;
+		for (int section = 0; section < kMaxSections; section++) {
+			int channelSource = section;
 
-			if ((i == 1 || i == 3) && !inputs[INPUT_VOLTAGE1 + i].isConnected()) {
-				channelSource = i - 1;
+			if ((section == 1 || section == 3) && !inputs[INPUT_VOLTAGE1 + section].isConnected()) {
+				channelSource = section - 1;
 			}
 
 			int channelCount = inputs[INPUT_VOLTAGE1 + channelSource].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + channelSource].getChannels() : 1;
@@ -81,19 +83,19 @@ struct Kitsune : Module {
 			for (int channel = 0; channel < channelCount; channel += 4) {
 				float_4 voltages = {};
 
-				voltages = clamp(inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + i].getValue() +
-					params[PARAM_OFFSET1 + i].getValue(), -10.f, 10.f);
+				voltages = clamp(inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + section].getValue() +
+					params[PARAM_OFFSET1 + section].getValue(), -10.f, 10.f);
 
-				outputs[OUTPUT_VOLTAGE1 + i].setChannels(channelCount);
-				outputs[OUTPUT_VOLTAGE1 + i].setVoltageSimd(voltages, channel);
+				outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCount);
+				outputs[OUTPUT_VOLTAGE1 + section].setVoltageSimd(voltages, channel);
 			}
 
 			if (isLightsTurn) {
 				int currentLight;
 
-				float lightValue = outputs[OUTPUT_VOLTAGE1 + i].getVoltageSum() / channelCount;
+				float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltageSum() / channelCount;
 
-				currentLight = LIGHT_VOLTAGE1 + i * 3;
+				currentLight = LIGHT_VOLTAGE1 + section * 3;
 
 				if (channelCount == 1) {
 					lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
