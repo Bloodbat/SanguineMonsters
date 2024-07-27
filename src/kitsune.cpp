@@ -57,12 +57,18 @@ struct Kitsune : Module {
 		using simd::float_4;
 
 		for (int i = 0; i < 4; i++) {
-			int channelCount = inputs[INPUT_VOLTAGE1 + i].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + i].getChannels() : 1;
+			int channelSource = i;
+
+			if ((i == 1 || i == 3) && !inputs[INPUT_VOLTAGE1 + i].isConnected()) {
+				channelSource = i - 1;
+			}
+
+			int channelCount = inputs[INPUT_VOLTAGE1 + channelSource].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + channelSource].getChannels() : 1;
 
 			for (int channel = 0; channel < channelCount; channel += 4) {
 				float_4 voltages = {};
 
-				voltages = clamp(inputs[INPUT_VOLTAGE1 + i].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + i].getValue() +
+				voltages = clamp(inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + i].getValue() +
 					params[PARAM_OFFSET1 + i].getValue(), -10.f, 10.f);
 
 				outputs[OUTPUT_VOLTAGE1 + i].setChannels(channelCount);
