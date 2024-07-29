@@ -488,12 +488,12 @@ struct SphinxDisplay : TransparentWidget {
 	}
 
 	void drawPolygon(NVGcontext* vg) {
-		Rect b = Rect(Vec(2, 2), box.size.minus(Vec(2, 2)));
+		Rect polyBoxSize = Rect(Vec(2, 2), box.size.minus(Vec(2, 2)));
 
-		float circleX = 0.5f * b.size.x + 1;
-		float circleY = 0.5f * b.size.y + 1;
-		const float radius1 = 0.45f * b.size.x;
-		const float radius2 = 0.35f * b.size.x;
+		float circleX = 0.5f * polyBoxSize.size.x + 1;
+		float circleY = 0.5f * polyBoxSize.size.y + 1;
+		const float radius1 = 0.45f * polyBoxSize.size.x;
+		const float radius2 = 0.35f * polyBoxSize.size.x;
 
 		// Circles
 		nvgBeginPath(vg);
