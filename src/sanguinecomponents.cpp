@@ -161,46 +161,58 @@ void SanguineBaseSegmentDisplay::draw(const DrawArgs& args) {
 
 void SanguineBaseSegmentDisplay::drawLayer(const DrawArgs& args, int layer) {
 	if (layer == 1) {
-		if (module && !module->isBypassed()) {
-			if (font) {
-				// Text				
-				nvgFontSize(args.vg, fontSize);
-				nvgFontFaceId(args.vg, font->handle);
-				nvgTextLetterSpacing(args.vg, kerning);
+		if (font) {
+			// Text				
+			nvgFontSize(args.vg, fontSize);
+			nvgFontFaceId(args.vg, font->handle);
+			nvgTextLetterSpacing(args.vg, kerning);
 
-				Vec textPos = textMargin;
-				nvgFillColor(args.vg, nvgTransRGBA(textColor, backgroundCharAlpha));
-				// Background of all characters
-				std::string backgroundText = "";
-				for (uint32_t i = 0; i < characterCount; i++)
-					backgroundText += backgroundCharacter;
-				nvgText(args.vg, textPos.x, textPos.y, backgroundText.c_str(), NULL);
-				nvgFillColor(args.vg, textColor);
+			Vec textPos = textMargin;
+			nvgFillColor(args.vg, nvgTransRGBA(textColor, backgroundCharAlpha));
+			// Background of all characters
+			std::string backgroundText = "";
+			for (uint32_t i = 0; i < characterCount; i++)
+				backgroundText += backgroundCharacter;
+			nvgText(args.vg, textPos.x, textPos.y, backgroundText.c_str(), NULL);
+			nvgFillColor(args.vg, textColor);
 
-				std::string displayValue = "";
+			std::string displayValue = "";
 
-				// TODO!!! Ensure we draw only characterCount chars.
-				switch (displayType)
-				{
-				case DISPLAY_NUMERIC: {
+			// TODO!!! Ensure we draw only characterCount chars.
+			switch (displayType)
+			{
+			case DISPLAY_NUMERIC: {
+				if (module && !module->isBypassed()) {
 					if (values.numberValue) {
 						displayValue = std::to_string(*values.numberValue);
 						if (*values.numberValue < 10 && leadingZero)
 							displayValue.insert(0, 1, '0');
 					}
-					break;
 				}
-				case DISPLAY_STRING: {
-					displayValue = *values.displayText;
-					break;
+				else if (!module) {
+					displayValue = std::to_string(fallbackNumber);
+					if (fallbackNumber < 10 && leadingZero)
+						displayValue.insert(0, 1, '0');
 				}
+				break;
+			}
+			case DISPLAY_STRING: {
+				if (module && !module->isBypassed()) {
+					if (values.displayText) {
+						displayValue = *values.displayText;
+					}
 				}
+				else if (!module) {
+					displayValue = fallbackString;
+				}
+				break;
+			}
+			}
 
-				nvgText(args.vg, textPos.x, textPos.y, displayValue.c_str(), NULL);
+			nvgText(args.vg, textPos.x, textPos.y, displayValue.c_str(), NULL);
 
-				if (drawHalo) {
-					drawRectHalo(args, box.size, textColor, haloOpacity, 0.f);
-				}
+			if (drawHalo) {
+				drawRectHalo(args, box.size, textColor, haloOpacity, 0.f);
 			}
 		}
 	}
@@ -318,16 +330,17 @@ void Sanguine96x32OLEDDisplay::draw(const DrawArgs& args) {
 
 void Sanguine96x32OLEDDisplay::drawLayer(const DrawArgs& args, int layer) {
 	if (layer == 1) {
-		if (module && !module->isBypassed()) {
-			if (font) {
+		if (font) {
+			// Text					
+			nvgFontSize(args.vg, 6);
+			nvgFontFaceId(args.vg, font->handle);
+
+			nvgFillColor(args.vg, textColor);
+
+			Vec textPos = Vec(3, 7.5);
+
+			if (module && !module->isBypassed()) {
 				if (oledText && !(oledText->empty())) {
-					// Text					
-					nvgFontSize(args.vg, 6);
-					nvgFontFaceId(args.vg, font->handle);
-
-					nvgFillColor(args.vg, textColor);
-
-					Vec textPos = Vec(3, 7.5);
 					std::string textCopy;
 					textCopy.assign(oledText->data());
 					bool multiLine = oledText->size() > 8;
@@ -347,6 +360,11 @@ void Sanguine96x32OLEDDisplay::drawLayer(const DrawArgs& args, int layer) {
 						nvgText(args.vg, textPos.x, textPos.y, oledText->c_str(), NULL);
 					}
 					//drawRectHalo(args, box.size, textColor, 55, 0.f);					
+				}
+			}
+			else {
+				if (!module) {
+					nvgText(args.vg, textPos.x, textPos.y, fallbackString.c_str(), NULL);
 				}
 			}
 		}
@@ -571,7 +589,11 @@ SanguineShapedLight::SanguineShapedLight(Module* theModule, const std::string sh
 }
 
 void SanguineShapedLight::draw(const DrawArgs& args) {
-	// Do not call Widget::draw: it draws on the wrong layer.	
+	// Draw lights in module browser.
+	if (!module) {
+		Widget::draw(args);
+	}
+	// else do not call Widget::draw: it draws on the wrong layer.
 }
 
 void SanguineShapedLight::drawLayer(const DrawArgs& args, int layer) {
