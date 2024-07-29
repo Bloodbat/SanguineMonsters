@@ -34,6 +34,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 
 - Sphinx can now run in reverse.
 
+- Leave displays on in module browser.
+
 ## Changes
 
 - Use float_4 for Dolly-X voltages.
@@ -45,6 +47,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 - Better changelog layout.
 
 - Drop prefix from module names in browser.
+
+- Shaped lights don't turn off in module browser.
 
 ## Fixes
 
