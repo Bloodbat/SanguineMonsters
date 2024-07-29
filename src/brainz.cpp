@@ -1051,6 +1051,7 @@ struct BrainzWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2, module, 36.207, 34.908);
 		brainzFrameBuffer->addChild(displayStepsATotal);
+		displayStepsATotal->fallbackNumber = 1;
 
 		if (module)
 			displayStepsATotal->values.numberValue = &module->maxCounters[0];
@@ -1063,6 +1064,7 @@ struct BrainzWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayStepsBTotal = new SanguineTinyNumericDisplay(2, module, 36.207, 85.938);
 		brainzFrameBuffer->addChild(displayStepsBTotal);
+		displayStepsBTotal->fallbackNumber = 1;
 
 		if (module)
 			displayStepsBTotal->values.numberValue = &module->maxCounters[1];
@@ -1075,12 +1077,14 @@ struct BrainzWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayStepsCTotal = new SanguineTinyNumericDisplay(2, module, 108.181, 85.938);
 		brainzFrameBuffer->addChild(displayStepsCTotal);
+		displayStepsCTotal->fallbackNumber = 1;
 
 		if (module)
 			displayStepsCTotal->values.numberValue = &module->maxCounters[2];
 
 		SanguineTinyNumericDisplay* displayMetronomeSpeed = new SanguineTinyNumericDisplay(2, module, 110.857, 28.914);
 		brainzFrameBuffer->addChild(displayMetronomeSpeed);
+		displayMetronomeSpeed->fallbackNumber = 60;
 
 		if (module)
 			displayMetronomeSpeed->values.numberValue = &module->metronomeSpeed;
@@ -1093,6 +1097,7 @@ struct BrainzWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayMetronomeTotalSteps = new SanguineTinyNumericDisplay(2, module, 110.857, 40.647);
 		brainzFrameBuffer->addChild(displayMetronomeTotalSteps);
+		displayMetronomeTotalSteps->fallbackNumber = 10;
 
 		if (module)
 			displayMetronomeTotalSteps->values.numberValue = &module->metronomeSteps;

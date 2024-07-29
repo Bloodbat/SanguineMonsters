@@ -453,6 +453,7 @@ struct SuperSwitch81Widget : ModuleWidget {
 
 		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay(2, module, 39.397, 21.472);
 		switchFrameBuffer->addChild(display);
+		display->fallbackNumber = 8;
 
 		if (module)
 			display->values.numberValue = (&module->stepCount);

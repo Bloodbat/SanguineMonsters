@@ -146,9 +146,11 @@ struct DollyXWidget : ModuleWidget {
 
 		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay(2, module, 13.713, 24.498);
 		dollyFrameBuffer->addChild(displayCloner1);
+		displayCloner1->fallbackNumber = 16;
 
 		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay(2, module, 13.713, 79.168);
 		dollyFrameBuffer->addChild(displayCloner2);
+		displayCloner2->fallbackNumber = 16;
 
 		if (module) {
 			displayCloner1->values.numberValue = (&module->cloneCounts[0]);

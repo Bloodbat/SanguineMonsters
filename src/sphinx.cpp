@@ -684,12 +684,14 @@ struct SphinxWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayLength = new SanguineTinyNumericDisplay(2, module, 10.386, 50.499);
 		sphinxFrameBuffer->addChild(displayLength);
+		displayLength->fallbackNumber = 16;
 
 		if (module)
 			displayLength->values.numberValue = &module->patternLength;
 
 		SanguineTinyNumericDisplay* displayFill = new SanguineTinyNumericDisplay(2, module, 27.82, 50.499);
 		sphinxFrameBuffer->addChild(displayFill);
+		displayFill->fallbackNumber = 4;
 
 		if (module)
 			displayFill->values.numberValue = &module->patternFill;

@@ -320,6 +320,7 @@ struct DungeonWidget : ModuleWidget {
 		SanguineTinyNumericDisplay* displayMode = new SanguineTinyNumericDisplay(2, module, 35.56, 16.934);
 		displayMode->displayType = DISPLAY_STRING;
 		dungeonFrameBuffer->addChild(displayMode);
+		displayMode->fallbackString = dungeonModeLabels[0];
 
 		if (module)
 			displayMode->values.displayText = &module->modeLabel;
@@ -333,16 +334,16 @@ struct DungeonWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 100.733), module, Dungeon::OUTPUT_NOISE));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 116.011), module, Dungeon::OUTPUT_VOLTAGE));
 
-		SanguineShapedLight* clockLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 8.762, 93.246);		
+		SanguineShapedLight* clockLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 8.762, 93.246);
 		addChild(clockLight);
 
-		SanguineMonoInputLight* inLight = new SanguineMonoInputLight(module, 8.762, 108.611);		
+		SanguineMonoInputLight* inLight = new SanguineMonoInputLight(module, 8.762, 108.611);
 		addChild(inLight);
 
-		SanguineShapedLight* noiseLight = new SanguineShapedLight(module, "res/noise_lit.svg", 62.386, 93.246);		
+		SanguineShapedLight* noiseLight = new SanguineShapedLight(module, "res/noise_lit.svg", 62.386, 93.246);
 		addChild(noiseLight);
 
-		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight(module, 62.386, 108.311);		
+		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight(module, 62.386, 108.311);
 		addChild(outLight);
 
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 25.796, 109.702);

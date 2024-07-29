@@ -250,6 +250,7 @@ struct AionWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayTimer1 = new SanguineTinyNumericDisplay(2, module, 21.675, 27.047);
 		aionFramebuffer->addChild(displayTimer1);
+		displayTimer1->fallbackNumber = 1;
 
 		if (module)
 			displayTimer1->values.numberValue = &module->currentTimerValues[0];
@@ -311,6 +312,7 @@ struct AionWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 90.004, 27.047);
 		aionFramebuffer->addChild(displayTimer2);
+		displayTimer2->fallbackNumber = 1;
 
 		if (module)
 			displayTimer2->values.numberValue = &module->currentTimerValues[1];
@@ -352,6 +354,7 @@ struct AionWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayTimer3 = new SanguineTinyNumericDisplay(2, module, 21.675, 73.246);
 		aionFramebuffer->addChild(displayTimer3);
+		displayTimer3->fallbackNumber = 1;
 
 		if (module)
 			displayTimer3->values.numberValue = &module->currentTimerValues[2];
@@ -413,6 +416,7 @@ struct AionWidget : ModuleWidget {
 
 		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 90.004, 73.246);
 		aionFramebuffer->addChild(displayTimer4);
+		displayTimer4->fallbackNumber = 1;
 
 		if (module)
 			displayTimer4->values.numberValue = &module->currentTimerValues[3];

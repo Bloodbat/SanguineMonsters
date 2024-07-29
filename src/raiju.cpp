@@ -4,6 +4,8 @@
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
 
+static const std::string kBrowserDisplayText = "00.000";
+
 struct Raiju : Module {
 	static const int kVoltagesCount = 8;
 
@@ -236,54 +238,63 @@ struct RaijuWidget : ModuleWidget {
 
 		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2, module, 112.331, 13.997);
 		raijuFrameBuffer->addChild(displayChannelCount);
+		displayChannelCount->fallbackNumber = 1;
 
 		if (module)
 			displayChannelCount->values.numberValue = (&module->currentChannelCount);
 
 		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7, module, 45.663, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage1);
+		displayVoltage1->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage1->values.displayText = &module->strVoltages[0];
 
 		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7, module, 45.663, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage2);
+		displayVoltage2->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage2->values.displayText = &module->strVoltages[1];
 
 		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7, module, 45.663, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage3);
+		displayVoltage3->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage3->values.displayText = &module->strVoltages[2];
 
 		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7, module, 45.663, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage4);
+		displayVoltage4->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage4->values.displayText = &module->strVoltages[3];
 
 		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7, module, 91.495, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage5);
+		displayVoltage5->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage5->values.displayText = &module->strVoltages[4];
 
 		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7, module, 91.495, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage6);
+		displayVoltage6->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage6->values.displayText = &module->strVoltages[5];
 
 		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7, module, 91.495, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage7);
+		displayVoltage7->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage7->values.displayText = &module->strVoltages[6];
 
 		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7, module, 91.495, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage8);
+		displayVoltage8->fallbackString = kBrowserDisplayText;
 
 		if (module)
 			displayVoltage8->values.displayText = &module->strVoltages[7];
