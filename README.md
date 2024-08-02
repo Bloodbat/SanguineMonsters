@@ -8,66 +8,66 @@ You can find the manual [here](https://raw.githubusercontent.com/Bloodbat/Sangui
 
 ![alt text](pics/monster_modules.png)
 
-## Sanguine Aion
+## Aion
 
 A quad timer/counter that can be triggered externally or has an internal seconds clock.
 
-## Sanguine Alchemist
+## Alchemist
 
 A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
 
-## Sanguine Brainz
+## Brainz
 
 A utility to control multiple recorders and ease synchronizing their outputs in post.
 
-## Sanguine Bukavac
+## Bukavac
 
 A noise generator with a plethora of colors... and Perlin.
 
-## Sanguine Dolly-X
+## Dolly-X
 
 A monophonic to polyphonic channel cloner.
 
-## Sanguine Dungeon
+## Dungeon
 
 A sample and hold; track and hold; hold and track, and white noise source.
 
-## Sanguine Gegenees
+## Gegenees
 
 A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
-## Sanguine Hydra
+## Hydra
 
 An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
-## Sanguine Kitsune
+## Kitsune
 
 An attenuverter, offsetter and inverter with four channels.
 
-## Sanguine Medusa
+## Medusa
 
 A normalled, polyphonic mega multiple with 32 inputs and outputs.
 
-# Sanguine Monsters Blank
+# Monsters Blank
 
 Put a vampire and the Monsters logo in your rack!
 
-## Sanguine Oraculus
+## Oraculus
 
 A polyphonic to monophonic switch.
 
-## Sanguine Oubliette
+## Oubliette
 
 A null sink and cable parking for your wires. Also works as a null voltage source.
 
-## Sanguine Raiju
+## Raiju
 
 A fixed voltages source.
 
-## Sanguine Sphinx
+## Sphinx
 
 A Euclidean sequencer.
 
-## Sanguine Werewolf
+## Werewolf
 
 A polyphonic, stereo, dirty distortion.
