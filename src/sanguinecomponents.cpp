@@ -609,6 +609,76 @@ void SanguineShapedLight::drawLayer(const DrawArgs& args, int layer) {
 	Widget::drawLayer(args, layer);
 }
 
+SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string shapeFileName, const float X, const float Y,
+	bool createCentered, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+	module = theModule;
+	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
+	lightColor = (alpha << 24) + (blue << 16) + (green << 8) + red;
+
+	if (createCentered) {
+		box.pos = centerWidgetInMillimeters(this, X, Y);
+	}
+	else
+	{
+		box.pos = mm2px(Vec(X, Y));
+	}
+}
+
+SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string shapeFileName, const float X, const float Y,
+	bool createCentered, unsigned int newLightColor) {
+	module = theModule;
+	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
+	lightColor = newLightColor;
+
+	if (createCentered) {
+		box.pos = centerWidgetInMillimeters(this, X, Y);
+	}
+	else
+	{
+		box.pos = mm2px(Vec(X, Y));
+	}
+}
+
+// draw and drawLayer logic partially based on code by BaconPaul and Hemmer.
+void SanguineStaticRGBLight::draw(const DrawArgs& args) {
+	// Draw lights in module browser.	
+	if (!module) {
+		if (!sw->svg)
+			return;
+
+		NSVGimage* mySvg = sw->svg->handle;
+
+		// for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next, shapeIndex++) {
+		for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next) {
+			shape->fill.color = lightColor;
+			shape->fill.type = NSVG_PAINT_COLOR;
+		}
+		svgDraw(args.vg, sw->svg->handle);
+	}
+	// else do not call Widget::draw: it draws on the wrong layer.
+}
+
+void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
+	if (layer == 1) {
+		//From SvgWidget::draw()
+		if (!sw->svg)
+			return;
+		if (module && !module->isBypassed()) {
+			NSVGimage* mySvg = sw->svg->handle;
+
+			// for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next, shapeIndex++) {
+			for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next) {
+				shape->fill.color = lightColor;
+				shape->fill.type = NSVG_PAINT_COLOR;
+			}
+			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
+
+			svgDraw(args.vg, sw->svg->handle);
+		}
+	}
+	Widget::drawLayer(args, layer);
+}
+
 SanguineMonoInputLight::SanguineMonoInputLight(Module* theModule, const float X, const float Y, bool createCentered) :
 	SanguineShapedLight(theModule, "res/in_mono_light.svg", X, Y, createCentered) {
 }
