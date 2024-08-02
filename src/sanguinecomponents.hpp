@@ -253,19 +253,19 @@ struct SanguineStaticRGBLight : SvgLight {
 	void drawLayer(const DrawArgs& args, int layer) override;
 };
 
-struct SanguineMonoInputLight : SanguineShapedLight {
+struct SanguineMonoInputLight : SanguineStaticRGBLight {
 	SanguineMonoInputLight(Module* theModule, const float X, const float Y, bool createCentered = true);
 };
 
-struct SanguineMonoOutputLight : SanguineShapedLight {
+struct SanguineMonoOutputLight : SanguineStaticRGBLight {
 	SanguineMonoOutputLight(Module* theModule, const float X, const float Y, bool createCentered = true);
 };
 
-struct SanguinePolyInputLight : SanguineShapedLight {
+struct SanguinePolyInputLight : SanguineStaticRGBLight {
 	SanguinePolyInputLight(Module* theModule, const float X, const float Y, bool createCentered = true);
 };
 
-struct SanguinePolyOutputLight : SanguineShapedLight {
+struct SanguinePolyOutputLight : SanguineStaticRGBLight {
 	SanguinePolyOutputLight(Module* theModule, const float X, const float Y, bool createCentered = true);
 };
 

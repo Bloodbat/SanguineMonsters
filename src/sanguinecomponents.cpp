@@ -680,19 +680,19 @@ void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
 }
 
 SanguineMonoInputLight::SanguineMonoInputLight(Module* theModule, const float X, const float Y, bool createCentered) :
-	SanguineShapedLight(theModule, "res/in_mono_light.svg", X, Y, createCentered) {
+	SanguineStaticRGBLight(theModule, "res/in_light.svg", X, Y, createCentered, kSanguineYellowLight) {
 }
 
 SanguineMonoOutputLight::SanguineMonoOutputLight(Module* theModule, const float X, const float Y, bool createCentered) :
-	SanguineShapedLight(theModule, "res/out_mono_light.svg", X, Y, createCentered) {
+	SanguineStaticRGBLight(theModule, "res/out_light.svg", X, Y, createCentered, kSanguineYellowLight) {
 }
 
 SanguinePolyInputLight::SanguinePolyInputLight(Module* theModule, const float X, const float Y, bool createCentered) :
-	SanguineShapedLight(theModule, "res/in_light.svg", X, Y, createCentered) {
+	SanguineStaticRGBLight(theModule, "res/in_light.svg", X, Y, createCentered, kSanguineBlueLight) {
 }
 
 SanguinePolyOutputLight::SanguinePolyOutputLight(Module* theModule, const float X, const float Y, bool createCentered) :
-	SanguineShapedLight(theModule, "res/out_light.svg", X, Y, createCentered) {
+	SanguineStaticRGBLight(theModule, "res/out_light.svg", X, Y, createCentered, kSanguineBlueLight) {
 }
 
 SanguineBloodLogoLight::SanguineBloodLogoLight(Module* theModule, const float X, const float Y, bool createCentered) :
