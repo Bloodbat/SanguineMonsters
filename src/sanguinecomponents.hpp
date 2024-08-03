@@ -288,8 +288,10 @@ struct SanguinePanel : SvgPanel {
 };
 
 // Drawing utils
-void drawCircularHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor, unsigned char haloOpacity, float radiusFactor);
-void drawRectHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor, unsigned char haloOpacity, float positionX);
+void drawCircularHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
+	const unsigned char haloOpacity, const float radiusFactor);
+void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
+	const unsigned char haloOpacity, const float positionX);
 
 inline void fillSvgSolidColor(NSVGimage* svgImage, const unsigned int fillColor);
 

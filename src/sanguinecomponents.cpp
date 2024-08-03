@@ -647,7 +647,7 @@ void SanguineStaticRGBLight::draw(const DrawArgs& args) {
 			return;
 
 		NSVGimage* mySvg = sw->svg->handle;
-		
+
 		fillSvgSolidColor(mySvg, lightColor);
 		svgDraw(args.vg, sw->svg->handle);
 	}
@@ -661,7 +661,7 @@ void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
 			return;
 		if (module && !module->isBypassed()) {
 			NSVGimage* mySvg = sw->svg->handle;
-			
+
 			fillSvgSolidColor(mySvg, lightColor);
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
 
@@ -711,7 +711,8 @@ SanguinePanel::SanguinePanel(const std::string newBackgroundFileName, const std:
 
 // Drawing utils
 
-void drawCircularHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor, unsigned char haloOpacity, float radiusFactor) {
+void drawCircularHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
+	const unsigned char haloOpacity, const float radiusFactor) {
 	// Adapted from LightWidget
 	// Don't draw halo if rendering in a framebuffer, e.g. screenshots or Module Browser
 	if (args.fb)
@@ -738,7 +739,8 @@ void drawCircularHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloCo
 	nvgFill(args.vg);
 }
 
-void drawRectHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor, unsigned char haloOpacity, float positionX) {
+void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
+	const unsigned char haloOpacity, const float positionX) {
 	// Adapted from MindMeld & LightWidget.
 	if (args.fb)
 		return;
