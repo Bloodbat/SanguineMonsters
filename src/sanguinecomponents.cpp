@@ -647,12 +647,8 @@ void SanguineStaticRGBLight::draw(const DrawArgs& args) {
 			return;
 
 		NSVGimage* mySvg = sw->svg->handle;
-
-		// for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next, shapeIndex++) {
-		for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next) {
-			shape->fill.color = lightColor;
-			shape->fill.type = NSVG_PAINT_COLOR;
-		}
+		
+		fillSvgSolidColor(mySvg, lightColor);
 		svgDraw(args.vg, sw->svg->handle);
 	}
 	// else do not call Widget::draw: it draws on the wrong layer.
@@ -665,12 +661,8 @@ void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
 			return;
 		if (module && !module->isBypassed()) {
 			NSVGimage* mySvg = sw->svg->handle;
-
-			// for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next, shapeIndex++) {
-			for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next) {
-				shape->fill.color = lightColor;
-				shape->fill.type = NSVG_PAINT_COLOR;
-			}
+			
+			fillSvgSolidColor(mySvg, lightColor);
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
 
 			svgDraw(args.vg, sw->svg->handle);
@@ -770,4 +762,11 @@ void drawRectHalo(const Widget::DrawArgs& args, Vec boxSize, NVGcolor haloColor,
 	nvgFillPaint(args.vg, paint);
 	nvgFill(args.vg);
 	nvgGlobalCompositeOperation(args.vg, NVG_SOURCE_OVER);
+}
+
+void fillSvgSolidColor(NSVGimage* svgImage, const unsigned int fillColor) {
+	for (NSVGshape* shape = svgImage->shapes; shape; shape = shape->next) {
+		shape->fill.color = fillColor;
+		shape->fill.type = NSVG_PAINT_COLOR;
+	}
 }
