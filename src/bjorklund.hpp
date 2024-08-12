@@ -1,6 +1,6 @@
 #pragma once
 
-// Bjorklunds algorithm for euclidean sequnces
+// Bjorklunds algorithm for euclidean sequences
 //
 // Modified GIST from https://gist.github.com/unohee/d4f32b3222b42de84a5f
 
@@ -70,7 +70,7 @@ struct Bjorklund {
 	}
 
 	void buildSeq(int slot) {
-		// Construct a binary sequence of n bits with k one‚Äôs, such that the k one‚Äôs are distributed as evenly as possible among the zero‚Äôs
+		// Construct a binary sequence of n bits with k oneâ€šÃ„Ã´s, such that the k oneâ€šÃ„Ã´s are distributed as evenly as possible among the zeroâ€šÃ„Ã´s
 
 		if (slot == -1) {
 			sequence.push_back(0);
