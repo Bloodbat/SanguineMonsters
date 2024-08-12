@@ -83,7 +83,7 @@ struct Kitsune : Module {
 			for (int channel = 0; channel < channelCount; channel += 4) {
 				float_4 voltages = {};
 
-				voltages = clamp(inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + section].getValue() +
+				voltages = simd::clamp(inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + section].getValue() +
 					params[PARAM_OFFSET1 + section].getValue(), -10.f, 10.f);
 
 				outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCount);
