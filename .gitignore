@@ -8,3 +8,6 @@ dep
 dist
 .vs
 /faceplate_sources
+/.settings
+/.cproject
+/.project
