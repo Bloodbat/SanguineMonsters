@@ -6,10 +6,6 @@
 
 using namespace rack;
 
-// Color constants for decorative lights
-static const unsigned int kSanguineBlueLight = (255 << 24) + (255 << 16) + (167 << 8) + 0;
-static const unsigned int kSanguineYellowLight = (255 << 24) + (100 << 16) + (250 << 8) + 239;
-
 // Ports
 
 struct BananutBlack : app::SvgPort {
@@ -307,3 +303,7 @@ struct RGBLightColor {
 	float green;
 	float blue;
 };
+
+// Color constants for decorative lights
+static const unsigned int kSanguineBlueLight = rgbColorToInt(0, 167, 255);
+static const unsigned int kSanguineYellowLight = rgbColorToInt(239, 250, 100);
