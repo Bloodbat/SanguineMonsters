@@ -295,6 +295,11 @@ void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolo
 
 inline void fillSvgSolidColor(NSVGimage* svgImage, const unsigned int fillColor);
 
+// utils
+inline unsigned int rgbColorToInt(const unsigned int red, const unsigned int green, const unsigned int blue, const unsigned int alpha = 255) {
+	return (alpha << 24) + (blue << 16) + (green << 8) + red;
+}
+
 // Light colors.
 
 struct RGBLightColor {
