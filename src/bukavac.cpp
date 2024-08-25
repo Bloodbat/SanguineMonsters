@@ -347,6 +347,16 @@ struct Bukavac : Module {
 	}
 };
 
+struct SanguineCirclePortLight : SanguineStaticRGBLight {
+	SvgWidget* blackBorder;
+	SanguineCirclePortLight(Module* theModule, const float X, const float Y, bool createCentered, unsigned int newLightColor) :
+		SanguineStaticRGBLight(theModule, "res/port_circle_light.svg", X, Y, createCentered, newLightColor) {
+		SvgWidget* blackBorder = new SvgWidget();
+		blackBorder->setSvg(Svg::load(asset::plugin(pluginInstance, "res/port_circle_light_border.svg")));
+		fb->addChildBelow(blackBorder, sw);
+	};
+};
+
 struct BukavacWidget : ModuleWidget {
 	BukavacWidget(Bukavac* module) {
 		setModule(module);
@@ -388,32 +398,32 @@ struct BukavacWidget : ModuleWidget {
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 26.228, 93.384);
 		addChild(monstersLight);
 
-		SanguineShapedLight* whiteLight = new SanguineShapedLight(module, "res/white_ring_lit.svg", 7.04, 106.724);
+		SanguineCirclePortLight* whiteLight = new SanguineCirclePortLight(module, 7.04, 106.724, true, rgbColorToInt(204, 204, 204));
 		addChild(whiteLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 106.724), module, Bukavac::OUTPUT_WHITE));
 
-		SanguineShapedLight* pinkLight = new SanguineShapedLight(module, "res/pink_ring_lit.svg", 17.583, 106.724);
+		SanguineCirclePortLight* pinkLight = new SanguineCirclePortLight(module, 17.583, 106.724, true, rgbColorToInt(255, 153, 204));
 		addChild(pinkLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 106.724), module, Bukavac::OUTPUT_PINK));
 
-		SanguineShapedLight* redLight = new SanguineShapedLight(module, "res/red_ring_lit.svg", 28.127, 106.724);
+		SanguineCirclePortLight* redLight = new SanguineCirclePortLight(module, 28.127, 106.724, true, rgbColorToInt(255, 0, 0));
 		addChild(redLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 106.724), module, Bukavac::OUTPUT_RED));
 
-		SanguineShapedLight* purpleLight = new SanguineShapedLight(module, "res/purple_ring_lit.svg", 38.67, 106.724);
+		SanguineCirclePortLight* purpleLight = new SanguineCirclePortLight(module, 38.67, 106.724, true, rgbColorToInt(180, 70, 218));
 		addChild(purpleLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 106.724), module, Bukavac::OUTPUT_VIOLET));
 
-		SanguineShapedLight* blueLight = new SanguineShapedLight(module, "res/blue_ring_lit.svg", 7.04, 117.456);
+		SanguineCirclePortLight* blueLight = new SanguineCirclePortLight(module, 7.04, 117.456, true, rgbColorToInt(0, 167, 255));
 		addChild(blueLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 117.456), module, Bukavac::OUTPUT_BLUE));
 
-		SanguineShapedLight* grayLight = new SanguineShapedLight(module, "res/gray_ring_lit.svg", 17.583, 117.456);
+		SanguineCirclePortLight* grayLight = new SanguineCirclePortLight(module, 17.583, 117.456, true, rgbColorToInt(102, 102, 102));
 		addChild(grayLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 117.456), module, Bukavac::OUTPUT_GRAY));
