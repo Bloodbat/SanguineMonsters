@@ -55,9 +55,9 @@ struct Werewolf : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
-		bool leftInConnected = inputs[INPUT_LEFT].isConnected();
-		bool rightInConnected = inputs[INPUT_RIGHT].isConnected();
-		bool normalled = true;
+		bool bLeftInConnected = inputs[INPUT_LEFT].isConnected();
+		bool bRightInConnected = inputs[INPUT_RIGHT].isConnected();
+		bool bIsNormalled = true;
 
 		float voltageInLeft = 0.f;
 		float voltageInRight = 0.f;
@@ -70,7 +70,7 @@ struct Werewolf : Module {
 		float foldSum = 0.f;
 		float gainSum = 0.f;
 
-		bool lightsTurn = lightDivider.process();
+		bool bIsLightsTurn = lightDivider.process();
 		const float sampleTime = args.sampleTime * kLightFrequency;
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
@@ -86,24 +86,24 @@ struct Werewolf : Module {
 				gainSum += channelGain;
 				foldSum += channelFold;
 
-				if (leftInConnected) {
+				if (bLeftInConnected) {
 					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
 					voltageInLeft = newVoltage;
 					voltageInRight = newVoltage;
 					outputs[OUTPUT_LEFT].setChannels(channelCount);
 					outputs[OUTPUT_RIGHT].setChannels(channelCount);
 				}
-				if (rightInConnected) {
-					normalled = false;
+				if (bRightInConnected) {
+					bIsNormalled = false;
 					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
 				}
 
 				// Distortion
-				if (leftInConnected) {
+				if (bLeftInConnected) {
 					doDistortion(voltageInLeft, voltageOutLeft, channelFold);
 				}
 
-				if (rightInConnected) {
+				if (bRightInConnected) {
 					doDistortion(voltageInRight, voltageOutRight, channelFold);
 				}
 
@@ -113,7 +113,7 @@ struct Werewolf : Module {
 					outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
 				}
 
-				if (normalled) {
+				if (bIsNormalled) {
 					if (outputs[OUTPUT_RIGHT].isConnected()) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageOutLeft, channel);
 					}
@@ -128,12 +128,12 @@ struct Werewolf : Module {
 			}
 		}
 
-		if (lightsTurn) {
+		if (bIsLightsTurn) {
 			if (channelCount < 2) {
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(0.f, sampleTime);
-				if (normalled) {
+				if (bIsNormalled) {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
@@ -158,7 +158,7 @@ struct Werewolf : Module {
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
-				if (normalled) {
+				if (bIsNormalled) {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
