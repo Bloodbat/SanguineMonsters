@@ -359,14 +359,14 @@ struct BukavacWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		SanguineShapedLight* speedLight = new SanguineShapedLight(module, "res/speed_lit.svg", 4.199, 26.802);
+		SanguineStaticRGBLight* speedLight = new SanguineStaticRGBLight(module, "res/speed_lit.svg", 4.199, 26.802, true, kSanguineBlueLight);
 		addChild(speedLight);
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 26.802), module, Bukavac::INPUT_PERLIN_SPEED));
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(23.184, 26.802), module, Bukavac::PARAM_PERLIN_SPEED_CV));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(37.527, 26.802), module, Bukavac::PARAM_PERLIN_SPEED));
 
-		SanguineShapedLight* amplifierLight = new SanguineShapedLight(module, "res/amplifier_lit.svg", 4.199, 44.898);
+		SanguineStaticRGBLight* amplifierLight = new SanguineStaticRGBLight(module, "res/amplifier_lit.svg", 4.199, 44.898, true, kSanguineBlueLight);
 		addChild(amplifierLight);
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 44.898), module, Bukavac::INPUT_PERLIN_AMP));

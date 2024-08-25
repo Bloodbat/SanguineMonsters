@@ -157,10 +157,10 @@ struct DollyXWidget : ModuleWidget {
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
 		}
 
-		SanguineShapedLight* amalgamLight1 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 36.856);
+		SanguineStaticRGBLight* amalgamLight1 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 36.856, true, kSanguineBlueLight);
 		addChild(amalgamLight1);
 
-		SanguineShapedLight* amalgamLight2 = new SanguineShapedLight(module, "res/amalgam_light.svg", 13.713, 91.526);
+		SanguineStaticRGBLight* amalgamLight2 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 91.526, true, kSanguineBlueLight);
 		addChild(amalgamLight2);
 
 		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight(module, 9.871, 49.743);
