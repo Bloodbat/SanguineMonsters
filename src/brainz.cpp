@@ -898,39 +898,39 @@ struct Brainz : Module {
 	}
 };
 
-struct YellowGateLight : SanguineShapedLight {
+struct YellowGateLight : SanguineStaticRGBLight {
 	YellowGateLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
-		SanguineShapedLight(theModule, "res/gate_lit_mono.svg", X, Y, createCentered) {
+		SanguineStaticRGBLight(theModule, "res/gate_lit.svg", X, Y, createCentered, kSanguineYellowLight) {
 	}
 };
 
-struct BluePowerLight : SanguineShapedLight {
+struct BluePowerLight : SanguineStaticRGBLight {
 	BluePowerLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
-		SanguineShapedLight(theModule, "res/power_blue_lit.svg", X, Y, createCentered) {
+		SanguineStaticRGBLight(theModule, "res/power_lit.svg", X, Y, createCentered, kSanguineBlueLight) {
 	}
 };
 
-struct BlueAdvancedClockLight : SanguineShapedLight {
+struct BlueAdvancedClockLight : SanguineStaticRGBLight {
 	BlueAdvancedClockLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
-		SanguineShapedLight(theModule, "res/clock_move_blue_lit.svg", X, Y, createCentered) {
+		SanguineStaticRGBLight(theModule, "res/clock_move_lit.svg", X, Y, createCentered, kSanguineBlueLight) {
 	}
 };
 
-struct BlueInitialClockLight : SanguineShapedLight {
+struct BlueInitialClockLight : SanguineStaticRGBLight {
 	BlueInitialClockLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
-		SanguineShapedLight(theModule, "res/clock_still_blue_lit.svg", X, Y, createCentered) {
+		SanguineStaticRGBLight(theModule, "res/clock_still_lit.svg", X, Y, createCentered, kSanguineBlueLight) {
 	}
 };
 
-struct BlueRightArrowLight : SanguineShapedLight {
+struct BlueRightArrowLight : SanguineStaticRGBLight {
 	BlueRightArrowLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
-		SanguineShapedLight(theModule, "res/arrow_right_blue_lit.svg", X, Y, createCentered) {
+		SanguineStaticRGBLight(theModule, "res/arrow_right_lit.svg", X, Y, createCentered, kSanguineBlueLight) {
 	}
 };
 
-struct BlueQuarterNoteLight : SanguineShapedLight {
+struct BlueQuarterNoteLight : SanguineStaticRGBLight {
 	BlueQuarterNoteLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
-		SanguineShapedLight(theModule, "res/quarter_note_blue_lit.svg", X, Y, createCentered) {
+		SanguineStaticRGBLight(theModule, "res/quarter_note_lit.svg", X, Y, createCentered, kSanguineBlueLight) {
 	}
 };
 
@@ -1102,13 +1102,13 @@ struct BrainzWidget : ModuleWidget {
 		if (module)
 			displayMetronomeTotalSteps->values.numberValue = &module->metronomeSteps;
 
-		SanguineShapedLight* inPlayLight = new SanguineShapedLight(module, "res/yellow_play_lit.svg", 7.402, 109.601);
+		SanguineStaticRGBLight* inPlayLight = new SanguineStaticRGBLight(module, "res/play_lit.svg", 7.402, 109.601, true, kSanguineYellowLight);
 		addChild(inPlayLight);
 
-		SanguineShapedLight* resetLight = new SanguineShapedLight(module, "res/reset_buttonless_lit_mono.svg", 20.367, 109.601);
+		SanguineStaticRGBLight* resetLight = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 20.367, 109.601, true, kSanguineYellowLight);
 		addChild(resetLight);
 
-		SanguineShapedLight* metronomeStepsLight = new SanguineShapedLight(module, "res/numpad_lit_blue.svg", 120.921, 40.647);
+		SanguineStaticRGBLight* metronomeStepsLight = new SanguineStaticRGBLight(module, "res/numpad_lit.svg", 120.921, 40.647, true, kSanguineBlueLight);
 		addChild(metronomeStepsLight);
 
 		YellowGateLight* gateLightA = new YellowGateLight(module, 39.454, 43.647);
@@ -1168,25 +1168,25 @@ struct BrainzWidget : ModuleWidget {
 		BlueQuarterNoteLight* quarterNoteLightMetronome = new BlueQuarterNoteLight(module, 120.921, 28.914);
 		addChild(quarterNoteLightMetronome);
 
-		SanguineShapedLight* outPlayLight = new SanguineShapedLight(module, "res/yellow_play_lit.svg", 59.739, 109.601);
+		SanguineStaticRGBLight* outPlayLight = new SanguineStaticRGBLight(module, "res/play_lit.svg", 59.739, 109.601, true, kSanguineYellowLight);
 		addChild(outPlayLight);
 
-		SanguineShapedLight* outResetLight = new SanguineShapedLight(module, "res/reset_buttonless_lit_mono.svg", 69.799, 109.601);
+		SanguineStaticRGBLight* outResetLight = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 69.799, 109.601, true, kSanguineYellowLight);
 		addChild(outResetLight);
 
-		SanguineShapedLight* outMetronomeLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 79.541, 109.601);
+		SanguineStaticRGBLight* outMetronomeLight = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 79.541, 109.601, true, kSanguineYellowLight);
 		addChild(outMetronomeLight);
 
-		SanguineShapedLight* outLight1 = new SanguineShapedLight(module, "res/number_1_yellow_lit.svg", 88.888, 109.601);
+		SanguineStaticRGBLight* outLight1 = new SanguineStaticRGBLight(module, "res/number_1_lit.svg", 88.888, 109.601, true, kSanguineYellowLight);
 		addChild(outLight1);
 
-		SanguineShapedLight* outLight2 = new SanguineShapedLight(module, "res/number_2_yellow_lit.svg", 98.652, 109.601);
+		SanguineStaticRGBLight* outLight2 = new SanguineStaticRGBLight(module, "res/number_2_lit.svg", 98.652, 109.601, true, kSanguineYellowLight);
 		addChild(outLight2);
 
-		SanguineShapedLight* outLight3 = new SanguineShapedLight(module, "res/number_3_yellow_lit.svg", 108.321, 109.601);
+		SanguineStaticRGBLight* outLight3 = new SanguineStaticRGBLight(module, "res/number_3_lit.svg", 108.321, 109.601, true, kSanguineYellowLight);
 		addChild(outLight3);
 
-		SanguineShapedLight* outLight4 = new SanguineShapedLight(module, "res/number_4_yellow_lit.svg", 117.898, 109.601);
+		SanguineStaticRGBLight* outLight4 = new SanguineStaticRGBLight(module, "res/number_4_lit.svg", 117.898, 109.601, true, kSanguineYellowLight);
 		addChild(outLight4);
 
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 31.116, 109.911);

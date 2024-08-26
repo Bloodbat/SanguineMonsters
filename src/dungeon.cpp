@@ -334,7 +334,7 @@ struct DungeonWidget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 100.733), module, Dungeon::OUTPUT_NOISE));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 116.011), module, Dungeon::OUTPUT_VOLTAGE));
 
-		SanguineShapedLight* clockLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 8.762, 93.246);
+		SanguineStaticRGBLight* clockLight = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 8.762, 93.246, true, kSanguineYellowLight);
 		addChild(clockLight);
 
 		SanguineMonoInputLight* inLight = new SanguineMonoInputLight(module, 8.762, 108.611);

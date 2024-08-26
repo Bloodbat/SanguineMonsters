@@ -833,13 +833,13 @@ struct SphinxWidget : ModuleWidget {
 		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.543, 112.894), module, Sphinx::OUTPUT_GATE));
 		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(48.448, 112.894), module, Sphinx::OUTPUT_ACCENT));
 
-		SanguineShapedLight* clockLight = new SanguineShapedLight(module, "res/clock_lit_mono.svg", 7.326, 105.958);
+		SanguineStaticRGBLight* clockLight = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 7.326, 105.958, true, kSanguineYellowLight);
 		addChild(clockLight);
 
-		SanguineShapedLight* resetLight = new SanguineShapedLight(module, "res/reset_buttonless_lit_mono.svg", 19.231, 105.958);
+		SanguineStaticRGBLight* resetLight = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 19.231, 105.958, true, kSanguineYellowLight);
 		addChild(resetLight);
 
-		SanguineShapedLight* gateLight = new SanguineShapedLight(module, "res/gate_lit_mono.svg", 36.543, 105.958);
+		SanguineStaticRGBLight* gateLight = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 36.543, 105.958, true, kSanguineYellowLight);
 		addChild(gateLight);
 
 		SanguineShapedLight* accentLight = new SanguineShapedLight(module, "res/accent_lit_mono.svg", 48.448, 105.958);
