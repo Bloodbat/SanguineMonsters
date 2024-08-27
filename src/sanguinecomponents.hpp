@@ -179,6 +179,20 @@ struct SanguineLightUpSwitch : app::SvgSwitch {
 	void drawLayer(const DrawArgs& args, int layer) override;
 };
 
+struct SanguineLightUpRGBSwitch : app::SvgSwitch {
+	std::vector<unsigned int>colors;
+	std::vector<NVGcolor> halos;
+	SvgWidget* glyph;
+	TransformWidget* transformWidget;
+	SanguineLightUpRGBSwitch();
+	void addColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255);
+	void addColor(unsigned int color);
+	void addHalo(NVGcolor haloColor);
+	void drawLayer(const DrawArgs& args, int layer) override;
+	void setBackground(const std::string fileName);
+	void setGlyph(const std::string fileName, const float offsetX, const float offsetY);
+};
+
 struct Befaco2StepSwitch : app::SvgSwitch {
 	Befaco2StepSwitch();
 };

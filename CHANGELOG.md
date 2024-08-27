@@ -50,6 +50,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 
 - Shaped lights don't turn off in module browser.
 
+- Use less disk space for shaped lights and buttons.
+
 ## Fixes
 
 - Switches output 0V when their input is disconnected.

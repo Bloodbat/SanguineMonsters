@@ -352,90 +352,37 @@ struct SuperSwitch18Widget : ModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT8));
 
 		currentY = 20.104f;
-		SeqStepSwitch* step1 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP1);
-		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_off.svg")));
-		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_on.svg")));
-		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_disabled.svg")));
-		addParam(step1);
+
+		addParam(createParam<SeqStep1Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP1));
 		currentY += deltaY;
-		SeqStepSwitch* step2 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP2);
-		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_off.svg")));
-		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_on.svg")));
-		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_disabled.svg")));
-		addParam(step2);
+
+		addParam(createParam<SeqStep2Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP2));
 		currentY += deltaY;
-		SeqStepSwitch* step3 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP3);
-		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_off.svg")));
-		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_on.svg")));
-		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_disabled.svg")));
-		addParam(step3);
+
+		addParam(createParam<SeqStep3Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP3));
 		currentY += deltaY;
-		SeqStepSwitch* step4 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP4);
-		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_off.svg")));
-		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_on.svg")));
-		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_disabled.svg")));
-		addParam(step4);
+
+		addParam(createParam<SeqStep4Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP4));
 		currentY += deltaY;
-		SeqStepSwitch* step5 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP5);
-		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_off.svg")));
-		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_on.svg")));
-		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_disabled.svg")));
-		addParam(step5);
+
+		addParam(createParam<SeqStep5Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP5));
 		currentY += deltaY;
-		SeqStepSwitch* step6 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP6);
-		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_off.svg")));
-		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_on.svg")));
-		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_disabled.svg")));
-		addParam(step6);
+
+		addParam(createParam<SeqStep6Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP6));
 		currentY += deltaY;
-		SeqStepSwitch* step7 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP7);
-		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_off.svg")));
-		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_on.svg")));
-		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_disabled.svg")));
-		addParam(step7);
+
+		addParam(createParam<SeqStep7Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP7));
 		currentY += deltaY;
-		SeqStepSwitch* step8 = createParam<SeqStepSwitch>(millimetersToPixelsVec(39.677, currentY),
-			module, SuperSwitch18::PARAM_STEP8);
-		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_off.svg")));
-		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_on.svg")));
-		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_disabled.svg")));
-		addParam(step8);
+
+		addParam(createParam<SeqStep8Big>(millimetersToPixelsVec(39.677, currentY), module, SuperSwitch18::PARAM_STEP8));
 
 		currentY = 43.085f;
 
-		SanguineLightUpSwitch* switchNoRepeats = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(28.711, currentY),
-			module, SuperSwitch18::PARAM_NO_REPEATS);
-		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_off.svg")));
-		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_on.svg")));
-		switchNoRepeats->addHalo(nvgRGB(0, 0, 0));
-		switchNoRepeats->addHalo(nvgRGB(206, 61, 255));
-		switchNoRepeats->momentary = false;
-		addParam(switchNoRepeats);
+		addParam(createParam<SeqButtonNoRepeatsSmall>(millimetersToPixelsVec(28.711, currentY), module, SuperSwitch18::PARAM_NO_REPEATS));
 
-		SanguineLightUpSwitch* switchOneShot = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(15.844, currentY),
-			module, SuperSwitch18::PARAM_ONE_SHOT);
-		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_off.svg")));
-		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_on.svg")));
-		switchOneShot->addHalo(nvgRGB(0, 0, 0));
-		switchOneShot->addHalo(nvgRGB(255, 11, 11));
-		switchOneShot->momentary = false;
-		addParam(switchOneShot);
+		addParam(createParam<SeqButtonOneShotSmall>(millimetersToPixelsVec(15.844, currentY), module, SuperSwitch18::PARAM_ONE_SHOT));
 
-		SanguineLightUpSwitch* switchResetToFirstStep = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(2.977, currentY),
-			module, SuperSwitch18::PARAM_RESET_TO_FIRST_STEP);
-		switchResetToFirstStep->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_to_one_off.svg")));
-		switchResetToFirstStep->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_to_one_on.svg")));
-		switchResetToFirstStep->addHalo(nvgRGB(0, 0, 0));
-		switchResetToFirstStep->addHalo(nvgRGB(230, 230, 230));
-		switchResetToFirstStep->momentary = false;
-		addParam(switchResetToFirstStep);
+		addParam(createParam<SeqButtonResetToOne>(millimetersToPixelsVec(2.977, currentY), module, SuperSwitch18::PARAM_RESET_TO_FIRST_STEP));
 
 		currentY = 55.291f;
 		deltaY = 14.631f;
@@ -447,30 +394,13 @@ struct SuperSwitch18Widget : ModuleWidget {
 		currentY += deltaY;
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.487, currentY), module, SuperSwitch18::INPUT_RESET));
 
-		currentY = 51.376f;
-		SeqControlSwitch* btnIncrease = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(21.433, currentY),
-			module, SuperSwitch18::PARAM_INCREASE);
-		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_off.svg")));
-		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_on.svg")));
-		addParam(btnIncrease);
-		currentY += deltaY;
-		SeqControlSwitch* btnDecrease = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(21.433, currentY),
-			module, SuperSwitch18::PARAM_DECREASE);
-		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_off.svg")));
-		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_on.svg")));
-		addParam(btnDecrease);
-		currentY += deltaY;
-		SeqControlSwitch* btnRandom = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(21.433, currentY),
-			module, SuperSwitch18::PARAM_RANDOM);
-		btnRandom->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/random_off.svg")));
-		btnRandom->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/random_on.svg")));
-		addParam(btnRandom);
-		currentY += deltaY;
-		SeqControlSwitch* btnReset = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(21.433, currentY),
-			module, SuperSwitch18::PARAM_RESET);
-		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset);
+		addParam(createParamCentered<SeqButtonUp>(millimetersToPixelsVec(25.349, 55.292), module, SuperSwitch18::PARAM_INCREASE));
+
+		addParam(createParamCentered<SeqButtonDown>(millimetersToPixelsVec(25.349, 69.922), module, SuperSwitch18::PARAM_DECREASE));
+
+		addParam(createParamCentered<SeqButtonRandom>(millimetersToPixelsVec(25.349, 84.553), module, SuperSwitch18::PARAM_RANDOM));
+
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(25.349, 99.184), module, SuperSwitch18::PARAM_RESET));
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(10.237, 116.012), module, SuperSwitch18::INPUT_IN));
 
@@ -484,7 +414,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 		if (module)
 			display->values.numberValue = (&module->stepCount);
 
-		SanguineShapedLight* stepsLight = new SanguineShapedLight(module, "res/seqs/light_steps.svg", 27.015, 34.372);
+		SanguineStaticRGBLight* stepsLight = new SanguineStaticRGBLight(module, "res/seqs/light_steps.svg", 27.015, 34.372, true, kSanguineBlueLight);
 		addChild(stepsLight);
 
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 10.237, 108.611);

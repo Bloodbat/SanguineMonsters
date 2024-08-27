@@ -240,29 +240,13 @@ struct OraculusWidget : ModuleWidget {
 		FramebufferWidget* oraculusFrameBuffer = new FramebufferWidget();
 		addChild(oraculusFrameBuffer);
 
-		SeqControlSwitch* btnIncrease = createParam<SeqControlSwitch>(millimetersToPixelsVec(21.536, 51.886),
-			module, Oraculus::PARAM_INCREASE);
-		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_off.svg")));
-		btnIncrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/up_on.svg")));
-		oraculusFrameBuffer->addChild(btnIncrease);
+		addParam(createParamCentered<SeqButtonUp>(millimetersToPixelsVec(25.451, 55.801), module, Oraculus::PARAM_INCREASE));
 
-		SeqControlSwitch* btnDecrease = createParam<SeqControlSwitch>(millimetersToPixelsVec(21.5361, 65.069),
-			module, Oraculus::PARAM_DECREASE);
-		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_off.svg")));
-		btnDecrease->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/down_on.svg")));
-		oraculusFrameBuffer->addChild(btnDecrease);
+		addParam(createParamCentered<SeqButtonDown>(millimetersToPixelsVec(25.451f, 68.984f), module, Oraculus::PARAM_DECREASE));
 
-		SeqControlSwitch* btnRandom = createParam<SeqControlSwitch>(millimetersToPixelsVec(21.536, 78.253),
-			module, Oraculus::PARAM_RANDOM);
-		btnRandom->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/random_off.svg")));
-		btnRandom->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/random_on.svg")));
-		oraculusFrameBuffer->addChild(btnRandom);
+		addParam(createParamCentered<SeqButtonRandom>(millimetersToPixelsVec(25.451, 82.168), module, Oraculus::PARAM_RANDOM));
 
-		SeqControlSwitch* btnReset = createParam<SeqControlSwitch>(millimetersToPixelsVec(21.536, 91.436),
-			module, Oraculus::PARAM_RESET);
-		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		oraculusFrameBuffer->addChild(btnReset);
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(25.451, 95.351), module, Oraculus::PARAM_RESET));
 
 		SanguinePolyInputLight* InPolyLight = new SanguinePolyInputLight(module, 6.452, 14.785);
 		addChild(InPolyLight);
@@ -270,14 +254,7 @@ struct OraculusWidget : ModuleWidget {
 		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight(module, 17.78, 106.565);
 		addChild(outMonoLight);
 
-		SanguineLightUpSwitch* switchNoRepeats = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(9.454, 41.189),
-			module, Oraculus::PARAM_NO_REPEATS);
-		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_off.svg")));
-		switchNoRepeats->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/no_repeats_on.svg")));
-		switchNoRepeats->addHalo(nvgRGB(0, 0, 0));
-		switchNoRepeats->addHalo(nvgRGB(206, 61, 255));
-		switchNoRepeats->momentary = false;
-		oraculusFrameBuffer->addChild(switchNoRepeats);
+		addParam(createParam<SeqButtonNoRepeatsSmall>(millimetersToPixelsVec(9.454, 41.189), module, Oraculus::PARAM_NO_REPEATS));
 
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(23.734, 15.11), module, Oraculus::LIGHT_CHANNEL + 0 * 3));
 

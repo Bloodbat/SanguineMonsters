@@ -258,56 +258,28 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.411, 27.047), module, Aion::PARAM_TIMER_1));
 
-		SanguineLightUpSwitch* switchRestart1 = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(45.87, 14.631),
-			module, Aion::PARAM_RESTART_1);
-		switchRestart1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_off.svg")));
-		switchRestart1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_on.svg")));
-		switchRestart1->addHalo(nvgRGB(0, 0, 0));
-		switchRestart1->addHalo(nvgRGB(0, 255, 0));
-		switchRestart1->momentary = false;
-		switchRestart1->latch = true;
-		addParam(switchRestart1);
+		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 14.631), module, Aion::PARAM_RESTART_1));
 
-		SeqControlSwitch* btnTrigger1 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(2.835, 36.482),
-			module, Aion::PARAM_TRIGGER_1);
-		btnTrigger1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_off.svg")));
-		btnTrigger1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_on.svg")));
-		addParam(btnTrigger1);
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(6.75, 40.397), module, Aion::PARAM_TRIGGER_1));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 51.545), module, Aion::INPUT_TRIGGER_1));
 
-		SeqControlSwitch* btnStart1 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(16.531, 36.482),
-			module, Aion::PARAM_START_1);
-		btnStart1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_off.svg")));
-		btnStart1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_on.svg")));
-		addParam(btnStart1);
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(20.446, 40.397), module, Aion::PARAM_START_1));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 51.545), module, Aion::INPUT_RUN_1));
 
-		SeqControlSwitch* btnReset1 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(30.246, 36.482),
-			module, Aion::PARAM_RESET_1);
-		btnReset1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset1);
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(34.161, 40.397), module, Aion::PARAM_RESET_1));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.161, 51.545), module, Aion::INPUT_RESET_1));
 
-		SanguineMonoOutputLight* lightOutput1 = new SanguineMonoOutputLight(module, 47.869, 44.546);		
+		SanguineStaticRGBLight* lightOutput1 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 47.87, 44.546, true, kSanguineYellowLight);
 		addChild(lightOutput1);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(47.87, 51.545), module, Aion::OUTPUT_TRIGGER_1));
 
 		// Timer 2
 
-		SanguineLightUpSwitch* switchRestart2 = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(61.69, 14.631),
-			module, Aion::PARAM_RESTART_2);
-		switchRestart2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_off.svg")));
-		switchRestart2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_on.svg")));
-		switchRestart2->addHalo(nvgRGB(0, 0, 0));
-		switchRestart2->addHalo(nvgRGB(0, 255, 0));
-		switchRestart2->momentary = false;
-		switchRestart2->latch = true;
-		addParam(switchRestart2);
+		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(61.69, 14.631), module, Aion::PARAM_RESTART_2));
 
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(73.316, 27.047), module, Aion::PARAM_TIMER_2));
 
@@ -320,31 +292,19 @@ struct AionWidget : ModuleWidget {
 
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(102.466, 27.047), module, Aion::LIGHT_TIMER_2));
 
-		SeqControlSwitch* btnReset2 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(59.774, 36.482),
-			module, Aion::PARAM_RESET_2);
-		btnReset2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset2);
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(63.69, 40.397), module, Aion::PARAM_RESET_2));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(63.69, 51.545), module, Aion::INPUT_RESET_2));
 
-		SeqControlSwitch* btnStart2 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(73.565, 36.482),
-			module, Aion::PARAM_START_2);
-		btnStart2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_off.svg")));
-		btnStart2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_on.svg")));
-		addParam(btnStart2);
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(77.481, 40.397), module, Aion::PARAM_START_2));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(77.48, 51.545), module, Aion::INPUT_RUN_2));
 
-		SeqControlSwitch* btnTrigger2 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(87.326, 36.482),
-			module, Aion::PARAM_TRIGGER_2);
-		btnTrigger2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_off.svg")));
-		btnTrigger2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_on.svg")));
-		addParam(btnTrigger2);
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(91.242, 40.397), module, Aion::PARAM_TRIGGER_2));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(91.424, 51.545), module, Aion::INPUT_TRIGGER_2));
 
-		SanguineMonoOutputLight* lightOutput2 = new SanguineMonoOutputLight(module, 105.016, 44.546);		
+		SanguineStaticRGBLight* lightOutput2 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 105.016, 44.546, true, kSanguineYellowLight);
 		addChild(lightOutput2);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(105.016, 51.545), module, Aion::OUTPUT_TRIGGER_2));
@@ -362,56 +322,28 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(38.411, 73.246), module, Aion::PARAM_TIMER_3));
 
-		SanguineLightUpSwitch* switchRestart3 = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(45.87, 60.833),
-			module, Aion::PARAM_RESTART_3);
-		switchRestart3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_off.svg")));
-		switchRestart3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_on.svg")));
-		switchRestart3->addHalo(nvgRGB(0, 0, 0));
-		switchRestart3->addHalo(nvgRGB(0, 255, 0));
-		switchRestart3->momentary = false;
-		switchRestart3->latch = true;
-		addParam(switchRestart3);
+		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 60.833), module, Aion::PARAM_RESTART_3));
 
-		SeqControlSwitch* btnTrigger3 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(2.835, 82.685),
-			module, Aion::PARAM_TRIGGER_3);
-		btnTrigger3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_off.svg")));
-		btnTrigger3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_on.svg")));
-		addParam(btnTrigger3);
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(6.75, 86.6), module, Aion::PARAM_TRIGGER_3));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 97.748), module, Aion::INPUT_TRIGGER_3));
 
-		SeqControlSwitch* btnStart3 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(16.531, 82.685),
-			module, Aion::PARAM_START_3);
-		btnStart3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_off.svg")));
-		btnStart3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_on.svg")));
-		addParam(btnStart3);
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(20.446, 86.6), module, Aion::PARAM_START_3));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 97.748), module, Aion::INPUT_RUN_3));
 
-		SeqControlSwitch* btnReset3 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(30.346, 82.685),
-			module, Aion::PARAM_RESET_3);
-		btnReset3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset3);
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(34.261, 86.6), module, Aion::PARAM_RESET_3));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.261, 97.748), module, Aion::INPUT_RESET_3));
 
-		SanguineMonoOutputLight* lightOutput3 = new SanguineMonoOutputLight(module, 47.869, 90.749);
+		SanguineStaticRGBLight* lightOutput3 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 47.87, 90.749, true, kSanguineYellowLight);
 		addChild(lightOutput3);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(47.87, 97.748), module, Aion::OUTPUT_TRIGGER_3));
 
 		// Timer 4
 
-		SanguineLightUpSwitch* switchRestart4 = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(61.69, 60.833),
-			module, Aion::PARAM_RESTART_4);
-		switchRestart4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_off.svg")));
-		switchRestart4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/restart_on.svg")));
-		switchRestart4->addHalo(nvgRGB(0, 0, 0));
-		switchRestart4->addHalo(nvgRGB(0, 255, 0));
-		switchRestart4->momentary = false;
-		switchRestart4->latch = true;
-		addParam(switchRestart4);
+		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(61.69, 60.833), module, Aion::PARAM_RESTART_4));
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(73.316, 73.246), module, Aion::PARAM_TIMER_4));
 
@@ -424,38 +356,26 @@ struct AionWidget : ModuleWidget {
 
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(102.466, 73.246), module, Aion::LIGHT_TIMER_4));
 
-		SeqControlSwitch* btnReset4 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(59.774, 82.685),
-			module, Aion::PARAM_RESET_4);
-		btnReset4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset4);
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(63.69, 86.6), module, Aion::PARAM_RESET_4));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(63.69, 97.748), module, Aion::INPUT_RESET_4));
 
-		SeqControlSwitch* btnStart4 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(73.565, 82.685),
-			module, Aion::PARAM_START_4);
-		btnStart4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_off.svg")));
-		btnStart4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_on.svg")));
-		addParam(btnStart4);
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(77.481, 86.6), module, Aion::PARAM_START_4));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(77.48, 97.748), module, Aion::INPUT_RUN_4));
 
-		SeqControlSwitch* btnTrigger4 = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(87.326, 82.685),
-			module, Aion::PARAM_TRIGGER_4);
-		btnTrigger4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_off.svg")));
-		btnTrigger4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/clock_on.svg")));
-		addParam(btnTrigger4);
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(91.242, 86.6), module, Aion::PARAM_TRIGGER_4));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(91.242, 97.748), module, Aion::INPUT_TRIGGER_4));
 
-		SanguineMonoOutputLight* lightOutput4 = new SanguineMonoOutputLight(module, 105.016, 90.749);
+		SanguineStaticRGBLight* lightOutput4 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 105.016, 90.749, true, kSanguineYellowLight);
 		addChild(lightOutput4);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(105.046, 97.748), module, Aion::OUTPUT_TRIGGER_4));
 
 		// Sanguine logo lights
 
-		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 46.116, 113.48);		
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 46.116, 113.48);
 		addChild(bloodLight);
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 59.248, 120.435);

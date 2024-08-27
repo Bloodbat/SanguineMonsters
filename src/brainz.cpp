@@ -946,17 +946,9 @@ struct BrainzWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		SeqControlSwitch* btnPlay = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(93.474, 7.954),
-			module, Brainz::PARAM_PLAY_BUTTON);
-		btnPlay->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_off.svg")));
-		btnPlay->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/play_on.svg")));
-		addParam(btnPlay);
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(97.39, 11.87), module, Brainz::PARAM_PLAY_BUTTON));
 
-		SeqControlSwitch* btnReset = createParamCentered<SeqControlSwitch>(millimetersToPixelsVec(105.641, 7.954),
-			module, Brainz::PARAM_RESET_BUTTON);
-		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_off.svg")));
-		btnReset->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/reset_on.svg")));
-		addParam(btnReset);
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(109.556, 11.87), module, Brainz::PARAM_RESET_BUTTON));
 
 		CKD6* btnModuleDirection = createParamCentered<CKD6>(millimetersToPixelsVec(81.319, 59.888), module, Brainz::PARAM_MODULE_DIRECTION);
 		btnModuleDirection->momentary = false;
@@ -1031,14 +1023,7 @@ struct BrainzWidget : ModuleWidget {
 			currentX += deltaX;
 		}
 
-		SanguineLightUpSwitch* switchOneShot = createParam<SanguineLightUpSwitch>(millimetersToPixelsVec(91.231, 57.888),
-			module, Brainz::PARAM_ONE_SHOT);
-		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_off.svg")));
-		switchOneShot->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/one_shot_on.svg")));
-		switchOneShot->addHalo(nvgRGB(0, 0, 0));
-		switchOneShot->addHalo(nvgRGB(255, 11, 11));
-		switchOneShot->momentary = false;
-		addParam(switchOneShot);
+		addParam(createParam<SeqButtonOneShotSmall>(millimetersToPixelsVec(91.231, 57.888), module, Brainz::PARAM_ONE_SHOT));
 
 		FramebufferWidget* brainzFrameBuffer = new FramebufferWidget();
 		addChild(brainzFrameBuffer);

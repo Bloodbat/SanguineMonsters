@@ -186,55 +186,30 @@ struct RaijuWidget : ModuleWidget {
 		currentY = 29.182f;
 		yDistance = 19.689f;
 
-		SeqStepSwitch* step1 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0);
-		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_off.svg")));
-		step1->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_1_on.svg")));
-		addParam(step1);
+		addParam(createParam<SeqStep1Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 0));
 		currentY += yDistance;
-		SeqStepSwitch* step2 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 1);
-		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_off.svg")));
-		step2->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_2_on.svg")));
-		addParam(step2);
+
+		addParam(createParam<SeqStep2Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 1));
 		currentY += yDistance;
-		SeqStepSwitch* step3 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 2);
-		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_off.svg")));
-		step3->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_3_on.svg")));
-		addParam(step3);
+
+		addParam(createParam<SeqStep3Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 2));
 		currentY += yDistance;
-		SeqStepSwitch* step4 = createParam<SeqStepSwitch>(millimetersToPixelsVec(4.012, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 3);
-		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_off.svg")));
-		step4->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_4_on.svg")));
-		addParam(step4);
+
+		addParam(createParam<SeqStep4Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 3));
 
 		currentY = 29.182f;
 		yDistance = 19.689f;
-		SeqStepSwitch* step5 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 4);
-		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_off.svg")));
-		step5->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_5_on.svg")));
-		addParam(step5);
+
+		addParam(createParam<SeqStep5Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 4));
 		currentY += yDistance;
-		SeqStepSwitch* step6 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 5);
-		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_off.svg")));
-		step6->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_6_on.svg")));
-		addParam(step6);
+
+		addParam(createParam<SeqStep6Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 5));
 		currentY += yDistance;
-		SeqStepSwitch* step7 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 6);
-		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_off.svg")));
-		step7->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_7_on.svg")));
-		addParam(step7);
+
+		addParam(createParam<SeqStep7Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 6));
 		currentY += yDistance;
-		SeqStepSwitch* step8 = createParam<SeqStepSwitch>(millimetersToPixelsVec(125.548, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 7);
-		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_off.svg")));
-		step8->addFrame(Svg::load(asset::plugin(pluginInstance, "res/seqs/step_8_on.svg")));
-		addParam(step8);
+
+		addParam(createParam<SeqStep8Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 7));
 
 		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2, module, 112.331, 13.997);
 		raijuFrameBuffer->addChild(displayChannelCount);
