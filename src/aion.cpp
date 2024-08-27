@@ -63,7 +63,7 @@ struct Aion : Module {
 
 	bool timerStarted[4];
 
-	bool lastTimerEdge = false;
+	bool lastTimerEdge[4];
 
 	int setTimerValues[4];
 	int currentTimerValues[4];
@@ -106,6 +106,7 @@ struct Aion : Module {
 			setTimerValues[i] = 1;
 			currentTimerValues[i] = 1;
 			timerStarted[i] = false;
+			lastTimerEdge[i] = false;
 
 			knobsDivider.setDivision(kKnobsFrequency);
 		}
@@ -129,11 +130,11 @@ struct Aion : Module {
 			if (internalTimerSecond) {
 				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
 
-					if (lastTimerEdge != internalTimerSecond) {
+					if (lastTimerEdge[i] != internalTimerSecond) {
 						if (timerStarted[i]) {
 							decreaseTimer(i);
 						}
-						lastTimerEdge = internalTimerSecond;
+						lastTimerEdge[i] = internalTimerSecond;
 					}
 
 					lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(1.f, args.sampleTime);
@@ -143,7 +144,7 @@ struct Aion : Module {
 				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
 					lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(0.f, args.sampleTime);
 				}
-				lastTimerEdge = internalTimerSecond;
+				lastTimerEdge[i] = internalTimerSecond;
 			}
 
 			if (stResetInputs[i].process(inputs[INPUT_RESET_1 + i].getVoltage())) {
