@@ -340,7 +340,7 @@ struct DungeonWidget : ModuleWidget {
 		SanguineMonoInputLight* inLight = new SanguineMonoInputLight(module, 8.762, 108.611);
 		addChild(inLight);
 
-		SanguineShapedLight* noiseLight = new SanguineShapedLight(module, "res/noise_lit.svg", 62.386, 93.246);
+		SanguineStaticRGBLight* noiseLight = new SanguineStaticRGBLight(module, "res/noise_lit.svg", 62.386, 93.246, true, kSanguineYellowLight);
 		addChild(noiseLight);
 
 		SanguineMonoOutputLight* outLight = new SanguineMonoOutputLight(module, 62.386, 108.311);

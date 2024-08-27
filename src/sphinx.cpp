@@ -842,7 +842,7 @@ struct SphinxWidget : ModuleWidget {
 		SanguineStaticRGBLight* gateLight = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 36.543, 105.958, true, kSanguineYellowLight);
 		addChild(gateLight);
 
-		SanguineShapedLight* accentLight = new SanguineShapedLight(module, "res/accent_lit_mono.svg", 48.448, 105.958);
+		SanguineStaticRGBLight* accentLight = new SanguineStaticRGBLight(module, "res/accent_lit.svg", 48.448, 105.958, true, kSanguineYellowLight);
 		addChild(accentLight);
 	}
 };

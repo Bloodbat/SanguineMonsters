@@ -299,7 +299,7 @@ struct RaijuWidget : ModuleWidget {
 		if (module)
 			displayVoltage8->values.displayText = &module->strVoltages[7];
 
-		SanguineShapedLight* channelsLight = new SanguineShapedLight(module, "res/channels_lit.svg", 127.365, 18.999);
+		SanguineStaticRGBLight* channelsLight = new SanguineStaticRGBLight(module, "res/channels_lit.svg", 127.365, 18.999, true, kSanguineBlueLight);
 		addChild(channelsLight);
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 82.75, 104.658);

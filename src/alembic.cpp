@@ -44,10 +44,10 @@ struct AlembicWidget : ModuleWidget {
 		SanguineMonoOutputLight* outMonoLight2 = new SanguineMonoOutputLight(module, 31.404, 17.494);
 		addChild(outMonoLight2);
 
-		SanguineShapedLight* cvLight1 = new SanguineShapedLight(module, "res/light_mono_cv_lit.svg", 19.397, 17.494);
+		SanguineStaticRGBLight* cvLight1 = new SanguineStaticRGBLight(module, "res/light_cv_lit.svg", 19.397, 17.494, true, kSanguineYellowLight);
 		addChild(cvLight1);
 
-		SanguineShapedLight* cvLight2 = new SanguineShapedLight(module, "res/light_mono_cv_lit.svg", 44.334, 17.494);
+		SanguineStaticRGBLight* cvLight2 = new SanguineStaticRGBLight(module, "res/light_cv_lit.svg", 44.334, 17.494, true, kSanguineYellowLight);
 		addChild(cvLight2);
 
 		const float portBaseY = 25.703;

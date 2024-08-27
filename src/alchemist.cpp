@@ -84,7 +84,7 @@ struct Alchemist : Module {
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
-		bool hasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic);		
+		bool hasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic);
 
 		if (bIsLightsTurn) {
 			soloCount = 0;
@@ -211,33 +211,33 @@ struct AlchemistWidget : ModuleWidget {
 
 		addChild(createLightCentered<MediumLight<OrangeLight>>(millimetersToPixelsVec(111.871, 9.672), module, Alchemist::LIGHT_EXPANDER));
 
-		const float sliderBaseX = 8.329;			
+		const float sliderBaseX = 8.329;
 		const float deltaX = 14.307;
 
-		float currentSliderX = sliderBaseX;		
+		float currentSliderX = sliderBaseX;
 
 		for (int i = 0; i < 8; i++) {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 28.145),
-				module, Alchemist::PARAM_GAIN + i, Alchemist::LIGHT_GAIN + i * 2));			
+				module, Alchemist::PARAM_GAIN + i, Alchemist::LIGHT_GAIN + i * 2));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
 				module, Alchemist::PARAM_MUTE + i, Alchemist::LIGHT_MUTE + i));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
 				module, Alchemist::PARAM_SOLO + i, Alchemist::LIGHT_SOLO + i));
-			currentSliderX += deltaX;			
+			currentSliderX += deltaX;
 		}
 
 		const int offset = 8;
 
-		currentSliderX = sliderBaseX;		
+		currentSliderX = sliderBaseX;
 
 		for (int i = 0; i < 8; i++) {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 73.478),
-				module, Alchemist::PARAM_GAIN + i + offset, (Alchemist::LIGHT_GAIN + i + offset) * 2));			
+				module, Alchemist::PARAM_GAIN + i + offset, (Alchemist::LIGHT_GAIN + i + offset) * 2));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 92.218),
 				module, Alchemist::PARAM_MUTE + i + offset, Alchemist::LIGHT_MUTE + i + offset));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 99.855),
 				module, Alchemist::PARAM_SOLO + i + offset, Alchemist::LIGHT_SOLO + i + offset));
-			currentSliderX += deltaX;			
+			currentSliderX += deltaX;
 		}
 
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 7.876, 108.973);
@@ -249,7 +249,7 @@ struct AlchemistWidget : ModuleWidget {
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 35.563, 117.606);
 		addChild(monstersLight);
 
-		SanguineShapedLight* sumLight = new SanguineShapedLight(module, "res/sum_light_on.svg", 62.155, 108.973);
+		SanguineStaticRGBLight* sumLight = new SanguineStaticRGBLight(module, "res/sum_light_on.svg", 62.155, 108.973, true, kSanguineBlueLight);
 		addChild(sumLight);
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(53.657, 114.094), module, Alchemist::INPUT_MIX_CV));
