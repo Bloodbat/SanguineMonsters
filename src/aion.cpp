@@ -260,13 +260,13 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 14.631), module, Aion::PARAM_RESTART_1));
 
-		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(6.75, 40.397), module, Aion::PARAM_TRIGGER_1));
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(6.75, 40.397), module, Aion::PARAM_START_1));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 51.545), module, Aion::INPUT_TRIGGER_1));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 51.545), module, Aion::INPUT_RUN_1));
 
-		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(20.446, 40.397), module, Aion::PARAM_START_1));
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(20.446, 40.397), module, Aion::PARAM_TRIGGER_1));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 51.545), module, Aion::INPUT_RUN_1));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 51.545), module, Aion::INPUT_TRIGGER_1));
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(34.161, 40.397), module, Aion::PARAM_RESET_1));
 
@@ -292,13 +292,13 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 14.631), module, Aion::PARAM_RESTART_2));
 
-		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(62.515, 40.397), module, Aion::PARAM_TRIGGER_2));
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(62.515, 40.397), module, Aion::PARAM_START_2));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 51.545), module, Aion::INPUT_TRIGGER_2));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 51.545), module, Aion::INPUT_RUN_2));
 
-		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(76.211, 40.397), module, Aion::PARAM_START_2));
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(76.211, 40.397), module, Aion::PARAM_TRIGGER_2));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 51.545), module, Aion::INPUT_RUN_2));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 51.545), module, Aion::INPUT_TRIGGER_2));
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(90.026, 40.397), module, Aion::PARAM_RESET_2));
 
@@ -324,13 +324,13 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 60.833), module, Aion::PARAM_RESTART_3));
 
-		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(6.75, 86.6), module, Aion::PARAM_TRIGGER_3));
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(6.75, 86.6), module, Aion::PARAM_START_3));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 97.748), module, Aion::INPUT_TRIGGER_3));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 97.748), module, Aion::INPUT_RUN_3));
 
-		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(20.446, 86.6), module, Aion::PARAM_START_3));
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(20.446, 86.6), module, Aion::PARAM_TRIGGER_3));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 97.748), module, Aion::INPUT_RUN_3));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 97.748), module, Aion::INPUT_TRIGGER_3));
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(34.261, 86.6), module, Aion::PARAM_RESET_3));
 
@@ -356,13 +356,13 @@ struct AionWidget : ModuleWidget {
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 60.833), module, Aion::PARAM_RESTART_4));
 
-		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(62.515, 86.6), module, Aion::PARAM_TRIGGER_4));
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(62.515, 86.6), module, Aion::PARAM_START_4));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 97.748), module, Aion::INPUT_TRIGGER_4));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 97.748), module, Aion::INPUT_RUN_4));
 
-		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(76.211, 86.6), module, Aion::PARAM_START_4));
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(76.211, 86.6), module, Aion::PARAM_TRIGGER_4));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 97.748), module, Aion::INPUT_RUN_4));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 97.748), module, Aion::INPUT_TRIGGER_4));
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(90.026, 86.6), module, Aion::PARAM_RESET_4));
 
