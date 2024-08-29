@@ -97,11 +97,11 @@ struct Aion : Module {
 			configButton(PARAM_TRIGGER_1 + i, string::f("Advance timer %d", currentNumber));
 			configButton(PARAM_RESET_1 + i, string::f("Reset timer %d", currentNumber));
 
-			configInput(INPUT_TRIGGER_1 + i, string::f("Trigger timer %d", currentNumber));
+			configInput(INPUT_TRIGGER_1 + i, string::f("Advance timer %d", currentNumber));
 			configInput(INPUT_RESET_1 + i, string::f("Reset timer %d", currentNumber));
-			configInput(INPUT_RUN_1 + i, string::f("Run timer % d", currentNumber));
+			configInput(INPUT_RUN_1 + i, string::f("Start/stop timer %d", currentNumber));
 
-			configOutput(OUTPUT_TRIGGER_1 + i, string::f("Output on timer end %d", currentNumber));
+			configOutput(OUTPUT_TRIGGER_1 + i, string::f("Timer end %d", currentNumber));
 
 			setTimerValues[i] = 1;
 			currentTimerValues[i] = 1;
@@ -279,7 +279,7 @@ struct AionWidget : ModuleWidget {
 
 		// Timer 2
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(102.466, 27.047), module, Aion::LIGHT_TIMER_2));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(65.065, 27.047), module, Aion::LIGHT_TIMER_2));
 
 		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 77.441, 27.047);
 		aionFramebuffer->addChild(displayTimer2);
