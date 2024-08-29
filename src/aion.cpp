@@ -279,35 +279,35 @@ struct AionWidget : ModuleWidget {
 
 		// Timer 2
 
-		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(61.69, 14.631), module, Aion::PARAM_RESTART_2));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(102.466, 27.047), module, Aion::LIGHT_TIMER_2));
 
-		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(73.316, 27.047), module, Aion::PARAM_TIMER_2));
-
-		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 90.004, 27.047);
+		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 77.441, 27.047);
 		aionFramebuffer->addChild(displayTimer2);
 		displayTimer2->fallbackNumber = 1;
 
 		if (module)
 			displayTimer2->values.numberValue = &module->currentTimerValues[1];
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(102.466, 27.047), module, Aion::LIGHT_TIMER_2));
+		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(94.176, 27.047), module, Aion::PARAM_TIMER_2));
 
-		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(63.69, 40.397), module, Aion::PARAM_RESET_2));
+		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 14.631), module, Aion::PARAM_RESTART_2));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(63.69, 51.545), module, Aion::INPUT_RESET_2));
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(62.515, 40.397), module, Aion::PARAM_TRIGGER_2));
 
-		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(77.481, 40.397), module, Aion::PARAM_START_2));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 51.545), module, Aion::INPUT_TRIGGER_2));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(77.48, 51.545), module, Aion::INPUT_RUN_2));
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(76.211, 40.397), module, Aion::PARAM_START_2));
 
-		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(91.242, 40.397), module, Aion::PARAM_TRIGGER_2));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 51.545), module, Aion::INPUT_RUN_2));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(91.424, 51.545), module, Aion::INPUT_TRIGGER_2));
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(90.026, 40.397), module, Aion::PARAM_RESET_2));
 
-		SanguineStaticRGBLight* lightOutput2 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 105.016, 44.546, true, kSanguineYellowLight);
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.026, 51.545), module, Aion::INPUT_RESET_2));
+
+		SanguineStaticRGBLight* lightOutput2 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 103.635, 44.546, true, kSanguineYellowLight);
 		addChild(lightOutput2);
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(105.016, 51.545), module, Aion::OUTPUT_TRIGGER_2));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(103.635, 51.545), module, Aion::OUTPUT_TRIGGER_2));
 
 		// Timer 3
 
@@ -343,35 +343,35 @@ struct AionWidget : ModuleWidget {
 
 		// Timer 4
 
-		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(61.69, 60.833), module, Aion::PARAM_RESTART_4));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(65.065, 73.246), module, Aion::LIGHT_TIMER_4));
 
-		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(73.316, 73.246), module, Aion::PARAM_TIMER_4));
-
-		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 90.004, 73.246);
+		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 77.441, 73.246);
 		aionFramebuffer->addChild(displayTimer4);
 		displayTimer4->fallbackNumber = 1;
 
 		if (module)
 			displayTimer4->values.numberValue = &module->currentTimerValues[3];
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(102.466, 73.246), module, Aion::LIGHT_TIMER_4));
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(94.176, 73.246), module, Aion::PARAM_TIMER_4));
 
-		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(63.69, 86.6), module, Aion::PARAM_RESET_4));
+		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 60.833), module, Aion::PARAM_RESTART_4));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(63.69, 97.748), module, Aion::INPUT_RESET_4));
+		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(62.515, 86.6), module, Aion::PARAM_TRIGGER_4));
 
-		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(77.481, 86.6), module, Aion::PARAM_START_4));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 97.748), module, Aion::INPUT_TRIGGER_4));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(77.48, 97.748), module, Aion::INPUT_RUN_4));
+		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(76.211, 86.6), module, Aion::PARAM_START_4));
 
-		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(91.242, 86.6), module, Aion::PARAM_TRIGGER_4));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 97.748), module, Aion::INPUT_RUN_4));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(91.242, 97.748), module, Aion::INPUT_TRIGGER_4));
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(90.026, 86.6), module, Aion::PARAM_RESET_4));
 
-		SanguineStaticRGBLight* lightOutput4 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 105.016, 90.749, true, kSanguineYellowLight);
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.026, 97.748), module, Aion::INPUT_RESET_4));
+
+		SanguineStaticRGBLight* lightOutput4 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 103.635, 90.749, true, kSanguineYellowLight);
 		addChild(lightOutput4);
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(105.046, 97.748), module, Aion::OUTPUT_TRIGGER_4));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(103.635, 97.748), module, Aion::OUTPUT_TRIGGER_4));
 
 		// Sanguine logo lights
 
