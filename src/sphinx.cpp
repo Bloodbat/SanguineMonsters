@@ -2,8 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "bjorklund.hpp"
 #include <array>
-#include "pcg_variants.h"
 #include "sanguinehelpers.hpp"
+#include "pcg_variants.h"
 
 #define MAXLEN 32
 

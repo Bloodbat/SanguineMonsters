@@ -1,7 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
-#include "pcg_variants.h"
 #include "sanguinehelpers.hpp"
+#include "pcg_variants.h"
 
 /** Based on "The Voss algorithm"
 http://www.firstpr.com.au/dsp/pink-noise/

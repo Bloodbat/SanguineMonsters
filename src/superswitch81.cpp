@@ -1,8 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
-#include "pcg_variants.h"
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "pcg_variants.h"
 
 using simd::float_4;
 
