@@ -19,12 +19,24 @@ BananutGreen::BananutGreen() {
 	setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/BananutGreen.svg")));
 }
 
+BananutGreenPoly::BananutGreenPoly() {
+	setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/BananutGreenPoly.svg")));
+}
+
 BananutPurple::BananutPurple() {
 	setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/BananutPurple.svg")));
 }
 
+BananutPurplePoly::BananutPurplePoly() {
+	setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/BananutPurplePoly.svg")));
+}
+
 BananutRed::BananutRed() {
 	setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/BananutRed.svg")));
+}
+
+BananutRedPoly::BananutRedPoly() {
+	setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/BananutRedPoly.svg")));
 }
 
 BananutYellow::BananutYellow() {
@@ -793,6 +805,113 @@ SanguinePanel::SanguinePanel(const std::string newBackgroundFileName, const std:
 	fb->addChildBelow(foreground, panelBorder);
 }
 
+void SanguinePanel::addLayer(const std::string layerFileName) {
+	SvgWidget* layer = new SvgWidget();
+	layer->setSvg(Svg::load(asset::plugin(pluginInstance, layerFileName)));
+	fb->addChildBelow(layer, panelBorder);
+}
+
+// Modules
+
+void SanguineModule::dataFromJson(json_t* rootJ) {
+	json_t* uniqueThemeJ = json_object_get(rootJ, "uniqueSanguineTheme");
+	if (uniqueThemeJ) {
+		bUniqueTheme = json_boolean_value(uniqueThemeJ);
+		if (bUniqueTheme) {
+			json_t* moduleThemeJ = json_object_get(rootJ, "sanguineModuleTheme");
+			if (moduleThemeJ) {
+				currentTheme = FaceplateThemes(json_integer_value(moduleThemeJ));
+			}
+		}
+	}
+}
+
+json_t* SanguineModule::dataToJson() {
+	json_t* rootJ = json_object();
+	json_object_set_new(rootJ, "uniqueSanguineTheme", json_boolean(bUniqueTheme));
+	json_object_set_new(rootJ, "sanguineModuleTheme", json_integer(int(currentTheme)));
+
+	return rootJ;
+}
+
+void SanguineModule::setModuleTheme(int themeNum) {
+	currentTheme = FaceplateThemes(themeNum);
+	bUniqueTheme = true;
+}
+
+// Module widgets
+
+void SanguineModuleWidget::makePanel() {
+	BackplateColors themeBackplateColor = PLATE_PURPLE;
+	FaceplateThemes faceplateTheme = defaultTheme;
+
+	SanguineModule* sanguineModule = dynamic_cast<SanguineModule*>(this->module);
+
+	if (module) {
+		if (!sanguineModule->bUniqueTheme) {
+			sanguineModule->setModuleTheme(faceplateTheme);
+		}
+		else {
+			faceplateTheme = sanguineModule->currentTheme;
+		}
+	}
+
+	switch (faceplateTheme)
+	{
+	case THEME_NONE:
+	case THEME_VITRIOL:
+		themeBackplateColor = backplateColor;
+		break;
+	case THEME_PLUMBAGO:
+		themeBackplateColor = PLATE_BLACK;
+		break;
+	}
+
+	std::string backplateFileName = "res/backplate_" + panelSizeStrings[panelSize] + backplateColorStrings[themeBackplateColor] + ".svg";
+
+	std::string faceplateFileName = "res/" + moduleName;
+
+	if (bFaceplateSuffix) {
+		faceplateFileName += "_faceplate";
+	}
+
+	faceplateFileName += faceplateThemeStrings[faceplateTheme] + ".svg";
+
+	SanguinePanel* panel = new SanguinePanel(backplateFileName, faceplateFileName);
+	if (bHasCommon) {
+		panel->addLayer("res/" + moduleName + "_common.svg");
+	}
+	setPanel(panel);
+}
+
+void SanguineModuleWidget::appendContextMenu(Menu* menu) {
+	SanguineModule* sanguineModule = dynamic_cast<SanguineModule*>(this->module);
+	assert(sanguineModule);
+
+	menu->addChild(new MenuSeparator);
+
+	menu->addChild(createIndexSubmenuItem("Default theme", faceplateMenuLabels,
+		[=]() { return int(defaultTheme); },
+		[=](int i) { setDefaultTheme(i); sanguineModule->setModuleTheme(i); }
+	));
+
+	menu->addChild(createIndexSubmenuItem("Module theme", faceplateMenuLabels,
+		[=]() { return int(sanguineModule->currentTheme); },
+		[=](int i) { sanguineModule->setModuleTheme(i); }
+	));
+}
+
+void SanguineModuleWidget::step() {
+	SanguineModule* sanguineModule = dynamic_cast<SanguineModule*>(this->module);
+	if (module) {
+		if (sanguineModule->currentTheme != sanguineModule->previousTheme) {
+			sanguineModule->previousTheme = sanguineModule->currentTheme;
+			makePanel();
+		}
+	}
+	Widget::step();
+}
+
 // Drawing utils
 
 void drawCircularHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
@@ -856,3 +975,5 @@ void fillSvgSolidColor(NSVGimage* svgImage, const unsigned int fillColor) {
 		shape->fill.type = NSVG_PAINT_COLOR;
 	}
 }
+
+FaceplateThemes defaultTheme = THEME_VITRIOL;
