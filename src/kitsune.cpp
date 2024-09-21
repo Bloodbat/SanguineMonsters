@@ -4,7 +4,7 @@
 
 static const int kMaxSections = 4;
 
-struct Kitsune : Module {
+struct Kitsune : SanguineModule {
 
 	enum ParamIds {
 		PARAM_ATTENUATOR1,
@@ -117,12 +117,16 @@ struct Kitsune : Module {
 	}
 };
 
-struct KitsuneWidget : ModuleWidget {
+struct KitsuneWidget : SanguineModuleWidget {
 	KitsuneWidget(Kitsune* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_10hp_purple.svg", "res/kitsune.svg");
-		setPanel(panel);
+		moduleName = "kitsune";
+		panelSize = SIZE_10;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
