@@ -6,7 +6,7 @@
 
 const float SaturatorFloat::limit = 12.f;
 
-struct Alchemist : Module {
+struct Alchemist : SanguineModule {
 
 	enum ParamIds {
 		ENUMS(PARAM_GAIN, PORT_MAX_CHANNELS),
@@ -197,12 +197,16 @@ struct Alchemist : Module {
 	}
 };
 
-struct AlchemistWidget : ModuleWidget {
+struct AlchemistWidget : SanguineModuleWidget {
 	AlchemistWidget(Alchemist* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_23hp_purple.svg", "res/alchemist.svg");
-		setPanel(panel);
+		moduleName = "alchemist";
+		panelSize = SIZE_23;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();		
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

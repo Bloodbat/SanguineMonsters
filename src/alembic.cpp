@@ -24,12 +24,16 @@ void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 	}
 }
 
-struct AlembicWidget : ModuleWidget {
+struct AlembicWidget : SanguineModuleWidget {
 	AlembicWidget(Alembic* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_10hp_purple.svg", "res/alembic.svg");
-		setPanel(panel);
+		moduleName = "alembic";
+		panelSize = SIZE_10;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

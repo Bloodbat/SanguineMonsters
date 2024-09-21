@@ -39,7 +39,7 @@ enum StepDirections {
 	DIRECTIONS_COUNT
 };
 
-struct Brainz : Module {
+struct Brainz : SanguineModule {
 	enum ParamIds {
 		PARAM_MODULE_DIRECTION,
 		PARAM_LOGIC_ENABLED,
@@ -934,12 +934,16 @@ struct BlueQuarterNoteLight : SanguineStaticRGBLight {
 	}
 };
 
-struct BrainzWidget : ModuleWidget {
+struct BrainzWidget : SanguineModuleWidget {
 	BrainzWidget(Brainz* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_25hp_purple.svg", "res/brainz.svg");
-		setPanel(panel);
+		moduleName = "brainz";
+		panelSize = SIZE_25;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

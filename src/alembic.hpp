@@ -4,7 +4,7 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
-struct Alembic : Module {
+struct Alembic : SanguineModule {
 
 	enum ParamIds {
 		PARAMS_COUNT
