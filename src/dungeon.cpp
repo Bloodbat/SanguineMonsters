@@ -31,7 +31,7 @@ struct SlewFilter {
 	}
 };
 
-struct Dungeon : Module {
+struct Dungeon : SanguineModule {
 
 	enum ParamIds {
 		PARAM_MODE,
@@ -264,7 +264,7 @@ struct Dungeon : Module {
 	}
 
 	json_t* dataToJson() override {
-		json_t* rootJ = json_object();
+		json_t* rootJ = SanguineModule::dataToJson();
 
 		if (bStoreVoltageInPatch) {
 			json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
@@ -275,6 +275,8 @@ struct Dungeon : Module {
 	}
 
 	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
 		json_t* storeVoltageInPatchJ = json_object_get(rootJ, "storeVoltageInPatch");
 		if (storeVoltageInPatchJ) {
 			bStoreVoltageInPatch = json_boolean_value(storeVoltageInPatchJ);
@@ -290,12 +292,16 @@ struct Dungeon : Module {
 	}
 };
 
-struct DungeonWidget : ModuleWidget {
+struct DungeonWidget : SanguineModuleWidget {
 	DungeonWidget(Dungeon* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_14hp_purple.svg", "res/dungeon.svg");
-		setPanel(panel);
+		moduleName = "dungeon";
+		panelSize = SIZE_14;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		FramebufferWidget* dungeonFrameBuffer = new FramebufferWidget();
 		addChild(dungeonFrameBuffer);
@@ -354,6 +360,8 @@ struct DungeonWidget : ModuleWidget {
 	}
 
 	void appendContextMenu(Menu* menu) override {
+		SanguineModuleWidget::appendContextMenu(menu);
+
 		Dungeon* module = dynamic_cast<Dungeon*>(this->module);
 
 		menu->addChild(new MenuSeparator);

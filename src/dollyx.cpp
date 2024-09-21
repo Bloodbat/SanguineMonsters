@@ -5,7 +5,7 @@
 
 using simd::float_4;
 
-struct DollyX : Module {
+struct DollyX : SanguineModule {
 
 	enum ParamIds {
 		PARAM_CHANNELS1,
@@ -117,12 +117,16 @@ struct DollyX : Module {
 	}
 };
 
-struct DollyXWidget : ModuleWidget {
+struct DollyXWidget : SanguineModuleWidget {
 	DollyXWidget(DollyX* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_8hp_purple.svg", "res/dolly-x.svg");
-		setPanel(panel);
+		moduleName = "dolly-x";
+		panelSize = SIZE_8;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
