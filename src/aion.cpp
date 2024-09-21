@@ -3,7 +3,7 @@
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
 
-struct Aion : Module {
+struct Aion : SanguineModule {
 
 	enum ParamIds {
 		PARAM_TIMER_1,
@@ -208,7 +208,7 @@ struct Aion : Module {
 	}
 
 	json_t* dataToJson() override {
-		json_t* rootJ = json_object();
+		json_t* rootJ = SanguineModule::dataToJson();
 
 		json_t* timersStartedJ = json_array();
 		for (int i = 0; i < 4; i++) {
@@ -221,6 +221,8 @@ struct Aion : Module {
 	}
 
 	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
 		json_t* timersStartedJ = json_object_get(rootJ, "timersStarted");
 		size_t idx;
 		json_t* timerJ;
@@ -230,12 +232,16 @@ struct Aion : Module {
 	}
 };
 
-struct AionWidget : ModuleWidget {
+struct AionWidget : SanguineModuleWidget {
 	AionWidget(Aion* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_22hp_purple.svg", "res/aion.svg");
-		setPanel(panel);
+		moduleName = "aion";
+		panelSize = SIZE_22;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
