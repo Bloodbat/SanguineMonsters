@@ -22,4 +22,6 @@ void init(rack::Plugin* p) {
 	p->addModel(modelWerewolf);
 	p->addModel(modelAlchemist);
 	p->addModel(modelAlembic);
+
+	getDefaultTheme();
 }
