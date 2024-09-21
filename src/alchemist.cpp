@@ -271,9 +271,9 @@ struct AlchemistWidget : SanguineModuleWidget {
 		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(84.329, 111.878), module, Alchemist::LIGHT_VU + 2));
 		addChild(createLightCentered<MediumLight<RedLight>>(millimetersToPixelsVec(84.329, 107.776), module, Alchemist::LIGHT_VU + 3));
 
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.876, 116.769), module, Alchemist::INPUT_POLYPHONIC));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(7.876, 116.769), module, Alchemist::INPUT_POLYPHONIC));
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(95.442, 116.769), module, Alchemist::OUTPUT_POLYPHONIC_MIX));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(95.442, 116.769), module, Alchemist::OUTPUT_POLYPHONIC_MIX));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(108.963, 116.769), module, Alchemist::OUTPUT_MONO_MIX));
 	}
 };
