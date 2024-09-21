@@ -129,24 +129,33 @@ struct DollyXWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 21.843), module, DollyX::PARAM_CHANNELS1));
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 76.514), module, DollyX::PARAM_CHANNELS2));
-
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.871, 56.666), module, DollyX::INPUT_MONO_IN1));
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.871, 111.337), module, DollyX::INPUT_MONO_IN2));
-
-		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(29.945, 36.856), module, DollyX::INPUT_CHANNELS1_CV));
-		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(29.945, 91.526), module, DollyX::INPUT_CHANNELS2_CV));
-
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.769, 56.666), module, DollyX::OUTPUT_POLYOUT_1));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.769, 111.337), module, DollyX::OUTPUT_POLYOUT_2));
-
 		FramebufferWidget* dollyFrameBuffer = new FramebufferWidget();
 		addChild(dollyFrameBuffer);
+
+		// Section 1
 
 		SanguineLedNumberDisplay* displayCloner1 = new SanguineLedNumberDisplay(2, module, 13.713, 24.498);
 		dollyFrameBuffer->addChild(displayCloner1);
 		displayCloner1->fallbackNumber = 16;
+
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 21.843), module, DollyX::PARAM_CHANNELS1));
+
+		SanguineStaticRGBLight* amalgamLight1 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 36.856, true, kSanguineBlueLight);
+		addChild(amalgamLight1);
+
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(29.945, 36.856), module, DollyX::INPUT_CHANNELS1_CV));
+
+		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight(module, 9.871, 49.743);
+		addChild(inMonoLight1);
+
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.871, 56.666), module, DollyX::INPUT_MONO_IN1));
+
+		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight(module, 30.769, 49.743);
+		addChild(outPolyLight1);
+
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(30.769, 56.666), module, DollyX::OUTPUT_POLYOUT_1));
+
+		// Section 2
 
 		SanguineLedNumberDisplay* displayCloner2 = new SanguineLedNumberDisplay(2, module, 13.713, 79.168);
 		dollyFrameBuffer->addChild(displayCloner2);
@@ -157,23 +166,22 @@ struct DollyXWidget : ModuleWidget {
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
 		}
 
-		SanguineStaticRGBLight* amalgamLight1 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 36.856, true, kSanguineBlueLight);
-		addChild(amalgamLight1);
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 76.514), module, DollyX::PARAM_CHANNELS2));
 
 		SanguineStaticRGBLight* amalgamLight2 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 91.526, true, kSanguineBlueLight);
 		addChild(amalgamLight2);
 
-		SanguineMonoInputLight* inMonoLight1 = new SanguineMonoInputLight(module, 9.871, 49.743);
-		addChild(inMonoLight1);
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(29.945, 91.526), module, DollyX::INPUT_CHANNELS2_CV));
 
 		SanguineMonoInputLight* inMonoLight2 = new SanguineMonoInputLight(module, 9.871, 104.413);
 		addChild(inMonoLight2);
 
-		SanguinePolyOutputLight* outPolyLight1 = new SanguinePolyOutputLight(module, 30.769, 49.743);
-		addChild(outPolyLight1);
+		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.871, 111.337), module, DollyX::INPUT_MONO_IN2));
 
 		SanguinePolyOutputLight* outPolyLight2 = new SanguinePolyOutputLight(module, 30.769, 104.413);
 		addChild(outPolyLight2);
+
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(30.769, 111.337), module, DollyX::OUTPUT_POLYOUT_2));
 	}
 };
 
