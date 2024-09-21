@@ -102,7 +102,7 @@ static const unsigned char perm[512] = { 151,160,137,91,90,15,
 
 #define FASTFLOOR(x) ( ((x)>0) ? ((int)x) : (((int)x)-1) )
 
-struct Bukavac : Module {
+struct Bukavac : SanguineModule {
 
 	enum ParamIds {
 		PARAM_PERLIN_SPEED,
@@ -357,12 +357,16 @@ struct SanguineCirclePortLight : SanguineStaticRGBLight {
 	};
 };
 
-struct BukavacWidget : ModuleWidget {
+struct BukavacWidget : SanguineModuleWidget {
 	BukavacWidget(Bukavac* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_9hp_purple.svg", "res/bukavac.svg");
-		setPanel(panel);
+		moduleName = "bukavac";
+		panelSize = SIZE_9;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

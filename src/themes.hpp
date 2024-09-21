@@ -4,6 +4,7 @@
 
 enum PanelSizes {
 	SIZE_6,
+	SIZE_9,
 	SIZE_10,
 	SIZE_14,
 	SIZE_21,
@@ -17,6 +18,7 @@ enum PanelSizes {
 
 static const std::vector<std::string> panelSizeStrings = {
 	"6hp",
+	"9hp",
 	"10hp",
 	"14hp",
 	"21hp",
