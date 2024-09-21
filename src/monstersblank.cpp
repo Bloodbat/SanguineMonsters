@@ -2,16 +2,21 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
-struct MonstersBlank : Module {
+struct MonstersBlank : SanguineModule {
 
 };
 
-struct MonstersBlankWidget : ModuleWidget {
+struct MonstersBlankWidget : SanguineModuleWidget {
 	MonstersBlankWidget(MonstersBlank* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_10hp_purple.svg", "res/monsters_blank.svg");
-		setPanel(panel);
+		moduleName = "monsters_blank";
+		panelSize = SIZE_10;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+		bHasCommon = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

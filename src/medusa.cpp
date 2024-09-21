@@ -13,7 +13,7 @@ static const std::vector<RGBLightColor> paletteMedusaLights{
 	{ 0.f, 1.f, 0.f }
 };
 
-struct Medusa : Module {
+struct Medusa : SanguineModule {
 
 	enum ParamIds {
 		PARAMS_COUNT
@@ -100,12 +100,16 @@ struct Medusa : Module {
 	}
 };
 
-struct MedusaWidget : ModuleWidget {
+struct MedusaWidget : SanguineModuleWidget {
 	MedusaWidget(Medusa* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_27hp_purple.svg", "res/medusa.svg");
-		setPanel(panel);
+		moduleName = "medusa";
+		panelSize = SIZE_27;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
