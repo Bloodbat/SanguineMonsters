@@ -2,7 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
-struct Oubliette : Module {
+struct Oubliette : SanguineModule {
 
 	enum ParamIds {
 		PARAMS_COUNT
@@ -32,12 +32,16 @@ struct Oubliette : Module {
 	}
 };
 
-struct OublietteWidget : ModuleWidget {
+struct OublietteWidget : SanguineModuleWidget {
 	OublietteWidget(Oubliette* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_8hp_purple.svg", "res/oubliette.svg");
-		setPanel(panel);
+		moduleName = "oubliette";
+		panelSize = SIZE_8;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));

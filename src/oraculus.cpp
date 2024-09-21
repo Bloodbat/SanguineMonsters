@@ -4,7 +4,7 @@
 #include "sanguinehelpers.hpp"
 #include "pcg_variants.h"
 
-struct Oraculus : Module {
+struct Oraculus : SanguineModule {
 
 	enum ParamIds {
 		PARAM_INCREASE,
@@ -214,12 +214,16 @@ struct Oraculus : Module {
 	}
 };
 
-struct OraculusWidget : ModuleWidget {
+struct OraculusWidget : SanguineModuleWidget {
 	OraculusWidget(Oraculus* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_7hp_purple.svg", "res/oraculus.svg");
-		setPanel(panel);
+		moduleName = "oraculus";
+		panelSize = SIZE_7;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
