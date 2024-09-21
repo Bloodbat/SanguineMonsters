@@ -133,8 +133,8 @@ struct MedusaWidget : ModuleWidget {
 		int portOffset = 0;
 
 		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
 			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
@@ -158,8 +158,8 @@ struct MedusaWidget : ModuleWidget {
 		portOffset = 10;
 
 		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
 			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
@@ -183,8 +183,8 @@ struct MedusaWidget : ModuleWidget {
 		portOffset = 16;
 
 		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
 			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
@@ -208,8 +208,8 @@ struct MedusaWidget : ModuleWidget {
 		portOffset = 22;
 
 		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
 
 			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
 
