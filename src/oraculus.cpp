@@ -226,7 +226,7 @@ struct OraculusWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.452, 23.464), module, Oraculus::INPUT_POLYPHONIC));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.452, 23.464), module, Oraculus::INPUT_POLYPHONIC));
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(22.734, 43.189), module, Oraculus::INPUT_CV_OFFSET));
 
