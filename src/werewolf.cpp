@@ -2,7 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
-struct Werewolf : Module {
+struct Werewolf : SanguineModule {
 
 	enum ParamIds {
 		PARAM_GAIN,
@@ -203,12 +203,16 @@ struct Werewolf : Module {
 	}
 };
 
-struct WerewolfWidget : ModuleWidget {
+struct WerewolfWidget : SanguineModuleWidget {
 	WerewolfWidget(Werewolf* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_12hp_purple.svg", "res/werewolf.svg");
-		setPanel(panel);
+		moduleName = "werewolf";
+		panelSize = SIZE_12;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();		
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
