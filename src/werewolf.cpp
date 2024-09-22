@@ -80,8 +80,8 @@ struct Werewolf : Module {
 			gain = params[PARAM_GAIN].getValue();
 
 			for (int channel = 0; channel < channelCount; channel++) {
-				float channelFold = clamp(fold + inputs[INPUT_FOLD].getVoltage(), 0.f, 10.f);
-				float channelGain = clamp(gain + inputs[INPUT_GAIN].getVoltage(), 0.f, 20.f);
+				float channelFold = clamp(fold + inputs[INPUT_FOLD].getVoltage(channel), 0.f, 10.f);
+				float channelGain = clamp(gain + inputs[INPUT_GAIN].getVoltage(channel), 0.f, 20.f);
 
 				gainSum += channelGain;
 				foldSum += channelFold;
