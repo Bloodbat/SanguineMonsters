@@ -6,7 +6,7 @@
 
 using simd::float_4;
 
-struct SuperSwitch81 : Module {
+struct SuperSwitch81 : SanguineModule {
 
 	enum ParamIds {
 		PARAM_STEP1,
@@ -265,13 +265,16 @@ struct SuperSwitch81 : Module {
 	}
 
 	json_t* dataToJson() override {
-		json_t* rootJ = json_object();
+		json_t* rootJ = SanguineModule::dataToJson();
+
 		json_object_set_new(rootJ, "noRepeats", json_boolean(bNoRepeats));
 		json_object_set_new(rootJ, "resetToFirstStep", json_boolean(bResetToFirstStep));
 		return rootJ;
 	}
 
 	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
 		json_t* noRepeatsJ = json_object_get(rootJ, "noRepeats");
 		if (noRepeatsJ)
 			bNoRepeats = json_boolean_value(noRepeatsJ);
@@ -292,12 +295,16 @@ struct SuperSwitch81 : Module {
 	}
 };
 
-struct SuperSwitch81Widget : ModuleWidget {
+struct SuperSwitch81Widget : SanguineModuleWidget {
 	SuperSwitch81Widget(SuperSwitch81* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_13hp_purple.svg", "res/switch8-1.svg");
-		setPanel(panel);
+		moduleName = "switch8-1";
+		panelSize = SIZE_13;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
