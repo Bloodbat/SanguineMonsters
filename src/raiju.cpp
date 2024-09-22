@@ -178,7 +178,7 @@ struct RaijuWidget : ModuleWidget {
 			currentX += xDistance;
 		}
 
-		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(82.75, 118.393), module, Raiju::OUTPUT_EIGHT_CHANNELS));
+		addChild(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(82.75, 118.393), module, Raiju::OUTPUT_EIGHT_CHANNELS));
 
 		FramebufferWidget* raijuFrameBuffer = new FramebufferWidget();
 		addChild(raijuFrameBuffer);
