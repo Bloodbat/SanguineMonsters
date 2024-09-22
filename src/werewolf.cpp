@@ -225,14 +225,14 @@ struct WerewolfWidget : ModuleWidget {
 
 		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(51.908, 83.56), module, Werewolf::PARAM_FOLD));
 
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(23.04, 98.047), module, Werewolf::INPUT_GAIN));
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(37.814, 98.047), module, Werewolf::INPUT_FOLD));
+		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(23.04, 98.047), module, Werewolf::INPUT_GAIN));
+		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(37.814, 98.047), module, Werewolf::INPUT_FOLD));
 
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(9.866, 112.894), module, Werewolf::INPUT_LEFT));
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(21.771, 112.894), module, Werewolf::INPUT_RIGHT));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(9.866, 112.894), module, Werewolf::INPUT_LEFT));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(21.771, 112.894), module, Werewolf::INPUT_RIGHT));
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(39.083, 112.894), module, Werewolf::OUTPUT_LEFT));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(50.988, 112.894), module, Werewolf::OUTPUT_RIGHT));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(39.083, 112.894), module, Werewolf::OUTPUT_LEFT));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(50.988, 112.894), module, Werewolf::OUTPUT_RIGHT));
 
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 15.819, 106.451);
 		addChild(inLight);
