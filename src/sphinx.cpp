@@ -14,7 +14,7 @@ enum PatternStyle {
 	LINEAR_PATTERN
 };
 
-struct Sphinx : Module {
+struct Sphinx : SanguineModule {
 	enum ParamIds {
 		PARAM_LENGTH,
 		PARAM_STEPS,
@@ -731,12 +731,16 @@ struct TL1105Latch : TL1105 {
 	}
 };
 
-struct SphinxWidget : ModuleWidget {
+struct SphinxWidget : SanguineModuleWidget {
 	SphinxWidget(Sphinx* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_11hp_purple.svg", "res/sphinx.svg");
-		setPanel(panel);
+		moduleName = "sphinx";
+		panelSize = SIZE_11;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
