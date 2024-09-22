@@ -6,7 +6,7 @@
 
 static const std::string kBrowserDisplayText = "00.000";
 
-struct Raiju : Module {
+struct Raiju : SanguineModule {
 	static const int kVoltagesCount = 8;
 
 	enum ParamIds {
@@ -116,7 +116,7 @@ struct Raiju : Module {
 	}
 
 	json_t* dataToJson() override {
-		json_t* rootJ = json_object();
+		json_t* rootJ = SanguineModule::dataToJson();
 
 		json_t* channelCountsJ = json_array();
 		for (int channelCount : channelCounts) {
@@ -129,6 +129,8 @@ struct Raiju : Module {
 	}
 
 	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
 		json_t* channelCountsJ = json_object_get(rootJ, "channelCounts");
 		size_t idx;
 		json_t* cJ;
@@ -138,12 +140,16 @@ struct Raiju : Module {
 	}
 };
 
-struct RaijuWidget : ModuleWidget {
+struct RaijuWidget : SanguineModuleWidget {
 	RaijuWidget(Raiju* module) {
 		setModule(module);
 
-		SanguinePanel* panel = new SanguinePanel("res/backplate_27hp_purple.svg", "res/raiju.svg");
-		setPanel(panel);
+		moduleName = "raiju";
+		panelSize = SIZE_27;
+		backplateColor = PLATE_PURPLE;
+		bFaceplateSuffix = false;
+
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
