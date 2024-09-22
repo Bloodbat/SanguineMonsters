@@ -309,21 +309,21 @@ struct SuperSwitch81Widget : ModuleWidget {
 
 		float currentY = 23.904f;
 		float deltaY = 13.129f;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN1));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN1));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN2));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN2));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN3));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN3));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN4));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN4));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN5));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN5));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN6));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN6));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN7));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN7));
 		currentY += deltaY;
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN8));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN8));
 
 		currentY = 20.104f;
 
@@ -376,7 +376,7 @@ struct SuperSwitch81Widget : ModuleWidget {
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(40.692, 99.184), module, SuperSwitch81::PARAM_RESET));
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(55.803, 116.012), module, SuperSwitch81::OUTPUT_OUT));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(55.803, 116.012), module, SuperSwitch81::OUTPUT_OUT));
 
 		FramebufferWidget* switchFrameBuffer = new FramebufferWidget();
 		addChild(switchFrameBuffer);
