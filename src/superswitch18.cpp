@@ -335,21 +335,21 @@ struct SuperSwitch18Widget : ModuleWidget {
 
 		float currentY = 23.904f;
 		float deltaY = 13.129f;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT1));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT1));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT2));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT2));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT3));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT3));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT4));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT4));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT5));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT5));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT6));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT6));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT7));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT7));
 		currentY += deltaY;
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT8));
+		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(59.887, currentY), module, SuperSwitch18::OUTPUT_OUT8));
 
 		currentY = 20.104f;
 
@@ -402,7 +402,7 @@ struct SuperSwitch18Widget : ModuleWidget {
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(25.349, 99.184), module, SuperSwitch18::PARAM_RESET));
 
-		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(10.237, 116.012), module, SuperSwitch18::INPUT_IN));
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(10.237, 116.012), module, SuperSwitch18::INPUT_IN));
 
 		FramebufferWidget* switchFrameBuffer = new FramebufferWidget();
 		addChild(switchFrameBuffer);
