@@ -11,7 +11,10 @@
 
 struct Bjorklund {
 
-	Bjorklund() {};
+	Bjorklund() {
+		lengthOfSeq = 0;
+		pulseAmt = 0;
+	};
 	Bjorklund(int step, int pulse) : lengthOfSeq(step), pulseAmt(pulse) {};
 	~Bjorklund() {
 		reset();

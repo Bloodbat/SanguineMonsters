@@ -78,8 +78,8 @@ struct Dungeon : SanguineModule {
 
 	float minSlew = std::log2(1e-3f);
 	float maxSlew = std::log2(10.f);
-	float inVoltage = 0;
-	float whiteNoise;
+	float inVoltage = 0.f;
+	float whiteNoise = 0.f;
 
 	bool bStoreVoltageInPatch = true;
 

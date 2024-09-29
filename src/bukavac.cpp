@@ -152,9 +152,9 @@ struct Bukavac : SanguineModule {
 	float currentPerlinTime = 0.0;
 	float minSpd = 1;
 	float maxSpd = 500;
-	float oldSpeedVal;
-	float oldSpeedPctVal;
-	float noiseOutMix;
+	float oldSpeedVal = 0.f;
+	float oldSpeedPctVal = 0.f;
+	float noiseOutMix = 0.f;
 	float* noise;
 	const float maxTime = 511; //FLT_MAX-1000; <-- this needs some more love
 
@@ -351,7 +351,7 @@ struct SanguineCirclePortLight : SanguineStaticRGBLight {
 	SvgWidget* blackBorder;
 	SanguineCirclePortLight(Module* theModule, const float X, const float Y, bool createCentered, unsigned int newLightColor) :
 		SanguineStaticRGBLight(theModule, "res/port_circle_light.svg", X, Y, createCentered, newLightColor) {
-		SvgWidget* blackBorder = new SvgWidget();
+		blackBorder = new SvgWidget();
 		blackBorder->setSvg(Svg::load(asset::plugin(pluginInstance, "res/port_circle_light_border.svg")));
 		fb->addChildBelow(blackBorder, sw);
 	};
