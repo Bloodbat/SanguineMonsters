@@ -1,3 +1,22 @@
+# 2.3.1
+
+## Additions
+
+- Theme support for existing modules with two available options: "Vitriol" the usual, colorful faceplate or "Plumbago" a black as night variation.
+
+- Polyphonic ports are now shown with golden jacks.
+
+## Fixes
+
+- Plugin no longer crashes Rack Pro when it is used as a guest of hosts such as Reaper and Ableton and patches are loaded.
+
+- Plugin no longer crashes Rack when used headless.
+
+- Display rendering order.
+
+- Werewolf Gain and Fold now respect polyphonic CV.
+
+
 # 2.3.0
 
 ## New Modules
