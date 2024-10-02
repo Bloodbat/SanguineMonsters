@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "denki.hpp"
 
 static const int kMaxSections = 4;
 
@@ -39,6 +40,7 @@ struct Kitsune : SanguineModule {
 		ENUMS(LIGHT_VOLTAGE2, 3),
 		ENUMS(LIGHT_VOLTAGE3, 3),
 		ENUMS(LIGHT_VOLTAGE4, 3),
+		LIGHT_EXPANDER,
 		LIGHTS_COUNT
 	};
 
@@ -71,6 +73,10 @@ struct Kitsune : SanguineModule {
 			sampleTime = kLightDivisor * args.sampleTime;
 		}
 
+		Module* denkiExpander = getRightExpander().module;
+
+		bool bhasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki);
+
 		for (int section = 0; section < kMaxSections; section++) {
 			int channelSource = section;
 
@@ -82,13 +88,31 @@ struct Kitsune : SanguineModule {
 
 			for (int channel = 0; channel < channelCount; channel += 4) {
 				float_4 voltages = {};
+				float_4 gains = {};
+				float_4 offsets = {};
 
-				voltages = simd::clamp(inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel) * params[PARAM_ATTENUATOR1 + section].getValue() +
-					params[PARAM_OFFSET1 + section].getValue(), -10.f, 10.f);
+				voltages = inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel);
 
-				outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCount);
+				gains = params[PARAM_ATTENUATOR1 + section].getValue();
+
+				offsets = params[PARAM_OFFSET1 + section].getValue();
+
+				if (bhasExpander) {
+					if (denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).isConnected()) {
+						gains *= denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
+						gains = simd::clamp(gains, -2.f, 2.f);
+					}
+					if (denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).isConnected()) {
+						offsets += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
+						offsets = simd::clamp(offsets, -10.f, 10.f);
+					}
+				}
+
+				voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
+
 				outputs[OUTPUT_VOLTAGE1 + section].setVoltageSimd(voltages, channel);
 			}
+			outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCount);
 
 			if (isLightsTurn) {
 				int currentLight = LIGHT_VOLTAGE1 + section * 3;
@@ -98,12 +122,33 @@ struct Kitsune : SanguineModule {
 					lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.0f, sampleTime);
+
+					if (bhasExpander) {
+						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
+						float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
+						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(math::rescale(-cvGainLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(math::rescale(cvGainLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(0.f, sampleTime);
+
+						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
+						float cvOffsetLightValue = denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage();
+						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(math::rescale(-cvOffsetLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(math::rescale(cvOffsetLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);
+					}
 				}
 				else {
 					float* outputVoltages = outputs[OUTPUT_VOLTAGE1 + section].getVoltages();
 					float lightValue = 0;
+					float cvGainLightValue = 0.f;
+					float cvOffsetLightValue = 0.f;
 					for (int channel = 0; channel < channelCount; channel++) {
 						lightValue += outputVoltages[channel];
+
+						if (bhasExpander) {
+							cvGainLightValue += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage(channel);
+							cvOffsetLightValue += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage(channel);
+						}
 					}
 					lightValue /= channelCount;
 					float redValue = math::rescale(-lightValue, 0.f, 10.f, 0.f, 1.f);
@@ -111,8 +156,35 @@ struct Kitsune : SanguineModule {
 					lights[currentLight + 0].setBrightnessSmooth(redValue, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(greenValue, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? redValue : greenValue, sampleTime);
+
+					if (bhasExpander) {
+						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
+
+						cvGainLightValue /= channelCount;
+
+						float cvGainRedValue = math::rescale(-cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
+						float cvGainGreenValue = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
+
+						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(cvGainRedValue, sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(cvGainGreenValue, sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(cvGainLightValue < 0 ? cvGainRedValue : cvGainGreenValue, sampleTime);
+
+						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
+						cvOffsetLightValue /= channelCount;
+
+						float cvOffsetRedValue = math::rescale(-cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
+						float cvOffsetGreenValue = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
+
+						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(cvOffsetRedValue, sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(cvOffsetGreenValue, sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(cvOffsetLightValue < 0 ? cvOffsetRedValue : cvOffsetGreenValue, sampleTime);
+					}
 				}
 			}
+		}
+
+		if (isLightsTurn) {
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bhasExpander ? 1.f : 0.f, sampleTime);
 		}
 	}
 };
@@ -132,6 +204,8 @@ struct KitsuneWidget : SanguineModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(48.017, 5.573), module, Kitsune::LIGHT_EXPANDER));
 
 		// Section 1
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(12.7, 11.198), module, Kitsune::PARAM_ATTENUATOR1));

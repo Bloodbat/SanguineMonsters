@@ -23,3 +23,4 @@ extern Model* modelAion;
 extern Model* modelWerewolf;
 extern Model* modelAlchemist;
 extern Model* modelAlembic;
+extern Model* modelDenki;
