@@ -168,6 +168,15 @@
       "tags" : [
         "Expander"
       ]
+    },
+    {
+      "slug" : "Sanguine-Denki",
+      "name" : "Denki",
+      "description" : "An expander for Kitsune providing gain CV control for every channel",
+      "tags" : [
+        "Expander",
+        "Polyphonic"
+      ]
     }
   ]
 }
