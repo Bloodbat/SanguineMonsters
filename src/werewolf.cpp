@@ -86,44 +86,77 @@ struct Werewolf : SanguineModule {
 				gainSum += channelGain;
 				foldSum += channelFold;
 
+				bIsNormalled = !bLeftInConnected != !bRightInConnected;
+
+				outputs[OUTPUT_LEFT].setChannels(channelCount);
+				outputs[OUTPUT_RIGHT].setChannels(channelCount);
+
 				if (bLeftInConnected) {
-					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
-					voltageInLeft = newVoltage;
-					voltageInRight = newVoltage;
-					outputs[OUTPUT_LEFT].setChannels(channelCount);
-					outputs[OUTPUT_RIGHT].setChannels(channelCount);
+					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
+					if (bIsNormalled) {
+						voltageInRight = voltageInLeft;
+					}
 				}
 				if (bRightInConnected) {
-					bIsNormalled = false;
 					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
+					if (bIsNormalled) {
+						voltageInLeft = voltageInRight;
+					}
 				}
 
 				// Distortion
 				if (bLeftInConnected) {
 					doDistortion(voltageInLeft, voltageOutLeft, channelFold);
+					if (bIsNormalled) {
+						voltageOutRight = voltageOutLeft;
+					}
 				}
 
 				if (bRightInConnected) {
 					doDistortion(voltageInRight, voltageOutRight, channelFold);
-				}
-
-				voltageSumLeft += voltageOutLeft;
-
-				if (outputs[OUTPUT_LEFT].isConnected()) {
-					outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
-				}
-
-				if (bIsNormalled) {
-					if (outputs[OUTPUT_RIGHT].isConnected()) {
-						outputs[OUTPUT_RIGHT].setVoltage(voltageOutLeft, channel);
+					if (bIsNormalled) {
+						voltageOutLeft = voltageOutRight;
 					}
-					voltageSumRight += voltageOutLeft;
+				}
+
+				bool bOutputsNormalled = !outputs[OUTPUT_LEFT].isConnected() != !outputs[OUTPUT_RIGHT].isConnected();
+
+				float voltageMix = 0.f;
+
+				if (!bIsNormalled && bOutputsNormalled) {
+					voltageMix = voltageOutLeft + voltageOutRight;
+				}
+
+				if (!bOutputsNormalled) {
+					voltageSumLeft += voltageOutLeft;
+
+					if (outputs[OUTPUT_LEFT].isConnected()) {
+						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
+					}
+
+					if (bIsNormalled) {
+						voltageOutRight = voltageOutLeft;
+						if (outputs[OUTPUT_RIGHT].isConnected()) {
+							outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
+						}
+						voltageSumRight += voltageOutLeft;
+					}
+					else {
+						if (outputs[OUTPUT_RIGHT].isConnected()) {
+							outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
+						}
+						voltageSumRight += voltageOutRight;
+					}
 				}
 				else {
-					if (outputs[OUTPUT_RIGHT].isConnected()) {
-						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
+					if (outputs[OUTPUT_LEFT].isConnected()) {
+						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
 					}
-					voltageSumRight += voltageOutRight;
+					if (outputs[OUTPUT_RIGHT].isConnected()) {
+						outputs[OUTPUT_RIGHT].setVoltage(voltageMix, channel);
+					}
+					voltageSumLeft += voltageMix;
+					voltageSumRight += voltageMix;
 				}
 			}
 		}
@@ -212,7 +245,7 @@ struct WerewolfWidget : SanguineModuleWidget {
 		backplateColor = PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
-		makePanel();		
+		makePanel();
 
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
