@@ -99,12 +99,12 @@ struct Oraculus : SanguineModule {
 	void doRandomTrigger() {
 		int randomNum;
 		if (!bNoRepeats) {
-			selectedChannel = (int)pcg32_boundedrand_r(&pcgRng, channelCount);
+			selectedChannel = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
 		}
 		else {
 			randomNum = selectedChannel;
 			while (randomNum == selectedChannel)
-				randomNum = (int)pcg32_boundedrand_r(&pcgRng, channelCount);
+				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
 			selectedChannel = randomNum;
 		}
 	};
