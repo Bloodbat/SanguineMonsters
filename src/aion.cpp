@@ -174,7 +174,7 @@ struct Aion : SanguineModule {
 					decreaseTimer(i);
 				}
 
-				if (setTimerValues[i] != int(params[PARAM_TIMER_1 + i].getValue())) {
+				if (setTimerValues[i] != static_cast<int>(params[PARAM_TIMER_1 + i].getValue())) {
 					setTimerValues[i] = params[PARAM_TIMER_1 + i].getValue();
 					currentTimerValues[i] = params[PARAM_TIMER_1 + i].getValue();
 				}
