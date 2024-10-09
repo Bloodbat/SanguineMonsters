@@ -38,7 +38,7 @@ struct Bjorklund {
 		pulseAmt = pulse;
 	}
 	int getSequence(int index) { return sequence.at(index); };
-	int size() { return (int)sequence.size(); };
+	int size() { return static_cast<int>(sequence.size()); };
 
 	void iter() {
 		// Bjorklund algorithm
