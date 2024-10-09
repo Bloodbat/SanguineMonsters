@@ -119,9 +119,9 @@ struct Brainz : SanguineModule {
 	};
 
 	const RGBLightColor stepDirectionsLightColors[DIRECTIONS_COUNT]{
-		{1.f, 0.f, 1.f},
-		{1.f, 0.f, 0.f},
-		{0.f, 0.f, 1.f},
+		{0.75f, 0.f, 0.75f},
+		{0.75f, 0.f, 0.f},
+		{0.f, 0.f, 0.75f},
 	};
 
 	bool bEnteredMetronome = false;
@@ -594,9 +594,9 @@ struct Brainz : SanguineModule {
 				for (int i = 0; i < 3; i++) {
 					bStepEnabled[i] = params[PARAM_A_ENABLED + i].getValue();
 
-					lights[LIGHT_STEP_A_ENABLED + i].setBrightnessSmooth(params[PARAM_A_ENABLED + i].getValue(), sampleTime);
-					lights[LIGHT_STEP_A_TRIGGERS + i].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + i].getValue(), sampleTime);
-					lights[LIGHT_STEP_A_METRONOME + i].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + i].getValue(), sampleTime);
+					lights[LIGHT_STEP_A_ENABLED + i].setBrightnessSmooth(params[PARAM_A_ENABLED + i].getValue() ? 0.75f : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_TRIGGERS + i].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + i].getValue() ? 0.75f : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_METRONOME + i].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + i].getValue() ? 0.75f : 0.f, sampleTime);
 
 					if (i < 2) {
 						stepDirections[i] = StepDirections(params[PARAM_A_DIRECTION + i].getValue());
@@ -635,8 +635,8 @@ struct Brainz : SanguineModule {
 
 
 
-				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue(), sampleTime);
-				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue(), sampleTime);
+				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue() ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue() ? 0.75f : 0.f, sampleTime);
 
 				lights[LIGHT_OUT_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 0.f : 1.f, sampleTime);
 				lights[LIGHT_OUT_ENABLED + 1].setBrightnessSmooth(1.f, sampleTime);
