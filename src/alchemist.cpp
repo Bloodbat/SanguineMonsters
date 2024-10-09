@@ -183,8 +183,8 @@ struct Alchemist : SanguineModule {
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 
-				lights[LIGHT_MUTE + i].setBrightnessSmooth(params[PARAM_MUTE + i].getValue(), sampleTime);
-				lights[LIGHT_SOLO + i].setBrightnessSmooth(params[PARAM_SOLO + i].getValue(), sampleTime);
+				lights[LIGHT_MUTE + i].setBrightnessSmooth(params[PARAM_MUTE + i].getValue() ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_SOLO + i].setBrightnessSmooth(params[PARAM_SOLO + i].getValue() ? 0.75f : 0.f, sampleTime);
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
