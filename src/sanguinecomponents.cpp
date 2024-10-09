@@ -680,7 +680,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 					if (shape->stroke.type) {
 						nvgStrokeWidth(args.vg, shape->strokeWidth);
 						nvgLineCap(args.vg, (NVGlineCap)shape->strokeLineCap);
-						nvgLineJoin(args.vg, (int)shape->strokeLineJoin);
+						nvgLineJoin(args.vg, static_cast<int>(shape->strokeLineJoin));
 
 						switch (shape->stroke.type) {
 						case NSVG_PAINT_COLOR: {
@@ -943,12 +943,12 @@ void SanguineModuleWidget::appendContextMenu(Menu* menu) {
 	menu->addChild(new MenuSeparator);
 
 	menu->addChild(createIndexSubmenuItem("Default theme", faceplateMenuLabels,
-		[=]() { return int(defaultTheme); },
+		[=]() { return static_cast<int>(defaultTheme); },
 		[=](int i) { setDefaultTheme(i); sanguineModule->setModuleTheme(i); }
 	));
 
 	menu->addChild(createIndexSubmenuItem("Module theme", faceplateMenuLabels,
-		[=]() { return int(sanguineModule->currentTheme); },
+		[=]() { return static_cast<int>(sanguineModule->currentTheme); },
 		[=](int i) { sanguineModule->setModuleTheme(i); }
 	));
 }
