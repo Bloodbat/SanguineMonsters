@@ -87,7 +87,7 @@ struct DollyX : SanguineModule {
 	int getChannelCloneCount(int channel) {
 		if (bCvConnected[channel]) {
 			float inputValue = math::clamp(inputs[INPUT_CHANNELS1_CV + channel].getVoltage(), 0.f, 10.f);
-			int steps = (int)rescale(inputValue, 0.f, 10.f, 1.f, 16.f);
+			int steps = static_cast<int>(rescale(inputValue, 0.f, 10.f, 1.f, 16.f));
 			return steps;
 		}
 		else {
