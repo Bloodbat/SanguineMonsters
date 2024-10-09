@@ -217,7 +217,7 @@ struct Sphinx : SanguineModule {
 					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 					int fill = 0;
 					while (fill < patternFill) {
-						if (ldexpf(pcg32_random_r(&pcgRng), -32) < (float)patternFill / (float)patternLength) {
+						if (ldexpf(pcg32_random_r(&pcgRng), -32) < static_cast<float>(patternFill) / static_cast<float>(patternLength)) {
 							calculatedSequence[num % patternLength] = 1;
 							fill++;
 						}
@@ -230,7 +230,7 @@ struct Sphinx : SanguineModule {
 					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 					int accentNum = 0;
 					while (accentNum < patternAccents) {
-						if (ldexpf(pcg32_random_r(&pcgRng), -32) < (float)patternAccents / (float)patternFill) {
+						if (ldexpf(pcg32_random_r(&pcgRng), -32) < static_cast<float>(patternAccents) / static_cast<float>(patternFill)) {
 							calculatedAccents[num % patternFill] = 1;
 							accentNum++;
 						}
@@ -276,7 +276,7 @@ struct Sphinx : SanguineModule {
 		finalSequence.fill(0);
 		finalAccents.fill(0);
 		int j = patternFill - patternAccentRotation;
-		for (int i = 0; i != int(calculatedSequence.size()); i++) {
+		for (int i = 0; i != static_cast<int>(calculatedSequence.size()); i++) {
 			int index = (i + patternRotation) % patternSize;
 			finalSequence[index] = calculatedSequence[i];
 			finalAccents[index] = 0;
@@ -576,7 +576,7 @@ struct SphinxDisplay : TransparentWidget {
 		for (unsigned int i = 0; i < len; i++) {
 			if (module && !module->isBypassed()) {
 				if (sequence->at(i)) {
-					float a = i / float(len);
+					float a = i / static_cast<float>(len);
 					float r = accents->at(i) ? radius1 : radius2;
 					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
 					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
@@ -595,7 +595,7 @@ struct SphinxDisplay : TransparentWidget {
 			}
 			else if (!module) {
 				if (browserSequence[i]) {
-					float a = i / float(len);
+					float a = i / static_cast<float>(len);
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
 					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
