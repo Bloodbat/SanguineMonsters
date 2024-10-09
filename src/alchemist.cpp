@@ -89,9 +89,9 @@ struct Alchemist : SanguineModule {
 		if (bIsLightsTurn) {
 			soloCount = 0;
 			for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-				channelMuted[i] = bool(params[PARAM_MUTE + i].getValue());
+				channelMuted[i] = static_cast<bool>(params[PARAM_MUTE + i].getValue());
 				if (i < channelCount) {
-					channelSoloed[i] = bool(params[PARAM_SOLO + i].getValue());
+					channelSoloed[i] = static_cast<bool>(params[PARAM_SOLO + i].getValue());
 					if (channelSoloed[i]) {
 						++soloCount;
 					}
