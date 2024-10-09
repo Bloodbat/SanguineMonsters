@@ -133,12 +133,12 @@ struct SuperSwitch81 : SanguineModule {
 
 	void doRandomTrigger() {
 		if (!bNoRepeats) {
-			selectedIn = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
+			selectedIn = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
 		}
 		else {
 			randomNum = selectedIn;
 			while (randomNum == selectedIn)
-				randomNum = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
+				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
 			selectedIn = randomNum;
 		}
 		bClockReceived = true;
@@ -260,8 +260,8 @@ struct SuperSwitch81 : SanguineModule {
 	}
 
 	void onRandomize() override {
-		stepCount = (int)pcg32_boundedrand_r(&pcgRng, 8) + 1;
-		selectedIn = (int)pcg32_boundedrand_r(&pcgRng, stepCount);
+		stepCount = static_cast<int>(pcg32_boundedrand_r(&pcgRng, 8)) + 1;
+		selectedIn = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
 	}
 
 	json_t* dataToJson() override {
