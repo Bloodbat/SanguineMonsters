@@ -119,21 +119,24 @@ struct Kitsune : SanguineModule {
 
 				if (channelCount == 1) {
 					float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltage();
-					lights[currentLight + 0].setBrightnessSmooth(math::rescale(-lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+					float rescaledLight = math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f);
+					lights[currentLight + 0].setBrightnessSmooth(-rescaledLight, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.0f, sampleTime);
 
 					if (bhasExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 						float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
-						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(math::rescale(-cvGainLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(math::rescale(cvGainLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+						rescaledLight = math::rescale(cvGainLightValue, 0.f, 5.f, 0.f, 1.f);
+						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(-rescaledLight, sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(0.f, sampleTime);
 
 						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
 						float cvOffsetLightValue = denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage();
-						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(math::rescale(-cvOffsetLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(math::rescale(cvOffsetLightValue, 0.f, 5.f, 0.f, 1.f), sampleTime);
+						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 5.f, 0.f, 1.f);
+						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(-rescaledLight, sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);
 					}
 				}
@@ -151,33 +154,31 @@ struct Kitsune : SanguineModule {
 						}
 					}
 					lightValue /= channelCount;
-					float redValue = math::rescale(-lightValue, 0.f, 10.f, 0.f, 1.f);
-					float greenValue = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
-					lights[currentLight + 0].setBrightnessSmooth(redValue, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(greenValue, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? redValue : greenValue, sampleTime);
+
+					float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
+					lights[currentLight + 0].setBrightnessSmooth(-rescaledLight, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 
 					if (bhasExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 
 						cvGainLightValue /= channelCount;
 
-						float cvGainRedValue = math::rescale(-cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
-						float cvGainGreenValue = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
+						rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
 
-						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(cvGainRedValue, sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(cvGainGreenValue, sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(cvGainLightValue < 0 ? cvGainRedValue : cvGainGreenValue, sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(-rescaledLight, sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
+						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(cvGainLightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 
 						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
 						cvOffsetLightValue /= channelCount;
 
-						float cvOffsetRedValue = math::rescale(-cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
-						float cvOffsetGreenValue = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
+						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
 
-						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(cvOffsetRedValue, sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(cvOffsetGreenValue, sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(cvOffsetLightValue < 0 ? cvOffsetRedValue : cvOffsetGreenValue, sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(-rescaledLight, sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
+						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(cvOffsetLightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 					}
 				}
 			}

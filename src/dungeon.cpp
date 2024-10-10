@@ -238,8 +238,9 @@ struct Dungeon : SanguineModule {
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), minSlew, maxSlew, 0.f, 1.f), sampleTime);
 			}
 			else {
-				lights[LIGHT_SLEW + 0].setBrightnessSmooth(math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f), sampleTime);
-				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(-inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f), sampleTime);
+				float rescaledLight = math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f);
+				lights[LIGHT_SLEW + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_SLEW + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
 			}
 
 			if (inVoltage >= 1.f) {
