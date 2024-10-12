@@ -12,3 +12,5 @@ dist
 /.cproject
 /.project
 *.so
+/.vscode
+/SanguineMonsters.code-workspace
