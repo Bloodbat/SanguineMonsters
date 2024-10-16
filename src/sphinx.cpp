@@ -428,7 +428,7 @@ struct Sphinx : SanguineModule {
 
 			const float sampleTime = args.sampleTime * kClockDivider;
 
-			// Update lights			
+			// Update lights
 			float lightVoltage1;
 
 			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage();
@@ -716,7 +716,7 @@ struct SphinxDisplay : TransparentWidget {
 				nvgFillColor(args.vg, arrayDisplayColors[0].backgroundColor);
 				nvgFill(args.vg);
 
-				// Shape				
+				// Shape
 				drawPolygon(args.vg);
 			}
 		}
