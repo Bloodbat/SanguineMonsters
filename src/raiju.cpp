@@ -87,7 +87,7 @@ struct Raiju : SanguineModule {
 			for (uint8_t i = 0; i < kVoltagesCount; i++) {
 				params[PARAM_VOLTAGE_SELECTOR + i].setValue(i == selectedVoltage ? 1 : 0);
 
-				// Get channel voltages and update strings for displays				
+				// Get channel voltages and update strings for displays
 				voltages[i] = params[PARAM_VOLTAGE + i].getValue();
 				std::stringstream stringStream;
 				stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[i];
