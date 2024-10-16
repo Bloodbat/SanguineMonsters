@@ -1,3 +1,30 @@
+# 2.4.0
+
+## New Modules
+
+### Denki
+
+- Polyphonic expander for Kitsune: adds Gain and Offset CV control.
+
+## Additions
+
+- Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
+
+## Changes
+
+- Werewolf: normal left and right inputs to each other.
+
+- Werewolf: normal left and right outputs to each other.
+
+- Separate Sanguine Monsters and Sanguine Mutants in the browser.
+
+- Performance tweaks.
+
+- Dim LED button's light intensity a little.
+
+
+---
+
 # 2.3.2
 
 ## Fixes
@@ -8,6 +35,8 @@
 
 - Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser. Monsters are grouped in the "Sanguine Monsters" brand.
 
+
+---
 
 # 2.3.1
 
