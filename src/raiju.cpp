@@ -3,8 +3,7 @@
 #include <iomanip>
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
-
-static const std::string kBrowserDisplayText = "00.000";
+#include "raiju.hpp"
 
 struct Raiju : SanguineModule {
 	static const int kVoltagesCount = 8;
@@ -97,8 +96,7 @@ struct Raiju : SanguineModule {
 					tmpStr.replace(0, 1, "0");
 					tmpStr.insert(0, "-");
 					strVoltages[i] = tmpStr;
-				}
-				else
+				} else
 					strVoltages[i] = stringStream.str();
 
 				if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
