@@ -63,8 +63,8 @@ struct Sphinx : SanguineModule {
 	std::vector<bool> calculatedAccents;
 
 	// Padded + rotated + distributed
-	std::array<bool, MAXLEN * 2> finalSequence;
-	std::array<bool, MAXLEN * 2> finalAccents;
+	std::array<bool, kMaxSphinxLength * 2> finalSequence;
+	std::array<bool, kMaxSphinxLength * 2> finalAccents;
 
 	bool bAccentOn = false;
 	bool bCalculate;
@@ -441,12 +441,12 @@ struct Sphinx : SanguineModule {
 	}
 };
 
-static const std::array<bool, MAXLEN / 2> browserSequence = { true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false };
+static const std::array<bool, kMaxSphinxLength / 2> browserSequence = { true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false };
 
 struct SphinxDisplay : TransparentWidget {
 	Sphinx* module;
-	std::array<bool, MAXLEN * 2>* sequence = nullptr;
-	std::array<bool, MAXLEN * 2>* accents = nullptr;
+	std::array<bool, kMaxSphinxLength * 2>* sequence = nullptr;
+	std::array<bool, kMaxSphinxLength * 2>* accents = nullptr;
 	int* currentStep = nullptr;
 	int* patternFill = nullptr;
 	int* patternLength = nullptr;
