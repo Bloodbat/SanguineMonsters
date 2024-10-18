@@ -1,17 +1,9 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "medusa.hpp"
+
 using simd::float_4;
-
-#define MEDUSA_MAX_PORTS 32
-
-static const std::vector<RGBLightColor> paletteMedusaLights{
-	{ 1.f, 1.f, 1.f },
-	{ 1.f, 0.f, 0.f },
-	{ 1.f, 1.f, 0.f },
-	{ 0.f, 0.f, 1.f },
-	{ 0.f, 1.f, 0.f }
-};
 
 struct Medusa : SanguineModule {
 
@@ -89,8 +81,7 @@ struct Medusa : SanguineModule {
 					lights[currentLight + 0].setBrightnessSmooth(paletteMedusaLights[currentPalette].red, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(paletteMedusaLights[currentPalette].green, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(paletteMedusaLights[currentPalette].blue, sampleTime);
-				}
-				else {
+				} else {
 					lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);

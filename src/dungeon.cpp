@@ -1,35 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
-
-struct GradientColors {
-	NVGcolor innerColor;
-	NVGcolor outerColor;
-};
-
-static const std::vector<GradientColors> moonColors{
-	{ nvgRGB(247, 187, 187), nvgRGB(223, 33, 33) },
-	{ nvgRGB(217, 217, 217), nvgRGB(128, 128, 128) },
-	{ nvgRGB(187, 214, 247), nvgRGB(22, 117, 234) }
-};
-
-static const std::vector<std::string> dungeonModeLabels{
-	"SH ",
-	"TH",
-	"HT"
-};
-
-struct SlewFilter {
-	float value = 0.f;
-
-	float process(float in, float slew) {
-		value += math::clamp(in - value, -slew, slew);
-		return value;
-	}
-	float getValue() {
-		return value;
-	}
-};
+#include "dungeon.hpp"
 
 struct Dungeon : SanguineModule {
 
@@ -116,8 +88,7 @@ struct Dungeon : SanguineModule {
 	inline void getNewVoltage(bool bHaveWhiteNoise, bool bHaveInVoltage) {
 		if (bHaveInVoltage) {
 			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
-		}
-		else {
+		} else {
 			if (!bHaveWhiteNoise) {
 				whiteNoise = 2.f * random::normal();
 			}
@@ -149,8 +120,7 @@ struct Dungeon : SanguineModule {
 					getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 					engine.voltage = inVoltage;
 				}
-			}
-			else {
+			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
@@ -169,8 +139,7 @@ struct Dungeon : SanguineModule {
 					// Triggered
 					engine.state = true;
 				}
-			}
-			else {
+			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
@@ -192,8 +161,7 @@ struct Dungeon : SanguineModule {
 					// Triggered
 					engine.state = true;
 				}
-			}
-			else {
+			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
 					engine.state = false;
@@ -236,8 +204,7 @@ struct Dungeon : SanguineModule {
 			if (!inputs[INPUT_SLEW].isConnected()) {
 				lights[LIGHT_SLEW + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), minSlew, maxSlew, 0.f, 1.f), sampleTime);
-			}
-			else {
+			} else {
 				float rescaledLight = math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f);
 				lights[LIGHT_SLEW + 0].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
@@ -248,14 +215,12 @@ struct Dungeon : SanguineModule {
 				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.r, moonColors[2].innerColor.r);
 				innerMoon.g = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.g, moonColors[2].innerColor.g);
 				innerMoon.b = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.b, moonColors[2].innerColor.b);
-			}
-			else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
+			} else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
 				outerMoon = moonColors[1].outerColor;
 				innerMoon.r = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.r, moonColors[1].innerColor.r);
 				innerMoon.g = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.g, moonColors[1].innerColor.g);
 				innerMoon.b = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.b, moonColors[1].innerColor.b);
-			}
-			else {
+			} else {
 				outerMoon = moonColors[0].outerColor;
 				innerMoon.r = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.r, moonColors[0].innerColor.r);
 				innerMoon.g = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.g, moonColors[0].innerColor.g);

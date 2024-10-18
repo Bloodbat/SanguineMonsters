@@ -2,8 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "denki.hpp"
-
-static const int kMaxSections = 4;
+#include "kitsune.hpp"
 
 struct Kitsune : SanguineModule {
 
@@ -139,8 +138,7 @@ struct Kitsune : SanguineModule {
 						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);
 					}
-				}
-				else {
+				} else {
 					float* outputVoltages = outputs[OUTPUT_VOLTAGE1 + section].getVoltages();
 					float lightValue = 0;
 					float cvGainLightValue = 0.f;
