@@ -334,10 +334,14 @@ struct Chronos : SanguineModule {
     }
 
     void onReset() override {
+        float newPhase = 0.f;
+        // Offset each phase by 90º
+        const float phaseOffset = 0.25f;
         for (int section = 0; section < kMaxSections; section++) {
             for (int channel = 0; channel < 16; channel += 4) {
-                phases[section][channel >> 2] = 0.f;
+                phases[section][channel >> 2] = newPhase;
             }
+            newPhase += phaseOffset;
             clockFrequencies[section] = 1.f;
             clockTimers[section].reset();
         }
