@@ -1,4 +1,4 @@
-#define MAXLEN 32
+static const int kMaxSphinxLength = 32;
 
 enum PatternStyle {
     EUCLIDEAN_PATTERN,

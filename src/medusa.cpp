@@ -12,17 +12,17 @@ struct Medusa : SanguineModule {
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_VOLTAGE, MEDUSA_MAX_PORTS),
+		ENUMS(INPUT_VOLTAGE, kMedusaMaxPorts),
 		INPUTS_COUNT
 	};
 
 	enum OutputIds {
-		ENUMS(OUTPUT_VOLTAGE, MEDUSA_MAX_PORTS),
+		ENUMS(OUTPUT_VOLTAGE, kMedusaMaxPorts),
 		OUTPUTS_COUNT
 	};
 
 	enum LightIds {
-		ENUMS(LIGHT_NORMALLED_PORT, MEDUSA_MAX_PORTS * 3),
+		ENUMS(LIGHT_NORMALLED_PORT, kMedusaMaxPorts * 3),
 		LIGHTS_COUNT
 	};
 
@@ -33,7 +33,7 @@ struct Medusa : SanguineModule {
 	Medusa() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
+		for (int i = 0; i < kMedusaMaxPorts; i++) {
 			configInput(INPUT_VOLTAGE + i, string::f("Medusa %d", i + 1));
 			configOutput(OUTPUT_VOLTAGE + i, string::f("Medusa %d", i + 1));
 		}
@@ -51,7 +51,7 @@ struct Medusa : SanguineModule {
 
 		bool lightsTurn = lightDivider.process();
 
-		for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
+		for (int i = 0; i < kMedusaMaxPorts; i++) {
 			if (inputs[INPUT_VOLTAGE + i].isConnected()) {
 				channelCount = inputs[INPUT_VOLTAGE + i].getChannels();
 				activePort = i;
