@@ -394,9 +394,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(52.132, 29.993), module, Chronos::PARAM_PWM_1));
 
         addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(13.125, 39.856), module, Chronos::PARAM_PULSEWIDTH_1));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(29.251, 39.856), module, Chronos::INPUT_RESET_1));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(40.692, 39.856), module, Chronos::INPUT_FM_1));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(52.132, 39.856), module, Chronos::INPUT_PWM_1));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(29.251, 39.856), module, Chronos::INPUT_RESET_1));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(40.692, 39.856), module, Chronos::INPUT_FM_1));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(52.132, 39.856), module, Chronos::INPUT_PWM_1));
 
         SanguineStaticRGBLight* lightReset1 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 29.251, 46.545, true, kSanguineBlueLight);
         addChild(lightReset1);
@@ -410,10 +410,10 @@ struct ChronosWidget : SanguineModuleWidget {
         SanguineStaticRGBLight* lightSquare1 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 41.88, 52.518, true, kSanguineBlueLight);
         addChild(lightSquare1);
 
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.558, 59.167), module, Chronos::OUTPUT_SINE_1));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(18.999, 59.167), module, Chronos::OUTPUT_TRIANGLE_1));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.439, 59.167), module, Chronos::OUTPUT_SAW_1));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(41.88, 59.167), module, Chronos::OUTPUT_SQUARE_1));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(7.558, 59.167), module, Chronos::OUTPUT_SINE_1));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(18.999, 59.167), module, Chronos::OUTPUT_TRIANGLE_1));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(30.439, 59.167), module, Chronos::OUTPUT_SAW_1));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(41.88, 59.167), module, Chronos::OUTPUT_SQUARE_1));
 
         // LFO 2
         SanguineStaticRGBLight* lightClock2 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 90.245, 13.18, true, kSanguineBlueLight);
@@ -432,9 +432,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(113.126, 29.993), module, Chronos::PARAM_PWM_2));
 
         addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(74.119, 39.856), module, Chronos::PARAM_PULSEWIDTH_2));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.245, 39.856), module, Chronos::INPUT_RESET_2));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(101.686, 39.856), module, Chronos::INPUT_FM_2));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(113.126, 39.856), module, Chronos::INPUT_PWM_2));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(90.245, 39.856), module, Chronos::INPUT_RESET_2));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(101.686, 39.856), module, Chronos::INPUT_FM_2));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(113.126, 39.856), module, Chronos::INPUT_PWM_2));
 
         SanguineStaticRGBLight* lightReset2 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 90.245, 46.545, true, kSanguineBlueLight);
         addChild(lightReset2);
@@ -448,10 +448,10 @@ struct ChronosWidget : SanguineModuleWidget {
         SanguineStaticRGBLight* lightSquare2 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 114.281, 52.518, true, kSanguineBlueLight);
         addChild(lightSquare2);
 
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(79.959, 59.167), module, Chronos::OUTPUT_SINE_2));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(91.4, 59.167), module, Chronos::OUTPUT_TRIANGLE_2));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(102.841, 59.167), module, Chronos::OUTPUT_SAW_2));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(114.281, 59.167), module, Chronos::OUTPUT_SQUARE_2));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(79.959, 59.167), module, Chronos::OUTPUT_SINE_2));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(91.4, 59.167), module, Chronos::OUTPUT_TRIANGLE_2));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(102.841, 59.167), module, Chronos::OUTPUT_SAW_2));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(114.281, 59.167), module, Chronos::OUTPUT_SQUARE_2));
 
         // LFO 3
         SanguineStaticRGBLight* lightClock3 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 29.251, 72.664, true, kSanguineBlueLight);
@@ -470,9 +470,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(52.132, 89.477), module, Chronos::PARAM_PWM_3));
 
         addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(13.125, 99.34), module, Chronos::PARAM_PULSEWIDTH_3));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(29.251, 99.34), module, Chronos::INPUT_RESET_3));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(40.692, 99.34), module, Chronos::INPUT_FM_3));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(52.132, 99.34), module, Chronos::INPUT_PWM_3));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(29.251, 99.34), module, Chronos::INPUT_RESET_3));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(40.692, 99.34), module, Chronos::INPUT_FM_3));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(52.132, 99.34), module, Chronos::INPUT_PWM_3));
 
         SanguineStaticRGBLight* lightReset3 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 29.251, 106.028, true, kSanguineBlueLight);
         addChild(lightReset3);
@@ -486,10 +486,10 @@ struct ChronosWidget : SanguineModuleWidget {
         SanguineStaticRGBLight* lightSquare3 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 41.88, 112.001, true, kSanguineBlueLight);
         addChild(lightSquare3);
 
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.558, 118.651), module, Chronos::OUTPUT_SINE_3));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(18.999, 118.651), module, Chronos::OUTPUT_TRIANGLE_3));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.439, 118.651), module, Chronos::OUTPUT_SAW_3));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(41.88, 118.651), module, Chronos::OUTPUT_SQUARE_3));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(7.558, 118.651), module, Chronos::OUTPUT_SINE_3));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(18.999, 118.651), module, Chronos::OUTPUT_TRIANGLE_3));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(30.439, 118.651), module, Chronos::OUTPUT_SAW_3));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(41.88, 118.651), module, Chronos::OUTPUT_SQUARE_3));
 
         // LFO 4
         SanguineStaticRGBLight* lightClock4 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 90.245, 72.664, true, kSanguineBlueLight);
@@ -508,9 +508,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(113.126, 89.477), module, Chronos::PARAM_PWM_4));
 
         addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(74.119, 99.34), module, Chronos::PARAM_PULSEWIDTH_4));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.245, 99.34), module, Chronos::INPUT_RESET_4));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(101.686, 99.34), module, Chronos::INPUT_FM_4));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(113.126, 99.34), module, Chronos::INPUT_PWM_4));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(90.245, 99.34), module, Chronos::INPUT_RESET_4));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(101.686, 99.34), module, Chronos::INPUT_FM_4));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(113.126, 99.34), module, Chronos::INPUT_PWM_4));
 
         SanguineStaticRGBLight* lightReset4 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 90.245, 106.028, true, kSanguineBlueLight);
         addChild(lightReset4);
@@ -524,10 +524,10 @@ struct ChronosWidget : SanguineModuleWidget {
         SanguineStaticRGBLight* lightSquare4 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 114.281, 112.001, true, kSanguineBlueLight);
         addChild(lightSquare4);
 
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(79.959, 118.651), module, Chronos::OUTPUT_SINE_4));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(91.4, 118.651), module, Chronos::OUTPUT_TRIANGLE_4));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(102.841, 118.651), module, Chronos::OUTPUT_SAW_4));
-        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(114.281, 118.651), module, Chronos::OUTPUT_SQUARE_4));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(79.959, 118.651), module, Chronos::OUTPUT_SINE_4));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(91.4, 118.651), module, Chronos::OUTPUT_TRIANGLE_4));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(102.841, 118.651), module, Chronos::OUTPUT_SAW_4));
+        addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(114.281, 118.651), module, Chronos::OUTPUT_SQUARE_4));
     }
 
     void appendContextMenu(Menu* menu) override {
