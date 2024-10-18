@@ -248,7 +248,7 @@ struct Chronos : SanguineModule {
                     }
                     float_4 voltage = simd::sin(2 * M_PI * phase);
                     if (bIsInverted) {
-                        voltage *= -1.f;
+                        voltage = -voltage;
                     }
                     if (bHasOffset) {
                         voltage += 1.f;
@@ -264,7 +264,7 @@ struct Chronos : SanguineModule {
                     }
                     float_4 voltage = 4.f * simd::fabs(phase - simd::round(phase)) - 1.f;
                     if (bIsInverted) {
-                        voltage *= -1.f;
+                        voltage = -voltage;
                     }
                     if (bHasOffset) {
                         voltage += 1.f;
@@ -280,7 +280,7 @@ struct Chronos : SanguineModule {
                     }
                     float_4 voltage = 2.f * (phase - simd::round(phase));
                     if (bIsInverted) {
-                        voltage *= -1.f;
+                        voltage = -voltage;
                     }
                     if (bHasOffset) {
                         voltage += 1.f;
@@ -292,7 +292,7 @@ struct Chronos : SanguineModule {
                 if (outputs[OUTPUT_SQUARE_1 + section].isConnected()) {
                     float_4 voltage = simd::ifelse(phases[section][currentChannel] < pulseWidth, 1.f, -1.f);
                     if (bIsInverted) {
-                        voltage *= -1.f;
+                        voltage = -voltage;
                     }
                     if (bHasOffset) {
                         voltage += 1.f;
