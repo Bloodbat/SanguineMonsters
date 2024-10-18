@@ -4,15 +4,7 @@
 #include <array>
 #include "sanguinehelpers.hpp"
 #include "pcg_variants.h"
-
-#define MAXLEN 32
-
-enum PatternStyle {
-	EUCLIDEAN_PATTERN,
-	RANDOM_PATTERN,
-	FIBONACCI_PATTERN,
-	LINEAR_PATTERN
-};
+#include "sphinx.hpp"
 
 struct Sphinx : SanguineModule {
 	enum ParamIds {
@@ -305,8 +297,7 @@ struct Sphinx : SanguineModule {
 			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
 				if (!params[PARAM_REVERSE].getValue()) {
 					currentStep = patternLength + patternPadding;
-				}
-				else {
+				} else {
 					currentStep = 0;
 				}
 				bCycleReset = true;
@@ -328,8 +319,7 @@ struct Sphinx : SanguineModule {
 						pgEoc.trigger();
 					}
 				}
-			}
-			else {
+			} else {
 				currentStep--;
 				if (currentStep < 0) {
 					currentStep = patternLength + patternPadding - 1;
@@ -349,8 +339,7 @@ struct Sphinx : SanguineModule {
 					turing |= finalSequence[(currentStep + i) % patternLength + patternPadding];
 					turing <<= 1;
 				}
-			}
-			else {
+			} else {
 				bGateOn = false;
 				if (finalSequence[currentStep]) {
 					pgGate.trigger();
@@ -407,8 +396,7 @@ struct Sphinx : SanguineModule {
 
 			if (patternAccents == 0) {
 				patternAccentRotation = 0;
-			}
-			else {
+			} else {
 				patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
 					inputs[INPUT_SHIFT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 			}
@@ -502,8 +490,7 @@ struct SphinxDisplay : TransparentWidget {
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
 			nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		}
-		else if (!module) {
+		} else if (!module) {
 			nvgStrokeColor(vg, arrayDisplayColors[0].inactiveColor);
 			nvgFillColor(vg, arrayDisplayColors[0].activeColor);
 		}
@@ -516,15 +503,13 @@ struct SphinxDisplay : TransparentWidget {
 
 		if (module && !module->isBypassed()) {
 			len = *patternLength + *patternPadding;
-		}
-		else if (!module) {
+		} else if (!module) {
 			len = 16;
 		}
 
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		}
-		else if (!module) {
+		} else if (!module) {
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
 		}
 		nvgBeginPath(vg);
@@ -546,8 +531,7 @@ struct SphinxDisplay : TransparentWidget {
 					nvgFill(vg);
 					nvgStroke(vg);
 				}
-			}
-			else if (!module) {
+			} else if (!module) {
 				if (!browserSequence[i]) {
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
@@ -568,8 +552,7 @@ struct SphinxDisplay : TransparentWidget {
 		nvgBeginPath(vg);
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		}
-		else if (!module) {
+		} else if (!module) {
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
 		}
 		nvgStrokeWidth(vg, 1.f);
@@ -587,13 +570,11 @@ struct SphinxDisplay : TransparentWidget {
 					if (first) {
 						nvgMoveTo(vg, p.x, p.y);
 						first = false;
-					}
-					else {
+					} else {
 						nvgLineTo(vg, p.x, p.y);
 					}
 				}
-			}
-			else if (!module) {
+			} else if (!module) {
 				if (browserSequence[i]) {
 					float a = i / static_cast<float>(len);
 					float r = radius2;
@@ -604,8 +585,7 @@ struct SphinxDisplay : TransparentWidget {
 					if (first) {
 						nvgMoveTo(vg, p.x, p.y);
 						first = false;
-					}
-					else {
+					} else {
 						nvgLineTo(vg, p.x, p.y);
 					}
 				}
@@ -630,8 +610,7 @@ struct SphinxDisplay : TransparentWidget {
 					nvgFill(vg);
 					nvgStroke(vg);
 				}
-			}
-			else if (!module) {
+			} else if (!module) {
 				if (browserSequence[i]) {
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
@@ -656,16 +635,14 @@ struct SphinxDisplay : TransparentWidget {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
 			if (sequence->at(*currentStep)) {
 				nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-			}
-			else {
+			} else {
 				nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
 			}
 			nvgCircle(vg, x, y, 2.);
 			nvgStrokeWidth(vg, 1.5f);
 			nvgFill(vg);
 			nvgStroke(vg);
-		}
-		else if (!module) {
+		} else if (!module) {
 			float r = radius2;
 			float x = circleX + r * cosf(2.f * M_PI * 0 / len - 0.5f * M_PI);
 			float y = circleY + r * sinf(2.f * M_PI * 0 / len - 0.5f * M_PI);
@@ -673,8 +650,7 @@ struct SphinxDisplay : TransparentWidget {
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
 			if (browserSequence[0]) {
 				nvgFillColor(vg, arrayDisplayColors[0].activeColor);
-			}
-			else {
+			} else {
 				nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
 			}
 			nvgCircle(vg, x, y, 2.);
@@ -709,8 +685,7 @@ struct SphinxDisplay : TransparentWidget {
 					drawPolygon(args.vg);
 					drawRectHalo(args, box.size, arrayDisplayColors[*patternStyle].activeColor, 55, 0.f);
 				}
-			}
-			else if (!module) {
+			} else if (!module) {
 				nvgBeginPath(args.vg);
 				nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
 				nvgFillColor(args.vg, arrayDisplayColors[0].backgroundColor);
