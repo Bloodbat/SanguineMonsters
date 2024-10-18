@@ -1,0 +1,551 @@
+#include "plugin.hpp"
+#include "sanguinecomponents.hpp"
+#include "sanguinehelpers.hpp"
+#include "sanguinechannels.hpp"
+#include "chronos.hpp"
+
+using simd::float_4;
+
+struct Chronos : SanguineModule {
+
+    enum ParamIds {
+        PARAM_FREQUENCY_1,
+        PARAM_FREQUENCY_2,
+        PARAM_FREQUENCY_3,
+        PARAM_FREQUENCY_4,
+        PARAM_PULSEWIDTH_1,
+        PARAM_PULSEWIDTH_2,
+        PARAM_PULSEWIDTH_3,
+        PARAM_PULSEWIDTH_4,
+        PARAM_INVERT_1,
+        PARAM_INVERT_2,
+        PARAM_INVERT_3,
+        PARAM_INVERT_4,
+        PARAM_BIPOLAR_1,
+        PARAM_BIPOLAR_2,
+        PARAM_BIPOLAR_3,
+        PARAM_BIPOLAR_4,
+        PARAM_FM_1,
+        PARAM_FM_2,
+        PARAM_FM_3,
+        PARAM_FM_4,
+        PARAM_PWM_1,
+        PARAM_PWM_2,
+        PARAM_PWM_3,
+        PARAM_PWM_4,
+        PARAMS_COUNT
+    };
+
+    enum InputIds {
+        INPUT_CLOCK_1,
+        INPUT_CLOCK_2,
+        INPUT_CLOCK_3,
+        INPUT_CLOCK_4,
+        INPUT_RESET_1,
+        INPUT_RESET_2,
+        INPUT_RESET_3,
+        INPUT_RESET_4,
+        INPUT_FM_1,
+        INPUT_FM_2,
+        INPUT_FM_3,
+        INPUT_FM_4,
+        INPUT_PWM_1,
+        INPUT_PWM_2,
+        INPUT_PWM_3,
+        INPUT_PWM_4,
+        INPUTS_COUNT
+    };
+
+    enum OutputIds {
+        OUTPUT_SINE_1,
+        OUTPUT_SINE_2,
+        OUTPUT_SINE_3,
+        OUTPUT_SINE_4,
+        OUTPUT_TRIANGLE_1,
+        OUTPUT_TRIANGLE_2,
+        OUTPUT_TRIANGLE_3,
+        OUTPUT_TRIANGLE_4,
+        OUTPUT_SAW_1,
+        OUTPUT_SAW_2,
+        OUTPUT_SAW_3,
+        OUTPUT_SAW_4,
+        OUTPUT_SQUARE_1,
+        OUTPUT_SQUARE_2,
+        OUTPUT_SQUARE_3,
+        OUTPUT_SQUARE_4,
+        OUTPUTS_COUNT
+    };
+
+    enum LightIds {
+        ENUMS(LIGHT_PHASE_1, 3),
+        ENUMS(LIGHT_PHASE_2, 3),
+        ENUMS(LIGHT_PHASE_3, 3),
+        ENUMS(LIGHT_PHASE_4, 3),
+        LIGHT_INVERT_1,
+        LIGHT_INVERT_2,
+        LIGHT_INVERT_3,
+        LIGHT_INVERT_4,
+        LIGHT_BIPOLAR_1,
+        LIGHT_BIPOLAR_2,
+        LIGHT_BIPOLAR_3,
+        LIGHT_BIPOLAR_4,
+        LIGHTS_COUNT
+    };
+
+    static const int kLightsDivision = 16;
+
+    int channelCounts[kMaxSections] = {};
+    int ledsChannel[kMaxSections] = {};
+
+    float clockFrequencies[kMaxSections] = {};
+
+    float_4 phases[kMaxSections][4];
+
+    dsp::ClockDivider lightsDivider;
+    dsp::Timer clockTimers[kMaxSections];
+    dsp::TSchmittTrigger<float_4> stResetTriggers[kMaxSections][4];
+    dsp::SchmittTrigger stClockTriggers[kMaxSections];
+
+    struct FrequencyParam : ParamQuantity {
+        float getDisplayValue() override {
+            Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
+            if (paramId >= PARAM_FREQUENCY_1 && paramId <= PARAM_FREQUENCY_4) {
+                switch (paramId)
+                {
+                case PARAM_FREQUENCY_1:
+                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_1] == 2.f) {
+                        unit = " Hz";
+                        displayMultiplier = 1.f;
+                    } else {
+                        unit = "x";
+                        displayMultiplier = 1 / 2.f;
+                    }
+                    break;
+                case PARAM_FREQUENCY_2:
+                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_2] == 2.f) {
+                        unit = " Hz";
+                        displayMultiplier = 1.f;
+                    } else {
+                        unit = "x";
+                        displayMultiplier = 1 / 2.f;
+                    }
+                    break;
+                case PARAM_FREQUENCY_3:
+                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_3] == 2.f) {
+                        unit = " Hz";
+                        displayMultiplier = 1.f;
+                    } else {
+                        unit = "x";
+                        displayMultiplier = 1 / 2.f;
+                    }
+                    break;
+                case PARAM_FREQUENCY_4:
+                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_4] == 2.f) {
+                        unit = " Hz";
+                        displayMultiplier = 1.f;
+                    } else {
+                        unit = "x";
+                        displayMultiplier = 1 / 2.f;
+                    }
+                    break;
+                }
+            }
+            return ParamQuantity::getDisplayValue();
+        }
+    };
+
+    Chronos() {
+        config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
+
+        for (int i = 0; i < kMaxSections; i++) {
+            int lfoNumber = i + 1;
+            configParam<FrequencyParam>(PARAM_FREQUENCY_1 + i, -8.f, 10.f, 1.f,
+                string::f("LFO %d frequency", lfoNumber), " Hz", 2, 1);
+
+            configInput(INPUT_CLOCK_1 + i, string::f("LFO %d clock", lfoNumber));
+            configButton(PARAM_INVERT_1 + i, string::f("LFO %d invert", lfoNumber));
+            configButton(PARAM_BIPOLAR_1 + i, string::f("LFO %d bipolar", lfoNumber));
+
+            configLight(LIGHT_PHASE_1 + i * 3, string::f("LFO %d phase", lfoNumber));
+            configParam(PARAM_FM_1 + i, -1.f, 1.f, 0.f,
+                string::f("LFO %d frequency modulation", lfoNumber), "%", 0.f, 100.f);
+            getParamQuantity(PARAM_FM_1 + i)->randomizeEnabled = false;
+            configParam(PARAM_PWM_1 + i, -1.f, 1.f, 0.f,
+                string::f("LFO %d Pulse width modulation", lfoNumber), "%", 0.f, 100.f);
+
+            configParam(PARAM_PULSEWIDTH_1 + i, 0.01f, 0.99f, 0.5f,
+                string::f("LFO %d Pulse width", lfoNumber), "%", 0.f, 100.f);
+            configInput(INPUT_RESET_1 + i, string::f("LFO %d reset", lfoNumber));
+            configInput(INPUT_FM_1 + i, string::f("LFO %d FM", lfoNumber));
+            configInput(INPUT_PWM_1 + i, string::f("LFO %d pulse width modulation", lfoNumber));
+
+            configOutput(OUTPUT_SINE_1 + i, string::f("LFO %d sine", lfoNumber));
+            configOutput(OUTPUT_TRIANGLE_1 + i, string::f("LFO %d triangle", lfoNumber));
+            configOutput(OUTPUT_SAW_1 + i, string::f("LFO %d sawtooth", lfoNumber));
+            configOutput(OUTPUT_SQUARE_1 + i, string::f("LFO %d square", lfoNumber));
+        }
+
+        onReset();
+        lightsDivider.setDivision(kLightsDivision);
+    };
+
+    void process(const ProcessArgs& args) override {
+        bool bIsLightsTurn = lightsDivider.process();
+
+        for (int section = 0; section < kMaxSections; section++) {
+            float paramFrequency = params[PARAM_FREQUENCY_1 + section].getValue();
+            float paramFm = params[PARAM_FM_1 + section].getValue();
+            float paramPulsewidth = params[PARAM_PULSEWIDTH_1 + section].getValue();
+            float paramPwm = params[PARAM_PWM_1 + section].getValue();
+            bool bHasOffset = !(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()));
+            bool bIsInverted = static_cast<bool>(params[PARAM_INVERT_1 + section].getValue());
+
+            // Clocks
+            if (inputs[INPUT_CLOCK_1 + section].isConnected()) {
+                clockTimers[section].process(args.sampleTime);
+
+                if (stClockTriggers[section].process(inputs[INPUT_CLOCK_1 + section].getVoltage(), 0.1f, 2.f)) {
+                    float clockFrequency = 1.f / clockTimers[section].getTime();
+                    clockTimers[section].reset();
+                    if (0.001f <= clockFrequency && clockFrequency <= 1000.f) {
+                        clockFrequencies[section] = clockFrequency;
+                    }
+                }
+            } else {
+                // Default frequency when clock is unpatched
+                clockFrequencies[section] = 2.f;
+            }
+
+            channelCounts[section] = std::max(1, inputs[INPUT_FM_1 + section].getChannels());
+
+            for (int channel = 0; channel < channelCounts[section]; channel += 4) {
+                // Pitch and frequency
+                float_4 pitch = paramFrequency;
+                pitch += inputs[INPUT_FM_1 + section].getVoltageSimd<float_4>(channel) * paramFm;
+                float_4 frequency = clockFrequencies[section] / 2.f * dsp::exp2_taylor5(pitch);
+
+                // Pulse width
+                float_4 pulseWidth = paramPulsewidth;
+                pulseWidth += inputs[INPUT_PWM_1 + section].getPolyVoltageSimd<float_4>(channel) / 10.f * paramPwm;
+                pulseWidth = clamp(pulseWidth, 0.01f, 0.99f);
+
+                // Advance phase
+                float_4 deltaPhase = simd::fmin(frequency * args.sampleTime, 0.5f);
+                phases[section][channel >> 2] += deltaPhase;
+                phases[section][channel >> 2] -= simd::trunc(phases[section][channel >> 2]);
+
+                // Reset
+                float_4 reset = inputs[INPUT_RESET_1 + section].getPolyVoltageSimd<float_4>(channel);
+                float_4 resetTriggered = stResetTriggers[section][channel >> 2].process(reset, 0.1f, 2.f);
+                phases[section][channel >> 2] = simd::ifelse(resetTriggered, 0.f, phases[section][channel >> 2]);
+
+                // Sine
+                if (outputs[OUTPUT_SINE_1 + section].isConnected()) {
+                    float_4 phase = phases[section][channel >> 2];
+                    if (bHasOffset) {
+                        phase -= 0.25f;
+                    }
+                    float_4 voltage = simd::sin(2 * M_PI * phase);
+                    if (bIsInverted) {
+                        voltage *= -1.f;
+                    }
+                    if (bHasOffset) {
+                        voltage += 1.f;
+                    }
+                    outputs[OUTPUT_SINE_1 + section].setVoltageSimd(5.f * voltage, channel);
+                }
+
+                // Triangle
+                if (outputs[OUTPUT_TRIANGLE_1 + section].isConnected()) {
+                    float_4 phase = phases[section][channel >> 2];
+                    if (!bHasOffset) {
+                        phase += 0.25f;
+                    }
+                    float_4 voltage = 4.f * simd::fabs(phase - simd::round(phase)) - 1.f;
+                    if (bIsInverted) {
+                        voltage *= -1.f;
+                    }
+                    if (bHasOffset) {
+                        voltage += 1.f;
+                    }
+                    outputs[OUTPUT_TRIANGLE_1 + section].setVoltageSimd(5.f * voltage, channel);
+                }
+
+                // Sawtooth
+                if (outputs[OUTPUT_SAW_1 + section].isConnected()) {
+                    float_4 phase = phases[section][channel >> 2];
+                    if (bHasOffset) {
+                        phase -= 0.5f;
+                    }
+                    float_4 voltage = 2.f * (phase - simd::round(phase));
+                    if (bIsInverted) {
+                        voltage *= -1.f;
+                    }
+                    if (bHasOffset) {
+                        voltage += 1.f;
+                    }
+                    outputs[OUTPUT_SAW_1 + section].setVoltageSimd(5.f * voltage, channel);
+                }
+
+                // Square
+                if (outputs[OUTPUT_SQUARE_1 + section].isConnected()) {
+                    float_4 voltage = simd::ifelse(phases[section][channel >> 2] < pulseWidth, 1.f, -1.f);
+                    if (bIsInverted) {
+                        voltage *= -1.f;
+                    }
+                    if (bHasOffset) {
+                        voltage += 1.f;
+                    }
+                    outputs[OUTPUT_SQUARE_1 + section].setVoltageSimd(5.f * voltage, channel);
+                }
+            }
+
+            outputs[OUTPUT_SINE_1 + section].setChannels(channelCounts[section]);
+            outputs[OUTPUT_TRIANGLE_1 + section].setChannels(channelCounts[section]);
+            outputs[OUTPUT_SAW_1 + section].setChannels(channelCounts[section]);
+            outputs[OUTPUT_SQUARE_1 + section].setChannels(channelCounts[section]);
+
+            if (bIsLightsTurn) {
+                if (ledsChannel[section] >= channelCounts[section]) {
+                    ledsChannel[section] = channelCounts[section] - 1;
+                }
+
+                const float sampleTime = args.sampleTime * kLightsDivision;
+                int currentLight = LIGHT_PHASE_1 + section * 3;
+                if (channelCounts[section] == 1) {
+                    float brightness = sinf(2.f * M_PI * phases[section][0][0]);
+                    lights[currentLight + 0].setBrightnessSmooth(-brightness, sampleTime);
+                    lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
+                    lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
+                } else {
+                    float brightness = sinf(2.f * M_PI * phases[section][ledsChannel[section] >> 2][ledsChannel[section] % 4]);
+                    lights[currentLight + 0].setBrightnessSmooth(-brightness, sampleTime);
+                    lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
+                    lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
+                }
+                lights[LIGHT_BIPOLAR_1 + section].setBrightnessSmooth(!bHasOffset ? 0.75f : 0.f, sampleTime);
+                lights[LIGHT_INVERT_1 + section].setBrightnessSmooth(bIsInverted ? 0.75f : 0.f, sampleTime);
+            }
+        }
+    }
+
+    void onReset() override {
+        for (int section = 0; section < kMaxSections; section++) {
+            for (int channel = 0; channel < 16; channel += 4) {
+                phases[section][channel / 4] = 0.f;
+            }
+            clockFrequencies[section] = 1.f;
+            clockTimers[section].reset();
+        }
+    }
+
+    json_t* dataToJson() override {
+        json_t* rootJ = SanguineModule::dataToJson();
+
+        for (int section = 0; section < kMaxSections; section++) {
+            json_object_set_new(rootJ, string::f("ledsChannel%d", section).c_str(), json_integer(ledsChannel[section]));
+        }
+        return rootJ;
+    }
+
+    void dataFromJson(json_t* rootJ) override {
+        SanguineModule::dataFromJson(rootJ);
+
+        for (int section = 0; section < kMaxSections; section++) {
+            json_t* ledsChannelJ = json_object_get(rootJ, string::f("ledsChannel%d", section).c_str());
+            if (ledsChannelJ) {
+                ledsChannel[section] = json_integer_value(ledsChannelJ);
+            }
+        }
+    }
+};
+
+struct ChronosWidget : SanguineModuleWidget {
+    ChronosWidget(Chronos* module) {
+        setModule(module);
+
+        moduleName = "chronos";
+        panelSize = SIZE_24;
+        backplateColor = PLATE_PURPLE;
+        bFaceplateSuffix = false;
+
+        makePanel();
+
+        addScrews(SCREW_ALL);
+
+        // LFO 1
+        SanguineStaticRGBLight* lightClock1 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 29.251, 13.18, true, kSanguineBlueLight);
+        addChild(lightClock1);
+
+        addParam(createParamCentered<Davies1900hLargeRedKnob>(millimetersToPixelsVec(13.125, 24.53), module, Chronos::PARAM_FREQUENCY_1));
+
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(29.251, 20.33), module, Chronos::INPUT_CLOCK_1));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(40.692, 20.33),
+            module, Chronos::PARAM_INVERT_1, Chronos::LIGHT_INVERT_1));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(52.132, 20.33),
+            module, Chronos::PARAM_BIPOLAR_1, Chronos::LIGHT_BIPOLAR_1));
+
+        addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(29.251, 30.093), module, Chronos::LIGHT_PHASE_1));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(40.692, 29.993), module, Chronos::PARAM_FM_1));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(52.132, 29.993), module, Chronos::PARAM_PWM_1));
+
+        addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(13.125, 39.856), module, Chronos::PARAM_PULSEWIDTH_1));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(29.251, 39.856), module, Chronos::INPUT_RESET_1));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(40.692, 39.856), module, Chronos::INPUT_FM_1));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(52.132, 39.856), module, Chronos::INPUT_PWM_1));
+
+        SanguineStaticRGBLight* lightReset1 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 29.251, 46.545, true, kSanguineBlueLight);
+        addChild(lightReset1);
+
+        SanguineStaticRGBLight* lightSine1 = new SanguineStaticRGBLight(module, "res/wave_sine.svg", 7.558, 52.518, true, kSanguineBlueLight);
+        addChild(lightSine1);
+        SanguineStaticRGBLight* lightTriangle1 = new SanguineStaticRGBLight(module, "res/wave_triangle.svg", 18.999, 52.518, true, kSanguineBlueLight);
+        addChild(lightTriangle1);
+        SanguineStaticRGBLight* lightSaw1 = new SanguineStaticRGBLight(module, "res/wave_saw.svg", 30.439, 52.518, true, kSanguineBlueLight);
+        addChild(lightSaw1);
+        SanguineStaticRGBLight* lightSquare1 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 41.88, 52.518, true, kSanguineBlueLight);
+        addChild(lightSquare1);
+
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.558, 59.167), module, Chronos::OUTPUT_SINE_1));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(18.999, 59.167), module, Chronos::OUTPUT_TRIANGLE_1));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.439, 59.167), module, Chronos::OUTPUT_SAW_1));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(41.88, 59.167), module, Chronos::OUTPUT_SQUARE_1));
+
+        // LFO 2
+        SanguineStaticRGBLight* lightClock2 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 90.245, 13.18, true, kSanguineBlueLight);
+        addChild(lightClock2);
+
+        addParam(createParamCentered<Davies1900hLargeBlackKnob>(millimetersToPixelsVec(74.119, 24.53), module, Chronos::PARAM_FREQUENCY_2));
+
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.245, 20.33), module, Chronos::INPUT_CLOCK_2));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(101.686, 20.33),
+            module, Chronos::PARAM_INVERT_2, Chronos::LIGHT_INVERT_2));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(113.126, 20.33),
+            module, Chronos::PARAM_BIPOLAR_2, Chronos::LIGHT_BIPOLAR_2));
+
+        addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(90.245, 30.093), module, Chronos::LIGHT_PHASE_2));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(101.686, 29.993), module, Chronos::PARAM_FM_2));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(113.126, 29.993), module, Chronos::PARAM_PWM_2));
+
+        addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(74.119, 39.856), module, Chronos::PARAM_PULSEWIDTH_2));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.245, 39.856), module, Chronos::INPUT_RESET_2));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(101.686, 39.856), module, Chronos::INPUT_FM_2));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(113.126, 39.856), module, Chronos::INPUT_PWM_2));
+
+        SanguineStaticRGBLight* lightReset2 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 90.245, 46.545, true, kSanguineBlueLight);
+        addChild(lightReset2);
+
+        SanguineStaticRGBLight* lightSine2 = new SanguineStaticRGBLight(module, "res/wave_sine.svg", 79.959, 52.518, true, kSanguineBlueLight);
+        addChild(lightSine2);
+        SanguineStaticRGBLight* lightTriangle2 = new SanguineStaticRGBLight(module, "res/wave_triangle.svg", 91.4, 52.518, true, kSanguineBlueLight);
+        addChild(lightTriangle2);
+        SanguineStaticRGBLight* lightSaw2 = new SanguineStaticRGBLight(module, "res/wave_saw.svg", 102.841, 52.518, true, kSanguineBlueLight);
+        addChild(lightSaw2);
+        SanguineStaticRGBLight* lightSquare2 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 114.281, 52.518, true, kSanguineBlueLight);
+        addChild(lightSquare2);
+
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(79.959, 59.167), module, Chronos::OUTPUT_SINE_2));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(91.4, 59.167), module, Chronos::OUTPUT_TRIANGLE_2));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(102.841, 59.167), module, Chronos::OUTPUT_SAW_2));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(114.281, 59.167), module, Chronos::OUTPUT_SQUARE_2));
+
+        // LFO 3
+        SanguineStaticRGBLight* lightClock3 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 29.251, 72.664, true, kSanguineBlueLight);
+        addChild(lightClock3);
+
+        addParam(createParamCentered<Davies1900hLargeBlackKnob>(millimetersToPixelsVec(13.125, 84.013), module, Chronos::PARAM_FREQUENCY_3));
+
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(29.251, 79.813), module, Chronos::INPUT_CLOCK_3));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(40.692, 79.813),
+            module, Chronos::PARAM_INVERT_3, Chronos::LIGHT_INVERT_3));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(52.132, 79.813),
+            module, Chronos::PARAM_BIPOLAR_3, Chronos::LIGHT_BIPOLAR_3));
+
+        addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(29.251, 89.577), module, Chronos::LIGHT_PHASE_3));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(40.692, 89.477), module, Chronos::PARAM_FM_3));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(52.132, 89.477), module, Chronos::PARAM_PWM_3));
+
+        addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(13.125, 99.34), module, Chronos::PARAM_PULSEWIDTH_3));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(29.251, 99.34), module, Chronos::INPUT_RESET_3));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(40.692, 99.34), module, Chronos::INPUT_FM_3));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(52.132, 99.34), module, Chronos::INPUT_PWM_3));
+
+        SanguineStaticRGBLight* lightReset3 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 29.251, 106.028, true, kSanguineBlueLight);
+        addChild(lightReset3);
+
+        SanguineStaticRGBLight* lightSine3 = new SanguineStaticRGBLight(module, "res/wave_sine.svg", 7.558, 112.001, true, kSanguineBlueLight);
+        addChild(lightSine3);
+        SanguineStaticRGBLight* lightTriangle3 = new SanguineStaticRGBLight(module, "res/wave_triangle.svg", 18.999, 112.001, true, kSanguineBlueLight);
+        addChild(lightTriangle3);
+        SanguineStaticRGBLight* lightSaw3 = new SanguineStaticRGBLight(module, "res/wave_saw.svg", 30.439, 112.001, true, kSanguineBlueLight);
+        addChild(lightSaw3);
+        SanguineStaticRGBLight* lightSquare3 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 41.88, 112.001, true, kSanguineBlueLight);
+        addChild(lightSquare3);
+
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.558, 118.651), module, Chronos::OUTPUT_SINE_3));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(18.999, 118.651), module, Chronos::OUTPUT_TRIANGLE_3));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(30.439, 118.651), module, Chronos::OUTPUT_SAW_3));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(41.88, 118.651), module, Chronos::OUTPUT_SQUARE_3));
+
+        // LFO 4
+        SanguineStaticRGBLight* lightClock4 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 90.245, 72.664, true, kSanguineBlueLight);
+        addChild(lightClock4);
+
+        addParam(createParamCentered<Davies1900hLargeRedKnob>(millimetersToPixelsVec(74.119, 84.013), module, Chronos::PARAM_FREQUENCY_4));
+
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.245, 79.813), module, Chronos::INPUT_CLOCK_4));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(101.686, 79.813),
+            module, Chronos::PARAM_INVERT_4, Chronos::LIGHT_INVERT_4));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(113.126, 79.813),
+            module, Chronos::PARAM_BIPOLAR_4, Chronos::LIGHT_BIPOLAR_4));
+
+        addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(90.245, 89.577), module, Chronos::LIGHT_PHASE_4));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(101.686, 89.477), module, Chronos::PARAM_FM_4));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(113.126, 89.477), module, Chronos::PARAM_PWM_4));
+
+        addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(74.119, 99.34), module, Chronos::PARAM_PULSEWIDTH_4));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.245, 99.34), module, Chronos::INPUT_RESET_4));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(101.686, 99.34), module, Chronos::INPUT_FM_4));
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(113.126, 99.34), module, Chronos::INPUT_PWM_4));
+
+        SanguineStaticRGBLight* lightReset4 = new SanguineStaticRGBLight(module, "res/reset_lit.svg", 90.245, 106.028, true, kSanguineBlueLight);
+        addChild(lightReset4);
+
+        SanguineStaticRGBLight* lightSine4 = new SanguineStaticRGBLight(module, "res/wave_sine.svg", 79.959, 112.001, true, kSanguineBlueLight);
+        addChild(lightSine4);
+        SanguineStaticRGBLight* lightTriangle4 = new SanguineStaticRGBLight(module, "res/wave_triangle.svg", 91.4, 112.001, true, kSanguineBlueLight);
+        addChild(lightTriangle4);
+        SanguineStaticRGBLight* lightSaw4 = new SanguineStaticRGBLight(module, "res/wave_saw.svg", 102.841, 112.001, true, kSanguineBlueLight);
+        addChild(lightSaw4);
+        SanguineStaticRGBLight* lightSquare4 = new SanguineStaticRGBLight(module, "res/wave_square.svg", 114.281, 112.001, true, kSanguineBlueLight);
+        addChild(lightSquare4);
+
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(79.959, 118.651), module, Chronos::OUTPUT_SINE_4));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(91.4, 118.651), module, Chronos::OUTPUT_TRIANGLE_4));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(102.841, 118.651), module, Chronos::OUTPUT_SAW_4));
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(114.281, 118.651), module, Chronos::OUTPUT_SQUARE_4));
+    }
+
+    void appendContextMenu(Menu* menu) override {
+        SanguineModuleWidget::appendContextMenu(menu);
+
+        Chronos* module = dynamic_cast<Chronos*>(this->module);
+
+        menu->addChild(new MenuSeparator);
+
+        std::vector<std::string> availableChannels = {};
+
+        for (int section = 0; section < kMaxSections; section++) {
+            availableChannels.clear();
+            for (int channel = 0; channel < module->channelCounts[section]; channel++) {
+                availableChannels.push_back(channelNumbers[channel]);
+            }
+            menu->addChild(createIndexSubmenuItem(string::f("Section %d LEDs channel", section + 1), availableChannels,
+                [=]() {return module->ledsChannel[section]; },
+                [=](int i) {module->ledsChannel[section] = i; }
+            ));
+        }
+    }
+};
+
+Model* modelChronos = createModel<Chronos, ChronosWidget>("Sanguine-Monsters-Chronos");
