@@ -212,13 +212,14 @@ struct Chronos : SanguineModule {
                     }
                 }
             } else {
-                // Default frequency when clock is unpatched
                 clockFrequencies[section] = 2.f;
             }
 
-            channelCounts[section] = std::max(1, inputs[INPUT_FM_1 + section].getChannels());
+            channelCounts[section] = std::max(inputs[INPUT_FM_1 + section].getChannels(), 1);
 
-            for (int channel = 0; channel < channelCounts[section]; channel += 4) {
+            for (uint8_t channel = 0; channel < channelCounts[section]; channel += 4) {
+                uint8_t currentChannel = channel >> 2;
+
                 // Pitch and frequency
                 float_4 pitch = paramFrequency;
                 pitch += inputs[INPUT_FM_1 + section].getVoltageSimd<float_4>(channel) * paramFm;
@@ -231,17 +232,17 @@ struct Chronos : SanguineModule {
 
                 // Advance phase
                 float_4 deltaPhase = simd::fmin(frequency * args.sampleTime, 0.5f);
-                phases[section][channel >> 2] += deltaPhase;
-                phases[section][channel >> 2] -= simd::trunc(phases[section][channel >> 2]);
+                phases[section][currentChannel] += deltaPhase;
+                phases[section][currentChannel] -= simd::trunc(phases[section][currentChannel]);
 
                 // Reset
                 float_4 reset = inputs[INPUT_RESET_1 + section].getPolyVoltageSimd<float_4>(channel);
-                float_4 resetTriggered = stResetTriggers[section][channel >> 2].process(reset, 0.1f, 2.f);
-                phases[section][channel >> 2] = simd::ifelse(resetTriggered, 0.f, phases[section][channel >> 2]);
+                float_4 resetTriggered = stResetTriggers[section][currentChannel].process(reset, 0.1f, 2.f);
+                phases[section][currentChannel] = simd::ifelse(resetTriggered, 0.f, phases[section][currentChannel]);
 
                 // Sine
                 if (outputs[OUTPUT_SINE_1 + section].isConnected()) {
-                    float_4 phase = phases[section][channel >> 2];
+                    float_4 phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
@@ -257,7 +258,7 @@ struct Chronos : SanguineModule {
 
                 // Triangle
                 if (outputs[OUTPUT_TRIANGLE_1 + section].isConnected()) {
-                    float_4 phase = phases[section][channel >> 2];
+                    float_4 phase = phases[section][currentChannel];
                     if (!bHasOffset) {
                         phase += 0.25f;
                     }
@@ -273,7 +274,7 @@ struct Chronos : SanguineModule {
 
                 // Sawtooth
                 if (outputs[OUTPUT_SAW_1 + section].isConnected()) {
-                    float_4 phase = phases[section][channel >> 2];
+                    float_4 phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.5f;
                     }
@@ -289,7 +290,7 @@ struct Chronos : SanguineModule {
 
                 // Square
                 if (outputs[OUTPUT_SQUARE_1 + section].isConnected()) {
-                    float_4 voltage = simd::ifelse(phases[section][channel >> 2] < pulseWidth, 1.f, -1.f);
+                    float_4 voltage = simd::ifelse(phases[section][currentChannel] < pulseWidth, 1.f, -1.f);
                     if (bIsInverted) {
                         voltage *= -1.f;
                     }
@@ -332,7 +333,7 @@ struct Chronos : SanguineModule {
     void onReset() override {
         for (int section = 0; section < kMaxSections; section++) {
             for (int channel = 0; channel < 16; channel += 4) {
-                phases[section][channel / 4] = 0.f;
+                phases[section][channel >> 2] = 0.f;
             }
             clockFrequencies[section] = 1.f;
             clockTimers[section].reset();
