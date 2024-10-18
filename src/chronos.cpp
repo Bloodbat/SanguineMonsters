@@ -246,7 +246,7 @@ struct Chronos : SanguineModule {
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
-                    float_4 voltage = simd::sin(2 * M_PI * phase);
+                    float_4 voltage = simd::sin(2.f * M_PI * phase);
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
