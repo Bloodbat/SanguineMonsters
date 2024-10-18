@@ -23,6 +23,7 @@ void init(rack::Plugin* p) {
 	p->addModel(modelAlchemist);
 	p->addModel(modelAlembic);
 	p->addModel(modelDenki);
+	p->addModel(modelChronos);
 
 	getDefaultTheme();
 }

@@ -177,6 +177,16 @@
         "Expander",
         "Polyphonic"
       ]
+    },
+    {
+      "slug" : "Sanguine-Monsters-Chronos",
+      "name" : "Chronos",
+      "description" : "Four polyphonic low-frequency oscillators",
+      "tags" : [
+        "Low-frequency oscillator",
+        "Polyphonic",
+        "Quad"
+      ]
     }
   ]
 }
