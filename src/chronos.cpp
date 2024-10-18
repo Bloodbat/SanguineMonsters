@@ -92,7 +92,7 @@ struct Chronos : SanguineModule {
         LIGHTS_COUNT
     };
 
-    static const int kLightsDivision = 16;
+    static const int kLightsDivision = 64;
 
     int channelCounts[kMaxSections] = {};
     int ledsChannel[kMaxSections] = {};
