@@ -100,6 +100,7 @@ struct Chronos : SanguineModule {
     float clockFrequencies[kMaxSections] = {};
 
     float_4 phases[kMaxSections][4];
+    float_4 sineVoltages[kMaxSections][4];
 
     dsp::ClockDivider lightsDivider;
     dsp::Timer clockTimers[kMaxSections];
@@ -241,19 +242,22 @@ struct Chronos : SanguineModule {
                 phases[section][currentChannel] = simd::ifelse(resetTriggered, 0.f, phases[section][currentChannel]);
 
                 // Sine
-                if (outputs[OUTPUT_SINE_1 + section].isConnected()) {
+                if (outputs[OUTPUT_SINE_1 + section].isConnected() || bIsLightsTurn) {
                     float_4 phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
-                    float_4 voltage = simd::sin(2.f * M_PI * phase);
-                    if (bIsInverted) {
-                        voltage = -voltage;
+                    sineVoltages[section][currentChannel] = simd::sin(2.f * M_PI * phase);
+                    if (outputs[OUTPUT_SINE_1 + section].isConnected()) {
+                        float_4 voltage = sineVoltages[section][currentChannel];
+                        if (bIsInverted) {
+                            voltage = -voltage;
+                        }
+                        if (bHasOffset) {
+                            voltage += 1.f;
+                        }
+                        outputs[OUTPUT_SINE_1 + section].setVoltageSimd(5.f * voltage, channel);
                     }
-                    if (bHasOffset) {
-                        voltage += 1.f;
-                    }
-                    outputs[OUTPUT_SINE_1 + section].setVoltageSimd(5.f * voltage, channel);
                 }
 
                 // Triangle
@@ -314,12 +318,11 @@ struct Chronos : SanguineModule {
                 const float sampleTime = args.sampleTime * kLightsDivision;
                 int currentLight = LIGHT_PHASE_1 + section * 3;
                 if (channelCounts[section] == 1) {
-                    float brightness = sinf(2.f * M_PI * phases[section][0][0]);
-                    lights[currentLight + 0].setBrightnessSmooth(-brightness, sampleTime);
-                    lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
+                    lights[currentLight + 0].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
+                    lights[currentLight + 1].setBrightnessSmooth(sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
                 } else {
-                    float brightness = sinf(2.f * M_PI * phases[section][ledsChannel[section] >> 2][ledsChannel[section] % 4]);
+                    float brightness = sineVoltages[section][ledsChannel[section] >> 2][ledsChannel[section] % 4];
                     lights[currentLight + 0].setBrightnessSmooth(-brightness, sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
