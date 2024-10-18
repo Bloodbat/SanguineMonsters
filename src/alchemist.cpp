@@ -3,8 +3,7 @@
 #include "sanguinehelpers.hpp"
 #include "sanguinedsp.hpp"
 #include "alembic.hpp"
-
-const float SaturatorFloat::limit = 12.f;
+#include "alchemist.hpp"
 
 struct Alchemist : SanguineModule {
 
@@ -95,8 +94,7 @@ struct Alchemist : SanguineModule {
 					if (channelSoloed[i]) {
 						++soloCount;
 					}
-				}
-				else {
+				} else {
 					channelSoloed[i] = false;
 				}
 				if (params[PARAM_SOLO + i].getValue()) {
@@ -115,8 +113,7 @@ struct Alchemist : SanguineModule {
 				if (hasExpander) {
 					outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() +
 						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + i).getVoltage() / 5.f, 0.f, 2.f);
-				}
-				else {
+				} else {
 					outVoltages[i] = outVoltages[i] * params[PARAM_GAIN + i].getValue();
 				}
 
@@ -127,8 +124,7 @@ struct Alchemist : SanguineModule {
 				if (!channelMuted[i] && (soloCount == 0 || channelSoloed[i])) {
 					monoMix += outVoltages[i];
 					masterOutVoltages[i] = outVoltages[i] * mixModulation;
-				}
-				else {
+				} else {
 					masterOutVoltages[i] = 0.f;
 				}
 				if (hasExpander) {
@@ -136,8 +132,7 @@ struct Alchemist : SanguineModule {
 						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).setVoltage(masterOutVoltages[i]);
 					}
 				}
-			}
-			else {
+			} else {
 				outVoltages[i] = 0.f;
 				if (hasExpander) {
 					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).isConnected()) {
@@ -177,8 +172,7 @@ struct Alchemist : SanguineModule {
 				if (isRed) {
 					lights[currentLight + 0].setBrightness(0.f);
 					lights[currentLight + 1].setBrightness(redValue);
-				}
-				else {
+				} else {
 					lights[currentLight + 0].setBrightness(greenValue);
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
