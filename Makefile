@@ -1,6 +1,10 @@
 FLAGS += -I./pcg
 
+ifndef DEBUGBUILD
 EXTRA_FLAGS =
+else
+EXTRA_FLAGS = -Og
+endif
 
 SOURCES += $(wildcard src/*.cpp)
 
