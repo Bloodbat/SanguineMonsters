@@ -59,30 +59,29 @@ struct Werewolf : SanguineModule {
 		bool bRightInConnected = inputs[INPUT_RIGHT].isConnected();
 		bool bIsNormalled = true;
 
-		float voltageInLeft = 0.f;
-		float voltageInRight = 0.f;
-		float voltageOutLeft = 0.f;
-		float voltageOutRight = 0.f;
 		float voltageSumLeft = 0.f;
 		float voltageSumRight = 0.f;
-		float fold = 0.f;
-		float gain = 0.f;
 		float foldSum = 0.f;
 		float gainSum = 0.f;
 
 		bool bIsLightsTurn = lightDivider.process();
-		const float sampleTime = args.sampleTime * kLightFrequency;
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
+		// Logical XOR
 		bIsNormalled = !bLeftInConnected != !bRightInConnected;
 		bool bOutputsNormalled = !outputs[OUTPUT_LEFT].isConnected() != !outputs[OUTPUT_RIGHT].isConnected();
 
 		if (channelCount > 0) {
-			fold = params[PARAM_FOLD].getValue();
-			gain = params[PARAM_GAIN].getValue();
+			float fold = params[PARAM_FOLD].getValue();
+			float gain = params[PARAM_GAIN].getValue();
 
 			for (int channel = 0; channel < channelCount; channel++) {
+				float voltageInLeft = 0.f;
+				float voltageInRight = 0.f;
+				float voltageOutLeft = 0.f;
+				float voltageOutRight = 0.f;
+
 				float channelFold = clamp(fold + inputs[INPUT_FOLD].getVoltage(channel), 0.f, 10.f);
 				float channelGain = clamp(gain + inputs[INPUT_GAIN].getVoltage(channel), 0.f, 20.f);
 
@@ -122,8 +121,12 @@ struct Werewolf : SanguineModule {
 
 				float voltageMix = 0.f;
 
-				if (!bIsNormalled && bOutputsNormalled) {
-					voltageMix = voltageOutLeft + voltageOutRight;
+				if (bOutputsNormalled) {
+					if (!bIsNormalled) {
+						voltageMix = voltageOutLeft + voltageOutRight;
+					} else {
+						voltageMix = voltageOutLeft;
+					}
 				}
 
 				if (!bOutputsNormalled) {
@@ -135,16 +138,13 @@ struct Werewolf : SanguineModule {
 
 					if (bIsNormalled) {
 						voltageOutRight = voltageOutLeft;
-						if (outputs[OUTPUT_RIGHT].isConnected()) {
-							outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
-						}
 						voltageSumRight += voltageOutLeft;
-					} else {
-						if (outputs[OUTPUT_RIGHT].isConnected()) {
-							outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
-						}
-						voltageSumRight += voltageOutRight;
+
 					}
+					if (outputs[OUTPUT_RIGHT].isConnected()) {
+						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
+					}
+					voltageSumRight += voltageOutRight;
 				} else {
 					if (outputs[OUTPUT_LEFT].isConnected()) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
@@ -159,6 +159,8 @@ struct Werewolf : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
+			const float sampleTime = args.sampleTime * kLightFrequency;
+
 			if (channelCount < 2) {
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
