@@ -75,6 +75,9 @@ struct Werewolf : SanguineModule {
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
+		bIsNormalled = !bLeftInConnected != !bRightInConnected;
+		bool bOutputsNormalled = !outputs[OUTPUT_LEFT].isConnected() != !outputs[OUTPUT_RIGHT].isConnected();
+
 		if (channelCount > 0) {
 			fold = params[PARAM_FOLD].getValue();
 			gain = params[PARAM_GAIN].getValue();
@@ -85,8 +88,6 @@ struct Werewolf : SanguineModule {
 
 				gainSum += channelGain;
 				foldSum += channelFold;
-
-				bIsNormalled = !bLeftInConnected != !bRightInConnected;
 
 				outputs[OUTPUT_LEFT].setChannels(channelCount);
 				outputs[OUTPUT_RIGHT].setChannels(channelCount);
@@ -119,8 +120,6 @@ struct Werewolf : SanguineModule {
 					}
 				}
 
-				bool bOutputsNormalled = !outputs[OUTPUT_LEFT].isConnected() != !outputs[OUTPUT_RIGHT].isConnected();
-
 				float voltageMix = 0.f;
 
 				if (!bIsNormalled && bOutputsNormalled) {
@@ -140,15 +139,13 @@ struct Werewolf : SanguineModule {
 							outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
 						}
 						voltageSumRight += voltageOutLeft;
-					}
-					else {
+					} else {
 						if (outputs[OUTPUT_RIGHT].isConnected()) {
 							outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
 						}
 						voltageSumRight += voltageOutRight;
 					}
-				}
-				else {
+				} else {
 					if (outputs[OUTPUT_LEFT].isConnected()) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
 					}
@@ -170,8 +167,7 @@ struct Werewolf : SanguineModule {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
-				}
-				else {
+				} else {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumRight, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
@@ -185,8 +181,7 @@ struct Werewolf : SanguineModule {
 				lights[LIGHT_FOLD + 0].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 2].setBrightnessSmooth(0.f, sampleTime);
-			}
-			else {
+			} else {
 				float rescaledLight = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
@@ -195,8 +190,7 @@ struct Werewolf : SanguineModule {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
-				}
-				else {
+				} else {
 					rescaledLight = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
