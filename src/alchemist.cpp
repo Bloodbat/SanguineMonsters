@@ -40,8 +40,8 @@ struct Alchemist : SanguineModule {
 
 	int soloCount = 0;
 
-	bool channelMuted[PORT_MAX_CHANNELS] = {};
-	bool channelSoloed[PORT_MAX_CHANNELS] = {};
+	bool bChannelMuted[PORT_MAX_CHANNELS] = {};
+	bool bChannelSoloed[PORT_MAX_CHANNELS] = {};
 
 	dsp::ClockDivider lightsDivider;
 	dsp::VuMeter2 vuMeterMix;
@@ -83,23 +83,23 @@ struct Alchemist : SanguineModule {
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
-		bool hasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic);
+		bool bHasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic);
 
 		if (bIsLightsTurn) {
 			soloCount = 0;
 			for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-				channelMuted[i] = static_cast<bool>(params[PARAM_MUTE + i].getValue());
+				bChannelMuted[i] = static_cast<bool>(params[PARAM_MUTE + i].getValue());
 				if (i < channelCount) {
-					channelSoloed[i] = static_cast<bool>(params[PARAM_SOLO + i].getValue());
-					if (channelSoloed[i]) {
+					bChannelSoloed[i] = static_cast<bool>(params[PARAM_SOLO + i].getValue());
+					if (bChannelSoloed[i]) {
 						++soloCount;
 					}
 				} else {
-					channelSoloed[i] = false;
+					bChannelSoloed[i] = false;
 				}
 				if (params[PARAM_SOLO + i].getValue()) {
-					if (channelMuted[i]) {
-						channelMuted[i] = false;
+					if (bChannelMuted[i]) {
+						bChannelMuted[i] = false;
 						params[PARAM_MUTE + i].setValue(0.f);
 					}
 				}
@@ -110,7 +110,7 @@ struct Alchemist : SanguineModule {
 			if (i < channelCount) {
 				outVoltages[i] = inputs[INPUT_POLYPHONIC].getPolyVoltage(i);
 
-				if (hasExpander) {
+				if (bHasExpander) {
 					outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() +
 						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + i).getVoltage() / 5.f, 0.f, 2.f);
 				} else {
@@ -121,20 +121,20 @@ struct Alchemist : SanguineModule {
 					outVoltages[i] = saturatorFloat.next(outVoltages[i]);
 				}
 
-				if (!channelMuted[i] && (soloCount == 0 || channelSoloed[i])) {
+				if (!bChannelMuted[i] && (soloCount == 0 || bChannelSoloed[i])) {
 					monoMix += outVoltages[i];
 					masterOutVoltages[i] = outVoltages[i] * mixModulation;
 				} else {
 					masterOutVoltages[i] = 0.f;
 				}
-				if (hasExpander) {
+				if (bHasExpander) {
 					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).isConnected()) {
 						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).setVoltage(masterOutVoltages[i]);
 					}
 				}
 			} else {
 				outVoltages[i] = 0.f;
-				if (hasExpander) {
+				if (bHasExpander) {
 					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).isConnected()) {
 						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).setVoltage(0.f);
 					}
@@ -167,9 +167,9 @@ struct Alchemist : SanguineModule {
 				float redValue = vuMetersGain[i].getBrightness(0.f, 0.f);
 				float yellowValue = vuMetersGain[i].getBrightness(-3.f, -1.f);
 				float greenValue = vuMetersGain[i].getBrightness(-38.f, -1.f);
-				bool isRed = redValue > 0;
+				bool bLightIsRed = redValue > 0;
 
-				if (isRed) {
+				if (bLightIsRed) {
 					lights[currentLight + 0].setBrightness(0.f);
 					lights[currentLight + 1].setBrightness(redValue);
 				} else {
@@ -186,7 +186,7 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(hasExpander, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander, sampleTime);
 		}
 	}
 };

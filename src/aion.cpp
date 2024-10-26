@@ -61,9 +61,9 @@ struct Aion : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	bool timerStarted[4];
+	bool bTmerStarted[4];
 
-	bool lastTimerEdge[4];
+	bool bLastTimerEdge[4];
 
 	int setTimerValues[4];
 	int currentTimerValues[4];
@@ -105,8 +105,8 @@ struct Aion : SanguineModule {
 
 			setTimerValues[i] = 1;
 			currentTimerValues[i] = 1;
-			timerStarted[i] = false;
-			lastTimerEdge[i] = false;
+			bTmerStarted[i] = false;
+			bLastTimerEdge[i] = false;
 
 			knobsDivider.setDivision(kKnobsFrequency);
 		}
@@ -114,37 +114,35 @@ struct Aion : SanguineModule {
 
 	void process(const ProcessArgs& args) override {
 
-		bool controlsTurn = knobsDivider.process();
+		bool bIsControlsTurn = knobsDivider.process();
 
-		bool internalTimerSecond = false;
+		bool bInternalTimerSecond = false;
 		currentTime += args.sampleTime;
 		if (currentTime > 1.f) {
 			currentTime -= 1.f;
-			internalTimerSecond = true;
-		}
-		else if (currentTime < 0.5f) {
-			internalTimerSecond = true;
+			bInternalTimerSecond = true;
+		} else if (currentTime < 0.5f) {
+			bInternalTimerSecond = true;
 		}
 
 		for (int i = 0; i < 4; i++) {
-			if (internalTimerSecond) {
+			if (bInternalTimerSecond) {
 				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
 
-					if (lastTimerEdge[i] != internalTimerSecond) {
-						if (timerStarted[i]) {
+					if (bLastTimerEdge[i] != bInternalTimerSecond) {
+						if (bTmerStarted[i]) {
 							decreaseTimer(i);
 						}
-						lastTimerEdge[i] = internalTimerSecond;
+						bLastTimerEdge[i] = bInternalTimerSecond;
 					}
 
 					lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(1.f, args.sampleTime);
 				}
-			}
-			else {
+			} else {
 				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
 					lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(0.f, args.sampleTime);
 				}
-				lastTimerEdge[i] = internalTimerSecond;
+				bLastTimerEdge[i] = bInternalTimerSecond;
 			}
 
 			if (stResetInputs[i].process(inputs[INPUT_RESET_1 + i].getVoltage())) {
@@ -152,24 +150,24 @@ struct Aion : SanguineModule {
 			}
 
 			if (stRunInputs[i].process(inputs[INPUT_RUN_1 + i].getVoltage()) && currentTimerValues[i] > 0) {
-				timerStarted[i] = !timerStarted[i];
+				bTmerStarted[i] = !bTmerStarted[i];
 			}
 
-			if (stTriggerInputs[i].process(inputs[INPUT_TRIGGER_1 + i].getVoltage()) && timerStarted[i]) {
+			if (stTriggerInputs[i].process(inputs[INPUT_TRIGGER_1 + i].getVoltage()) && bTmerStarted[i]) {
 				pgTimerLights[i].trigger(0.05f);
 				decreaseTimer(i);
 			}
 
-			if (controlsTurn) {
+			if (bIsControlsTurn) {
 				if (btResetButtons[i].process(params[PARAM_RESET_1 + i].getValue())) {
 					currentTimerValues[i] = setTimerValues[i];
 				}
 
 				if (btRunButtons[i].process(params[PARAM_START_1 + i].getValue()) && currentTimerValues[i] > 0) {
-					timerStarted[i] = !timerStarted[i];
+					bTmerStarted[i] = !bTmerStarted[i];
 				}
 
-				if (btTriggerButtons[i].process(params[PARAM_TRIGGER_1 + i].getValue()) && timerStarted[i]) {
+				if (btTriggerButtons[i].process(params[PARAM_TRIGGER_1 + i].getValue()) && bTmerStarted[i]) {
 					pgTimerLights[i].trigger(0.05f);
 					decreaseTimer(i);
 				}
@@ -198,10 +196,9 @@ struct Aion : SanguineModule {
 				pgTriggerOutputs[timerNum].trigger();
 			}
 			if (!params[PARAM_RESTART_1 + timerNum].getValue()) {
-				timerStarted[timerNum] = false;
+				bTmerStarted[timerNum] = false;
 				currentTimerValues[timerNum] = 0;
-			}
-			else {
+			} else {
 				currentTimerValues[timerNum] = setTimerValues[timerNum];
 			}
 		}
@@ -212,7 +209,7 @@ struct Aion : SanguineModule {
 
 		json_t* timersStartedJ = json_array();
 		for (int i = 0; i < 4; i++) {
-			json_t* timerJ = json_boolean(timerStarted[i]);
+			json_t* timerJ = json_boolean(bTmerStarted[i]);
 			json_array_append_new(timersStartedJ, timerJ);
 		}
 		json_object_set_new(rootJ, "timersStarted", timersStartedJ);
@@ -227,7 +224,7 @@ struct Aion : SanguineModule {
 		size_t idx;
 		json_t* timerJ;
 		json_array_foreach(timersStartedJ, idx, timerJ) {
-			timerStarted[idx] = json_boolean_value(timerJ);
+			bTmerStarted[idx] = json_boolean_value(timerJ);
 		}
 	}
 };
