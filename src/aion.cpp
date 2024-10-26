@@ -61,52 +61,51 @@ struct Aion : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	bool bTimerStarted[4];
+	static const int kKnobsFrequency = 64;
+	static const int kModuleSections = 4;
 
-	bool bLastTimerEdge[4];
+	bool bTimerStarted[kModuleSections] = {};
 
-	int setTimerValues[4];
-	int currentTimerValues[4];
+	bool bLastTimerEdge[kModuleSections] = {};
 
-	const int kKnobsFrequency = 64;
+	int setTimerValues[kModuleSections] = {};
+	int currentTimerValues[kModuleSections] = {};
 
 	float currentTime = 0.f;
 
 	dsp::ClockDivider knobsDivider;
 
-	dsp::BooleanTrigger btResetButtons[4];
-	dsp::BooleanTrigger btRunButtons[4];
-	dsp::BooleanTrigger btTriggerButtons[4];
-	dsp::SchmittTrigger stResetInputs[4];
-	dsp::SchmittTrigger stRunInputs[4];
-	dsp::SchmittTrigger stTriggerInputs[4];
-	dsp::PulseGenerator pgTimerLights[4];
-	dsp::PulseGenerator pgTriggerOutputs[4];
+	dsp::BooleanTrigger btResetButtons[kModuleSections];
+	dsp::BooleanTrigger btRunButtons[kModuleSections];
+	dsp::BooleanTrigger btTriggerButtons[kModuleSections];
+	dsp::SchmittTrigger stResetInputs[kModuleSections];
+	dsp::SchmittTrigger stRunInputs[kModuleSections];
+	dsp::SchmittTrigger stTriggerInputs[kModuleSections];
+	dsp::PulseGenerator pgTimerLights[kModuleSections];
+	dsp::PulseGenerator pgTriggerOutputs[kModuleSections];
 
 	Aion() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < 4; i++) {
-			int currentNumber = i + 1;
+		for (int section = 0; section < kModuleSections; ++section) {
+			int currentNumber = section + 1;
 
-			configParam(PARAM_TIMER_1 + i, 1.f, 99.f, 1.f, string::f("Timer %d", currentNumber));
-			paramQuantities[PARAM_TIMER_1 + i]->snapEnabled = true;
+			configParam(PARAM_TIMER_1 + section, 1.f, 99.f, 1.f, string::f("Timer %d", currentNumber));
+			paramQuantities[PARAM_TIMER_1 + section]->snapEnabled = true;
 
-			configButton(PARAM_RESTART_1 + i, string::f("Auto restart timer %d on timer end", currentNumber));
-			configButton(PARAM_START_1 + i, string::f("Start/stop timer %d", currentNumber));
-			configButton(PARAM_TRIGGER_1 + i, string::f("Advance timer %d", currentNumber));
-			configButton(PARAM_RESET_1 + i, string::f("Reset timer %d", currentNumber));
+			configButton(PARAM_RESTART_1 + section, string::f("Auto restart timer %d on timer end", currentNumber));
+			configButton(PARAM_START_1 + section, string::f("Start/stop timer %d", currentNumber));
+			configButton(PARAM_TRIGGER_1 + section, string::f("Advance timer %d", currentNumber));
+			configButton(PARAM_RESET_1 + section, string::f("Reset timer %d", currentNumber));
 
-			configInput(INPUT_TRIGGER_1 + i, string::f("Advance timer %d", currentNumber));
-			configInput(INPUT_RESET_1 + i, string::f("Reset timer %d", currentNumber));
-			configInput(INPUT_RUN_1 + i, string::f("Start/stop timer %d", currentNumber));
+			configInput(INPUT_TRIGGER_1 + section, string::f("Advance timer %d", currentNumber));
+			configInput(INPUT_RESET_1 + section, string::f("Reset timer %d", currentNumber));
+			configInput(INPUT_RUN_1 + section, string::f("Start/stop timer %d", currentNumber));
 
-			configOutput(OUTPUT_TRIGGER_1 + i, string::f("Timer end %d", currentNumber));
+			configOutput(OUTPUT_TRIGGER_1 + section, string::f("Timer end %d", currentNumber));
 
-			setTimerValues[i] = 1;
-			currentTimerValues[i] = 1;
-			bTimerStarted[i] = false;
-			bLastTimerEdge[i] = false;
+			setTimerValues[section] = 1;
+			currentTimerValues[section] = 1;
 
 			knobsDivider.setDivision(kKnobsFrequency);
 		}
@@ -125,65 +124,65 @@ struct Aion : SanguineModule {
 			bInternalTimerSecond = true;
 		}
 
-		for (int i = 0; i < 4; i++) {
+		for (int section = 0; section < kModuleSections; ++section) {
 			if (bInternalTimerSecond) {
-				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
+				if (!inputs[INPUT_TRIGGER_1 + section].isConnected()) {
 
-					if (bLastTimerEdge[i] != bInternalTimerSecond) {
-						if (bTimerStarted[i]) {
-							decreaseTimer(i);
+					if (bLastTimerEdge[section] != bInternalTimerSecond) {
+						if (bTimerStarted[section]) {
+							decreaseTimer(section);
 						}
-						bLastTimerEdge[i] = bInternalTimerSecond;
+						bLastTimerEdge[section] = bInternalTimerSecond;
 					}
 
-					lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(1.f, args.sampleTime);
+					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(1.f, args.sampleTime);
 				}
 			} else {
-				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
-					lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(0.f, args.sampleTime);
+				if (!inputs[INPUT_TRIGGER_1 + section].isConnected()) {
+					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(0.f, args.sampleTime);
 				}
-				bLastTimerEdge[i] = bInternalTimerSecond;
+				bLastTimerEdge[section] = bInternalTimerSecond;
 			}
 
-			if (stResetInputs[i].process(inputs[INPUT_RESET_1 + i].getVoltage())) {
-				currentTimerValues[i] = setTimerValues[i];
+			if (stResetInputs[section].process(inputs[INPUT_RESET_1 + section].getVoltage())) {
+				currentTimerValues[section] = setTimerValues[section];
 			}
 
-			if (stRunInputs[i].process(inputs[INPUT_RUN_1 + i].getVoltage()) && currentTimerValues[i] > 0) {
-				bTimerStarted[i] = !bTimerStarted[i];
+			if (stRunInputs[section].process(inputs[INPUT_RUN_1 + section].getVoltage()) && currentTimerValues[section] > 0) {
+				bTimerStarted[section] = !bTimerStarted[section];
 			}
 
-			if (stTriggerInputs[i].process(inputs[INPUT_TRIGGER_1 + i].getVoltage()) && bTimerStarted[i]) {
-				pgTimerLights[i].trigger(0.05f);
-				decreaseTimer(i);
+			if (stTriggerInputs[section].process(inputs[INPUT_TRIGGER_1 + section].getVoltage()) && bTimerStarted[section]) {
+				pgTimerLights[section].trigger(0.05f);
+				decreaseTimer(section);
 			}
 
 			if (bIsControlsTurn) {
-				if (btResetButtons[i].process(params[PARAM_RESET_1 + i].getValue())) {
-					currentTimerValues[i] = setTimerValues[i];
+				if (btResetButtons[section].process(params[PARAM_RESET_1 + section].getValue())) {
+					currentTimerValues[section] = setTimerValues[section];
 				}
 
-				if (btRunButtons[i].process(params[PARAM_START_1 + i].getValue()) && currentTimerValues[i] > 0) {
-					bTimerStarted[i] = !bTimerStarted[i];
+				if (btRunButtons[section].process(params[PARAM_START_1 + section].getValue()) && currentTimerValues[section] > 0) {
+					bTimerStarted[section] = !bTimerStarted[section];
 				}
 
-				if (btTriggerButtons[i].process(params[PARAM_TRIGGER_1 + i].getValue()) && bTimerStarted[i]) {
-					pgTimerLights[i].trigger(0.05f);
-					decreaseTimer(i);
+				if (btTriggerButtons[section].process(params[PARAM_TRIGGER_1 + section].getValue()) && bTimerStarted[section]) {
+					pgTimerLights[section].trigger(0.05f);
+					decreaseTimer(section);
 				}
 
-				if (setTimerValues[i] != static_cast<int>(params[PARAM_TIMER_1 + i].getValue())) {
-					setTimerValues[i] = params[PARAM_TIMER_1 + i].getValue();
-					currentTimerValues[i] = params[PARAM_TIMER_1 + i].getValue();
+				if (setTimerValues[section] != static_cast<int>(params[PARAM_TIMER_1 + section].getValue())) {
+					setTimerValues[section] = params[PARAM_TIMER_1 + section].getValue();
+					currentTimerValues[section] = params[PARAM_TIMER_1 + section].getValue();
 				}
 			}
 
-			if (outputs[OUTPUT_TRIGGER_1 + i].isConnected()) {
-				outputs[OUTPUT_TRIGGER_1 + i].setVoltage(pgTriggerOutputs[i].process(args.sampleTime) ? 10.f : 0.f);
+			if (outputs[OUTPUT_TRIGGER_1 + section].isConnected()) {
+				outputs[OUTPUT_TRIGGER_1 + section].setVoltage(pgTriggerOutputs[section].process(args.sampleTime) ? 10.f : 0.f);
 			}
 
-			if (inputs[INPUT_TRIGGER_1 + i].isConnected()) {
-				lights[LIGHT_TIMER_1 + i].setBrightnessSmooth(pgTimerLights[i].process(args.sampleTime) ? 1.f : 0.f, args.sampleTime);
+			if (inputs[INPUT_TRIGGER_1 + section].isConnected()) {
+				lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(pgTimerLights[section].process(args.sampleTime) ? 1.f : 0.f, args.sampleTime);
 			}
 		}
 	}
@@ -208,8 +207,8 @@ struct Aion : SanguineModule {
 		json_t* rootJ = SanguineModule::dataToJson();
 
 		json_t* timersStartedJ = json_array();
-		for (int i = 0; i < 4; i++) {
-			json_t* timerJ = json_boolean(bTimerStarted[i]);
+		for (int section = 0; section < kModuleSections; ++section) {
+			json_t* timerJ = json_boolean(bTimerStarted[section]);
 			json_array_append_new(timersStartedJ, timerJ);
 		}
 		json_object_set_new(rootJ, "timersStarted", timersStartedJ);
