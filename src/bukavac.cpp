@@ -159,7 +159,7 @@ struct Bukavac : SanguineModule {
 
 		// Prism noise: uniform noise
 		/* Note: Black noise was the original definition, made up by VCV.
-		   Ammended by me to be Prism(for light ring convenience)... also completely made up. */
+		   Amended by me to be Prism(for light ring convenience)... also completely made up. */
 		if (outputs[OUTPUT_PRISM].isConnected()) {
 			float uniformNoise = ldexpf(pcg32_random_r(&pcgRng), -32);
 			outputs[OUTPUT_PRISM].setVoltage(uniformNoise * 10.f - 5.f);
