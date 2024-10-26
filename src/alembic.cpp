@@ -50,24 +50,20 @@ struct AlembicWidget : SanguineModuleWidget {
 		SanguineStaticRGBLight* cvLight2 = new SanguineStaticRGBLight(module, "res/light_cv_lit.svg", 44.334, 17.494, true, kSanguineYellowLight);
 		addChild(cvLight2);
 
-		const float portBaseY = 25.703;
-		const float deltaY = 13.01;
+		static const int offset = 8;
+
+		static const float portBaseY = 25.703;
+		static const float deltaY = 13.01;
 
 		float currentPortY = portBaseY;
 
 		for (int component = 0; component < 8; ++component) {
 			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(6.466, currentPortY), module, Alembic::OUTPUT_CHANNEL + component));
-			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(19.397, currentPortY), module, Alembic::INPUT_GAIN_CV + component));
-			currentPortY += deltaY;
-		}
-
-		const int offset = 8;
-
-		currentPortY = portBaseY;
-
-		for (int component = 0; component < 8; ++component) {
 			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(31.403, currentPortY), module, Alembic::OUTPUT_CHANNEL + component + offset));
+
+			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(19.397, currentPortY), module, Alembic::INPUT_GAIN_CV + component));
 			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(44.334, currentPortY), module, Alembic::INPUT_GAIN_CV + component + offset));
+
 			currentPortY += deltaY;
 		}
 	}
