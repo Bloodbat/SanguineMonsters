@@ -1,4 +1,4 @@
-﻿#include "plugin.hpp"
+#include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "bjorklund.hpp"
 #include <array>
@@ -290,7 +290,7 @@ struct Sphinx : SanguineModule {
 			lastPatternStyle = patternStyle;
 		}
 
-		bool nextStep = false;
+		bool bNextStep = false;
 
 		// Reset sequence.
 		if (inputs[INPUT_RESET].isConnected()) {
@@ -306,11 +306,11 @@ struct Sphinx : SanguineModule {
 
 		if (inputs[INPUT_CLOCK].isConnected()) {
 			if (stClockInput.process(inputs[INPUT_CLOCK].getVoltage())) {
-				nextStep = true;
+				bNextStep = true;
 			}
 		}
 
-		if (nextStep) {
+		if (bNextStep) {
 			if (!params[PARAM_REVERSE].getValue()) {
 				currentStep++;
 				if (currentStep >= patternLength + patternPadding) {
@@ -513,7 +513,7 @@ struct SphinxDisplay : TransparentWidget {
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
 		}
 		nvgBeginPath(vg);
-		bool first = true;
+		bool bFirst = true;
 
 		// inactive Step Rings
 		for (unsigned i = 0; i < len; i++) {
@@ -567,9 +567,9 @@ struct SphinxDisplay : TransparentWidget {
 					Vec p(x, y);
 					if (*patternFill == 1)
 						nvgCircle(vg, x, y, 2.f);
-					if (first) {
+					if (bFirst) {
 						nvgMoveTo(vg, p.x, p.y);
-						first = false;
+						bFirst = false;
 					} else {
 						nvgLineTo(vg, p.x, p.y);
 					}
@@ -582,9 +582,9 @@ struct SphinxDisplay : TransparentWidget {
 					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
 
 					Vec p(x, y);
-					if (first) {
+					if (bFirst) {
 						nvgMoveTo(vg, p.x, p.y);
-						first = false;
+						bFirst = false;
 					} else {
 						nvgLineTo(vg, p.x, p.y);
 					}

@@ -12,11 +12,10 @@ Denki::Denki() {
 
 void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 	Module* kitsuneMaster = getLeftExpander().module;
-	bool hasMaster = (kitsuneMaster && kitsuneMaster->getModel() == modelKitsune);
-	if (hasMaster) {
+	bool bHasMaster = (kitsuneMaster && kitsuneMaster->getModel() == modelKitsune);
+	if (bHasMaster) {
 		lights[LIGHT_MASTER_MODULE].setBrightness(1.f);
-	}
-	else {
+	} else {
 		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 	}
 }
