@@ -6,6 +6,10 @@
 
 - Polyphonic expander for Kitsune: adds Gain and Offset CV control.
 
+### Fortuna
+
+- Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
+
 ## Additions
 
 - Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
