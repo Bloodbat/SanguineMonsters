@@ -61,7 +61,7 @@ struct Aion : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	bool bTmerStarted[4];
+	bool bTimerStarted[4];
 
 	bool bLastTimerEdge[4];
 
@@ -105,7 +105,7 @@ struct Aion : SanguineModule {
 
 			setTimerValues[i] = 1;
 			currentTimerValues[i] = 1;
-			bTmerStarted[i] = false;
+			bTimerStarted[i] = false;
 			bLastTimerEdge[i] = false;
 
 			knobsDivider.setDivision(kKnobsFrequency);
@@ -130,7 +130,7 @@ struct Aion : SanguineModule {
 				if (!inputs[INPUT_TRIGGER_1 + i].isConnected()) {
 
 					if (bLastTimerEdge[i] != bInternalTimerSecond) {
-						if (bTmerStarted[i]) {
+						if (bTimerStarted[i]) {
 							decreaseTimer(i);
 						}
 						bLastTimerEdge[i] = bInternalTimerSecond;
@@ -150,10 +150,10 @@ struct Aion : SanguineModule {
 			}
 
 			if (stRunInputs[i].process(inputs[INPUT_RUN_1 + i].getVoltage()) && currentTimerValues[i] > 0) {
-				bTmerStarted[i] = !bTmerStarted[i];
+				bTimerStarted[i] = !bTimerStarted[i];
 			}
 
-			if (stTriggerInputs[i].process(inputs[INPUT_TRIGGER_1 + i].getVoltage()) && bTmerStarted[i]) {
+			if (stTriggerInputs[i].process(inputs[INPUT_TRIGGER_1 + i].getVoltage()) && bTimerStarted[i]) {
 				pgTimerLights[i].trigger(0.05f);
 				decreaseTimer(i);
 			}
@@ -164,10 +164,10 @@ struct Aion : SanguineModule {
 				}
 
 				if (btRunButtons[i].process(params[PARAM_START_1 + i].getValue()) && currentTimerValues[i] > 0) {
-					bTmerStarted[i] = !bTmerStarted[i];
+					bTimerStarted[i] = !bTimerStarted[i];
 				}
 
-				if (btTriggerButtons[i].process(params[PARAM_TRIGGER_1 + i].getValue()) && bTmerStarted[i]) {
+				if (btTriggerButtons[i].process(params[PARAM_TRIGGER_1 + i].getValue()) && bTimerStarted[i]) {
 					pgTimerLights[i].trigger(0.05f);
 					decreaseTimer(i);
 				}
@@ -196,7 +196,7 @@ struct Aion : SanguineModule {
 				pgTriggerOutputs[timerNum].trigger();
 			}
 			if (!params[PARAM_RESTART_1 + timerNum].getValue()) {
-				bTmerStarted[timerNum] = false;
+				bTimerStarted[timerNum] = false;
 				currentTimerValues[timerNum] = 0;
 			} else {
 				currentTimerValues[timerNum] = setTimerValues[timerNum];
@@ -209,7 +209,7 @@ struct Aion : SanguineModule {
 
 		json_t* timersStartedJ = json_array();
 		for (int i = 0; i < 4; i++) {
-			json_t* timerJ = json_boolean(bTmerStarted[i]);
+			json_t* timerJ = json_boolean(bTimerStarted[i]);
 			json_array_append_new(timersStartedJ, timerJ);
 		}
 		json_object_set_new(rootJ, "timersStarted", timersStartedJ);
@@ -224,7 +224,7 @@ struct Aion : SanguineModule {
 		size_t idx;
 		json_t* timerJ;
 		json_array_foreach(timersStartedJ, idx, timerJ) {
-			bTmerStarted[idx] = json_boolean_value(timerJ);
+			bTimerStarted[idx] = json_boolean_value(timerJ);
 		}
 	}
 };
