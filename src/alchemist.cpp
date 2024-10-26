@@ -106,10 +106,9 @@ struct Alchemist : SanguineModule {
 			}
 		}
 
+		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 			if (channel < channelCount) {
-				outVoltages[channel] = inputs[INPUT_POLYPHONIC].getPolyVoltage(channel);
-
 				if (bHasExpander) {
 					outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
 						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
