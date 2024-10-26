@@ -3,10 +3,10 @@
 Alembic::Alembic() {
 	config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-	for (int i = 0; i < 16; i++) {
-		int channelNumber = i + 1;
-		configInput(INPUT_GAIN_CV + i, string::f("Channel %d gain CV", channelNumber));
-		configOutput(OUTPUT_CHANNEL + i, string::f("Channel %d", channelNumber));
+	for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+		int channelNumber = channel + 1;
+		configInput(INPUT_GAIN_CV + channel, string::f("Channel %d gain CV", channelNumber));
+		configOutput(OUTPUT_CHANNEL + channel, string::f("Channel %d", channelNumber));
 	}
 }
 
@@ -17,8 +17,8 @@ void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 		lights[LIGHT_MASTER_MODULE].setBrightness(1.f);
 	} else {
 		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
-		for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-			outputs[OUTPUT_CHANNEL + i].setVoltage(0.f);
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+			outputs[OUTPUT_CHANNEL + channel].setVoltage(0.f);
 		}
 	}
 }
@@ -55,9 +55,9 @@ struct AlembicWidget : SanguineModuleWidget {
 
 		float currentPortY = portBaseY;
 
-		for (int i = 0; i < 8; i++) {
-			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(6.466, currentPortY), module, Alembic::OUTPUT_CHANNEL + i));
-			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(19.397, currentPortY), module, Alembic::INPUT_GAIN_CV + i));
+		for (int component = 0; component < 8; ++component) {
+			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(6.466, currentPortY), module, Alembic::OUTPUT_CHANNEL + component));
+			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(19.397, currentPortY), module, Alembic::INPUT_GAIN_CV + component));
 			currentPortY += deltaY;
 		}
 
@@ -65,9 +65,9 @@ struct AlembicWidget : SanguineModuleWidget {
 
 		currentPortY = portBaseY;
 
-		for (int i = 0; i < 8; i++) {
-			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(31.403, currentPortY), module, Alembic::OUTPUT_CHANNEL + i + offset));
-			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(44.334, currentPortY), module, Alembic::INPUT_GAIN_CV + i + offset));
+		for (int component = 0; component < 8; ++component) {
+			addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(31.403, currentPortY), module, Alembic::OUTPUT_CHANNEL + component + offset));
+			addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(44.334, currentPortY), module, Alembic::INPUT_GAIN_CV + component + offset));
 			currentPortY += deltaY;
 		}
 	}
