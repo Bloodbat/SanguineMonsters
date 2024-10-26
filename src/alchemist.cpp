@@ -206,32 +206,29 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		addChild(createLightCentered<MediumLight<OrangeLight>>(millimetersToPixelsVec(111.871, 9.672), module, Alchemist::LIGHT_EXPANDER));
 
-		const float sliderBaseX = 8.329;
-		const float deltaX = 14.307;
+		static const int offset = 8;
+
+		static const float sliderBaseX = 8.329;
+		static const float deltaX = 14.307;
 
 		float currentSliderX = sliderBaseX;
 
 		for (int component = 0; component < 8; ++component) {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 28.145),
 				module, Alchemist::PARAM_GAIN + component, Alchemist::LIGHT_GAIN + component * 2));
-			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
-				module, Alchemist::PARAM_MUTE + component, Alchemist::LIGHT_MUTE + component));
-			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
-				module, Alchemist::PARAM_SOLO + component, Alchemist::LIGHT_SOLO + component));
-			currentSliderX += deltaX;
-		}
-
-		static const int offset = 8;
-
-		currentSliderX = sliderBaseX;
-
-		for (int component = 0; component < 8; ++component) {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 73.478),
 				module, Alchemist::PARAM_GAIN + component + offset, (Alchemist::LIGHT_GAIN + component + offset) * 2));
+
+			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
+				module, Alchemist::PARAM_MUTE + component, Alchemist::LIGHT_MUTE + component));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 92.218),
 				module, Alchemist::PARAM_MUTE + component + offset, Alchemist::LIGHT_MUTE + component + offset));
+
+			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
+				module, Alchemist::PARAM_SOLO + component, Alchemist::LIGHT_SOLO + component));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 99.855),
 				module, Alchemist::PARAM_SOLO + component + offset, Alchemist::LIGHT_SOLO + component + offset));
+
 			currentSliderX += deltaX;
 		}
 
