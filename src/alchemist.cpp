@@ -52,11 +52,11 @@ struct Alchemist : SanguineModule {
 	Alchemist() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-			int channelNumber = i + 1;
-			configParam(PARAM_GAIN + i, 0.f, 1.f, 0.f, string::f("Channel %d gain", channelNumber), "%", 0.f, 100.f);
-			configButton(PARAM_MUTE + i, string::f("Channel %d mute", channelNumber));
-			configButton(PARAM_SOLO + i, string::f("Channel %d solo", channelNumber));
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+			int channelNumber = channel + 1;
+			configParam(PARAM_GAIN + channel, 0.f, 1.f, 0.f, string::f("Channel %d gain", channelNumber), "%", 0.f, 100.f);
+			configButton(PARAM_MUTE + channel, string::f("Channel %d mute", channelNumber));
+			configButton(PARAM_SOLO + channel, string::f("Channel %d solo", channelNumber));
 		}
 
 		configParam(PARAM_MIX, 0.f, 1.f, 1.f, "Master mix", "%", 0.f, 100.f);
@@ -87,56 +87,56 @@ struct Alchemist : SanguineModule {
 
 		if (bIsLightsTurn) {
 			soloCount = 0;
-			for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-				bChannelMuted[i] = static_cast<bool>(params[PARAM_MUTE + i].getValue());
-				if (i < channelCount) {
-					bChannelSoloed[i] = static_cast<bool>(params[PARAM_SOLO + i].getValue());
-					if (bChannelSoloed[i]) {
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+				bChannelMuted[channel] = static_cast<bool>(params[PARAM_MUTE + channel].getValue());
+				if (channel < channelCount) {
+					bChannelSoloed[channel] = static_cast<bool>(params[PARAM_SOLO + channel].getValue());
+					if (bChannelSoloed[channel]) {
 						++soloCount;
 					}
 				} else {
-					bChannelSoloed[i] = false;
+					bChannelSoloed[channel] = false;
 				}
-				if (params[PARAM_SOLO + i].getValue()) {
-					if (bChannelMuted[i]) {
-						bChannelMuted[i] = false;
-						params[PARAM_MUTE + i].setValue(0.f);
+				if (params[PARAM_SOLO + channel].getValue()) {
+					if (bChannelMuted[channel]) {
+						bChannelMuted[channel] = false;
+						params[PARAM_MUTE + channel].setValue(0.f);
 					}
 				}
 			}
 		}
 
-		for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-			if (i < channelCount) {
-				outVoltages[i] = inputs[INPUT_POLYPHONIC].getPolyVoltage(i);
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+			if (channel < channelCount) {
+				outVoltages[channel] = inputs[INPUT_POLYPHONIC].getPolyVoltage(channel);
 
 				if (bHasExpander) {
-					outVoltages[i] = outVoltages[i] * clamp(params[PARAM_GAIN + i].getValue() +
-						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + i).getVoltage() / 5.f, 0.f, 2.f);
+					outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
+						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
 				} else {
-					outVoltages[i] = outVoltages[i] * params[PARAM_GAIN + i].getValue();
+					outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
 				}
 
-				if (std::fabs(outVoltages[i]) >= 10.1f) {
-					outVoltages[i] = saturatorFloat.next(outVoltages[i]);
+				if (std::fabs(outVoltages[channel]) >= 10.1f) {
+					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
 				}
 
-				if (!bChannelMuted[i] && (soloCount == 0 || bChannelSoloed[i])) {
-					monoMix += outVoltages[i];
-					masterOutVoltages[i] = outVoltages[i] * mixModulation;
+				if (!bChannelMuted[channel] && (soloCount == 0 || bChannelSoloed[channel])) {
+					monoMix += outVoltages[channel];
+					masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
 				} else {
-					masterOutVoltages[i] = 0.f;
+					masterOutVoltages[channel] = 0.f;
 				}
 				if (bHasExpander) {
-					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).isConnected()) {
-						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).setVoltage(masterOutVoltages[i]);
+					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).isConnected()) {
+						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).setVoltage(masterOutVoltages[channel]);
 					}
 				}
 			} else {
-				outVoltages[i] = 0.f;
+				outVoltages[channel] = 0.f;
 				if (bHasExpander) {
-					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).isConnected()) {
-						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + i).setVoltage(0.f);
+					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).isConnected()) {
+						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).setVoltage(0.f);
 					}
 				}
 			}
@@ -160,13 +160,13 @@ struct Alchemist : SanguineModule {
 		if (bIsLightsTurn) {
 			const float sampleTime = kLightFrequency * args.sampleTime;
 
-			for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
-				vuMetersGain[i].process(sampleTime, outVoltages[i] / 10.f);
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+				vuMetersGain[channel].process(sampleTime, outVoltages[channel] / 10.f);
 
-				int currentLight = LIGHT_GAIN + i * 2;
-				float redValue = vuMetersGain[i].getBrightness(0.f, 0.f);
-				float yellowValue = vuMetersGain[i].getBrightness(-3.f, -1.f);
-				float greenValue = vuMetersGain[i].getBrightness(-38.f, -1.f);
+				int currentLight = LIGHT_GAIN + channel * 2;
+				float redValue = vuMetersGain[channel].getBrightness(0.f, 0.f);
+				float yellowValue = vuMetersGain[channel].getBrightness(-3.f, -1.f);
+				float greenValue = vuMetersGain[channel].getBrightness(-38.f, -1.f);
 				bool bLightIsRed = redValue > 0;
 
 				if (bLightIsRed) {
@@ -177,8 +177,8 @@ struct Alchemist : SanguineModule {
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 
-				lights[LIGHT_MUTE + i].setBrightnessSmooth(params[PARAM_MUTE + i].getValue() ? 0.75f : 0.f, sampleTime);
-				lights[LIGHT_SOLO + i].setBrightnessSmooth(params[PARAM_SOLO + i].getValue() ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_MUTE + channel].setBrightnessSmooth(params[PARAM_MUTE + channel].getValue() ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_SOLO + channel].setBrightnessSmooth(params[PARAM_SOLO + channel].getValue() ? 0.75f : 0.f, sampleTime);
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
@@ -211,27 +211,27 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		float currentSliderX = sliderBaseX;
 
-		for (int i = 0; i < 8; i++) {
+		for (int component = 0; component < 8; ++component) {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 28.145),
-				module, Alchemist::PARAM_GAIN + i, Alchemist::LIGHT_GAIN + i * 2));
+				module, Alchemist::PARAM_GAIN + component, Alchemist::LIGHT_GAIN + component * 2));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
-				module, Alchemist::PARAM_MUTE + i, Alchemist::LIGHT_MUTE + i));
+				module, Alchemist::PARAM_MUTE + component, Alchemist::LIGHT_MUTE + component));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
-				module, Alchemist::PARAM_SOLO + i, Alchemist::LIGHT_SOLO + i));
+				module, Alchemist::PARAM_SOLO + component, Alchemist::LIGHT_SOLO + component));
 			currentSliderX += deltaX;
 		}
 
-		const int offset = 8;
+		static const int offset = 8;
 
 		currentSliderX = sliderBaseX;
 
-		for (int i = 0; i < 8; i++) {
+		for (int component = 0; component < 8; ++component) {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 73.478),
-				module, Alchemist::PARAM_GAIN + i + offset, (Alchemist::LIGHT_GAIN + i + offset) * 2));
+				module, Alchemist::PARAM_GAIN + component + offset, (Alchemist::LIGHT_GAIN + component + offset) * 2));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 92.218),
-				module, Alchemist::PARAM_MUTE + i + offset, Alchemist::LIGHT_MUTE + i + offset));
+				module, Alchemist::PARAM_MUTE + component + offset, Alchemist::LIGHT_MUTE + component + offset));
 			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 99.855),
-				module, Alchemist::PARAM_SOLO + i + offset, Alchemist::LIGHT_SOLO + i + offset));
+				module, Alchemist::PARAM_SOLO + component + offset, Alchemist::LIGHT_SOLO + component + offset));
 			currentSliderX += deltaX;
 		}
 
