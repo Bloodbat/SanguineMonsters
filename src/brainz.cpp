@@ -160,9 +160,9 @@ struct Brainz : SanguineModule {
 		configButton(PARAM_END_TRIGGERS, "Toggle global triggers on end");
 		params[PARAM_END_TRIGGERS].setValue(1);
 
-		configButton(PARAM_A_DO_TRIGGERS, "Send global triggers at the end of coundown A");
-		configButton(PARAM_B_DO_TRIGGERS, "Send global triggers at the end of coundown B");
-		configButton(PARAM_C_DO_TRIGGERS, "Send global triggers at the end of coundown C");
+		configButton(PARAM_A_DO_TRIGGERS, "Send global triggers at the end of countdown A");
+		configButton(PARAM_B_DO_TRIGGERS, "Send global triggers at the end of countdown B");
+		configButton(PARAM_C_DO_TRIGGERS, "Send global triggers at the end of countdown C");
 
 		configButton(PARAM_A_IS_METRONOME, "Step A is metronome");
 		configButton(PARAM_B_IS_METRONOME, "Step B is metronome");
