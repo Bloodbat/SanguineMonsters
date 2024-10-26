@@ -24,6 +24,7 @@ void init(rack::Plugin* p) {
 	p->addModel(modelAlembic);
 	p->addModel(modelDenki);
 	p->addModel(modelChronos);
+	p->addModel(modelFortuna);
 
 	getDefaultTheme();
 }
