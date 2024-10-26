@@ -49,7 +49,7 @@ struct Medusa : SanguineModule {
 
 		int currentPalette = 0;
 
-		bool lightsTurn = lightDivider.process();
+		bool bIsLightsTurn = lightDivider.process();
 
 		for (int i = 0; i < kMedusaMaxPorts; i++) {
 			if (inputs[INPUT_VOLTAGE + i].isConnected()) {
@@ -73,7 +73,7 @@ struct Medusa : SanguineModule {
 				}
 			}
 
-			if (lightsTurn) {
+			if (bIsLightsTurn) {
 				const float sampleTime = kLightFrequency * args.sampleTime;
 
 				int currentLight = LIGHT_NORMALLED_PORT + i * 3;
