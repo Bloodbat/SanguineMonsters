@@ -73,15 +73,13 @@ struct Bjorklund {
 	}
 
 	void buildSeq(int slot) {
-		// Construct a binary sequence of n bits with k one‚Äôs, such that the k one‚Äôs are distributed as evenly as possible among the zero‚Äôs
+		// Construct a binary sequence of n bits with k one's, such that the k one's are distributed as evenly as possible among the zero's
 
 		if (slot == -1) {
 			sequence.push_back(0);
-		}
-		else if (slot == -2) {
+		} else if (slot == -2) {
 			sequence.push_back(1);
-		}
-		else {
+		} else {
 			for (int i = 0; i < count[slot]; i++)
 				buildSeq(slot - 1);
 			if (remainder[slot] != 0)
