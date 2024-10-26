@@ -12,11 +12,10 @@ Alembic::Alembic() {
 
 void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 	Module* alchemistMaster = getLeftExpander().module;
-	bool hasMaster = (alchemistMaster && alchemistMaster->getModel() == modelAlchemist);
-	if (hasMaster) {
+	bool bHasMaster = (alchemistMaster && alchemistMaster->getModel() == modelAlchemist);
+	if (bHasMaster) {
 		lights[LIGHT_MASTER_MODULE].setBrightness(1.f);
-	}
-	else {
+	} else {
 		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 		for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
 			outputs[OUTPUT_CHANNEL + i].setVoltage(0.f);
