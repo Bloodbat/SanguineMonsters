@@ -187,6 +187,16 @@
         "Polyphonic",
         "Quad"
       ]
+    },
+    {
+      "slug" : "Sanguine-Fortuna",
+      "name" : "Fortuna",
+      "description" : "Pair of polyphonic Bernoulli-like random signal routers",
+      "tags" : [
+        "Dual",
+        "Polyphonic",
+        "Random"
+      ]
     }
   ]
 }
