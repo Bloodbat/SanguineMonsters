@@ -25,3 +25,4 @@ extern Model* modelAlchemist;
 extern Model* modelAlembic;
 extern Model* modelDenki;
 extern Model* modelChronos;
+extern Model* modelFortuna;
