@@ -134,6 +134,8 @@ struct Brainz : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
+	// TODO!!! This needs more constants!
+
 	Brainz() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
@@ -235,8 +237,9 @@ struct Brainz : SanguineModule {
 						if (params[PARAM_START_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
 						} else {
-							for (int i = 0; i < 4; i++)
-								bTriggersDone[i] = true;
+							for (int trigger = 0; trigger < 4; ++trigger) {
+								bTriggersDone[trigger] = true;
+							}
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
@@ -488,8 +491,8 @@ struct Brainz : SanguineModule {
 						if (params[PARAM_END_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
 						} else {
-							for (int i = 0; i < 4; i++) {
-								bTriggersDone[i] = true;
+							for (int trigger = 0; trigger < 4; ++trigger) {
+								bTriggersDone[trigger] = true;
 							}
 						}
 
@@ -514,26 +517,26 @@ struct Brainz : SanguineModule {
 				metronomeSpeed = params[PARAM_METRONOME_SPEED].getValue();
 				metronomeSteps = params[PARAM_METRONOME_STEPS].getValue();
 
-				for (int i = 0; i < 3; i++) {
-					bStepEnabled[i] = params[PARAM_A_ENABLED + i].getValue();
+				for (int step = 0; step < 3; ++step) {
+					bStepEnabled[step] = params[PARAM_A_ENABLED + step].getValue();
 
-					lights[LIGHT_STEP_A_ENABLED + i].setBrightnessSmooth(params[PARAM_A_ENABLED + i].getValue() ? 0.75f : 0.f, sampleTime);
-					lights[LIGHT_STEP_A_TRIGGERS + i].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + i].getValue() ? 0.75f : 0.f, sampleTime);
-					lights[LIGHT_STEP_A_METRONOME + i].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + i].getValue() ? 0.75f : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() ? 0.75f : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_TRIGGERS + step].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + step].getValue() ? 0.75f : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_METRONOME + step].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + step].getValue() ? 0.75f : 0.f, sampleTime);
 
-					if (i < 2) {
-						stepDirections[i] = StepDirections(params[PARAM_A_DIRECTION + i].getValue());
+					if (step < 2) {
+						stepDirections[step] = StepDirections(params[PARAM_A_DIRECTION + step].getValue());
 
-						int currentLight = LIGHT_STEP_A_DIRECTION + i * 3;
-						lights[currentLight + 0].setBrightness(stepDirectionsLightColors[stepDirections[i]].red);
-						lights[currentLight + 1].setBrightness(stepDirectionsLightColors[stepDirections[i]].green);
-						lights[currentLight + 2].setBrightness(stepDirectionsLightColors[stepDirections[i]].blue);
+						int currentLight = LIGHT_STEP_A_DIRECTION + step * 3;
+						lights[currentLight + 0].setBrightness(stepDirectionsLightColors[stepDirections[step]].red);
+						lights[currentLight + 1].setBrightness(stepDirectionsLightColors[stepDirections[step]].green);
+						lights[currentLight + 2].setBrightness(stepDirectionsLightColors[stepDirections[step]].blue);
 					}
 
-					if (!params[PARAM_A_IS_METRONOME + i].getValue()) {
-						maxCounters[i] = params[PARAM_A_DELAY + i].getValue();
+					if (!params[PARAM_A_IS_METRONOME + step].getValue()) {
+						maxCounters[step] = params[PARAM_A_DELAY + step].getValue();
 					} else {
-						maxCounters[i] = 0;
+						maxCounters[step] = 0;
 					}
 				}
 
@@ -561,8 +564,8 @@ struct Brainz : SanguineModule {
 
 				lights[LIGHT_OUT_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 0.f : 1.f, sampleTime);
 				lights[LIGHT_OUT_ENABLED + 1].setBrightnessSmooth(1.f, sampleTime);
-				for (int i = 2; i < 7; i++) {
-					lights[LIGHT_OUT_ENABLED + i].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
+				for (int light = 2; light < 7; ++light) {
+					lights[LIGHT_OUT_ENABLED + light].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
 				}
 
 				handleStepLights(sampleTime);
@@ -591,10 +594,10 @@ struct Brainz : SanguineModule {
 	}
 
 	void onReset() override {
-		for (int i = 0; i < 3; i++) {
-			params[PARAM_A_ENABLED + i].setValue(1);
-			if (i < 2) {
-				params[PARAM_START_TRIGGERS + i].setValue(1);
+		for (int step = 0; step < 3; ++step) {
+			params[PARAM_A_ENABLED + step].setValue(1);
+			if (step < 2) {
+				params[PARAM_START_TRIGGERS + step].setValue(1);
 			}
 		}
 
@@ -606,18 +609,18 @@ struct Brainz : SanguineModule {
 
 	void doGlobalTriggers(const float sampleTime) {
 		if (!bTriggersSent) {
-			for (int i = 0; i < 4; i++) {
-				if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
-					pgOutTriggers[i].trigger();
-					outputs[OUTPUT_OUT_1 + i].setVoltage(pgOutTriggers[i].process(1.0f / sampleTime) ? 10.f : 0.f);
+			for (int trigger = 0; trigger < 4; ++trigger) {
+				if (outputs[OUTPUT_OUT_1 + trigger].isConnected()) {
+					pgOutTriggers[trigger].trigger();
+					outputs[OUTPUT_OUT_1 + trigger].setVoltage(pgOutTriggers[trigger].process(1.0f / sampleTime) ? 10.f : 0.f);
 				}
 			}
 			bTriggersSent = true;
 		} else {
-			for (int i = 0; i < 4; i++) {
-				bTriggersDone[i] = !pgOutTriggers[i].process(1.0f / sampleTime);
-				if (outputs[OUTPUT_OUT_1 + i].isConnected()) {
-					outputs[OUTPUT_OUT_1 + i].setVoltage(bTriggersDone[i] ? 0.f : 10.f);
+			for (int trigger = 0; trigger < 4; ++trigger) {
+				bTriggersDone[trigger] = !pgOutTriggers[trigger].process(1.0f / sampleTime);
+				if (outputs[OUTPUT_OUT_1 + trigger].isConnected()) {
+					outputs[OUTPUT_OUT_1 + trigger].setVoltage(bTriggersDone[trigger] ? 0.f : 10.f);
 				}
 			}
 		}
@@ -631,10 +634,10 @@ struct Brainz : SanguineModule {
 		if (metronomeCounter > metronomePeriod) {
 			pgMetronone.trigger();
 			metronomeCounter -= metronomePeriod;
-			metronomeStepsDone++;
+			++metronomeStepsDone;
 			*metronomeCounterPtr = metronomeStepsDone;
 		}
-		metronomeCounter++;
+		++metronomeCounter;
 
 		outputs[OUTPUT_METRONOME].setVoltage(pgMetronone.process(args.sampleTime) ? 10.f : 0.f);
 
@@ -749,8 +752,9 @@ struct Brainz : SanguineModule {
 	}
 
 	void killVoltages() {
-		for (int i = 0; i < INPUTS_COUNT; i++) {
-			outputs[OUTPUT_METRONOME + i].setVoltage(0);
+		// TODO!!! This is probably wrong.
+		for (int input = 0; input < INPUTS_COUNT; ++input) {
+			outputs[OUTPUT_METRONOME + input].setVoltage(0);
 		}
 	}
 
@@ -787,8 +791,8 @@ struct Brainz : SanguineModule {
 	void doEndOfStepTriggers(ParamIds checkParam, const float sampleTime) {
 		if (bStepStarted && stepState == STEP_STATE_TRIGGER_DONE) {
 			if (!params[checkParam].getValue()) {
-				for (int i = 0; i < 4; i++) {
-					bTriggersDone[i] = true;
+				for (int trigger = 0; trigger < 4; ++trigger) {
+					bTriggersDone[trigger] = true;
 				}
 			} else {
 				doGlobalTriggers(sampleTime);
@@ -932,8 +936,8 @@ struct BrainzWidget : SanguineModuleWidget {
 
 		float currentX = 63.456;
 		float deltaX = 9.74;
-		for (int i = 0; i < 7; i++) {
-			addChild(createLightCentered<TinyLight<YellowLight>>(millimetersToPixelsVec(currentX, 109.601), module, Brainz::LIGHT_OUT_ENABLED + i));
+		for (int light = 0; light < 7; ++light) {
+			addChild(createLightCentered<TinyLight<YellowLight>>(millimetersToPixelsVec(currentX, 109.601), module, Brainz::LIGHT_OUT_ENABLED + light));
 			currentX += deltaX;
 		}
 
