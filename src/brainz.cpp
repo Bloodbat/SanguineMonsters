@@ -226,13 +226,13 @@ struct Brainz : SanguineModule {
 				const float sampleTime = args.sampleTime * kClockDivider;
 
 				if (params[PARAM_LOGIC_ENABLED].getValue()) {
-					switch (moduleState)
-					{
-					case MODULE_STATE_READY: {
+					switch (moduleState) {
+					case MODULE_STATE_READY:
+					case MODULE_STATE_WAIT_FOR_RESET:
+					case MODULE_STATE_ROUND_1_END:
 						break;
-					}
 
-					case MODULE_STATE_ROUND_1_START: {
+					case MODULE_STATE_ROUND_1_START:
 						resetGlobalTriggers();
 						if (params[PARAM_START_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
@@ -255,9 +255,9 @@ struct Brainz : SanguineModule {
 							}
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_1_STEP_A: {
+
+					case MODULE_STATE_ROUND_1_STEP_A:
 						resetGlobalTriggers();
 						if (params[PARAM_A_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -291,9 +291,9 @@ struct Brainz : SanguineModule {
 							resetStep();
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_1_STEP_B: {
+
+					case MODULE_STATE_ROUND_1_STEP_B:
 						resetGlobalTriggers();
 						if (params[PARAM_B_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -325,9 +325,9 @@ struct Brainz : SanguineModule {
 							resetStep();
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_1_STEP_C: {
+
+					case MODULE_STATE_ROUND_1_STEP_C:
 						resetGlobalTriggers();
 						if (params[PARAM_C_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -366,13 +366,8 @@ struct Brainz : SanguineModule {
 							}
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_1_END: {
-						break;
-					}
-
-					case MODULE_STATE_ROUND_2_START: {
+					case MODULE_STATE_ROUND_2_START:
 						resetStep();
 						if (bStepEnabled[2]) {
 							moduleState = MODULE_STATE_ROUND_2_STEP_C;
@@ -384,9 +379,8 @@ struct Brainz : SanguineModule {
 							moduleState = MODULE_STATE_ROUND_2_END;
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_2_STEP_C: {
+					case MODULE_STATE_ROUND_2_STEP_C:
 						resetGlobalTriggers();
 						if (params[PARAM_C_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -420,9 +414,9 @@ struct Brainz : SanguineModule {
 							resetStep();
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_2_STEP_B: {
+
+					case MODULE_STATE_ROUND_2_STEP_B:
 						resetGlobalTriggers();
 						if (params[PARAM_B_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -454,9 +448,8 @@ struct Brainz : SanguineModule {
 							resetStep();
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_2_STEP_A: {
+					case MODULE_STATE_ROUND_2_STEP_A:
 						resetGlobalTriggers();
 						if (params[PARAM_A_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -484,9 +477,8 @@ struct Brainz : SanguineModule {
 							resetStep();
 						}
 						break;
-					}
 
-					case MODULE_STATE_ROUND_2_END: {
+					case MODULE_STATE_ROUND_2_END:
 						resetGlobalTriggers();
 						if (params[PARAM_END_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
@@ -506,11 +498,6 @@ struct Brainz : SanguineModule {
 							}
 						}
 						break;
-					}
-
-					case MODULE_STATE_WAIT_FOR_RESET: {
-						break;
-					}
 					}
 				}
 
@@ -685,9 +672,8 @@ struct Brainz : SanguineModule {
 				moduleState = MODULE_STATE_READY;
 				moduleStage = MODULE_STAGE_INIT;
 			} else {
-				switch (moduleState)
-				{
-				case MODULE_STATE_READY: {
+				switch (moduleState) {
+				case MODULE_STATE_READY:
 					bTriggersSent = false;
 					if (moduleDirection < DIRECTION_BACKWARD) {
 						moduleStage = MODULE_STAGE_ROUND_1;
@@ -697,37 +683,37 @@ struct Brainz : SanguineModule {
 						moduleStage = MODULE_STAGE_ROUND_2;
 					}
 					break;
-				}
+
 				case MODULE_STATE_ROUND_1_START:
 				case MODULE_STATE_ROUND_1_STEP_A:
 				case MODULE_STATE_ROUND_1_STEP_B:
-				case MODULE_STATE_ROUND_1_STEP_C: {
+				case MODULE_STATE_ROUND_1_STEP_C:
 					killVoltages();
 					moduleState = MODULE_STATE_READY;
 					moduleStage = MODULE_STAGE_INIT;
 					break;
-				}
-				case MODULE_STATE_ROUND_1_END: {
+
+
+				case MODULE_STATE_ROUND_1_END:
 					if (moduleDirection == DIRECTION_BACKWARD || moduleDirection == DIRECTION_BIDIRECTIONAL) {
 						memset(currentCounters, 0, sizeof(int) * 3);
 						moduleStage = MODULE_STAGE_ROUND_2;
 						moduleState = MODULE_STATE_ROUND_2_START;
 					}
 					break;
-				}
+
 				case MODULE_STATE_ROUND_2_START:
 				case MODULE_STATE_ROUND_2_STEP_A:
 				case MODULE_STATE_ROUND_2_STEP_B:
 				case MODULE_STATE_ROUND_2_STEP_C:
-				case MODULE_STATE_ROUND_2_END: {
+				case MODULE_STATE_ROUND_2_END:
 					killVoltages();
 					moduleState = MODULE_STATE_READY;
 					moduleStage = MODULE_STAGE_INIT;
 					break;
-				}
-				case MODULE_STATE_WAIT_FOR_RESET: {
+
+				case MODULE_STATE_WAIT_FOR_RESET:
 					break;
-				}
 				}
 			}
 		} else {
