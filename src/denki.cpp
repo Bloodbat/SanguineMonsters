@@ -3,10 +3,10 @@
 Denki::Denki() {
 	config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-	for (int i = 0; i < 4; i++) {
-		int channelNumber = i + 1;
-		configInput(INPUT_GAIN_CV + i, string::f("Channel %d gain CV", channelNumber));
-		configInput(INPUT_OFFSET_CV + i, string::f("Channel %d offset CV", channelNumber));
+	for (int section = 0; section < kMaxSections; ++section) {
+		int channelNumber = section + 1;
+		configInput(INPUT_GAIN_CV + section, string::f("Channel %d gain CV", channelNumber));
+		configInput(INPUT_OFFSET_CV + section, string::f("Channel %d offset CV", channelNumber));
 	}
 }
 

@@ -1,8 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "denki.hpp"
 #include "kitsune.hpp"
+#include "denki.hpp"
 
 struct Kitsune : SanguineModule {
 
@@ -49,7 +49,7 @@ struct Kitsune : SanguineModule {
 	Kitsune() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int section = 0; section < kMaxSections; section++) {
+		for (int section = 0; section < kMaxSections; ++section) {
 			configParam(PARAM_ATTENUATOR1 + section, -1.f, 1.f, 0.f, string::f("Channel %d gain", section + 1), "%", 0, 100);
 			configParam(PARAM_OFFSET1 + section, -10.f, 10.f, 0.f, string::f("Channel %d offset", section + 1), " V");
 			configOutput(OUTPUT_VOLTAGE1 + section, string::f("Channel %d", section + 1));
@@ -76,7 +76,7 @@ struct Kitsune : SanguineModule {
 
 		bool bHasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki);
 
-		for (int section = 0; section < kMaxSections; section++) {
+		for (int section = 0; section < kMaxSections; ++section) {
 			int channelSource = section;
 
 			if ((section == 1 || section == 3) && !inputs[INPUT_VOLTAGE1 + section].isConnected()) {
@@ -143,7 +143,7 @@ struct Kitsune : SanguineModule {
 					float lightValue = 0;
 					float cvGainLightValue = 0.f;
 					float cvOffsetLightValue = 0.f;
-					for (int channel = 0; channel < channelCount; channel++) {
+					for (int channel = 0; channel < channelCount; ++channel) {
 						lightValue += outputVoltages[channel];
 
 						if (bHasExpander) {
