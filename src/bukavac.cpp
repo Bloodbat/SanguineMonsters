@@ -5,7 +5,6 @@
 #include "bukavac.hpp"
 
 struct Bukavac : SanguineModule {
-
 	enum ParamIds {
 		PARAM_PERLIN_SPEED,
 		PARAM_PERLIN_SPEED_CV,
@@ -190,10 +189,10 @@ struct Bukavac : SanguineModule {
 			}
 
 			float octaveMult = 1.0;
-			for (int i = 0; i < kPerlinOctaves; i++) {
-				noise[i] = perlinAmplifier * getPerlinNoise(currentPerlinTime * perlinSpeed * octaveMult);
-				if (outputs[OUTPUT_PERLIN_NOISE0 + i].isConnected()) {
-					outputs[OUTPUT_PERLIN_NOISE0 + i].setVoltage(noise[i]);
+			for (int octave = 0; octave < kPerlinOctaves; ++octave) {
+				noise[octave] = perlinAmplifier * getPerlinNoise(currentPerlinTime * perlinSpeed * octaveMult);
+				if (outputs[OUTPUT_PERLIN_NOISE0 + octave].isConnected()) {
+					outputs[OUTPUT_PERLIN_NOISE0 + octave].setVoltage(noise[octave]);
 				}
 				octaveMult *= 2;
 			}
@@ -232,9 +231,9 @@ struct Bukavac : SanguineModule {
 	void mixPerlinOctaves(float* noise) {
 		float totalWeight = 0;
 		noiseOutMix = 0.f;
-		for (int i = 0; i < kPerlinOctaves; i++) {
-			float currentWeight = params[PARAM_PERLIN_WEIGHT0 + i].getValue();
-			noiseOutMix += noise[i] * currentWeight;
+		for (int octave = 0; octave < kPerlinOctaves; ++octave) {
+			float currentWeight = params[PARAM_PERLIN_WEIGHT0 + octave].getValue();
+			noiseOutMix += noise[octave] * currentWeight;
 			totalWeight += currentWeight;
 		}
 		if (totalWeight == 0) {
