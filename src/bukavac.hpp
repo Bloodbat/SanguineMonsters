@@ -15,17 +15,17 @@ public:
 
     float process() {
         int lastFrame = frame;
-        frame++;
+        ++frame;
         if (frame >= (1 << QUALITY))
             frame = 0;
         int diff = lastFrame ^ frame;
 
         float sum = 0.f;
-        for (int i = 0; i < QUALITY; i++) {
-            if (diff & (1 << i)) {
-                values[i] = (ldexpf(pcg32_random_r(&pinkRng), -32)) - 0.5f;
+        for (int value = 0; value < QUALITY; ++value) {
+            if (diff & (1 << value)) {
+                values[value] = (ldexpf(pcg32_random_r(&pinkRng), -32)) - 0.5f;
             }
-            sum += values[i];
+            sum += values[value];
         }
         return sum;
     }
@@ -49,16 +49,16 @@ struct InverseAWeightingFFTFilter {
             alignas(16) float freqBuffer[BUFFER_LEN * 2];
             fft.rfft(inputBuffer, freqBuffer);
 
-            for (int i = 0; i < BUFFER_LEN; i++) {
-                float f = 1 / deltaTime / 2 / BUFFER_LEN * i;
+            for (int frequency = 0; frequency < BUFFER_LEN; ++frequency) {
+                float f = 1 / deltaTime / 2 / BUFFER_LEN * frequency;
                 float amp = 0.f;
                 if (80.f <= f && f <= 20000.f) {
                     float f2 = f * f;
                     // Inverse A-weighted curve
                     amp = ((424.36f + f2) * std::sqrt((11599.3f + f2) * (544496.f + f2)) * (148693636.f + f2)) / (148693636.f * f2 * f2);
                 }
-                freqBuffer[2 * i + 0] *= amp / BUFFER_LEN;
-                freqBuffer[2 * i + 1] *= amp / BUFFER_LEN;
+                freqBuffer[2 * frequency + 0] *= amp / BUFFER_LEN;
+                freqBuffer[2 * frequency + 1] *= amp / BUFFER_LEN;
             }
 
             fft.irfft(freqBuffer, outputBuffer);
