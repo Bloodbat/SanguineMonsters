@@ -3,6 +3,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "kitsune.hpp"
 
 struct Denki : SanguineModule {
 
@@ -11,8 +12,8 @@ struct Denki : SanguineModule {
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_GAIN_CV, 4),
-		ENUMS(INPUT_OFFSET_CV, 4),
+		ENUMS(INPUT_GAIN_CV, kMaxSections),
+		ENUMS(INPUT_OFFSET_CV, kMaxSections),
 		INPUTS_COUNT
 	};
 
@@ -23,8 +24,8 @@ struct Denki : SanguineModule {
 
 	enum LightIds {
 		LIGHT_MASTER_MODULE,
-		ENUMS(LIGHT_GAIN_CV, 4 * 3),
-		ENUMS(LIGHT_OFFSET_CV, 4 * 3),
+		ENUMS(LIGHT_GAIN_CV, kMaxSections * 3),
+		ENUMS(LIGHT_OFFSET_CV, kMaxSections * 3),
 		LIGHTS_COUNT
 	};
 
