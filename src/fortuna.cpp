@@ -197,6 +197,9 @@ struct FortunaWidget : SanguineModuleWidget {
         addScrews(SCREW_ALL);
 
         // Switch #1
+        SanguinePolyInputLight* inLight1 = new SanguinePolyInputLight(module, 6.413, 19.362);
+        addChild(inLight1);
+
         addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(20.288, 18.776), module, Fortuna::PARAM_THRESHOLD_1));
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 26.411), module, Fortuna::INPUT_IN_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 26.411), module, Fortuna::OUTPUT_OUT_1A));
@@ -206,8 +209,13 @@ struct FortunaWidget : SanguineModuleWidget {
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 44.323), module, Fortuna::INPUT_TRIGGER_1));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.288, 46.515), module, Fortuna::INPUT_P_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 44.323), module, Fortuna::OUTPUT_OUT_1B));
+        SanguineStaticRGBLight* triggerLight1 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 51.36, true, kSanguineBlueLight);
+        addChild(triggerLight1);
 
         // Switch #2
+        SanguinePolyInputLight* inLight2 = new SanguinePolyInputLight(module, 6.413, 78.759);
+        addChild(inLight2);
+
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 85.796), module, Fortuna::INPUT_IN_2));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.288, 83.605), module, Fortuna::INPUT_P_2));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 85.796), module, Fortuna::OUTPUT_OUT_2A));
@@ -217,6 +225,9 @@ struct FortunaWidget : SanguineModuleWidget {
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 103.709), module, Fortuna::INPUT_TRIGGER_2));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 103.709), module, Fortuna::OUTPUT_OUT_2B));
         addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(20.288, 111.344), module, Fortuna::PARAM_THRESHOLD_2));
+
+        SanguineStaticRGBLight* triggerLight2 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 110.757, true, kSanguineBlueLight);
+        addChild(triggerLight2);
     }
 
     void appendContextMenu(Menu* menu) override {
