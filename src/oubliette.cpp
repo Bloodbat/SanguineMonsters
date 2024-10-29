@@ -4,17 +4,19 @@
 
 struct Oubliette : SanguineModule {
 
+	static const int kMaxSectionPorts = 16;
+
 	enum ParamIds {
 		PARAMS_COUNT
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_NULL, 16),
+		ENUMS(INPUT_NULL, kMaxSectionPorts),
 		INPUTS_COUNT
 	};
 
 	enum OutputIds {
-		ENUMS(OUTPUT_NULL, 16),
+		ENUMS(OUTPUT_NULL, kMaxSectionPorts),
 		OUTPUTS_COUNT
 	};
 
@@ -25,9 +27,9 @@ struct Oubliette : SanguineModule {
 	Oubliette() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < 16; i++) {
-			configInput(INPUT_NULL + i, string::f("Null %d", i + 1));
-			configOutput(OUTPUT_NULL + i, string::f("Null %d", i + 1));
+		for (int port = 0; port < kMaxSectionPorts; ++port) {
+			configInput(INPUT_NULL + port, string::f("Null %d", port + 1));
+			configOutput(OUTPUT_NULL + port, string::f("Null %d", port + 1));
 		}
 	}
 };
@@ -45,21 +47,26 @@ struct OublietteWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		const float xBase = 6.012;
-		const float xDelta = 9.539;
+		static const float xBase = 6.012;
+		static const float xDelta = 9.539;
 
-		const float yInputsBase = 19.648;
-		const float yOutputsBase = 85.961;
-		const float yDelta = 9.568;
+		static const float yInputsBase = 19.648;
+		static const float yOutputsBase = 85.961;
+		static const float yDelta = 9.568;
 
 		float currentX = xBase;
 		float currentInputsY = yInputsBase;
 		float currentOutputsY = yOutputsBase;
 
-		for (int y = 0; y < 4; y++) {
-			for (int x = 0; x < 4; x++) {
-				addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(currentX, currentInputsY), module, Oubliette::INPUT_NULL + x + (y * 4)));
-				addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, currentOutputsY), module, Oubliette::OUTPUT_NULL + x + (y * 4)));
+		static const int kMaxPortsPerRow = 4;
+		static const int kMaxPortsPerColumn = 4;
+
+		for (int y = 0; y < kMaxPortsPerColumn; ++y) {
+			for (int x = 0; x < kMaxPortsPerRow; ++x) {
+				addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(currentX, currentInputsY),
+					module, Oubliette::INPUT_NULL + x + (y * kMaxPortsPerColumn)));
+				addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, currentOutputsY),
+					module, Oubliette::OUTPUT_NULL + x + (y * kMaxPortsPerColumn)));
 				currentX += xDelta;
 			}
 			currentX = xBase;
