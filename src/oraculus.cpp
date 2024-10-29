@@ -130,6 +130,10 @@ struct Oraculus : SanguineModule {
 
 		finalChannel = -1;
 		if (channelCount > 0) {
+			if (selectedChannel >= channelCount) {
+				selectedChannel = channelCount - 1;
+			}
+
 			if ((bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage()))
 				|| btIncrease.process(params[PARAM_INCREASE].getValue())) {
 				doIncreaseTrigger();
