@@ -66,7 +66,7 @@ struct Bjorklund {
 		int zeroCount = 0;
 		if (sequence.at(0) != 1) {
 			do {
-				zeroCount++;
+				++zeroCount;
 			} while (sequence.at(zeroCount) == 0);
 			std::rotate(sequence.begin(), sequence.begin() + zeroCount, sequence.end());
 		}
@@ -80,7 +80,7 @@ struct Bjorklund {
 		} else if (slot == -2) {
 			sequence.push_back(1);
 		} else {
-			for (int i = 0; i < count[slot]; i++)
+			for (int i = 0; i < count[slot]; ++i)
 				buildSeq(slot - 1);
 			if (remainder[slot] != 0)
 				buildSeq(slot - 2);
