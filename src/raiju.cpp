@@ -46,9 +46,9 @@ struct Raiju : SanguineModule {
 		configParam(PARAM_CHANNEL_COUNT, 1.0f, 16.0f, 1.0f, "Polyphonic output channels", "", 0.0f, 1.0f, 0.0f);
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
 
-		for (int i = 0; i < kVoltagesCount; i++) {
-			configOutput(OUTPUT_VOLTAGE + i, "Voltage " + std::to_string(i + 1));
-			configParam(PARAM_VOLTAGE + i, -10.f, 10.f, 0.f, "Voltage selector " + std::to_string(i + 1));
+		for (int component = 0; component < kVoltagesCount; ++component) {
+			configOutput(OUTPUT_VOLTAGE + component, "Voltage " + std::to_string(component + 1));
+			configParam(PARAM_VOLTAGE + component, -10.f, 10.f, 0.f, "Voltage selector " + std::to_string(component + 1));
 		}
 
 		configOutput(OUTPUT_EIGHT_CHANNELS, "Voltage series polyphonic");
@@ -59,9 +59,9 @@ struct Raiju : SanguineModule {
 	}
 
 	void pollSwitches() {
-		for (uint8_t i = 0; i < kVoltagesCount; i++) {
-			if (btButtons[i].process(params[PARAM_VOLTAGE_SELECTOR + i].getValue())) {
-				selectedVoltage = i;
+		for (uint8_t button = 0; button < kVoltagesCount; ++button) {
+			if (btButtons[button].process(params[PARAM_VOLTAGE_SELECTOR + button].getValue())) {
+				selectedVoltage = button;
 			}
 		}
 	}
@@ -83,26 +83,26 @@ struct Raiju : SanguineModule {
 				currentChannelCount = selectedChannelCount;
 			}
 
-			for (uint8_t i = 0; i < kVoltagesCount; i++) {
-				params[PARAM_VOLTAGE_SELECTOR + i].setValue(i == selectedVoltage ? 1 : 0);
+			for (uint8_t voltage = 0; voltage < kVoltagesCount; ++voltage) {
+				params[PARAM_VOLTAGE_SELECTOR + voltage].setValue(voltage == selectedVoltage ? 1 : 0);
 
 				// Get channel voltages and update strings for displays
-				voltages[i] = params[PARAM_VOLTAGE + i].getValue();
+				voltages[voltage] = params[PARAM_VOLTAGE + voltage].getValue();
 				std::stringstream stringStream;
-				stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[i];
-				if (voltages[i] < 0 && voltages[i] > -10)
+				stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[voltage];
+				if (voltages[voltage] < 0 && voltages[voltage] > -10)
 				{
 					std::string tmpStr = stringStream.str();
 					tmpStr.replace(0, 1, "0");
 					tmpStr.insert(0, "-");
-					strVoltages[i] = tmpStr;
+					strVoltages[voltage] = tmpStr;
 				} else
-					strVoltages[i] = stringStream.str();
+					strVoltages[voltage] = stringStream.str();
 
-				if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
-					outputs[OUTPUT_VOLTAGE + i].setChannels(channelCounts[i]);
-					std::fill(outputVoltages, outputVoltages + 16, voltages[i]);
-					outputs[OUTPUT_VOLTAGE + i].writeVoltages(outputVoltages);
+				if (outputs[OUTPUT_VOLTAGE + voltage].isConnected()) {
+					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
+					std::fill(outputVoltages, outputVoltages + 16, voltages[voltage]);
+					outputs[OUTPUT_VOLTAGE + voltage].writeVoltages(outputVoltages);
 				}
 			}
 
@@ -156,26 +156,30 @@ struct RaijuWidget : SanguineModuleWidget {
 		float yDistance = 19.688;
 		float currentY = 32.982;
 
-		for (int i = 0; i < 4; i++) {
-			addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(19.21, currentY), module, Raiju::PARAM_VOLTAGE + i));
+		for (int component = 0; component < 4; ++component) {
+			addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(19.21, currentY),
+				module, Raiju::PARAM_VOLTAGE + component));
 			currentY += yDistance;
 		}
 
 		currentY = 32.982;
-		for (int i = 4; i < 8; i++) {
-			addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(117.942, currentY), module, Raiju::PARAM_VOLTAGE + i));
+		for (int component = 4; component < 8; ++component) {
+			addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(117.942, currentY),
+				module, Raiju::PARAM_VOLTAGE + component));
 			currentY += yDistance;
 		}
 
 		float currentX = 37.073;
 		float xDistance = 12.136;
-		for (int i = 0; i < 4; i++) {
-			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758), module, Raiju::OUTPUT_VOLTAGE + i));
+		for (int component = 0; component < 4; ++component) {
+			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758),
+				module, Raiju::OUTPUT_VOLTAGE + component));
 			currentX += xDistance;
 		}
 		currentX = 92.018;
-		for (int i = 4; i < 8; i++) {
-			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758), module, Raiju::OUTPUT_VOLTAGE + i));
+		for (int component = 4; component < 8; ++component) {
+			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758),
+				module, Raiju::OUTPUT_VOLTAGE + component));
 			currentX += xDistance;
 		}
 
