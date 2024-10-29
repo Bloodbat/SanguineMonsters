@@ -90,8 +90,7 @@ struct Raiju : SanguineModule {
 				voltages[voltage] = params[PARAM_VOLTAGE + voltage].getValue();
 				std::stringstream stringStream;
 				stringStream << std::fixed << std::setprecision(3) << std::setfill('0') << std::setw(6) << voltages[voltage];
-				if (voltages[voltage] < 0 && voltages[voltage] > -10)
-				{
+				if (voltages[voltage] < 0 && voltages[voltage] > -10) {
 					std::string tmpStr = stringStream.str();
 					tmpStr.replace(0, 1, "0");
 					tmpStr.insert(0, "-");
@@ -159,13 +158,8 @@ struct RaijuWidget : SanguineModuleWidget {
 		for (int component = 0; component < 4; ++component) {
 			addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(19.21, currentY),
 				module, Raiju::PARAM_VOLTAGE + component));
-			currentY += yDistance;
-		}
-
-		currentY = 32.982;
-		for (int component = 4; component < 8; ++component) {
 			addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(117.942, currentY),
-				module, Raiju::PARAM_VOLTAGE + component));
+				module, Raiju::PARAM_VOLTAGE + component + 4));
 			currentY += yDistance;
 		}
 
@@ -220,64 +214,37 @@ struct RaijuWidget : SanguineModuleWidget {
 		raijuFrameBuffer->addChild(displayChannelCount);
 		displayChannelCount->fallbackNumber = 1;
 
-		if (module)
-			displayChannelCount->values.numberValue = (&module->currentChannelCount);
-
 		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7, module, 45.663, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage1);
 		displayVoltage1->fallbackString = kBrowserDisplayText;
-
-		if (module)
-			displayVoltage1->values.displayText = &module->strVoltages[0];
 
 		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7, module, 45.663, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage2);
 		displayVoltage2->fallbackString = kBrowserDisplayText;
 
-		if (module)
-			displayVoltage2->values.displayText = &module->strVoltages[1];
-
 		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7, module, 45.663, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage3);
 		displayVoltage3->fallbackString = kBrowserDisplayText;
-
-		if (module)
-			displayVoltage3->values.displayText = &module->strVoltages[2];
 
 		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7, module, 45.663, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage4);
 		displayVoltage4->fallbackString = kBrowserDisplayText;
 
-		if (module)
-			displayVoltage4->values.displayText = &module->strVoltages[3];
-
 		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7, module, 91.495, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage5);
 		displayVoltage5->fallbackString = kBrowserDisplayText;
-
-		if (module)
-			displayVoltage5->values.displayText = &module->strVoltages[4];
 
 		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7, module, 91.495, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage6);
 		displayVoltage6->fallbackString = kBrowserDisplayText;
 
-		if (module)
-			displayVoltage6->values.displayText = &module->strVoltages[5];
-
 		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7, module, 91.495, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage7);
 		displayVoltage7->fallbackString = kBrowserDisplayText;
 
-		if (module)
-			displayVoltage7->values.displayText = &module->strVoltages[6];
-
 		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7, module, 91.495, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage8);
 		displayVoltage8->fallbackString = kBrowserDisplayText;
-
-		if (module)
-			displayVoltage8->values.displayText = &module->strVoltages[7];
 
 		SanguineStaticRGBLight* channelsLight = new SanguineStaticRGBLight(module, "res/channels_lit.svg", 127.365, 18.999, true, kSanguineBlueLight);
 		addChild(channelsLight);
@@ -290,6 +257,19 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 19.747, 116.774);
 		addChild(monstersLight);
+
+		if (module) {
+			displayChannelCount->values.numberValue = (&module->currentChannelCount);
+
+			displayVoltage1->values.displayText = &module->strVoltages[0];
+			displayVoltage2->values.displayText = &module->strVoltages[1];
+			displayVoltage3->values.displayText = &module->strVoltages[2];
+			displayVoltage4->values.displayText = &module->strVoltages[3];
+			displayVoltage5->values.displayText = &module->strVoltages[4];
+			displayVoltage6->values.displayText = &module->strVoltages[5];
+			displayVoltage7->values.displayText = &module->strVoltages[6];
+			displayVoltage8->values.displayText = &module->strVoltages[7];
+		}
 	}
 };
 
