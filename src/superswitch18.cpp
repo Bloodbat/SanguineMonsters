@@ -3,6 +3,7 @@
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "pcg_variants.h"
+#include "switches.hpp"
 
 using simd::float_4;
 
@@ -54,7 +55,7 @@ struct SuperSwitch18 : SanguineModule {
 	dsp::BooleanTrigger btIncrease;
 	dsp::BooleanTrigger btRandom;
 	dsp::BooleanTrigger btReset;
-	dsp::BooleanTrigger btSteps[8];
+	dsp::BooleanTrigger btSteps[kMaxSteps];
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
@@ -69,7 +70,7 @@ struct SuperSwitch18 : SanguineModule {
 	int channelCount = 0;
 	int randomNum;
 	int selectedOut = 0;
-	int stepCount = 8;
+	int stepCount = kMaxSteps;
 	int stepsDone = 0;
 
 	float_4 outVoltages[4] = {};
@@ -81,16 +82,16 @@ struct SuperSwitch18 : SanguineModule {
 	SuperSwitch18() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
-		configParam(PARAM_STEPS, 1.0f, 8.0f, 8.0f, "Steps", "", 0.0f, 1.0f, 0.0f);
+		configParam(PARAM_STEPS, 1.f, 8.f, 8.f, "Steps", "", 0.f, 1.f, 0.f);
 		paramQuantities[PARAM_STEPS]->snapEnabled = true;
 
 		configButton(PARAM_NO_REPEATS, "No random consecutive repeats");
 		configButton(PARAM_RESET_TO_FIRST_STEP, "Reset to first step");
 		configButton(PARAM_ONE_SHOT, "One shot");
 
-		for (int i = 0; i < 8; i++) {
-			configButton(PARAM_STEP1 + i, "Step " + std::to_string(i + 1));
-			configOutput(OUTPUT_OUT1 + i, "Voltage " + std::to_string(i + 1));
+		for (int component = 0; component < kMaxSteps; ++component) {
+			configButton(PARAM_STEP1 + component, "Step " + std::to_string(component + 1));
+			configOutput(OUTPUT_OUT1 + component, "Voltage " + std::to_string(component + 1));
 		}
 
 		configInput(INPUT_STEPS, "Step count");
@@ -112,68 +113,69 @@ struct SuperSwitch18 : SanguineModule {
 	};
 
 	void doDecreaseTrigger() {
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived))
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 			selectedOut--;
-		else
-		{
+		} else {
 			selectedOut = stepCount - 1;
 			bClockReceived = true;
 		}
-		stepsDone++;
-		if (stepsDone > stepCount)
+		++stepsDone;
+		if (stepsDone > stepCount) {
 			stepsDone = 0;
+		}
 	}
 
 	void doIncreaseTrigger() {
-		selectedOut++;
+		++selectedOut;
 		bClockReceived = true;
-		stepsDone++;
-		if (stepsDone > stepCount)
+		++stepsDone;
+		if (stepsDone > stepCount) {
 			stepsDone = 0;
+		}
 	};
 
 	void doRandomTrigger() {
 		if (!bNoRepeats) {
 			selectedOut = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
-		}
-		else {
+		} else {
 			randomNum = selectedOut;
 			while (randomNum == selectedOut)
 				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
 			selectedOut = randomNum;
 		}
 		bClockReceived = true;
-		stepsDone++;
-		if (stepsDone > stepCount)
+		++stepsDone;
+		if (stepsDone > stepCount) {
 			stepsDone = 0;
+		}
 	}
 
 	void doResetTrigger() {
-		if (bResetToFirstStep)
+		if (bResetToFirstStep) {
 			selectedOut = 0;
-		else
-		{
+		} else {
 			channelCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
 				outVoltages[channel / 4] = 0.F;
 			}
 
-			for (int i = 0; i < 8; i++) {
-				outputs[OUTPUT_OUT1 + i].setChannels(0);
+			for (int output = 0; output < kMaxSteps; ++output) {
+				outputs[OUTPUT_OUT1 + output].setChannels(0);
 			}
 			selectedOut = -1;
 			bClockReceived = false;
 		}
 		stepsDone = 0;
-		if (bOneShot)
+		if (bOneShot) {
 			bOneShotDone = false;
+		}
 	};
 
 	void process(const ProcessArgs& args) override {
 		if (clockDivider.process()) {
-			if (inputs[INPUT_STEPS].isConnected())
-				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.0f, 8.0f));
-			else if (params[PARAM_STEPS].getValue() != stepCount) {
+			if (inputs[INPUT_STEPS].isConnected()) {
+				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.f, 8.f));
+			} else if (params[PARAM_STEPS].getValue() != stepCount) {
 				stepCount = params[PARAM_STEPS].getValue();
 			}
 		}
@@ -204,12 +206,12 @@ struct SuperSwitch18 : SanguineModule {
 			}
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-				for (int i = 0; i < stepCount; i++) {
-					if (btSteps[i].process(params[PARAM_STEP1 + i].getValue())) {
+				for (int output = 0; output < stepCount; ++output) {
+					if (btSteps[output].process(params[PARAM_STEP1 + output].getValue())) {
 						if (selectedOut > -1) {
 							outputs[OUTPUT_OUT1 + selectedOut].setChannels(0);
 						}
-						selectedOut = i;
+						selectedOut = output;
 					}
 
 					while (selectedOut < 0)
@@ -227,18 +229,16 @@ struct SuperSwitch18 : SanguineModule {
 				}
 			}
 
-			for (int i = 0; i < 8; i++)
+			for (int step = 0; step < kMaxSteps; ++step)
 			{
-				if (i < stepCount) {
-					params[PARAM_STEP1 + i].setValue(i == selectedOut ? 1 : 0);
-					if (i != selectedOut) {
-						outputs[OUTPUT_OUT1 + i].setChannels(0);
+				if (step < stepCount) {
+					params[PARAM_STEP1 + step].setValue(step == selectedOut ? 1 : 0);
+					if (step != selectedOut) {
+						outputs[OUTPUT_OUT1 + step].setChannels(0);
 					}
-				}
-				else
-				{
-					params[PARAM_STEP1 + i].setValue(2);
-					outputs[OUTPUT_OUT1 + i].setChannels(0);
+				} else {
+					params[PARAM_STEP1 + step].setValue(2);
+					outputs[OUTPUT_OUT1 + step].setChannels(0);
 				}
 			}
 
@@ -251,42 +251,45 @@ struct SuperSwitch18 : SanguineModule {
 				}
 			}
 
-			if (bOneShot && stepsDone == stepCount)
+			if (bOneShot && stepsDone == stepCount) {
 				bOneShotDone = true;
+			}
 		}
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
 		bResetToFirstStep = params[PARAM_RESET_TO_FIRST_STEP].getValue();
-		if (!bLastResetToFirstStepValue && bResetToFirstStep)
+		if (!bLastResetToFirstStepValue && bResetToFirstStep) {
 			selectedOut = 0;
+		}
 		bLastResetToFirstStepValue = bResetToFirstStep;
 		bOneShot = params[PARAM_ONE_SHOT].getValue();
-		if (bOneShot && (bOneShot != bLastOneShotValue))
+		if (bOneShot && (bOneShot != bLastOneShotValue)) {
 			bOneShotDone = false;
+		}
 		bLastOneShotValue = bOneShot;
 	};
 
 	void onReset() override {
-		if (bResetToFirstStep)
+		if (bResetToFirstStep) {
 			selectedOut = 0;
-		else {
+		} else {
 			channelCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-				outVoltages[channel / 4] = 0.F;
+				outVoltages[channel / 4] = 0.f;
 			}
 
-			for (int i = 0; i < 8; i++) {
-				outputs[OUTPUT_OUT1 + i].setChannels(0);
+			for (int output = 0; output < kMaxSteps; ++output) {
+				outputs[OUTPUT_OUT1 + output].setChannels(0);
 			}
 
 			selectedOut = -1;
 			bClockReceived = false;
 		}
-		stepCount = 8;
+		stepCount = kMaxSteps;
 	}
 
 	void onRandomize() override {
-		stepCount = static_cast<int>(pcg32_boundedrand_r(&pcgRng, 8)) + 1;
+		stepCount = static_cast<int>(pcg32_boundedrand_r(&pcgRng, kMaxSteps)) + 1;
 		selectedOut = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
 	}
 
@@ -302,8 +305,9 @@ struct SuperSwitch18 : SanguineModule {
 		SanguineModule::dataFromJson(rootJ);
 
 		json_t* noRepeatsJ = json_object_get(rootJ, "noRepeats");
-		if (noRepeatsJ)
+		if (noRepeatsJ) {
 			bNoRepeats = json_boolean_value(noRepeatsJ);
+		}
 
 		json_t* ResetToFirstStepJ = json_object_get(rootJ, "ResetToFirstStep");
 		bResetToFirstStep = json_boolean_value(ResetToFirstStepJ);
@@ -311,12 +315,13 @@ struct SuperSwitch18 : SanguineModule {
 		if (!bResetToFirstStep) {
 			selectedOut = -1;
 			bClockReceived = false;
-		}
-		else
+		} else {
 			selectedOut = 0;
+		}
 		bOneShot = params[PARAM_ONE_SHOT].getValue();
-		if (bOneShot && bOneShot != bLastOneShotValue)
+		if (bOneShot && bOneShot != bLastOneShotValue) {
 			bOneShotDone = false;
+		}
 		bLastOneShotValue = bOneShot;
 	}
 };
@@ -413,10 +418,11 @@ struct SuperSwitch18Widget : SanguineModuleWidget {
 
 		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay(2, module, 26.644, 21.472);
 		switchFrameBuffer->addChild(display);
-		display->fallbackNumber = 8;
+		display->fallbackNumber = kMaxSteps;
 
-		if (module)
+		if (module) {
 			display->values.numberValue = (&module->stepCount);
+		}
 
 		SanguineStaticRGBLight* stepsLight = new SanguineStaticRGBLight(module, "res/seqs/light_steps.svg", 27.015, 34.372, true, kSanguineBlueLight);
 		addChild(stepsLight);
