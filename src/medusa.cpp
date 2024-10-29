@@ -33,9 +33,9 @@ struct Medusa : SanguineModule {
 	Medusa() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < kMedusaMaxPorts; i++) {
-			configInput(INPUT_VOLTAGE + i, string::f("Medusa %d", i + 1));
-			configOutput(OUTPUT_VOLTAGE + i, string::f("Medusa %d", i + 1));
+		for (int port = 0; port < kMedusaMaxPorts; ++port) {
+			configInput(INPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
+			configOutput(OUTPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 		}
 
 		lightDivider.setDivision(kLightFrequency);
@@ -51,32 +51,32 @@ struct Medusa : SanguineModule {
 
 		bool bIsLightsTurn = lightDivider.process();
 
-		for (int i = 0; i < kMedusaMaxPorts; i++) {
-			if (inputs[INPUT_VOLTAGE + i].isConnected()) {
-				channelCount = inputs[INPUT_VOLTAGE + i].getChannels();
-				activePort = i;
+		for (int port = 0; port < kMedusaMaxPorts; ++port) {
+			if (inputs[INPUT_VOLTAGE + port].isConnected()) {
+				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
+				activePort = port;
 				currentPalette = (currentPalette + 1);
 
 				if (currentPalette > 4) {
 					currentPalette = 0;
 				}
 
-				connectedCount++;
+				++connectedCount;
 			}
 
-			if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
-				outputs[i].setChannels(channelCount);
+			if (outputs[OUTPUT_VOLTAGE + port].isConnected()) {
+				outputs[port].setChannels(channelCount);
 
 				for (int channel = 0; channel < channelCount; channel += 4) {
 					float_4 voltages = inputs[activePort].getVoltageSimd<float_4>(channel);
-					outputs[OUTPUT_VOLTAGE + i].setVoltageSimd(voltages, channel);
+					outputs[OUTPUT_VOLTAGE + port].setVoltageSimd(voltages, channel);
 				}
 			}
 
 			if (bIsLightsTurn) {
 				const float sampleTime = kLightFrequency * args.sampleTime;
 
-				int currentLight = LIGHT_NORMALLED_PORT + i * 3;
+				int currentLight = LIGHT_NORMALLED_PORT + port * 3;
 				if (connectedCount > 0) {
 					lights[currentLight + 0].setBrightnessSmooth(paletteMedusaLights[currentPalette].red, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(paletteMedusaLights[currentPalette].green, sampleTime);
@@ -124,11 +124,14 @@ struct MedusaWidget : SanguineModuleWidget {
 
 		int portOffset = 0;
 
-		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+		for (int component = 0; component < 10; ++component) {
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module,
+				Medusa::INPUT_VOLTAGE + portOffset + component));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module,
+				Medusa::OUTPUT_VOLTAGE + portOffset + component));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module,
+				(Medusa::LIGHT_NORMALLED_PORT + component + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
@@ -149,11 +152,14 @@ struct MedusaWidget : SanguineModuleWidget {
 
 		portOffset = 10;
 
-		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+		for (int component = 0; component < 6; ++component) {
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY),
+				module, Medusa::INPUT_VOLTAGE + portOffset + component));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY),
+				module, Medusa::OUTPUT_VOLTAGE + portOffset + component));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY),
+				module, (Medusa::LIGHT_NORMALLED_PORT + component + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
@@ -174,11 +180,14 @@ struct MedusaWidget : SanguineModuleWidget {
 
 		portOffset = 16;
 
-		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+		for (int component = 0; component < 6; ++component) {
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY),
+				module, Medusa::INPUT_VOLTAGE + portOffset + component));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY),
+				module, Medusa::OUTPUT_VOLTAGE + portOffset + component));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY),
+				module, (Medusa::LIGHT_NORMALLED_PORT + component + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
@@ -199,11 +208,14 @@ struct MedusaWidget : SanguineModuleWidget {
 
 		portOffset = 22;
 
-		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
+		for (int component = 0; component < 10; ++component) {
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY),
+				module, Medusa::INPUT_VOLTAGE + portOffset + component));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY),
+				module, Medusa::OUTPUT_VOLTAGE + portOffset + component));
 
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY),
+				module, (Medusa::LIGHT_NORMALLED_PORT + component + portOffset) * 3));
 
 			currentPortY += yDelta;
 			currentLightY += yDelta;
