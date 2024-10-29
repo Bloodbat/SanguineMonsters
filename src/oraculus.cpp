@@ -100,8 +100,7 @@ struct Oraculus : SanguineModule {
 		int randomNum;
 		if (!bNoRepeats) {
 			selectedChannel = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
-		}
-		else {
+		} else {
 			randomNum = selectedChannel;
 			while (randomNum == selectedChannel)
 				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
@@ -125,8 +124,7 @@ struct Oraculus : SanguineModule {
 			doResetTrigger();
 		}
 
-		if (btReset.process(params[PARAM_RESET].getValue()))
-		{
+		if (btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
 		}
 
@@ -150,26 +148,27 @@ struct Oraculus : SanguineModule {
 				float cv = inputs[INPUT_CV_OFFSET].getVoltage();
 				int channelOffset = std::floor(cv * (channelCount / 10.f));
 				finalChannel = selectedChannel + channelOffset;
-				if (finalChannel < 0)
+				if (finalChannel < 0) {
 					finalChannel = channelCount + channelOffset;
-				if (finalChannel >= channelCount)
+				}
+				if (finalChannel >= channelCount) {
 					finalChannel = channelOffset - (channelCount - selectedChannel);
-			}
-			else {
+				}
+			} else {
 				finalChannel = selectedChannel;
 			}
 
 
-			if (channelCount < 1)
+			if (channelCount < 1) {
 				finalChannel = -1;
+			}
 
 			if (finalChannel > -1) {
 				if (bOutputConnected) {
 					outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
 				}
 			}
-		}
-		else {
+		} else {
 			finalChannel = -1;
 			if (bOutputConnected) {
 				outputs[OUTPUT_MONOPHONIC].setChannels(0);
@@ -193,19 +192,17 @@ struct Oraculus : SanguineModule {
 		const float sampleTime = args.sampleTime * kClockUpdateFrequency;
 
 		int currentLight;
-		for (int i = 0; i < 16; i++) {
-			currentLight = i * 3;
-			if (i == finalChannel) {
+		for (int light = 0; light < PORT_MAX_CHANNELS; ++light) {
+			currentLight = light * 3;
+			if (light == finalChannel) {
 				lights[currentLight + 0].setBrightnessSmooth(0.59f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 2].setBrightnessSmooth(1.f, sampleTime);
-			}
-			else if (i < channelCount) {
+			} else if (light < channelCount) {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.28f, sampleTime);
 				lights[currentLight + 2].setBrightnessSmooth(0.15f, sampleTime);
-			}
-			else {
+			} else {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
