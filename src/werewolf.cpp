@@ -76,7 +76,7 @@ struct Werewolf : SanguineModule {
 			float fold = params[PARAM_FOLD].getValue();
 			float gain = params[PARAM_GAIN].getValue();
 
-			for (int channel = 0; channel < channelCount; channel++) {
+			for (int channel = 0; channel < channelCount; ++channel) {
 				float voltageInLeft = 0.f;
 				float voltageInRight = 0.f;
 				float voltageOutLeft = 0.f;
@@ -212,7 +212,7 @@ struct Werewolf : SanguineModule {
 	}
 
 	inline void doDistortion(float inVoltage, float& outVoltage, const float fold) {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 100; ++i) {
 			if (inVoltage < -5.f) {
 				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
 			}
