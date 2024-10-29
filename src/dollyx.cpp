@@ -41,17 +41,17 @@ struct DollyX : SanguineModule {
 	DollyX() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
-		for (int i = 0; i < kSUBMODULES; i++) {
-			int componentOffset = i + 1;
+		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+			int componentOffset = submodule + 1;
 
-			configParam(PARAM_CHANNELS1 + i, 1.0f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
+			configParam(PARAM_CHANNELS1 + submodule, 1.0f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
 			paramQuantities[PARAM_CHANNELS1]->snapEnabled = true;
 
-			configOutput(OUTPUT_POLYOUT_1 + i, string::f("Cloned %d", componentOffset));
+			configOutput(OUTPUT_POLYOUT_1 + submodule, string::f("Cloned %d", componentOffset));
 
-			configInput(INPUT_MONO_IN1 + i, string::f("Mono %d", componentOffset));
+			configInput(INPUT_MONO_IN1 + submodule, string::f("Mono %d", componentOffset));
 
-			configInput(INPUT_CHANNELS1_CV + i, string::f("Channels CV %d", componentOffset));
+			configInput(INPUT_CHANNELS1_CV + submodule, string::f("Channels CV %d", componentOffset));
 		}
 
 		clockDivider.setDivision(kClockDivision);
@@ -64,22 +64,20 @@ struct DollyX : SanguineModule {
 			updateCloneCounts();
 		}
 
-		for (int i = 0; i < kSUBMODULES; i++) {
+		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
 			float_4 voltages[4] = {};
 
-			if (bOutputConnected[i]) {
-				for (int channel = 0; channel < cloneCounts[i]; channel += 4) {
+			if (bOutputConnected[submodule]) {
+				for (int channel = 0; channel < cloneCounts[submodule]; channel += 4) {
 					uint8_t currentChannel = channel >> 2;
 
-					if (bInputConnected[i]) {
-						voltages[currentChannel] = inputs[INPUT_MONO_IN1 + i].getVoltage();
+					if (bInputConnected[submodule]) {
+						voltages[currentChannel] = inputs[INPUT_MONO_IN1 + submodule].getVoltage();
 					}
-					outputs[OUTPUT_POLYOUT_1 + i].setVoltageSimd(voltages[currentChannel], channel);
+					outputs[OUTPUT_POLYOUT_1 + submodule].setVoltageSimd(voltages[currentChannel], channel);
 				}
-			}
-			else
-			{
-				outputs[OUTPUT_POLYOUT_1 + i].setChannels(0);
+			} else {
+				outputs[OUTPUT_POLYOUT_1 + submodule].setChannels(0);
 			}
 		}
 	}
@@ -89,30 +87,29 @@ struct DollyX : SanguineModule {
 			float inputValue = math::clamp(inputs[INPUT_CHANNELS1_CV + channel].getVoltage(), 0.f, 10.f);
 			int steps = static_cast<int>(rescale(inputValue, 0.f, 10.f, 1.f, 16.f));
 			return steps;
-		}
-		else {
+		} else {
 			return std::floor(params[PARAM_CHANNELS1 + channel].getValue());
 		}
 	}
 
 	void updateCloneCounts() {
-		for (int i = 0; i < kSUBMODULES; i++) {
-			cloneCounts[i] = getChannelCloneCount(i);
-			outputs[OUTPUT_POLYOUT_1 + i].setChannels(cloneCounts[i]);
+		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+			cloneCounts[submodule] = getChannelCloneCount(submodule);
+			outputs[OUTPUT_POLYOUT_1 + submodule].setChannels(cloneCounts[submodule]);
 		}
 	}
 
 	void onReset() override {
-		for (int i = 0; i < kSUBMODULES; i++) {
-			cloneCounts[i] = PORT_MAX_CHANNELS;
+		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+			cloneCounts[submodule] = PORT_MAX_CHANNELS;
 		}
 	}
 
 	void checkConnections() {
-		for (int i = 0; i < kSUBMODULES; i++) {
-			bCvConnected[i] = inputs[INPUT_CHANNELS1_CV + i].isConnected();
-			bInputConnected[i] = inputs[INPUT_MONO_IN1 + i].isConnected();
-			bOutputConnected[i] = outputs[OUTPUT_POLYOUT_1 + i].isConnected();
+		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+			bCvConnected[submodule] = inputs[INPUT_CHANNELS1_CV + submodule].isConnected();
+			bInputConnected[submodule] = inputs[INPUT_MONO_IN1 + submodule].isConnected();
+			bOutputConnected[submodule] = outputs[OUTPUT_POLYOUT_1 + submodule].isConnected();
 		}
 	}
 };
