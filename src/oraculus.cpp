@@ -128,6 +128,7 @@ struct Oraculus : SanguineModule {
 			doResetTrigger();
 		}
 
+		finalChannel = -1;
 		if (channelCount > 0) {
 			if ((bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage()))
 				|| btIncrease.process(params[PARAM_INCREASE].getValue())) {
@@ -144,6 +145,7 @@ struct Oraculus : SanguineModule {
 				doRandomTrigger();
 			}
 
+			finalChannel = selectedChannel;
 			if (bCvConnected && channelCount > 1) {
 				float cv = inputs[INPUT_CV_OFFSET].getVoltage();
 				int channelOffset = std::floor(cv * (channelCount / 10.f));
@@ -154,22 +156,12 @@ struct Oraculus : SanguineModule {
 				if (finalChannel >= channelCount) {
 					finalChannel = channelOffset - (channelCount - selectedChannel);
 				}
-			} else {
-				finalChannel = selectedChannel;
 			}
 
-
-			if (channelCount < 1) {
-				finalChannel = -1;
-			}
-
-			if (finalChannel > -1) {
-				if (bOutputConnected) {
-					outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
-				}
+			if (bOutputConnected) {
+				outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
 			}
 		} else {
-			finalChannel = -1;
 			if (bOutputConnected) {
 				outputs[OUTPUT_MONOPHONIC].setChannels(0);
 			}
