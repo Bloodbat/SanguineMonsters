@@ -328,8 +328,8 @@ SanguineTinyNumericDisplay::SanguineTinyNumericDisplay(uint32_t newCharacterCoun
 	kerning = 2.5f;
 };
 
-Sanguine96x32OLEDDisplay::Sanguine96x32OLEDDisplay(Module* theModule, const float X, const float Y, bool createCentered) {
-	fontName = "res/components/sanguinematrix.ttf";
+Sanguine96x32OLEDDisplay::Sanguine96x32OLEDDisplay(Module* theModule, const float X, const float Y, bool createCentered) :
+	fontName("res/components/sanguinematrix.ttf") {
 	box.size = mm2px(Vec(16.298f, 5.418f));
 
 	module = theModule;
@@ -424,9 +424,7 @@ void SanguineLightUpSwitch::drawLayer(const DrawArgs& args, int layer) {
 				return;
 			}
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
-			#ifndef METAMODULE
 			rack::window::svgDraw(args.vg, svg->handle);
-			#endif
 			if (frameNum < halos.size()) {
 				drawCircularHalo(args, box.size, halos[frameNum], 175.f, 8.f);
 			}
@@ -462,24 +460,18 @@ void SanguineLightUpRGBSwitch::drawLayer(const DrawArgs& args, int layer) {
 	// Programmers responsibility: set both a background and glyph or Rack will crash here. You've been warned.
 	if (layer == 1) {
 		if (module && !module->isBypassed() && sw->svg) {
-			#ifndef METAMODULE
 			svgDraw(args.vg, sw->svg->handle);
-			#endif
 			uint32_t frameNum = getParamQuantity()->getValue();
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
 			/*
 			Programmer responsibility : make sure there are enough colors here for every switch state
 			or Rack will go bye-bye.
 			*/
-			#ifndef METAMODULE
 			fillSvgSolidColor(glyph->svg->handle, colors[frameNum]);
-			#endif
 			nvgSave(args.vg);
 			nvgTransform(args.vg, transformWidget->transform[0], transformWidget->transform[1], transformWidget->transform[2],
 				transformWidget->transform[3], transformWidget->transform[4], transformWidget->transform[5]);
-			#ifndef METAMODULE
 			svgDraw(args.vg, glyph->svg->handle);
-			#endif
 			nvgRestore(args.vg);
 			/*
 			Programmer responsibility: make sure there are enough halos here for  every switch state
@@ -489,23 +481,19 @@ void SanguineLightUpRGBSwitch::drawLayer(const DrawArgs& args, int layer) {
 		}
 		// For module browser
 		else if (!module && sw->svg) {
-			#ifndef METAMODULE
 			svgDraw(args.vg, sw->svg->handle);
 			fillSvgSolidColor(glyph->svg->handle, colors[0]);
-			#endif
 			nvgSave(args.vg);
 			nvgTransform(args.vg, transformWidget->transform[0], transformWidget->transform[1], transformWidget->transform[2],
 				transformWidget->transform[3], transformWidget->transform[4], transformWidget->transform[5]);
-			#ifndef METAMODULE
 			svgDraw(args.vg, glyph->svg->handle);
-			#endif
 			nvgRestore(args.vg);
 		}
 	}
 	Widget::drawLayer(args, layer);
 }
 
-void SanguineLightUpRGBSwitch::setBackground(const std::string fileName) {
+void SanguineLightUpRGBSwitch::setBackground(const std::string& fileName) {
 	sw->setSvg(Svg::load(asset::plugin(pluginInstance, fileName)));
 	sw->wrap();
 	box.size = sw->box.size;
@@ -515,7 +503,7 @@ void SanguineLightUpRGBSwitch::setBackground(const std::string fileName) {
 	shadow->box.pos = math::Vec(0.f, sw->box.size.y * 0.10f);
 }
 
-void SanguineLightUpRGBSwitch::setGlyph(const std::string fileName, const float offsetX, const float offsetY) {
+void SanguineLightUpRGBSwitch::setGlyph(const std::string& fileName, const float offsetX, const float offsetY) {
 	glyph->setSvg(Svg::load(asset::plugin(pluginInstance, fileName)));
 	glyph->wrap();
 	transformWidget->box.size = glyph->box.size;
@@ -575,11 +563,9 @@ NVGpaint SanguineMultiColoredShapedLight::getPaint(NVGcontext* vg, NSVGpaint* p,
 void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer) {
 	if (innerColor && svg) {
 		if (layer == 1) {
-			#ifndef METAMODULE
 			if (module && !module->isBypassed()) {
 				int shapeIndex = 0;
-				NSVGimage* mySvg = svg->handle;
-				NSVGimage* myGradient = svgGradient->handle;
+				const NSVGimage* mySvg = svg->handle;
 
 				// Iterate shape linked list
 				for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next, ++shapeIndex) {
@@ -653,6 +639,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 
 					// Fill shape with external gradient
 					if (svgGradient) {
+						NSVGimage* myGradient = svgGradient->handle;
 						if (myGradient->shapes->fill.type) {
 							switch (myGradient->shapes->fill.type) {
 							case NSVG_PAINT_COLOR: {
@@ -661,7 +648,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 							}
 							case NSVG_PAINT_LINEAR_GRADIENT:
 							case NSVG_PAINT_RADIAL_GRADIENT: {
-								if (innerColor && outerColor) {
+								if (outerColor) {
 									nvgFillPaint(args.vg, getPaint(args.vg, &myGradient->shapes->fill, *innerColor, *outerColor));
 								} else {
 									nvgFillColor(args.vg, *innerColor);
@@ -698,13 +685,12 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 					nvgRestore(args.vg);
 				}
 			}
-			#endif
 		}
 	}
 }
 
 // Decorations
-SanguineShapedLight::SanguineShapedLight(Module* theModule, const std::string shapeFileName, const float X, const float Y, bool createCentered) {
+SanguineShapedLight::SanguineShapedLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y, bool createCentered) {
 	module = theModule;
 
 	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
@@ -732,15 +718,13 @@ void SanguineShapedLight::drawLayer(const DrawArgs& args, int layer) {
 		}
 		if (module && !module->isBypassed()) {
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
-			#ifndef METAMODULE
 			rack::window::svgDraw(args.vg, sw->svg->handle);
-			#endif
 		}
 	}
 	Widget::drawLayer(args, layer);
 }
 
-SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string shapeFileName, const float X, const float Y,
+SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y,
 	bool createCentered, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
 	module = theModule;
 	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
@@ -753,7 +737,7 @@ SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::str
 	}
 }
 
-SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string shapeFileName, const float X, const float Y,
+SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y,
 	bool createCentered, unsigned int newLightColor) {
 	module = theModule;
 	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
@@ -774,12 +758,10 @@ void SanguineStaticRGBLight::draw(const DrawArgs& args) {
 			return;
 		}
 
-		#ifndef METAMODULE
-		NSVGimage* mySvg = sw->svg->handle;
+		const NSVGimage* mySvg = sw->svg->handle;
 
 		fillSvgSolidColor(mySvg, lightColor);
 		svgDraw(args.vg, sw->svg->handle);
-		#endif
 	}
 	// else do not call Widget::draw: it draws on the wrong layer.
 }
@@ -791,14 +773,12 @@ void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
 			return;
 		}
 		if (module && !module->isBypassed()) {
-			#ifndef METAMODULE
-			NSVGimage* mySvg = sw->svg->handle;
+			const NSVGimage* mySvg = sw->svg->handle;
 
 			fillSvgSolidColor(mySvg, lightColor);
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
 
 			svgDraw(args.vg, sw->svg->handle);
-			#endif
 		}
 	}
 	Widget::drawLayer(args, layer);
@@ -834,14 +814,14 @@ SanguineMutantsLogoLight::SanguineMutantsLogoLight(Module* theModule, const floa
 
 // Panels
 
-SanguinePanel::SanguinePanel(const std::string newBackgroundFileName, const std::string newForegroundFileName) {
+SanguinePanel::SanguinePanel(const std::string& newBackgroundFileName, const std::string& newForegroundFileName) {
 	setBackground(Svg::load(asset::plugin(pluginInstance, newBackgroundFileName)));
 	foreground = new SvgWidget();
 	foreground->setSvg(Svg::load(asset::plugin(pluginInstance, newForegroundFileName)));
 	fb->addChildBelow(foreground, panelBorder);
 }
 
-void SanguinePanel::addLayer(const std::string layerFileName) {
+void SanguinePanel::addLayer(const std::string& layerFileName) {
 	SvgWidget* layer = new SvgWidget();
 	layer->setSvg(Svg::load(asset::plugin(pluginInstance, layerFileName)));
 	fb->addChildBelow(layer, panelBorder);
@@ -915,22 +895,10 @@ void SanguineModuleWidget::makePanel() {
 	faceplateFileName += faceplateThemeStrings[faceplateTheme] + ".svg";
 
 	SanguinePanel* panel = new SanguinePanel(backplateFileName, faceplateFileName);
-	#ifdef METAMODULE
-	setPanel(panel);
-	SvgWidget* faceplate = new SvgWidget();
-	faceplate->setSvg(Svg::load(asset::plugin(pluginInstance, faceplateFileName)));
-	addChild(faceplate);
-	if (bHasCommon) {
-		SvgWidget* overlay = createWidget<SvgWidget>(Vec(0, 0));
- 		overlay->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/" + moduleName + "_common.svg")));
- 		addChild(overlay);
-	}
-	#else
 	if (bHasCommon) {
 		panel->addLayer("res/" + moduleName + "_common.svg");
 	}
 	setPanel(panel);
-	#endif
 }
 
 void SanguineModuleWidget::appendContextMenu(Menu* menu) {
@@ -1037,7 +1005,7 @@ void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolo
 	nvgGlobalCompositeOperation(args.vg, NVG_SOURCE_OVER);
 }
 
-void fillSvgSolidColor(NSVGimage* svgImage, const unsigned int fillColor) {
+void fillSvgSolidColor(const NSVGimage* svgImage, const unsigned int fillColor) {
 	for (NSVGshape* shape = svgImage->shapes; shape; shape = shape->next) {
 		shape->fill.color = fillColor;
 		shape->fill.type = NSVG_PAINT_COLOR;
