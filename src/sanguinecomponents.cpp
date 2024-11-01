@@ -328,8 +328,8 @@ SanguineTinyNumericDisplay::SanguineTinyNumericDisplay(uint32_t newCharacterCoun
 	kerning = 2.5f;
 };
 
-Sanguine96x32OLEDDisplay::Sanguine96x32OLEDDisplay(Module* theModule, const float X, const float Y, bool createCentered) {
-	fontName = "res/components/sanguinematrix.ttf";
+Sanguine96x32OLEDDisplay::Sanguine96x32OLEDDisplay(Module* theModule, const float X, const float Y, bool createCentered) :
+	fontName("res/components/sanguinematrix.ttf") {
 	box.size = mm2px(Vec(16.298f, 5.418f));
 
 	module = theModule;
@@ -493,7 +493,7 @@ void SanguineLightUpRGBSwitch::drawLayer(const DrawArgs& args, int layer) {
 	Widget::drawLayer(args, layer);
 }
 
-void SanguineLightUpRGBSwitch::setBackground(const std::string fileName) {
+void SanguineLightUpRGBSwitch::setBackground(const std::string& fileName) {
 	sw->setSvg(Svg::load(asset::plugin(pluginInstance, fileName)));
 	sw->wrap();
 	box.size = sw->box.size;
@@ -503,7 +503,7 @@ void SanguineLightUpRGBSwitch::setBackground(const std::string fileName) {
 	shadow->box.pos = math::Vec(0.f, sw->box.size.y * 0.10f);
 }
 
-void SanguineLightUpRGBSwitch::setGlyph(const std::string fileName, const float offsetX, const float offsetY) {
+void SanguineLightUpRGBSwitch::setGlyph(const std::string& fileName, const float offsetX, const float offsetY) {
 	glyph->setSvg(Svg::load(asset::plugin(pluginInstance, fileName)));
 	glyph->wrap();
 	transformWidget->box.size = glyph->box.size;
@@ -565,8 +565,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 		if (layer == 1) {
 			if (module && !module->isBypassed()) {
 				int shapeIndex = 0;
-				NSVGimage* mySvg = svg->handle;
-				NSVGimage* myGradient = svgGradient->handle;
+				const NSVGimage* mySvg = svg->handle;
 
 				// Iterate shape linked list
 				for (NSVGshape* shape = mySvg->shapes; shape; shape = shape->next, ++shapeIndex) {
@@ -640,6 +639,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 
 					// Fill shape with external gradient
 					if (svgGradient) {
+						NSVGimage* myGradient = svgGradient->handle;
 						if (myGradient->shapes->fill.type) {
 							switch (myGradient->shapes->fill.type) {
 							case NSVG_PAINT_COLOR: {
@@ -648,7 +648,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 							}
 							case NSVG_PAINT_LINEAR_GRADIENT:
 							case NSVG_PAINT_RADIAL_GRADIENT: {
-								if (innerColor && outerColor) {
+								if (outerColor) {
 									nvgFillPaint(args.vg, getPaint(args.vg, &myGradient->shapes->fill, *innerColor, *outerColor));
 								} else {
 									nvgFillColor(args.vg, *innerColor);
@@ -690,7 +690,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 }
 
 // Decorations
-SanguineShapedLight::SanguineShapedLight(Module* theModule, const std::string shapeFileName, const float X, const float Y, bool createCentered) {
+SanguineShapedLight::SanguineShapedLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y, bool createCentered) {
 	module = theModule;
 
 	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
@@ -724,7 +724,7 @@ void SanguineShapedLight::drawLayer(const DrawArgs& args, int layer) {
 	Widget::drawLayer(args, layer);
 }
 
-SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string shapeFileName, const float X, const float Y,
+SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y,
 	bool createCentered, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
 	module = theModule;
 	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
@@ -737,7 +737,7 @@ SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::str
 	}
 }
 
-SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string shapeFileName, const float X, const float Y,
+SanguineStaticRGBLight::SanguineStaticRGBLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y,
 	bool createCentered, unsigned int newLightColor) {
 	module = theModule;
 	setSvg(Svg::load(asset::plugin(pluginInstance, shapeFileName)));
@@ -758,7 +758,7 @@ void SanguineStaticRGBLight::draw(const DrawArgs& args) {
 			return;
 		}
 
-		NSVGimage* mySvg = sw->svg->handle;
+		const NSVGimage* mySvg = sw->svg->handle;
 
 		fillSvgSolidColor(mySvg, lightColor);
 		svgDraw(args.vg, sw->svg->handle);
@@ -773,7 +773,7 @@ void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
 			return;
 		}
 		if (module && !module->isBypassed()) {
-			NSVGimage* mySvg = sw->svg->handle;
+			const NSVGimage* mySvg = sw->svg->handle;
 
 			fillSvgSolidColor(mySvg, lightColor);
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
@@ -814,14 +814,14 @@ SanguineMutantsLogoLight::SanguineMutantsLogoLight(Module* theModule, const floa
 
 // Panels
 
-SanguinePanel::SanguinePanel(const std::string newBackgroundFileName, const std::string newForegroundFileName) {
+SanguinePanel::SanguinePanel(const std::string& newBackgroundFileName, const std::string& newForegroundFileName) {
 	setBackground(Svg::load(asset::plugin(pluginInstance, newBackgroundFileName)));
 	foreground = new SvgWidget();
 	foreground->setSvg(Svg::load(asset::plugin(pluginInstance, newForegroundFileName)));
 	fb->addChildBelow(foreground, panelBorder);
 }
 
-void SanguinePanel::addLayer(const std::string layerFileName) {
+void SanguinePanel::addLayer(const std::string& layerFileName) {
 	SvgWidget* layer = new SvgWidget();
 	layer->setSvg(Svg::load(asset::plugin(pluginInstance, layerFileName)));
 	fb->addChildBelow(layer, panelBorder);
@@ -1005,7 +1005,7 @@ void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolo
 	nvgGlobalCompositeOperation(args.vg, NVG_SOURCE_OVER);
 }
 
-void fillSvgSolidColor(NSVGimage* svgImage, const unsigned int fillColor) {
+void fillSvgSolidColor(const NSVGimage* svgImage, const unsigned int fillColor) {
 	for (NSVGshape* shape = svgImage->shapes; shape; shape = shape->next) {
 		shape->fill.color = fillColor;
 		shape->fill.type = NSVG_PAINT_COLOR;
