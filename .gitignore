@@ -8,3 +8,5 @@ dist
 *.so
 /.vscode
 /SanguineMonsters.code-workspace
+/sanguine_monsters_check-cppcheck-build-dir
+/sanguine_monsters_check.cppcheck
