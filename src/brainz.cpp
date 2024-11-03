@@ -137,7 +137,7 @@ struct Brainz : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
-	// TODO!!! This needs more constants!
+	// TODO: This needs more constants!
 
 	Brainz() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -741,7 +741,7 @@ struct Brainz : SanguineModule {
 	}
 
 	void killVoltages() {
-		// TODO!!! This is probably wrong.
+		// TODO: This is probably wrong.
 		for (int input = 0; input < INPUTS_COUNT; ++input) {
 			outputs[OUTPUT_METRONOME + input].setVoltage(0);
 		}
