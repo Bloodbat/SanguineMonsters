@@ -47,7 +47,7 @@ struct Fortuna : SanguineModule {
     RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
     RollModes rollModes[kMaxModuleSections] = { ROLL_DIRECT, ROLL_DIRECT };
-    bool bOutputsConnected[OUTPUTS_COUNT];
+    bool bOutputsConnected[OUTPUTS_COUNT] = {};
 
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
