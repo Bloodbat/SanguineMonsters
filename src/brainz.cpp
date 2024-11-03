@@ -80,7 +80,7 @@ struct Brainz : SanguineModule {
 		{0.f, 1.f, 0.f},
 		{1.f, 1.f, 0.f},
 		{0.f, 0.f, 1.f},
-		{1.f, 0.0f, 0.f},
+		{1.f, 0.f, 0.f},
 	};
 
 	const RGBLightColor stepDirectionsLightColors[DIRECTIONS_COUNT]{
@@ -602,13 +602,13 @@ struct Brainz : SanguineModule {
 			for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
 				if (outputs[OUTPUT_OUT_1 + trigger].isConnected()) {
 					pgOutTriggers[trigger].trigger();
-					outputs[OUTPUT_OUT_1 + trigger].setVoltage(pgOutTriggers[trigger].process(1.0f / sampleTime) ? 10.f : 0.f);
+					outputs[OUTPUT_OUT_1 + trigger].setVoltage(pgOutTriggers[trigger].process(1.f / sampleTime) ? 10.f : 0.f);
 				}
 			}
 			bTriggersSent = true;
 		} else {
 			for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
-				bTriggersDone[trigger] = !pgOutTriggers[trigger].process(1.0f / sampleTime);
+				bTriggersDone[trigger] = !pgOutTriggers[trigger].process(1.f / sampleTime);
 				if (outputs[OUTPUT_OUT_1 + trigger].isConnected()) {
 					outputs[OUTPUT_OUT_1 + trigger].setVoltage(bTriggersDone[trigger] ? 0.f : 10.f);
 				}
@@ -653,11 +653,11 @@ struct Brainz : SanguineModule {
 		if (stepState < STEP_STATE_TRIGGER_SENT) {
 			if (outputs[output].isConnected()) {
 				pgTrigger.trigger();
-				outputs[output].setVoltage(pgTrigger.process(1.0f / sampleTime) ? 10.f : 0.f);
+				outputs[output].setVoltage(pgTrigger.process(1.f / sampleTime) ? 10.f : 0.f);
 			}
 			stepState = STEP_STATE_TRIGGER_SENT;
 		} else {
-			bStepTrigger = pgTrigger.process(1.0f / sampleTime);
+			bStepTrigger = pgTrigger.process(1.f / sampleTime);
 			if (outputs[output].isConnected()) {
 				outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
 			}
@@ -762,12 +762,12 @@ struct Brainz : SanguineModule {
 			if (elapsedTime >= currentDelayTime) {
 				if (outputs[output].isConnected()) {
 					pgTrigger.trigger();
-					outputs[output].setVoltage(pgTrigger.process(1.0f / sampleTime) ? 10.f : 0.f);
+					outputs[output].setVoltage(pgTrigger.process(1.f / sampleTime) ? 10.f : 0.f);
 				}
 				stepState = STEP_STATE_TRIGGER_SENT;
 			}
 		} else {
-			bStepTrigger = pgTrigger.process(1.0f / sampleTime);
+			bStepTrigger = pgTrigger.process(1.f / sampleTime);
 			if (outputs[output].isConnected()) {
 				outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
 			}
@@ -797,10 +797,10 @@ struct Brainz : SanguineModule {
 	}
 
 	void handleStepLights(float sampleTime) {
-		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.0f : 0.f, sampleTime);
-		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.0f : 0.f, sampleTime);
-		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.0f : 0.f, sampleTime);
-		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.0f : 0.f, sampleTime);
+		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.f : 0.f, sampleTime);
 	}
 };
 
