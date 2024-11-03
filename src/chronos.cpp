@@ -109,7 +109,7 @@ struct Chronos : SanguineModule {
 
     struct FrequencyParam : ParamQuantity {
         float getDisplayValue() override {
-            Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
+            const Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
             if (paramId >= PARAM_FREQUENCY_1 && paramId <= PARAM_FREQUENCY_4) {
                 switch (paramId)
                 {
