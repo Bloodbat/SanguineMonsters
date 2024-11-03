@@ -243,7 +243,7 @@ struct Bukavac : SanguineModule {
 		outputs[OUTPUT_PERLIN_NOISE_MIX].setVoltage(noiseOutMix);
 	}
 
-	float getPerlinEffectiveValue(float& inputVoltage, float& baseValue, float& voltagePercent) {
+	float getPerlinEffectiveValue(const float& inputVoltage, const float& baseValue, const float& voltagePercent) {
 		return (inputVoltage * voltagePercent) + (baseValue * (1.0 - voltagePercent));
 	}
 };
