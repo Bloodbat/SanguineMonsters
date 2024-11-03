@@ -68,7 +68,7 @@ struct SuperSwitch81 : SanguineModule {
 	bool bOneShotDone = false;
 	bool bResetToFirstStep = true;
 	int inChannelCount = 0;
-	int randomNum;
+	int randomNum = 0;
 	int selectedIn = 0;
 	int stepCount = kMaxSteps;
 	int stepsDone = 0;
