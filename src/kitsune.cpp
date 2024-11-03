@@ -115,7 +115,7 @@ struct Kitsune : SanguineModule {
 					float rescaledLight = math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f);
 					lights[currentLight + 0].setBrightnessSmooth(-rescaledLight, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(0.0f, sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
 
 					if (bHasExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
