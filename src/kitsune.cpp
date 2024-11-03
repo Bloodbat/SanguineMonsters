@@ -86,15 +86,9 @@ struct Kitsune : SanguineModule {
 			int channelCount = inputs[INPUT_VOLTAGE1 + channelSource].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + channelSource].getChannels() : 1;
 
 			for (int channel = 0; channel < channelCount; channel += 4) {
-				float_4 voltages = {};
-				float_4 gains = {};
-				float_4 offsets = {};
-
-				voltages = inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel);
-
-				gains = params[PARAM_ATTENUATOR1 + section].getValue();
-
-				offsets = params[PARAM_OFFSET1 + section].getValue();
+				float_4 voltages = inputs[INPUT_VOLTAGE1 + channelSource].getVoltageSimd<float_4>(channel);
+				float_4 gains = params[PARAM_ATTENUATOR1 + section].getValue();
+				float_4 offsets = params[PARAM_OFFSET1 + section].getValue();
 
 				if (bHasExpander) {
 					if (denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).isConnected()) {
