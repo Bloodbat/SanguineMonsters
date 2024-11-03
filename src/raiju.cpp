@@ -32,7 +32,6 @@ struct Raiju : SanguineModule {
 	static const int kClockDivision = 1024;
 
 	float voltages[kVoltagesCount];
-	float outputVoltages[PORT_MAX_CHANNELS];
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
@@ -100,6 +99,7 @@ struct Raiju : SanguineModule {
 
 				if (outputs[OUTPUT_VOLTAGE + voltage].isConnected()) {
 					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
+					float outputVoltages[PORT_MAX_CHANNELS];
 					std::fill(outputVoltages, outputVoltages + PORT_MAX_CHANNELS, voltages[voltage]);
 					outputs[OUTPUT_VOLTAGE + voltage].writeVoltages(outputVoltages);
 				}
