@@ -32,9 +32,9 @@ struct DollyX : SanguineModule {
 
 	int cloneCounts[kSUBMODULES];
 
-	bool bCvConnected[kSUBMODULES];
-	bool bInputConnected[kSUBMODULES];
-	bool bOutputConnected[kSUBMODULES];
+	bool bCvConnected[kSUBMODULES] = {};
+	bool bInputConnected[kSUBMODULES] = {};
+	bool bOutputConnected[kSUBMODULES] = {};
 
 	dsp::ClockDivider clockDivider;
 
@@ -52,6 +52,8 @@ struct DollyX : SanguineModule {
 			configInput(INPUT_MONO_IN1 + submodule, string::f("Mono %d", componentOffset));
 
 			configInput(INPUT_CHANNELS1_CV + submodule, string::f("Channels CV %d", componentOffset));
+
+			cloneCounts[submodule] = PORT_MAX_CHANNELS;
 		}
 
 		clockDivider.setDivision(kClockDivision);
