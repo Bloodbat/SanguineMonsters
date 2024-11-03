@@ -32,7 +32,7 @@ struct Raiju : SanguineModule {
 	static const int kClockDivision = 1024;
 
 	float voltages[kVoltagesCount];
-	float outputVoltages[16];
+	float outputVoltages[PORT_MAX_CHANNELS];
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
@@ -43,7 +43,7 @@ struct Raiju : SanguineModule {
 	Raiju() {
 		config(PARAMS_COUNT, 0, OUTPUTS_COUNT, 0);
 
-		configParam(PARAM_CHANNEL_COUNT, 1.0f, 16.0f, 1.0f, "Polyphonic output channels", "", 0.0f, 1.0f, 0.0f);
+		configParam(PARAM_CHANNEL_COUNT, 1.f, 16.f, 1.f, "Polyphonic output channels", "", 0.f, 1.f, 0.f);
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
 
 		for (int component = 0; component < kVoltagesCount; ++component) {
@@ -100,7 +100,7 @@ struct Raiju : SanguineModule {
 
 				if (outputs[OUTPUT_VOLTAGE + voltage].isConnected()) {
 					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
-					std::fill(outputVoltages, outputVoltages + 16, voltages[voltage]);
+					std::fill(outputVoltages, outputVoltages + PORT_MAX_CHANNELS, voltages[voltage]);
 					outputs[OUTPUT_VOLTAGE + voltage].writeVoltages(outputVoltages);
 				}
 			}
