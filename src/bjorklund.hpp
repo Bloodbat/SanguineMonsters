@@ -1,6 +1,6 @@
 #pragma once
 
-// Bjorklunds algorithm for euclidean sequences
+// Bjorklund's algorithm for euclidean sequences
 //
 // Modified GIST from https://gist.github.com/unohee/d4f32b3222b42de84a5f
 
@@ -62,9 +62,9 @@ struct Bjorklund {
 		buildSeq(index); //place one's and zero's
 		reverse(sequence.begin(), sequence.end());
 
-		// Position correction. some of result of algorithm is one step rotated.
-		int zeroCount = 0;
+		// Position correction. some of result of algorithm is one step rotated.		
 		if (sequence.at(0) != 1) {
+			int zeroCount = 0;
 			do {
 				++zeroCount;
 			} while (sequence.at(zeroCount) == 0);
