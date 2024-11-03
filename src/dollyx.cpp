@@ -27,21 +27,21 @@ struct DollyX : SanguineModule {
 		OUTPUTS_COUNT
 	};
 
-	static const int kSUBMODULES = 2;
+	static const int kSubmodules = 2;
 	static const int kClockDivision = 64;
 
-	int cloneCounts[kSUBMODULES];
+	int cloneCounts[kSubmodules];
 
-	bool bCvConnected[kSUBMODULES] = {};
-	bool bInputConnected[kSUBMODULES] = {};
-	bool bOutputConnected[kSUBMODULES] = {};
+	bool bCvConnected[kSubmodules] = {};
+	bool bInputConnected[kSubmodules] = {};
+	bool bOutputConnected[kSubmodules] = {};
 
 	dsp::ClockDivider clockDivider;
 
 	DollyX() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
-		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			int componentOffset = submodule + 1;
 
 			configParam(PARAM_CHANNELS1 + submodule, 1.0f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
@@ -66,7 +66,7 @@ struct DollyX : SanguineModule {
 			updateCloneCounts();
 		}
 
-		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			float_4 voltages[4] = {};
 
 			if (bOutputConnected[submodule]) {
@@ -95,20 +95,20 @@ struct DollyX : SanguineModule {
 	}
 
 	void updateCloneCounts() {
-		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			cloneCounts[submodule] = getChannelCloneCount(submodule);
 			outputs[OUTPUT_POLYOUT_1 + submodule].setChannels(cloneCounts[submodule]);
 		}
 	}
 
 	void onReset() override {
-		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			cloneCounts[submodule] = PORT_MAX_CHANNELS;
 		}
 	}
 
 	void checkConnections() {
-		for (int submodule = 0; submodule < kSUBMODULES; ++submodule) {
+		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			bCvConnected[submodule] = inputs[INPUT_CHANNELS1_CV + submodule].isConnected();
 			bInputConnected[submodule] = inputs[INPUT_MONO_IN1 + submodule].isConnected();
 			bOutputConnected[submodule] = outputs[OUTPUT_POLYOUT_1 + submodule].isConnected();
