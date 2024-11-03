@@ -4,6 +4,8 @@ A collection of useful modules.
 
 You can find the manual [here](https://media.githubusercontent.com/media/Bloodbat/SanguineModulesManuals/refs/heads/main/monsters_manual.pdf).
 
+You can find the Nightly builds [here](https://github.com/Bloodbat/SanguineMonsters/releases/tag/Nightly).
+
 ## Modules
 
 ![alt text](pics/monster_modules.png)
