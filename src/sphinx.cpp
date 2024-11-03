@@ -448,7 +448,7 @@ struct Sphinx : SanguineModule {
 static const std::array<bool, kMaxSphinxLength / 2> browserSequence = { true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false };
 
 struct SphinxDisplay : TransparentWidget {
-	Sphinx* module;
+	Sphinx* module = nullptr;
 	std::array<bool, kMaxSphinxLength * 2>* sequence = nullptr;
 	std::array<bool, kMaxSphinxLength * 2>* accents = nullptr;
 	int* currentStep = nullptr;
