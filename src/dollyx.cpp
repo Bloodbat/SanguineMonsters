@@ -44,7 +44,7 @@ struct DollyX : SanguineModule {
 		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			int componentOffset = submodule + 1;
 
-			configParam(PARAM_CHANNELS1 + submodule, 1.0f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
+			configParam(PARAM_CHANNELS1 + submodule, 1.f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
 			paramQuantities[PARAM_CHANNELS1]->snapEnabled = true;
 
 			configOutput(OUTPUT_POLYOUT_1 + submodule, string::f("Cloned %d", componentOffset));
