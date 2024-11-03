@@ -97,11 +97,10 @@ struct Oraculus : SanguineModule {
 	};
 
 	void doRandomTrigger() {
-		int randomNum;
 		if (!bNoRepeats) {
 			selectedChannel = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
 		} else {
-			randomNum = selectedChannel;
+			int randomNum = selectedChannel;
 			while (randomNum == selectedChannel)
 				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
 			selectedChannel = randomNum;
@@ -187,9 +186,8 @@ struct Oraculus : SanguineModule {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 		const float sampleTime = args.sampleTime * kClockUpdateFrequency;
 
-		int currentLight;
 		for (int light = 0; light < PORT_MAX_CHANNELS; ++light) {
-			currentLight = light * 3;
+			int currentLight = light * 3;
 			if (light == finalChannel) {
 				lights[currentLight + 0].setBrightnessSmooth(0.59f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
