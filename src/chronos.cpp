@@ -532,6 +532,10 @@ struct ChronosWidget : SanguineModuleWidget {
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(81.72, 118.651), module, Chronos::OUTPUT_TRIANGLE_4));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(93.161, 118.651), module, Chronos::OUTPUT_SAW_4));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(104.601, 118.651), module, Chronos::OUTPUT_SQUARE_4));
+
+        SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 55.88, 117.18);
+        addChild(bloodLight);
+
     }
 
     void appendContextMenu(Menu* menu) override {
