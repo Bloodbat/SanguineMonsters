@@ -4,9 +4,9 @@ struct GradientColors {
 };
 
 static const std::vector<GradientColors> moonColors{
-    { nvgRGB(247, 187, 187), nvgRGB(223, 33, 33) },
-    { nvgRGB(217, 217, 217), nvgRGB(128, 128, 128) },
-    { nvgRGB(187, 214, 247), nvgRGB(22, 117, 234) }
+    { nvgRGB(246, 228, 228), nvgRGB(242, 160, 160) },
+    { nvgRGB(228, 228, 228), nvgRGB(161, 161, 161) },
+    { nvgRGB(244, 244, 250), nvgRGB(140, 195, 238) }
 };
 
 static const std::vector<std::string> dungeonModeLabels{
