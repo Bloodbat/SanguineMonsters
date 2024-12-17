@@ -55,6 +55,8 @@ struct Dungeon : SanguineModule {
 
 	bool bStoreVoltageInPatch = true;
 
+	HaloType haloType = HALO_CIRCULAR;
+
 	std::string modeLabel = dungeonModeLabels[0];
 
 	dsp::ClockDivider clockDivider;
@@ -235,6 +237,7 @@ struct Dungeon : SanguineModule {
 		if (bStoreVoltageInPatch) {
 			json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
 			json_object_set_new(rootJ, "heldVoltage", json_real(engine.voltage));
+			json_object_set_new(rootJ, "haloType", json_integer(static_cast<int>(haloType)));
 		}
 
 		return rootJ;
@@ -254,6 +257,12 @@ struct Dungeon : SanguineModule {
 					outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
 				}
 			}
+		}
+
+		json_t* haloTypeJ = json_object_get(rootJ, "haloType");
+
+		if (haloTypeJ) {
+			haloType = static_cast<HaloType>(json_integer_value(haloTypeJ));
 		}
 	}
 };
@@ -277,11 +286,13 @@ struct DungeonWidget : SanguineModuleWidget {
 		moonLight->module = module;
 		moonLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_light.svg")));
 		moonLight->svgGradient = Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_gradient.svg"));
+		moonLight->haloRadiusFactor = 2.1f;
 		dungeonFrameBuffer->addChild(moonLight);
 
 		if (module) {
 			moonLight->innerColor = &module->innerMoon;
 			moonLight->outerColor = &module->outerMoon;
+			moonLight->haloType = &module->haloType;
 		}
 
 		addParam(createParamCentered<CKD6>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::PARAM_TRIGGER));
@@ -332,9 +343,19 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		menu->addChild(new MenuSeparator);
 
-		menu->addChild(createCheckMenuItem("Store held voltage in patch", "",
-			[=]() {return module->bStoreVoltageInPatch; },
-			[=]() {module->bStoreVoltageInPatch = !module->bStoreVoltageInPatch; }));
+		menu->addChild(createSubmenuItem("Options", "",
+			[=](Menu* menu) {
+				menu->addChild(createCheckMenuItem("Store held voltage in patch", "",
+					[=]() {return module->bStoreVoltageInPatch; },
+					[=]() {module->bStoreVoltageInPatch = !module->bStoreVoltageInPatch; }));
+
+				menu->addChild(new MenuSeparator);
+
+				menu->addChild(createCheckMenuItem("Draw moon halo", "",
+					[=]() { return module->haloType == HALO_CIRCULAR ? true : false; },
+					[=]() { module->haloType == HALO_CIRCULAR ? module->haloType = HALO_NONE : module->haloType = HALO_CIRCULAR; }));
+			}
+		));
 	}
 };
 

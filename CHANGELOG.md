@@ -14,6 +14,8 @@
 
 - Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
 
+- Dungeon: optional moon halo (on by default).
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
@@ -25,6 +27,8 @@
 - Performance tweaks.
 
 - Dim LED button's light intensity a little.
+
+- Dungeon: mellower moon light colors.
 
 
 ---
