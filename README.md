@@ -10,66 +10,84 @@ You can find the Nightly builds [here](https://github.com/Bloodbat/SanguineMonst
 
 ![alt text](pics/monster_modules.png)
 
-## Aion
+Base modules are listed in alphabetical order, with their alternative firmwares and expanders immediately following.
 
-A quad timer/counter that can be triggered externally or has an internal seconds clock.
+- ### Aion
 
-## Alchemist
+  A quad timer/counter that can be triggered externally or has an internal seconds clock.
 
-A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
+- ### Alchemist
 
-## Brainz
+  A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
 
-A utility to control multiple recorders and ease synchronizing their outputs in post.
+  - ### Alembic
 
-## Bukavac
+    An expander for Alchemist that provides individual post-mix channel outputs and gain CV control.
 
-A noise generator with a plethora of colors... and Perlin.
+- ### Brainz
 
-## Dolly-X
+  A utility to control multiple recorders and ease synchronizing their outputs in post.
 
-A monophonic to polyphonic channel cloner.
+- ### Bukavac
 
-## Dungeon
+  A noise generator with a plethora of colors... and Perlin.
 
-A sample and hold; track and hold; hold and track, and white noise source.
+- ### Chronos
 
-## Gegenees
+  Polyphonic collection of four low-frequency oscillators.
 
-A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
+- ### Dolly-X
 
-## Hydra
+  A monophonic to polyphonic channel cloner.
 
-An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
+- ### Dungeon
 
-## Kitsune
+  A sample and hold; track and hold; hold and track, and white noise source.
 
-An attenuverter, offsetter and inverter with four channels.
+- ### Fortuna
 
-## Medusa
+  Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
 
-A normalled, polyphonic mega multiple with 32 inputs and outputs.
+- ### Gegenees
 
-# Monsters Blank
+  A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
-Put a vampire and the Monsters logo in your rack!
+- ### Hydra
 
-## Oraculus
+  An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
-A polyphonic to monophonic switch.
+- ### Kitsune
 
-## Oubliette
+  An attenuverter, offsetter and inverter with four channels.
 
-A null sink and cable parking for your wires. Also works as a null voltage source.
+  - ### Denki
 
-## Raiju
+  Polyphonic expander for Kitsune: adds Gain and Offset CV control.
 
-A fixed voltages source.
+- ### Medusa
 
-## Sphinx
+  A normalled, polyphonic mega multiple with 32 inputs and outputs.
 
-A Euclidean sequencer.
+- ### Monsters Blank
 
-## Werewolf
+  Put a vampire and the Monsters logo in your rack!
 
-A polyphonic, stereo, dirty distortion.
+- ### Oraculus
+
+  A polyphonic to monophonic switch.
+
+- ### Oubliette
+
+  A null sink and cable parking for your wires. Also works as a null voltage source.
+
+- ### Raiju
+
+  A fixed voltages source.
+
+- ### Sphinx
+
+  A Euclidean sequencer.
+
+- ### Werewolf
+
+  A polyphonic, stereo, dirty distortion.
