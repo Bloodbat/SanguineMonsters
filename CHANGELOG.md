@@ -6,6 +6,10 @@
 
 - Polyphonic expander for Kitsune: adds Gain and Offset CV control.
 
+### Chronos
+
+- Polyphonic collection of four low-frequency oscillators.
+
 ### Fortuna
 
 - Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
