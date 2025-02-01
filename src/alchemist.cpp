@@ -185,7 +185,7 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.5f : 0.f, sampleTime);
 		}
 	}
 };
