@@ -190,6 +190,22 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.5f : 0.f, sampleTime);
 		}
 	}
+
+	void onBypass(const BypassEvent& e) override {
+		if (bHasExpander) {
+			Module* alembicExpander = getRightExpander().module;
+			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.f);
+		}
+		Module::onBypass(e);
+	}
+
+	void onUnBypass(const UnBypassEvent& e) override {
+		if (bHasExpander) {
+			Module* alembicExpander = getRightExpander().module;
+			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.5f);
+		}
+		Module::onUnBypass(e);
+	}
 };
 
 struct AlchemistWidget : SanguineModuleWidget {
