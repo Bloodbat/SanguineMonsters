@@ -46,6 +46,8 @@ struct Kitsune : SanguineModule {
 	dsp::ClockDivider lightsDivider;
 	const int kLightDivisor = 64;
 
+	bool bHasExpander = false;
+
 	Kitsune() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
@@ -74,7 +76,7 @@ struct Kitsune : SanguineModule {
 
 		Module* denkiExpander = getRightExpander().module;
 
-		bool bHasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki);
+		bHasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki && !denkiExpander->isBypassed());
 
 		for (int section = 0; section < kMaxSections; ++section) {
 			int channelSource = section;
