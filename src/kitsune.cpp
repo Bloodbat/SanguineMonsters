@@ -179,7 +179,7 @@ struct Kitsune : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 1.f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.5f : 0.f, sampleTime);
 		}
 	}
 };
