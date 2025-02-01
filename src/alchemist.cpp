@@ -43,6 +43,8 @@ struct Alchemist : SanguineModule {
 	bool bChannelMuted[PORT_MAX_CHANNELS] = {};
 	bool bChannelSoloed[PORT_MAX_CHANNELS] = {};
 
+	bool bHasExpander = false;
+
 	dsp::ClockDivider lightsDivider;
 	dsp::VuMeter2 vuMeterMix;
 	dsp::VuMeter2 vuMetersGain[PORT_MAX_CHANNELS];
@@ -83,7 +85,7 @@ struct Alchemist : SanguineModule {
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
-		bool bHasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic);
+		bHasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
 
 		if (bIsLightsTurn) {
 			soloCount = 0;
