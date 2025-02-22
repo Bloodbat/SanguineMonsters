@@ -8,7 +8,7 @@
   "sourceUrl" : "https://github.com/Bloodbat/SanguineMonsters",
   "description" : "Monster modules for your everyday needs.",
   "changelogUrl" : "https://github.com/Bloodbat/SanguineMonsters/blob/main/CHANGELOG.md",
-  "manualUrl" : "https://raw.githubusercontent.com/Bloodbat/SanguineModulesManuals/main/monsters_manual.pdf",
+  "manualUrl" : "https://media.githubusercontent.com/media/Bloodbat/SanguineModulesManuals/refs/heads/main/monsters_manual.pdf",
   "modules" : [
     {
       "slug" : "Sanguine-SuperSwitch81",

@@ -2,7 +2,7 @@
 
 A collection of useful modules.
 
-You can find the manual [here](https://raw.githubusercontent.com/Bloodbat/SanguineModulesManuals/main/monsters_manual.pdf).
+You can find the manual [here](https://media.githubusercontent.com/media/Bloodbat/SanguineModulesManuals/refs/heads/main/monsters_manual.pdf).
 
 ## Modules
 
