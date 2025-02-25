@@ -305,7 +305,7 @@ struct SuperSwitch81 : SanguineModule {
 };
 
 struct SuperSwitch81Widget : SanguineModuleWidget {
-	SuperSwitch81Widget(SuperSwitch81* module) {
+	explicit SuperSwitch81Widget(SuperSwitch81* module) {
 		setModule(module);
 
 		moduleName = "switch8-1";

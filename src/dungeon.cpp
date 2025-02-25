@@ -268,7 +268,7 @@ struct Dungeon : SanguineModule {
 };
 
 struct DungeonWidget : SanguineModuleWidget {
-	DungeonWidget(Dungeon* module) {
+	explicit DungeonWidget(Dungeon* module) {
 		setModule(module);
 
 		moduleName = "dungeon";
