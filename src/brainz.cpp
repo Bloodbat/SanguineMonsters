@@ -841,7 +841,7 @@ struct BlueQuarterNoteLight : SanguineStaticRGBLight {
 };
 
 struct BrainzWidget : SanguineModuleWidget {
-	BrainzWidget(Brainz* module) {
+	explicit BrainzWidget(Brainz* module) {
 		setModule(module);
 
 		moduleName = "brainz";

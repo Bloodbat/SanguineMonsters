@@ -201,7 +201,7 @@ struct Kitsune : SanguineModule {
 };
 
 struct KitsuneWidget : SanguineModuleWidget {
-	KitsuneWidget(Kitsune* module) {
+	explicit KitsuneWidget(Kitsune* module) {
 		setModule(module);
 
 		moduleName = "kitsune";
