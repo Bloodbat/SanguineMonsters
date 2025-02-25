@@ -138,7 +138,7 @@ struct Raiju : SanguineModule {
 };
 
 struct RaijuWidget : SanguineModuleWidget {
-	RaijuWidget(Raiju* module) {
+	explicit RaijuWidget(Raiju* module) {
 		setModule(module);
 
 		moduleName = "raiju";
