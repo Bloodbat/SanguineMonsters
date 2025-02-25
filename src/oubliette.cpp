@@ -35,7 +35,7 @@ struct Oubliette : SanguineModule {
 };
 
 struct OublietteWidget : SanguineModuleWidget {
-	OublietteWidget(Oubliette* module) {
+	explicit OublietteWidget(Oubliette* module) {
 		setModule(module);
 
 		moduleName = "oubliette";
