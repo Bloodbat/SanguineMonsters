@@ -21,7 +21,7 @@ void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 }
 
 struct DenkiWidget : SanguineModuleWidget {
-	DenkiWidget(Denki* module) {
+	explicit DenkiWidget(Denki* module) {
 		setModule(module);
 
 		moduleName = "denki";

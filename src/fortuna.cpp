@@ -183,7 +183,7 @@ struct Fortuna : SanguineModule {
 };
 
 struct FortunaWidget : SanguineModuleWidget {
-    FortunaWidget(Fortuna* module) {
+    explicit FortunaWidget(Fortuna* module) {
         setModule(module);
 
         moduleName = "fortuna";

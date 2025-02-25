@@ -206,7 +206,7 @@ struct Oraculus : SanguineModule {
 };
 
 struct OraculusWidget : SanguineModuleWidget {
-	OraculusWidget(Oraculus* module) {
+	explicit OraculusWidget(Oraculus* module) {
 		setModule(module);
 
 		moduleName = "oraculus";

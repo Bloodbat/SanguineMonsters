@@ -117,7 +117,7 @@ struct DollyX : SanguineModule {
 };
 
 struct DollyXWidget : SanguineModuleWidget {
-	DollyXWidget(DollyX* module) {
+	explicit DollyXWidget(DollyX* module) {
 		setModule(module);
 
 		moduleName = "dolly-x";

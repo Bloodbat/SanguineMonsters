@@ -369,7 +369,7 @@ struct Chronos : SanguineModule {
 };
 
 struct ChronosWidget : SanguineModuleWidget {
-    ChronosWidget(Chronos* module) {
+    explicit ChronosWidget(Chronos* module) {
         setModule(module);
 
         moduleName = "chronos";

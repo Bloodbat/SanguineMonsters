@@ -229,7 +229,7 @@ struct Aion : SanguineModule {
 };
 
 struct AionWidget : SanguineModuleWidget {
-	AionWidget(Aion* module) {
+	explicit AionWidget(Aion* module) {
 		setModule(module);
 
 		moduleName = "aion";

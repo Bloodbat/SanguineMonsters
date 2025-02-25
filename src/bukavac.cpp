@@ -259,7 +259,7 @@ struct SanguineCirclePortLight : SanguineStaticRGBLight {
 };
 
 struct BukavacWidget : SanguineModuleWidget {
-	BukavacWidget(Bukavac* module) {
+	explicit BukavacWidget(Bukavac* module) {
 		setModule(module);
 
 		moduleName = "bukavac";

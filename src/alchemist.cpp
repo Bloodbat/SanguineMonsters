@@ -209,7 +209,7 @@ struct Alchemist : SanguineModule {
 };
 
 struct AlchemistWidget : SanguineModuleWidget {
-	AlchemistWidget(Alchemist* module) {
+	explicit AlchemistWidget(Alchemist* module) {
 		setModule(module);
 
 		moduleName = "alchemist";

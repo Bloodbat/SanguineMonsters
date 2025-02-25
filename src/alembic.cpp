@@ -24,7 +24,7 @@ void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 }
 
 struct AlembicWidget : SanguineModuleWidget {
-	AlembicWidget(Alembic* module) {
+	explicit AlembicWidget(Alembic* module) {
 		setModule(module);
 
 		moduleName = "alembic";

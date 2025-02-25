@@ -92,7 +92,7 @@ struct Medusa : SanguineModule {
 };
 
 struct MedusaWidget : SanguineModuleWidget {
-	MedusaWidget(Medusa* module) {
+	explicit MedusaWidget(Medusa* module) {
 		setModule(module);
 
 		moduleName = "medusa";
