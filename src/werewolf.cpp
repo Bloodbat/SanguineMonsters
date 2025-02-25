@@ -233,7 +233,7 @@ struct Werewolf : SanguineModule {
 };
 
 struct WerewolfWidget : SanguineModuleWidget {
-	WerewolfWidget(Werewolf* module) {
+	explicit WerewolfWidget(Werewolf* module) {
 		setModule(module);
 
 		moduleName = "werewolf";
