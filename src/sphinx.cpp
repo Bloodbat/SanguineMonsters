@@ -712,7 +712,7 @@ struct TL1105Latch : TL1105 {
 };
 
 struct SphinxWidget : SanguineModuleWidget {
-	SphinxWidget(Sphinx* module) {
+	explicit SphinxWidget(Sphinx* module) {
 		setModule(module);
 
 		moduleName = "sphinx";
