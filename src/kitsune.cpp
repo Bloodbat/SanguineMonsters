@@ -276,6 +276,22 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(44.998, 118.422), module, Kitsune::OUTPUT_VOLTAGE4));
 	}
+
+	void appendContextMenu(Menu* menu) override {
+		SanguineModuleWidget::appendContextMenu(menu);
+
+		Kitsune* kitsune = dynamic_cast<Kitsune*>(this->module);
+
+		menu->addChild(new MenuSeparator);
+		const Module* expander = kitsune->rightExpander.module;
+		if (expander && expander->model == modelDenki) {
+			menu->addChild(createMenuLabel("Denki expander already connected"));
+		} else {
+			menu->addChild(createMenuItem("Add Denki expander", "", [=]() {
+				kitsune->addExpander(modelDenki, this);
+				}));
+		}
+	}
 };
 
 Model* modelKitsune = createModel<Kitsune, KitsuneWidget>("Sanguine-Kitsune");
