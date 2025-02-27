@@ -14,7 +14,7 @@ void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 	Module* kitsuneMaster = getLeftExpander().module;
 	bool bHasMaster = (kitsuneMaster && kitsuneMaster->getModel() == modelKitsune);
 	if (bHasMaster) {
-		lights[LIGHT_MASTER_MODULE].setBrightness(0.5f);
+		lights[LIGHT_MASTER_MODULE].setBrightness(0.75f);
 	} else {
 		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 	}

@@ -187,7 +187,7 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.5f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.75f : 0.f, sampleTime);
 		}
 	}
 
@@ -202,7 +202,7 @@ struct Alchemist : SanguineModule {
 	void onUnBypass(const UnBypassEvent& e) override {
 		if (bHasExpander) {
 			Module* alembicExpander = getRightExpander().module;
-			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.5f);
+			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.75f);
 		}
 		Module::onUnBypass(e);
 	}
