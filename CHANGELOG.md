@@ -34,6 +34,8 @@
 
 - Dungeon: mellower moon light colors.
 
+- Kitsune: prettify faceplate.
+
 
 ---
 
