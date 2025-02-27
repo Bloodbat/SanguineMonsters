@@ -281,6 +281,22 @@ struct AlchemistWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(95.442, 116.769), module, Alchemist::OUTPUT_POLYPHONIC_MIX));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(108.963, 116.769), module, Alchemist::OUTPUT_MONO_MIX));
 	}
+
+	void appendContextMenu(Menu* menu) override {
+		SanguineModuleWidget::appendContextMenu(menu);
+
+		Alchemist* alchemist = dynamic_cast<Alchemist*>(this->module);
+
+		menu->addChild(new MenuSeparator());
+		const Module* expander = alchemist->rightExpander.module;
+		if (expander && expander->model == modelAlembic) {
+			menu->addChild(createMenuLabel("Alembic expander already connected"));
+		} else {
+			menu->addChild(createMenuItem("Add Alembic expander", "", [=]() {
+				alchemist->addExpander(modelAlembic, this);
+				}));
+		}
+	}
 };
 
 Model* modelAlchemist = createModel<Alchemist, AlchemistWidget>("Sanguine-Alchemist");
