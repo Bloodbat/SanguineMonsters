@@ -20,6 +20,8 @@
 
 - Dungeon: optional moon halo (on by default).
 
+- Aion: faceplate knob borders and knob labels.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
