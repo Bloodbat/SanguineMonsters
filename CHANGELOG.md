@@ -24,6 +24,8 @@
 
 - Alchemist: knob border.
 
+- Brainz: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
@@ -39,6 +41,8 @@
 - Dungeon: mellower moon light colors.
 
 - Kitsune: prettify faceplate.
+
+- Brainz: faceplate tweaks.
 
 
 ---
