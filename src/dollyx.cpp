@@ -138,7 +138,7 @@ struct DollyXWidget : SanguineModuleWidget {
 		dollyFrameBuffer->addChild(displayCloner1);
 		displayCloner1->fallbackNumber = 16;
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 21.843), module, DollyX::PARAM_CHANNELS1));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.945, 24.543), module, DollyX::PARAM_CHANNELS1));
 
 		SanguineStaticRGBLight* amalgamLight1 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 36.856, true, kSanguineBlueLight);
 		addChild(amalgamLight1);
@@ -166,7 +166,7 @@ struct DollyXWidget : SanguineModuleWidget {
 			displayCloner2->values.numberValue = (&module->cloneCounts[1]);
 		}
 
-		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(29.945, 76.514), module, DollyX::PARAM_CHANNELS2));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(29.945, 79.214), module, DollyX::PARAM_CHANNELS2));
 
 		SanguineStaticRGBLight* amalgamLight2 = new SanguineStaticRGBLight(module, "res/amalgam_light.svg", 13.713, 91.526, true, kSanguineBlueLight);
 		addChild(amalgamLight2);
