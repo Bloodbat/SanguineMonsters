@@ -255,7 +255,7 @@ struct AionWidget : SanguineModuleWidget {
 		if (module)
 			displayTimer1->values.numberValue = &module->currentTimerValues[0];
 
-		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.411, 27.047), module, Aion::PARAM_TIMER_1));
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.411, 23.671), module, Aion::PARAM_TIMER_1));
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 14.631), module, Aion::PARAM_RESTART_1));
 
@@ -287,7 +287,7 @@ struct AionWidget : SanguineModuleWidget {
 		if (module)
 			displayTimer2->values.numberValue = &module->currentTimerValues[1];
 
-		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(94.176, 27.047), module, Aion::PARAM_TIMER_2));
+		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(94.176, 23.671), module, Aion::PARAM_TIMER_2));
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 14.631), module, Aion::PARAM_RESTART_2));
 
@@ -319,7 +319,7 @@ struct AionWidget : SanguineModuleWidget {
 		if (module)
 			displayTimer3->values.numberValue = &module->currentTimerValues[2];
 
-		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(38.411, 73.246), module, Aion::PARAM_TIMER_3));
+		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(38.411, 69.871), module, Aion::PARAM_TIMER_3));
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 60.833), module, Aion::PARAM_RESTART_3));
 
@@ -351,7 +351,7 @@ struct AionWidget : SanguineModuleWidget {
 		if (module)
 			displayTimer4->values.numberValue = &module->currentTimerValues[3];
 
-		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(94.176, 73.246), module, Aion::PARAM_TIMER_4));
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(94.176, 69.871), module, Aion::PARAM_TIMER_4));
 
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 60.833), module, Aion::PARAM_RESTART_4));
 
