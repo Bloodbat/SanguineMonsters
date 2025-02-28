@@ -246,9 +246,9 @@ struct AionWidget : SanguineModuleWidget {
 
 		// Timer 1
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(9.3, 26.424), module, Aion::LIGHT_TIMER_1));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(6.75, 26.424), module, Aion::LIGHT_TIMER_1));
 
-		SanguineTinyNumericDisplay* displayTimer1 = new SanguineTinyNumericDisplay(2, module, 21.675, 27.047);
+		SanguineTinyNumericDisplay* displayTimer1 = new SanguineTinyNumericDisplay(2, module, 19.775, 27.047);
 		aionFramebuffer->addChild(displayTimer1);
 		displayTimer1->fallbackNumber = 1;
 
@@ -278,9 +278,9 @@ struct AionWidget : SanguineModuleWidget {
 
 		// Timer 2
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(65.065, 27.047), module, Aion::LIGHT_TIMER_2));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(62.515, 27.047), module, Aion::LIGHT_TIMER_2));
 
-		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 77.441, 27.047);
+		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 75.54, 27.047);
 		aionFramebuffer->addChild(displayTimer2);
 		displayTimer2->fallbackNumber = 1;
 
@@ -310,9 +310,9 @@ struct AionWidget : SanguineModuleWidget {
 
 		// Timer 3
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(9.3, 73.246), module, Aion::LIGHT_TIMER_3));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(6.75, 73.246), module, Aion::LIGHT_TIMER_3));
 
-		SanguineTinyNumericDisplay* displayTimer3 = new SanguineTinyNumericDisplay(2, module, 21.675, 73.246);
+		SanguineTinyNumericDisplay* displayTimer3 = new SanguineTinyNumericDisplay(2, module, 19.775, 73.246);
 		aionFramebuffer->addChild(displayTimer3);
 		displayTimer3->fallbackNumber = 1;
 
@@ -342,9 +342,9 @@ struct AionWidget : SanguineModuleWidget {
 
 		// Timer 4
 
-		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(65.065, 73.246), module, Aion::LIGHT_TIMER_4));
+		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(62.515, 73.246), module, Aion::LIGHT_TIMER_4));
 
-		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 77.441, 73.246);
+		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 75.54, 73.246);
 		aionFramebuffer->addChild(displayTimer4);
 		displayTimer4->fallbackNumber = 1;
 
