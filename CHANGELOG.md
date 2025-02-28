@@ -30,6 +30,8 @@
 
 - Chronos: knob borders.
 
+- Dolly-X: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
@@ -57,6 +59,8 @@
 - Chronos: faceplate tweaks.
 
 - Aion: faceplate tweaks.
+
+- Dolly-X: faceplate tweaks.
 
 
 ---
