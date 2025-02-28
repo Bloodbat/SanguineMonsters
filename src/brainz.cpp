@@ -947,61 +947,34 @@ struct BrainzWidget : SanguineModuleWidget {
 		SanguineTinyNumericDisplay* displayStepsACurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 35.908);
 		brainzFrameBuffer->addChild(displayStepsACurrent);
 
-		if (module)
-			displayStepsACurrent->values.numberValue = &module->currentCounters[0];
-
 		SanguineTinyNumericDisplay* displayStepsATotal = new SanguineTinyNumericDisplay(2, module, 36.207, 35.908);
 		brainzFrameBuffer->addChild(displayStepsATotal);
 		displayStepsATotal->fallbackNumber = 1;
 
-		if (module)
-			displayStepsATotal->values.numberValue = &module->maxCounters[0];
-
 		SanguineTinyNumericDisplay* displayStepsBCurrent = new SanguineTinyNumericDisplay(2, module, 18.929, 86.938);
 		brainzFrameBuffer->addChild(displayStepsBCurrent);
-
-		if (module)
-			displayStepsBCurrent->values.numberValue = &module->currentCounters[1];
 
 		SanguineTinyNumericDisplay* displayStepsBTotal = new SanguineTinyNumericDisplay(2, module, 36.207, 86.938);
 		brainzFrameBuffer->addChild(displayStepsBTotal);
 		displayStepsBTotal->fallbackNumber = 1;
 
-		if (module)
-			displayStepsBTotal->values.numberValue = &module->maxCounters[1];
-
 		SanguineTinyNumericDisplay* displayStepsCCurrent = new SanguineTinyNumericDisplay(2, module, 90.891, 86.938);
 		brainzFrameBuffer->addChild(displayStepsCCurrent);
-
-		if (module)
-			displayStepsCCurrent->values.numberValue = &module->currentCounters[2];
 
 		SanguineTinyNumericDisplay* displayStepsCTotal = new SanguineTinyNumericDisplay(2, module, 108.181, 86.938);
 		brainzFrameBuffer->addChild(displayStepsCTotal);
 		displayStepsCTotal->fallbackNumber = 1;
 
-		if (module)
-			displayStepsCTotal->values.numberValue = &module->maxCounters[2];
-
 		SanguineTinyNumericDisplay* displayMetronomeSpeed = new SanguineTinyNumericDisplay(2, module, 110.857, 28.914);
 		brainzFrameBuffer->addChild(displayMetronomeSpeed);
 		displayMetronomeSpeed->fallbackNumber = 60;
 
-		if (module)
-			displayMetronomeSpeed->values.numberValue = &module->metronomeSpeed;
-
 		SanguineTinyNumericDisplay* displayMetronomeCurrentStep = new SanguineTinyNumericDisplay(2, module, 95.045, 40.647);
 		brainzFrameBuffer->addChild(displayMetronomeCurrentStep);
-
-		if (module)
-			displayMetronomeCurrentStep->values.numberValue = &module->metronomeStepsDone;
 
 		SanguineTinyNumericDisplay* displayMetronomeTotalSteps = new SanguineTinyNumericDisplay(2, module, 110.857, 40.647);
 		brainzFrameBuffer->addChild(displayMetronomeTotalSteps);
 		displayMetronomeTotalSteps->fallbackNumber = 10;
-
-		if (module)
-			displayMetronomeTotalSteps->values.numberValue = &module->metronomeSteps;
 
 		SanguineStaticRGBLight* inPlayLight = new SanguineStaticRGBLight(module, "res/play_lit.svg", 7.402, 109.601,
 			true, kSanguineYellowLight);
@@ -1105,6 +1078,19 @@ struct BrainzWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 44.248, 116.867);
 		addChild(monstersLight);
+
+		if (module) {
+			displayStepsACurrent->values.numberValue = &module->currentCounters[0];
+			displayStepsATotal->values.numberValue = &module->maxCounters[0];
+			displayStepsBCurrent->values.numberValue = &module->currentCounters[1];
+			displayStepsBTotal->values.numberValue = &module->maxCounters[1];
+			displayStepsCCurrent->values.numberValue = &module->currentCounters[2];
+			displayStepsCTotal->values.numberValue = &module->maxCounters[2];
+			displayMetronomeSpeed->values.numberValue = &module->metronomeSpeed;
+			displayMetronomeCurrentStep->values.numberValue = &module->metronomeStepsDone;
+
+			displayMetronomeTotalSteps->values.numberValue = &module->metronomeSteps;
+		}
 	}
 };
 
