@@ -44,6 +44,8 @@
 
 - Brainz: faceplate tweaks.
 
+- Brainz: performance tweaks.
+
 
 ---
 
