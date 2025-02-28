@@ -56,6 +56,8 @@
 
 - Chronos: faceplate tweaks.
 
+- Aion: faceplate tweaks.
+
 
 ---
 
