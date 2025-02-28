@@ -80,11 +80,11 @@ struct Bukavac : SanguineModule {
 
 		configInput(INPUT_PERLIN_SPEED, "Perlin noise speed");
 		configParam(PARAM_PERLIN_SPEED, 1.f, 500.f, 250.f, "Perlin noise speed");
-		configParam(PARAM_PERLIN_SPEED_CV, 0.f, 1.f, 0.5f, "Perlin speed CV", "%", 0.f, 100.f);
+		configParam(PARAM_PERLIN_SPEED_CV, -1.f, 1.f, 0.f, "Perlin speed CV");
 
 		configInput(INPUT_PERLIN_AMP, "Perlin noise amplifier");
 		configParam(PARAM_PERLIN_AMP, 1.f, 10.f, 1.f, "Perlin noise amplifier");
-		configParam(PARAM_PERLIN_AMP_CV, 0.f, 1.f, 0.5f, "Perlin amplifier CV", "%", 0.f, 100.f);
+		configParam(PARAM_PERLIN_AMP_CV, -1.f, 1.f, 0.f, "Perlin amplifier CV");
 
 		configParam(PARAM_PERLIN_WEIGHT0, 0.f, 1.f, 0.25f, "Perlin noise first octave weight", "%", 0.f, 100.f);
 		configParam(PARAM_PERLIN_WEIGHT1, 0.f, 1.f, 0.25f, "Perlin noise second octave weight", "%", 0.f, 100.f);
@@ -176,16 +176,16 @@ struct Bukavac : SanguineModule {
 
 			float perlinSpeed = params[PARAM_PERLIN_SPEED].getValue();
 			if (inputs[INPUT_PERLIN_SPEED].isConnected()) {
-				float perlinSpeedVoltage = inputs[INPUT_PERLIN_SPEED].getVoltage() / 5.0;
+				float perlinSpeedVoltage = inputs[INPUT_PERLIN_SPEED].getVoltage() / 5.f;
 				float perlinSpeedVoltagePercent = params[PARAM_PERLIN_SPEED_CV].getValue();
-				perlinSpeed = getPerlinEffectiveValue(perlinSpeedVoltage, perlinSpeed, perlinSpeedVoltagePercent);
+				perlinSpeed = getPerlinEffectiveValue(perlinSpeedVoltage, perlinSpeed, perlinSpeedVoltagePercent, 1.f, 500.f);
 			}
 
 			float perlinAmplifier = params[PARAM_PERLIN_AMP].getValue();
 			if (inputs[INPUT_PERLIN_AMP].isConnected()) {
-				float perlinAmplifierVoltage = inputs[INPUT_PERLIN_AMP].getVoltage();
+				float perlinAmplifierVoltage = inputs[INPUT_PERLIN_AMP].getVoltage() / 5.f;
 				float perlinAmplifierVoltagePercent = params[PARAM_PERLIN_AMP_CV].getValue();
-				perlinAmplifier = getPerlinEffectiveValue(perlinAmplifierVoltage, perlinAmplifier, perlinAmplifierVoltagePercent);
+				perlinAmplifier = getPerlinEffectiveValue(perlinAmplifierVoltage, perlinAmplifier, perlinAmplifierVoltagePercent, 1.f, 10.f);
 			}
 
 			float octaveMult = 1.0;
@@ -243,8 +243,9 @@ struct Bukavac : SanguineModule {
 		outputs[OUTPUT_PERLIN_NOISE_MIX].setVoltage(noiseOutMix);
 	}
 
-	float getPerlinEffectiveValue(const float& inputVoltage, const float& baseValue, const float& voltagePercent) {
-		return (inputVoltage * voltagePercent) + (baseValue * (1.0 - voltagePercent));
+	float getPerlinEffectiveValue(const float& inputVoltage, const float& baseValue, const float& attenuverterValue,
+		const float& minvalue, const float& maxValue) {
+		return clamp(baseValue + ((inputVoltage * maxValue) * attenuverterValue), minvalue, maxValue);
 	}
 };
 
