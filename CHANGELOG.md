@@ -26,6 +26,8 @@
 
 - Brainz: knob borders.
 
+- Bukavac: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
@@ -45,6 +47,8 @@
 - Brainz: faceplate tweaks.
 
 - Brainz: performance tweaks.
+
+- Bukavac: faceplate tweaks.
 
 
 ---
