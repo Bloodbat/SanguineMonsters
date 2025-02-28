@@ -28,6 +28,8 @@
 
 - Bukavac: knob borders.
 
+- Chronos: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
@@ -51,6 +53,8 @@
 - Bukavac: faceplate tweaks.
 
 - Bukavac: attenuators into attenuverters with more traditional response.
+
+- Chronos: faceplate tweaks.
 
 
 ---
