@@ -271,28 +271,28 @@ struct BukavacWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		SanguineStaticRGBLight* speedLight = new SanguineStaticRGBLight(module, "res/speed_lit.svg", 4.199, 26.802, true, kSanguineBlueLight);
+		SanguineStaticRGBLight* speedLight = new SanguineStaticRGBLight(module, "res/speed_lit.svg", 4.199, 23.402, true, kSanguineBlueLight);
 		addChild(speedLight);
 
-		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 26.802), module, Bukavac::INPUT_PERLIN_SPEED));
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(23.184, 26.802), module, Bukavac::PARAM_PERLIN_SPEED_CV));
-		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(37.527, 26.802), module, Bukavac::PARAM_PERLIN_SPEED));
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 23.402), module, Bukavac::INPUT_PERLIN_SPEED));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(22.484, 23.402), module, Bukavac::PARAM_PERLIN_SPEED_CV));
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(36.827, 23.402), module, Bukavac::PARAM_PERLIN_SPEED));
 
-		SanguineStaticRGBLight* amplifierLight = new SanguineStaticRGBLight(module, "res/amplifier_lit.svg", 4.199, 44.898, true, kSanguineBlueLight);
+		SanguineStaticRGBLight* amplifierLight = new SanguineStaticRGBLight(module, "res/amplifier_lit.svg", 4.199, 42.098, true, kSanguineBlueLight);
 		addChild(amplifierLight);
 
-		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 44.898), module, Bukavac::INPUT_PERLIN_AMP));
-		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(23.184, 44.898), module, Bukavac::PARAM_PERLIN_AMP_CV));
-		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(37.527, 44.898), module, Bukavac::PARAM_PERLIN_AMP));
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 42.098), module, Bukavac::INPUT_PERLIN_AMP));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(22.484, 42.098), module, Bukavac::PARAM_PERLIN_AMP_CV));
+		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(36.827, 42.098), module, Bukavac::PARAM_PERLIN_AMP));
 
-		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(5.976, 59.623), module, Bukavac::PARAM_PERLIN_WEIGHT0));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.588, 59.623), module, Bukavac::OUTPUT_PERLIN_NOISE0));
-		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(5.976, 71.787), module, Bukavac::PARAM_PERLIN_WEIGHT1));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.588, 71.787), module, Bukavac::OUTPUT_PERLIN_NOISE1));
-		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(39.73, 59.623), module, Bukavac::PARAM_PERLIN_WEIGHT2));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 59.623), module, Bukavac::OUTPUT_PERLIN_NOISE2));
-		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(39.73, 71.787), module, Bukavac::PARAM_PERLIN_WEIGHT3));
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 71.787), module, Bukavac::OUTPUT_PERLIN_NOISE3));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(5.376, 57.323), module, Bukavac::PARAM_PERLIN_WEIGHT0));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.588, 57.323), module, Bukavac::OUTPUT_PERLIN_NOISE0));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(5.376, 70.387), module, Bukavac::PARAM_PERLIN_WEIGHT1));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.588, 70.387), module, Bukavac::OUTPUT_PERLIN_NOISE1));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(40.33, 57.323), module, Bukavac::PARAM_PERLIN_WEIGHT2));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 57.323), module, Bukavac::OUTPUT_PERLIN_NOISE2));
+		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(40.33, 70.387), module, Bukavac::PARAM_PERLIN_WEIGHT3));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 70.387), module, Bukavac::OUTPUT_PERLIN_NOISE3));
 
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 13.096, 86.429);
 		addChild(bloodLight);
