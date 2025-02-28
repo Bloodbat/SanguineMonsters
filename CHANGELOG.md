@@ -22,6 +22,8 @@
 
 - Aion: faceplate knob borders and knob labels.
 
+- Alchemist: knob border.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
