@@ -289,12 +289,6 @@ struct DungeonWidget : SanguineModuleWidget {
 		moonLight->haloRadiusFactor = 2.1f;
 		dungeonFrameBuffer->addChild(moonLight);
 
-		if (module) {
-			moonLight->innerColor = &module->innerMoon;
-			moonLight->outerColor = &module->outerMoon;
-			moonLight->haloType = &module->haloType;
-		}
-
 		addParam(createParamCentered<CKD6>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::PARAM_TRIGGER));
 		addChild(createLightCentered<CKD6Light<RedLight>>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::LIGHT_TRIGGER));
 
@@ -304,9 +298,6 @@ struct DungeonWidget : SanguineModuleWidget {
 		displayMode->displayType = DISPLAY_STRING;
 		dungeonFrameBuffer->addChild(displayMode);
 		displayMode->fallbackString = dungeonModeLabels[0];
-
-		if (module)
-			displayMode->values.displayText = &module->modeLabel;
 
 		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module, Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(36.76, 95.874), module, Dungeon::INPUT_SLEW));
@@ -334,6 +325,14 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 38.928, 116.658);
 		addChild(monstersLight);
+
+		if (module) {
+			moonLight->innerColor = &module->innerMoon;
+			moonLight->outerColor = &module->outerMoon;
+			moonLight->haloType = &module->haloType;
+
+			displayMode->values.displayText = &module->modeLabel;
+		}
 	}
 
 	void appendContextMenu(Menu* menu) override {
