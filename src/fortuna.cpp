@@ -101,9 +101,7 @@ struct Fortuna : SanguineModule {
                 bool bGatePresent = trigger->getVoltage(channel) >= 2.f;
                 if (btGateTriggers[section][channel].process(bGatePresent)) {
                     // Trigger.
-                    // Don't have to clamp here because the threshold comparison works without it.
-                    // TODO: divide by 5, not 10
-                    float threshold = params[PARAM_THRESHOLD_1 + section].getValue() + cvVoltages[section][channel] / 10.f;
+                    float threshold = clamp(params[PARAM_THRESHOLD_1 + section].getValue() + cvVoltages[section][channel] / 5.f, 0.f, 1.f);
                     rollResults[section][channel] = (random::uniform() >= threshold) ? ROLL_HEADS : ROLL_TAILS;
                     if (rollModes[section] == ROLL_TOGGLE) {
                         rollResults[section][channel] = static_cast<RollResults>(lastRollResults[section][channel] ^ rollResults[section][channel]);
