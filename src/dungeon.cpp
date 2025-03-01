@@ -299,7 +299,8 @@ struct DungeonWidget : SanguineModuleWidget {
 		dungeonFrameBuffer->addChild(displayMode);
 		displayMode->fallbackString = dungeonModeLabels[0];
 
-		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module, Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
+		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module,
+			Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(36.76, 95.874), module, Dungeon::INPUT_SLEW));
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(8.762, 100.733), module, Dungeon::INPUT_CLOCK));
