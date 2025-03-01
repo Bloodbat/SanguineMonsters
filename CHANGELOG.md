@@ -32,6 +32,8 @@
 
 - Dolly-X: knob borders.
 
+- Dungeon: knob border.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
