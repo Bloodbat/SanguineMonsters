@@ -40,6 +40,8 @@
 
 - Gegeenes: knob border.
 
+- Hydra: knob border.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
