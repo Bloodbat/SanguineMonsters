@@ -36,6 +36,8 @@
 
 - Raiju: knob borders.
 
+- Sphinx: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
