@@ -46,7 +46,7 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
 
 - ### Fortuna
 
-  Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
+  Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals, with integrated crossfader.
 
 - ### Gegenees
 
