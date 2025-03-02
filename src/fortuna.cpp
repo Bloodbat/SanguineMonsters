@@ -10,25 +10,32 @@
 struct RampGenerator {
     float ellapsedTime = 0.f;
     float rampLength = 0.f;
+    float rampVoltage = 1.f;
+    float resetVoltage = 1.f;
+    bool autoReset = true;
     bool finished = true; // The output is the inverse of this.
 
-    // Immediately resets the state to LOW.
+    // Immediately resets the ramp.
     void reset() {
         ellapsedTime = 0.f;
         rampLength = 0.f;
+        rampVoltage = resetVoltage;
         finished = true;
     }
 
-    // Advances state by deltaTime. Returns whether the pulse is HIGH.
-    bool process(float deltaTime) {
+    // Advances state by deltaTime.
+    void process(float deltaTime) {
+        rampVoltage = resetVoltage;
         ellapsedTime += deltaTime;
         if (!finished) {
             finished = ellapsedTime >= rampLength;
+            rampVoltage = clamp(ellapsedTime / rampLength, 0.f, 1.f);
+        } else {
+            reset();
         }
-        return !finished;
     }
 
-    // Begins a ramp with "rampLength"
+    // Begins a ramp with rampLength.
     void trigger(float theRampLength) {
         finished = false;
         rampLength = theRampLength;
@@ -153,25 +160,13 @@ struct Fortuna : SanguineModule {
                     lastRollResults[section][channel] = rollResults[section][channel];
                 }
 
-                bool bLastRamping = rampGenerators[section][channel].finished;
-                bool bIsRamping = rampGenerators[section][channel].process(args.sampleTime);
-                float rampVoltage = 1.f;
-                if (bIsRamping) {
-                    // Update ramp duration even mid-trigger.
-                    rampGenerators[section][channel].rampLength = rampDuration;
-
-                    rampVoltage = clamp(rampGenerators[section][channel].ellapsedTime / rampGenerators[section][channel].rampLength, 0.f, 1.f);
-                }
-
-                if (bLastRamping && !bIsRamping) {
-                    rampGenerators[section][channel].reset();
-                }
+                rampGenerators[section][channel].process(args.sampleTime);
 
                 // Set output signals
                 inVoltages[section][channel] = input->getVoltage(channel);
 
-                float fadingOutVoltage = inVoltages[section][channel] * (clamp(1.f - rampVoltage, 0.f, 1.f));
-                float fadingInVoltage = inVoltages[section][channel] * rampVoltage;
+                float fadingOutVoltage = inVoltages[section][channel] * (clamp(1.f - rampGenerators[section][channel].rampVoltage, 0.f, 1.f));
+                float fadingInVoltage = inVoltages[section][channel] * rampGenerators[section][channel].rampVoltage;
 
                 if (bOutputsConnected[0 + section]) {
                     outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != ROLL_TAILS ?
