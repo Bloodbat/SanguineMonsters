@@ -166,13 +166,13 @@ struct RaijuWidget : SanguineModuleWidget {
 		float currentX = 37.073;
 		float xDistance = 12.136;
 		for (int component = 0; component < 4; ++component) {
-			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758),
+			addChild(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(currentX, 111.758),
 				module, Raiju::OUTPUT_VOLTAGE + component));
 			currentX += xDistance;
 		}
 		currentX = 92.018;
 		for (int component = 4; component < 8; ++component) {
-			addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(currentX, 111.758),
+			addChild(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(currentX, 111.758),
 				module, Raiju::OUTPUT_VOLTAGE + component));
 			currentX += xDistance;
 		}
