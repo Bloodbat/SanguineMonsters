@@ -38,6 +38,8 @@
 
 - Sphinx: knob borders.
 
+- Gegeenes: knob border.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
