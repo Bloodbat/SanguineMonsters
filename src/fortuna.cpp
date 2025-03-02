@@ -4,12 +4,45 @@
 #include "sanguinechannels.hpp"
 #include "fortuna.hpp"
 
+// Based on LittleUtils PulseGenerator, EUPL-1.2 GPL 3 compatible license.
+// Modified by Bloodbat, 2025.
+
+struct RampGenerator {
+    float ellapsedTime = 0.f;
+    float rampLength = 0.f;
+    bool finished = true; // The output is the inverse of this.
+
+    // Immediately resets the state to LOW.
+    void reset() {
+        ellapsedTime = 0.f;
+        rampLength = 0.f;
+        finished = true;
+    }
+
+    // Advances state by deltaTime. Returns whether the pulse is HIGH.
+    bool process(float deltaTime) {
+        ellapsedTime += deltaTime;
+        if (!finished) {
+            finished = ellapsedTime >= rampLength;
+        }
+        return !finished;
+    }
+
+    // Begins a ramp with "rampLength"
+    void trigger(float theRampLength) {
+        finished = false;
+        rampLength = theRampLength;
+    }
+};
+
 struct Fortuna : SanguineModule {
     enum ParamIds {
         PARAM_THRESHOLD_1,
         PARAM_THRESHOLD_2,
         PARAM_ROLL_MODE_1,
         PARAM_ROLL_MODE_2,
+        PARAM_CROSSFADE_A,
+        PARAM_CROSSFADE_B,
         PARAMS_COUNT
     };
     enum InputIds {
@@ -29,7 +62,10 @@ struct Fortuna : SanguineModule {
         OUTPUTS_COUNT
     };
     enum LightIds {
-        ENUMS(LIGHTS_GATE_STATE, 2 * 2),
+        LIGHT_GATE_STATE_1_A,
+        LIGHT_GATE_STATE_1_B,
+        LIGHT_GATE_STATE_2_A,
+        LIGHT_GATE_STATE_2_B,
         ENUMS(LIGHTS_ROLL_MODE, 2 * 2),
         ENUMS(LIGHTS_PROBABILITY, 2 * 2),
         LIGHTS_COUNT
@@ -40,9 +76,9 @@ struct Fortuna : SanguineModule {
     int ledsChannel = 0;
     int channelCount = 0;
 
-
     dsp::BooleanTrigger btGateTriggers[kMaxModuleSections][PORT_MAX_CHANNELS];
     dsp::ClockDivider lightsDivider;
+    RampGenerator rampGenerators[kMaxModuleSections][PORT_MAX_CHANNELS];
 
     RollResults rollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
     RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
@@ -53,7 +89,9 @@ struct Fortuna : SanguineModule {
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
         for (int section = 0; section < kMaxModuleSections; ++section) {
-            configParam(PARAM_THRESHOLD_1 + section, 1.f, 0.f, 0.5f, string::f("Channel %d probability", section + 1), "%", 0, 100);
+            configParam(PARAM_THRESHOLD_1 + section, 1.f, 0.f, 0.5f, string::f("Channel %d probability", section + 1),
+                "%", 0, 100);
+            configParam(PARAM_CROSSFADE_A + section, 0.f, 10.f, 0.f, string::f("Crossfade %d time", section + 1), " s");
             configSwitch(PARAM_ROLL_MODE_1 + section, 0.f, 1.f, 0.f, string::f("Channel %d coin mode", section + 1), { "Direct", "Toggle" });
             configInput(INPUT_IN_1 + section, string::f("Channel %d signal", section + 1));
             configInput(INPUT_TRIGGER_1 + section, string::f("Channel %d trigger", section + 1));
@@ -78,9 +116,10 @@ struct Fortuna : SanguineModule {
         bool bLightsTurn = lightsDivider.process();
 
         for (int section = 0; section < kMaxModuleSections; ++section) {
-            // Get input.
+            // Set input & trigger ports.
             Input* input = &inputs[INPUT_IN_1 + section];
             Input* trigger = &inputs[INPUT_TRIGGER_1 + section];
+
             // 2nd input and 2 trigger are normalized to 1st.
             if (section == 1 && !input->isConnected()) {
                 input = &inputs[INPUT_IN_1 + 0];
@@ -94,6 +133,8 @@ struct Fortuna : SanguineModule {
 
             rollModes[section] = static_cast<RollModes>(params[PARAM_ROLL_MODE_1 + section].getValue());
 
+            float rampDuration = params[PARAM_CROSSFADE_A + section].getValue();
+
             // Process triggers.
             for (int channel = 0; channel < channelCount; ++channel) {
                 cvVoltages[section][channel] = inputs[INPUT_P_1 + section].getVoltage(channel);
@@ -106,19 +147,39 @@ struct Fortuna : SanguineModule {
                     if (rollModes[section] == ROLL_TOGGLE) {
                         rollResults[section][channel] = static_cast<RollResults>(lastRollResults[section][channel] ^ rollResults[section][channel]);
                     }
+                    if (lastRollResults[section][channel] != rollResults[section][channel]) {
+                        rampGenerators[section][channel].trigger(rampDuration);
+                    }
                     lastRollResults[section][channel] = rollResults[section][channel];
                 }
 
-                // Output gate logic
+                bool bLastRamping = rampGenerators[section][channel].finished;
+                bool bIsRamping = rampGenerators[section][channel].process(args.sampleTime);
+                float rampVoltage = 1.f;
+                if (bIsRamping) {
+                    // Update ramp duration even mid-trigger.
+                    rampGenerators[section][channel].rampLength = rampDuration;
+
+                    rampVoltage = clamp(rampGenerators[section][channel].ellapsedTime / rampGenerators[section][channel].rampLength, 0.f, 1.f);
+                }
+
+                if (bLastRamping && !bIsRamping) {
+                    rampGenerators[section][channel].reset();
+                }
+
                 // Set output signals
                 inVoltages[section][channel] = input->getVoltage(channel);
+
+                float fadingOutVoltage = inVoltages[section][channel] * (clamp(1.f - rampVoltage, 0.f, 1.f));
+                float fadingInVoltage = inVoltages[section][channel] * rampVoltage;
+
                 if (bOutputsConnected[0 + section]) {
                     outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != ROLL_TAILS ?
-                        inVoltages[section][channel] : 0.f, channel);
+                        fadingInVoltage : fadingOutVoltage, channel);
                 }
                 if (bOutputsConnected[2 + section]) {
                     outputs[OUTPUT_OUT_1B + section].setVoltage(rollResults[section][channel] == ROLL_TAILS ?
-                        inVoltages[section][channel] : 0.f, channel);
+                        fadingInVoltage : fadingOutVoltage, channel);
                 }
             }
 
@@ -135,9 +196,13 @@ struct Fortuna : SanguineModule {
                 }
 
                 const float sampleTime = args.sampleTime * kLightFrequency;
-                int currentLight = LIGHTS_GATE_STATE + section * 2;
-                lights[currentLight + 1].setSmoothBrightness(rollResults[section][ledsChannel] != ROLL_TAILS ? 1.f : 0.f, sampleTime);
-                lights[currentLight + 0].setSmoothBrightness(rollResults[section][ledsChannel] == ROLL_TAILS ? 1.f : 0.f, sampleTime);
+                int currentLight = LIGHT_GATE_STATE_1_A + section * 2;
+                float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
+                lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);
+                lights[currentLight + 0].setSmoothBrightness(lightValueA, sampleTime);
+                float lightValueB = outputs[OUTPUT_OUT_1B + section].getVoltage(ledsChannel);
+                lightValueB = rescale(lightValueB, 0.f, 5.f, 0.f, 1.f);
+                lights[currentLight + 1].setSmoothBrightness(lightValueB, sampleTime);
 
                 currentLight = LIGHTS_PROBABILITY + section * 2;
                 float rescaledLight = rescale(cvVoltages[section][ledsChannel], 0.f, 5.f, 0.f, 1.f);
@@ -150,7 +215,6 @@ struct Fortuna : SanguineModule {
             }
         }
     }
-
 
     void onReset() override {
         for (int section = 0; section < kMaxModuleSections; ++section) {
@@ -198,31 +262,39 @@ struct FortunaWidget : SanguineModuleWidget {
         SanguinePolyInputLight* inLight1 = new SanguinePolyInputLight(module, 6.413, 19.362);
         addChild(inLight1);
 
+        addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(34.212, 20.521), module,
+            Fortuna::LIGHT_GATE_STATE_1_A));
+
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 26.411), module, Fortuna::INPUT_IN_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 26.411), module, Fortuna::OUTPUT_OUT_1A));
         addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(20.288, 14.368), module,
             Fortuna::PARAM_ROLL_MODE_1, Fortuna::LIGHTS_ROLL_MODE + 0 * 2));
         addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(20.32, 35.367), module,
             Fortuna::Fortuna::PARAM_THRESHOLD_1, Fortuna::LIGHTS_PROBABILITY + 0 * 2));
-        addChild(createLightCentered<MediumLight<GreenRedLight>>(millimetersToPixelsVec(34.212, 35.367), module,
-            Fortuna::LIGHTS_GATE_STATE + 0 * 2));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(34.212, 35.014), module, Fortuna::PARAM_CROSSFADE_A));
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 44.323), module, Fortuna::INPUT_TRIGGER_1));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.288, 53.515), module, Fortuna::INPUT_P_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 44.323), module, Fortuna::OUTPUT_OUT_1B));
+
         SanguineStaticRGBLight* triggerLight1 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 51.36, true, kSanguineBlueLight);
         addChild(triggerLight1);
+
+        addChild(createLightCentered<SmallLight<GreenLight>>(millimetersToPixelsVec(34.212, 50.01), module,
+            Fortuna::LIGHT_GATE_STATE_1_B));
 
         // Switch #2
         SanguinePolyInputLight* inLight2 = new SanguinePolyInputLight(module, 6.413, 78.759);
         addChild(inLight2);
+
+        addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(34.212, 79.916), module,
+            Fortuna::LIGHT_GATE_STATE_2_A));
 
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 85.796), module, Fortuna::INPUT_IN_2));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.288, 76.605), module, Fortuna::INPUT_P_2));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 85.796), module, Fortuna::OUTPUT_OUT_2A));
         addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(20.32, 94.753), module,
             Fortuna::Fortuna::PARAM_THRESHOLD_2, Fortuna::LIGHTS_PROBABILITY + 1 * 2));
-        addChild(createLightCentered<MediumLight<GreenRedLight>>(millimetersToPixelsVec(34.212, 94.753), module,
-            Fortuna::LIGHTS_GATE_STATE + 1 * 2));
+        addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(34.212, 94.399), module, Fortuna::PARAM_CROSSFADE_B));
         addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(20.288, 115.718), module,
             Fortuna::PARAM_ROLL_MODE_2, Fortuna::LIGHTS_ROLL_MODE + 1 * 2));
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 103.709), module, Fortuna::INPUT_TRIGGER_2));
@@ -230,6 +302,9 @@ struct FortunaWidget : SanguineModuleWidget {
 
         SanguineStaticRGBLight* triggerLight2 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 110.757, true, kSanguineBlueLight);
         addChild(triggerLight2);
+
+        addChild(createLightCentered<SmallLight<GreenLight>>(millimetersToPixelsVec(34.212, 109.408), module,
+            Fortuna::LIGHT_GATE_STATE_2_B));
     }
 
     void appendContextMenu(Menu* menu) override {
