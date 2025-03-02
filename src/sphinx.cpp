@@ -797,6 +797,9 @@ struct SphinxWidget : SanguineModuleWidget {
 		SanguineStaticRGBLight* accentLight = new SanguineStaticRGBLight(module, "res/accent_lit.svg", 48.448, 105.958, true, kSanguineYellowLight);
 		addChild(accentLight);
 
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 27.9, 113.47);
+		addChild(bloodLight);
+
 		if (module) {
 			sphinxDisplay->sequence = &module->finalSequence;
 			sphinxDisplay->accents = &module->finalAccents;
