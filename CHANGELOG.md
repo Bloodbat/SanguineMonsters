@@ -78,6 +78,8 @@
 
 - Werewolf: reorganize faceplate.
 
+- Sphinx: reorganize faceplate.
+
 
 ---
 
