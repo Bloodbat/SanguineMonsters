@@ -18,11 +18,21 @@
 
 - Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
 
+- Werewolf: knob borders.
+
+- Werewolf: normal left and right inputs to each other.
+
+- Werewolf: normal left and right outputs to each other.
+
 - Dungeon: optional moon halo (on by default).
+
+- Dungeon: knob border.
 
 - Aion: faceplate knob borders and knob labels.
 
 - Alchemist: knob border.
+
+- Alchemist: ability to add expander from context menu.
 
 - Brainz: knob borders.
 
@@ -32,8 +42,6 @@
 
 - Dolly-X: knob borders.
 
-- Dungeon: knob border.
-
 - Raiju: knob borders.
 
 - Sphinx: knob borders.
@@ -42,13 +50,7 @@
 
 - Hydra: knob border.
 
-- Werewolf: knob borders.
-
 ## Changes
-
-- Werewolf: normal left and right inputs to each other.
-
-- Werewolf: normal left and right outputs to each other.
 
 - Separate Sanguine Monsters and Sanguine Mutants in the browser.
 
@@ -79,6 +81,8 @@
 - Werewolf: reorganize faceplate.
 
 - Sphinx: reorganize faceplate.
+
+- Plugin: bring indicator lights in line with the ones from the Mutants.
 
 
 ---
