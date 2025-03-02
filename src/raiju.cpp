@@ -150,7 +150,7 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(127.365, 10.997), module, Raiju::PARAM_CHANNEL_COUNT));
+		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(127.365, 12.197), module, Raiju::PARAM_CHANNEL_COUNT));
 
 		float yDistance = 19.688;
 		float currentY = 32.982;
@@ -177,7 +177,8 @@ struct RaijuWidget : SanguineModuleWidget {
 			currentX += xDistance;
 		}
 
-		addChild(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(82.75, 118.393), module, Raiju::OUTPUT_EIGHT_CHANNELS));
+		addChild(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(82.75, 118.393),
+			module, Raiju::OUTPUT_EIGHT_CHANNELS));
 
 		FramebufferWidget* raijuFrameBuffer = new FramebufferWidget();
 		addChild(raijuFrameBuffer);
@@ -185,32 +186,40 @@ struct RaijuWidget : SanguineModuleWidget {
 		currentY = 29.182f;
 		yDistance = 19.689f;
 
-		addParam(createParam<SeqStep1Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 0));
+		addParam(createParam<SeqStep1Big>(millimetersToPixelsVec(4.012, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0));
 		currentY += yDistance;
 
-		addParam(createParam<SeqStep2Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 1));
+		addParam(createParam<SeqStep2Big>(millimetersToPixelsVec(4.012, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 1));
 		currentY += yDistance;
 
-		addParam(createParam<SeqStep3Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 2));
+		addParam(createParam<SeqStep3Big>(millimetersToPixelsVec(4.012, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 2));
 		currentY += yDistance;
 
-		addParam(createParam<SeqStep4Big>(millimetersToPixelsVec(4.012, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 3));
+		addParam(createParam<SeqStep4Big>(millimetersToPixelsVec(4.012, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 3));
 
 		currentY = 29.182f;
 		yDistance = 19.689f;
 
-		addParam(createParam<SeqStep5Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 4));
+		addParam(createParam<SeqStep5Big>(millimetersToPixelsVec(125.548, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 4));
 		currentY += yDistance;
 
-		addParam(createParam<SeqStep6Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 5));
+		addParam(createParam<SeqStep6Big>(millimetersToPixelsVec(125.548, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 5));
 		currentY += yDistance;
 
-		addParam(createParam<SeqStep7Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 6));
+		addParam(createParam<SeqStep7Big>(millimetersToPixelsVec(125.548, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 6));
 		currentY += yDistance;
 
-		addParam(createParam<SeqStep8Big>(millimetersToPixelsVec(125.548, currentY), module, Raiju::PARAM_VOLTAGE_SELECTOR + 7));
+		addParam(createParam<SeqStep8Big>(millimetersToPixelsVec(125.548, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 7));
 
-		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2, module, 112.331, 13.997);
+		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2, module, 112.331, 15.197);
 		raijuFrameBuffer->addChild(displayChannelCount);
 		displayChannelCount->fallbackNumber = 1;
 
@@ -246,7 +255,8 @@ struct RaijuWidget : SanguineModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage8);
 		displayVoltage8->fallbackString = kBrowserDisplayText;
 
-		SanguineStaticRGBLight* channelsLight = new SanguineStaticRGBLight(module, "res/channels_lit.svg", 127.365, 18.999, true, kSanguineBlueLight);
+		SanguineStaticRGBLight* channelsLight = new SanguineStaticRGBLight(module, "res/channels_lit.svg",
+			127.365, 20.199, true, kSanguineBlueLight);
 		addChild(channelsLight);
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 82.75, 104.658);
