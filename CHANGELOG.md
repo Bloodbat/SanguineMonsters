@@ -42,6 +42,8 @@
 
 - Hydra: knob border.
 
+- Werewolf: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
@@ -73,6 +75,8 @@
 - Dolly-X: faceplate tweaks.
 
 - Raiju: make it clear every output can be polyphonic.
+
+- Werewolf: reorganize faceplate.
 
 
 ---
