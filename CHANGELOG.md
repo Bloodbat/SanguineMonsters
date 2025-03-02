@@ -34,6 +34,8 @@
 
 - Dungeon: knob border.
 
+- Raiju: knob borders.
+
 ## Changes
 
 - Werewolf: normal left and right inputs to each other.
