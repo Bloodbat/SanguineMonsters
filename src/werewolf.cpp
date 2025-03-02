@@ -248,12 +248,12 @@ struct WerewolfWidget : SanguineModuleWidget {
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(22.879, 39.583), module, Werewolf::LIGHT_EYE_1));
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.602, 39.583), module, Werewolf::LIGHT_EYE_2));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(8.947, 83.56), module, Werewolf::PARAM_GAIN));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(11.947, 88.26), module, Werewolf::PARAM_GAIN));
 
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(8.947, 90.978), module, Werewolf::LIGHT_GAIN));
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(51.908, 90.978), module, Werewolf::LIGHT_FOLD));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(20.026, 83.56), module, Werewolf::LIGHT_GAIN));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(40.948, 83.56), module, Werewolf::LIGHT_FOLD));
 
-		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(51.908, 83.56), module, Werewolf::PARAM_FOLD));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(49.008, 88.26), module, Werewolf::PARAM_FOLD));
 
 		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(23.04, 98.047), module, Werewolf::INPUT_GAIN));
 		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(37.814, 98.047), module, Werewolf::INPUT_FOLD));
@@ -269,6 +269,9 @@ struct WerewolfWidget : SanguineModuleWidget {
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 45.036, 106.051);
 		addChild(outLight);
+
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 30.48, 90.451);
+		addChild(bloodLight);
 	}
 };
 
