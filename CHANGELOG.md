@@ -86,6 +86,8 @@
 
 - Alembic: faceplate tweaks.
 
+- Oraculus: faceplate tweaks.
+
 
 ---
 
