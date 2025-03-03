@@ -84,6 +84,8 @@
 
 - Plugin: bring indicator lights in line with the ones from the Mutants.
 
+- Alembic: faceplate tweaks.
+
 
 ---
 
