@@ -62,6 +62,8 @@
 
 - Gegeenes: knob border.
 
+- Gegeenes: Manus expander.
+
 - Hydra: knob border.
 
 - Hydra: Manus expander.
