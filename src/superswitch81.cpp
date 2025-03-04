@@ -113,7 +113,11 @@ struct SuperSwitch81 : SanguineModule {
 
 	void doDecreaseTrigger() {
 		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-			selectedIn--;
+			--selectedIn;
+
+			if (selectedIn < 0) {
+				selectedIn = stepCount - 1;
+			}
 		} else {
 			selectedIn = stepCount - 1;
 			bClockReceived = true;
@@ -126,8 +130,14 @@ struct SuperSwitch81 : SanguineModule {
 
 	void doIncreaseTrigger() {
 		++selectedIn;
+
+		if (selectedIn >= stepCount) {
+			selectedIn = 0;
+		}
+
 		bClockReceived = true;
 		++stepsDone;
+
 		if (stepsDone > stepCount) {
 			stepsDone = 0;
 		}
@@ -172,6 +182,14 @@ struct SuperSwitch81 : SanguineModule {
 			} else if (params[PARAM_STEPS].getValue() != stepCount) {
 				stepCount = params[PARAM_STEPS].getValue();
 			}
+
+			for (int step = 0; step < kMaxSteps; ++step) {
+				if (step < stepCount) {
+					params[PARAM_STEP1 + step].setValue(step == selectedIn ? 1 : 0);
+				} else {
+					params[PARAM_STEP1 + step].setValue(2);
+				}
+			}
 		}
 
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
@@ -201,31 +219,16 @@ struct SuperSwitch81 : SanguineModule {
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				for (int step = 0; step < stepCount; ++step) {
-					if (btSteps[step].process(params[PARAM_STEP1 + step].getValue())) {
+					if (btSteps[step].process(params[PARAM_STEP1 + step].getValue()) && step < stepCount) {
 						selectedIn = step;
 					}
-
-					while (selectedIn < 0) {
-						selectedIn += stepCount;
-					}
-					while (selectedIn >= stepCount) {
-						selectedIn -= stepCount;
-					}
-
-					if (inputs[INPUT_IN1 + selectedIn].isConnected()) {
-						inChannelCount = inputs[INPUT_IN1 + selectedIn].getChannels();
-						for (int channel = 0; channel < inChannelCount; channel += 4) {
-							outVoltages[channel / 4] = inputs[INPUT_IN1 + selectedIn].getVoltageSimd<float_4>(channel);
-						}
-					}
 				}
-			}
 
-			for (int step = 0; step < kMaxSteps; ++step) {
-				if (step < stepCount) {
-					params[PARAM_STEP1 + step].setValue(step == selectedIn ? 1 : 0);
-				} else {
-					params[PARAM_STEP1 + step].setValue(2);
+				if (inputs[INPUT_IN1 + selectedIn].isConnected()) {
+					inChannelCount = inputs[INPUT_IN1 + selectedIn].getChannels();
+					for (int channel = 0; channel < inChannelCount; channel += 4) {
+						outVoltages[channel / 4] = inputs[INPUT_IN1 + selectedIn].getVoltageSimd<float_4>(channel);
+					}
 				}
 			}
 
@@ -249,6 +252,7 @@ struct SuperSwitch81 : SanguineModule {
 			selectedIn = 0;
 		}
 		bLastResetToFirstStepValue = bResetToFirstStep;
+
 		bOneShot = params[PARAM_ONE_SHOT].getValue();
 		if (bOneShot && (bOneShot != bLastOneShotValue)) {
 			bOneShotDone = false;
