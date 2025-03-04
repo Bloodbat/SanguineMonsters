@@ -197,6 +197,16 @@
         "Polyphonic",
         "Random"
       ]
+    },
+    {
+      "slug" : "Sanguine-Manus",
+      "name" : "Manus",
+      "description" : "Expander for Gegeenes and Hydra that provides CV trigger step selection",
+      "tags" : [
+        "Expander",
+        "Switch",
+        "Utility"
+      ]
     }
   ]
 }

@@ -25,6 +25,7 @@ void init(rack::Plugin* p) {
 	p->addModel(modelDenki);
 	p->addModel(modelChronos);
 	p->addModel(modelFortuna);
+	p->addModel(modelManus);
 
 	getDefaultTheme();
 }

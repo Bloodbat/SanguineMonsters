@@ -52,9 +52,17 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
 
   A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
+  - ### Manus
+
+    Expander for Gegeenes and Hydra that provides CV trigger step selection.
+
 - ### Hydra
 
   An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
+
+  - ### Manus
+
+    Expander for Gegeenes and Hydra that provides CV trigger step selection.
 
 - ### Kitsune
 
