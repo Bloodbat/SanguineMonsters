@@ -114,7 +114,11 @@ struct SuperSwitch18 : SanguineModule {
 
 	void doDecreaseTrigger() {
 		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-			selectedOut--;
+			--selectedOut;
+
+			if (selectedOut < 0) {
+				selectedOut = stepCount - 1;
+			}
 		} else {
 			selectedOut = stepCount - 1;
 			bClockReceived = true;
@@ -127,6 +131,10 @@ struct SuperSwitch18 : SanguineModule {
 
 	void doIncreaseTrigger() {
 		++selectedOut;
+
+		if (selectedOut >= stepCount) {
+			selectedOut = 0;
+		}
 		bClockReceived = true;
 		++stepsDone;
 		if (stepsDone > stepCount) {
@@ -178,6 +186,15 @@ struct SuperSwitch18 : SanguineModule {
 			} else if (params[PARAM_STEPS].getValue() != stepCount) {
 				stepCount = params[PARAM_STEPS].getValue();
 			}
+
+			for (int step = 0; step < kMaxSteps; ++step)
+			{
+				if (step < stepCount) {
+					params[PARAM_STEP1 + step].setValue(step == selectedOut ? 1 : 0);
+				} else {
+					params[PARAM_STEP1 + step].setValue(2);
+				}
+			}
 		}
 
 		if ((inputs[INPUT_RESET].isConnected() && stInputReset.process(inputs[INPUT_RESET].getVoltage()))
@@ -207,17 +224,12 @@ struct SuperSwitch18 : SanguineModule {
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				for (int output = 0; output < stepCount; ++output) {
-					if (btSteps[output].process(params[PARAM_STEP1 + output].getValue())) {
+					if (btSteps[output].process(params[PARAM_STEP1 + output].getValue()) && output < stepCount) {
 						if (selectedOut > -1) {
 							outputs[OUTPUT_OUT1 + selectedOut].setChannels(0);
 						}
 						selectedOut = output;
 					}
-
-					while (selectedOut < 0)
-						selectedOut += stepCount;
-					while (selectedOut >= stepCount)
-						selectedOut -= stepCount;
 				}
 
 				if (inputs[INPUT_IN].isConnected()) {
@@ -232,12 +244,10 @@ struct SuperSwitch18 : SanguineModule {
 			for (int step = 0; step < kMaxSteps; ++step)
 			{
 				if (step < stepCount) {
-					params[PARAM_STEP1 + step].setValue(step == selectedOut ? 1 : 0);
 					if (step != selectedOut) {
 						outputs[OUTPUT_OUT1 + step].setChannels(0);
 					}
 				} else {
-					params[PARAM_STEP1 + step].setValue(2);
 					outputs[OUTPUT_OUT1 + step].setChannels(0);
 				}
 			}

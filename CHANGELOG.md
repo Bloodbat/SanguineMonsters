@@ -22,7 +22,9 @@
 
 ## Fixes
 
-- Hydra: lights turning when steps are clicked and when single shot has ended.
+- Hydra: button lights turning on when steps are clicked and single shot has ended.
+
+- Gegeenes: button lights turning on when steps are clicked when single shot has ended.
 
 ---
 
@@ -105,6 +107,8 @@
 - Oraculus: faceplate tweaks.
 
 - Hydra: performance tweaks.
+
+- Gegeenes: performance tweaks.
 
 
 ---
