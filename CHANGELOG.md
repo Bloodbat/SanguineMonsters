@@ -62,6 +62,8 @@
 
 - Hydra: knob border.
 
+- Hydra: Manus expander.
+
 ---
 
 ## Changes
