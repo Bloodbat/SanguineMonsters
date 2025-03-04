@@ -14,9 +14,17 @@
 
 - Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
 
+### Manus
+
+- Expander for Gegeenes and Hydra that provides CV trigger step selection.
+
+---
+
 ## Fixes
 
 - Hydra: lights turning when steps are clicked and when single shot has ended.
+
+---
 
 ## Additions
 
@@ -53,6 +61,8 @@
 - Gegeenes: knob border.
 
 - Hydra: knob border.
+
+---
 
 ## Changes
 
