@@ -134,14 +134,11 @@ struct Fortuna : SanguineModule {
                 float fadingOutVoltage = inVoltages[section][channel] * (clamp(1.f - rampGenerators[section][channel].rampVoltage, 0.f, 1.f));
                 float fadingInVoltage = inVoltages[section][channel] * rampGenerators[section][channel].rampVoltage;
 
-                if (bOutputsConnected[0 + section]) {
-                    outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != ROLL_TAILS ?
-                        fadingInVoltage : fadingOutVoltage, channel);
-                }
-                if (bOutputsConnected[2 + section]) {
-                    outputs[OUTPUT_OUT_1B + section].setVoltage(rollResults[section][channel] == ROLL_TAILS ?
-                        fadingInVoltage : fadingOutVoltage, channel);
-                }
+                outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != ROLL_TAILS ?
+                    fadingInVoltage : fadingOutVoltage, channel);
+
+                outputs[OUTPUT_OUT_1B + section].setVoltage(rollResults[section][channel] == ROLL_TAILS ?
+                    fadingInVoltage : fadingOutVoltage, channel);
             }
 
             if (bOutputsConnected[0 + section]) {
