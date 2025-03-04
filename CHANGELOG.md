@@ -14,6 +14,10 @@
 
 - Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
 
+## Fixes
+
+- Hydra: lights turning when steps are clicked and when single shot has ended.
+
 ## Additions
 
 - Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
@@ -87,6 +91,8 @@
 - Alembic: faceplate tweaks.
 
 - Oraculus: faceplate tweaks.
+
+- Hydra: performance tweaks.
 
 
 ---
