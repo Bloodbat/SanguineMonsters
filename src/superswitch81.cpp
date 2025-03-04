@@ -4,6 +4,7 @@
 #include "sanguinehelpers.hpp"
 #include "pcg_variants.h"
 #include "switches.hpp"
+#include "manus.hpp"
 
 using simd::float_4;
 
@@ -51,6 +52,11 @@ struct SuperSwitch81 : SanguineModule {
 		OUTPUTS_COUNT
 	};
 
+	enum LightIds {
+		LIGHT_EXPANDER,
+		LIGHTS_COUNT
+	};
+
 	dsp::BooleanTrigger btDecrease;
 	dsp::BooleanTrigger btIncrease;
 	dsp::BooleanTrigger btRandom;
@@ -60,6 +66,7 @@ struct SuperSwitch81 : SanguineModule {
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
 	dsp::SchmittTrigger stInputReset;
+	dsp::SchmittTrigger stDirectSteps[kMaxSteps];
 	bool bClockReceived = false;
 	bool bLastOneShotValue = false;
 	bool bLastResetToFirstStepValue = true;
@@ -67,11 +74,15 @@ struct SuperSwitch81 : SanguineModule {
 	bool bOneShot = false;
 	bool bOneShotDone = false;
 	bool bResetToFirstStep = true;
+	bool bHasExpander = false;
 	int inChannelCount = 0;
 	int randomNum = 0;
 	int selectedIn = 0;
 	int stepCount = kMaxSteps;
 	int stepsDone = 0;
+
+	static const int kClockDivider = 16;
+
 	float_4 outVoltages[4] = {};
 
 	dsp::ClockDivider clockDivider;
@@ -79,7 +90,7 @@ struct SuperSwitch81 : SanguineModule {
 	pcg32_random_t pcgRng;
 
 	SuperSwitch81() {
-		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
+		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
 		configParam(PARAM_STEPS, 1.f, 8.f, 8.f, "Steps", "", 0.f, 1.f, 0.f);
 		paramQuantities[PARAM_STEPS]->snapEnabled = true;
@@ -108,7 +119,7 @@ struct SuperSwitch81 : SanguineModule {
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
 		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
 
-		clockDivider.setDivision(16);
+		clockDivider.setDivision(kClockDivider);
 	};
 
 	void doDecreaseTrigger() {
@@ -176,7 +187,13 @@ struct SuperSwitch81 : SanguineModule {
 	};
 
 	void process(const ProcessArgs& args) override {
+		Module* manusExpander = getLeftExpander().module;
+
+		bHasExpander = (manusExpander && manusExpander->getModel() == modelManus && !manusExpander->isBypassed());
+
 		if (clockDivider.process()) {
+			const float sampleTime = args.sampleTime * kClockDivider;
+
 			if (inputs[INPUT_STEPS].isConnected()) {
 				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.f, 8.f));
 			} else if (params[PARAM_STEPS].getValue() != stepCount) {
@@ -188,6 +205,19 @@ struct SuperSwitch81 : SanguineModule {
 					params[PARAM_STEP1 + step].setValue(step == selectedIn ? 1 : 0);
 				} else {
 					params[PARAM_STEP1 + step].setValue(2);
+				}
+			}
+
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.75f : 0.f, sampleTime);
+
+			if (bHasExpander) {
+				for (int step = 0; step < kMaxSteps; ++step) {
+					int currentLight = Manus::LIGHT_STEP_1_RIGHT + step * 3;
+					if (step < stepCount) {
+						manusExpander->getLight(currentLight).setBrightnessSmooth(0.75f, sampleTime);
+					} else {
+						manusExpander->getLight(currentLight).setBrightnessSmooth(0.f, sampleTime);
+					}
 				}
 			}
 		}
@@ -219,6 +249,13 @@ struct SuperSwitch81 : SanguineModule {
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				for (int step = 0; step < stepCount; ++step) {
+					if (bHasExpander) {
+						const int currentInput = Manus::INPUT_STEP_1 + step;
+						if (stDirectSteps[step].process(manusExpander->getInput(currentInput).getVoltage()) && step < stepCount) {
+							selectedIn = step;
+						}
+					}
+
 					if (btSteps[step].process(params[PARAM_STEP1 + step].getValue()) && step < stepCount) {
 						selectedIn = step;
 					}
@@ -283,6 +320,22 @@ struct SuperSwitch81 : SanguineModule {
 		return rootJ;
 	}
 
+	void onBypass(const BypassEvent& e) override {
+		if (bHasExpander) {
+			Module* manusExpander = getRightExpander().module;
+			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(0.f);
+		}
+		Module::onBypass(e);
+	}
+
+	void onUnBypass(const UnBypassEvent& e) override {
+		if (bHasExpander) {
+			Module* manusExpander = getRightExpander().module;
+			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(0.75f);
+		}
+		Module::onUnBypass(e);
+	}
+
 	void dataFromJson(json_t* rootJ) override {
 		SanguineModule::dataFromJson(rootJ);
 
@@ -320,6 +373,8 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 		makePanel();
 
 		addScrews(SCREW_ALL);
+
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6f, 9.672f), module, SuperSwitch81::LIGHT_EXPANDER));
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(56.197, 18.272), module, SuperSwitch81::PARAM_STEPS));
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(56.197, 32.461), module, SuperSwitch81::INPUT_STEPS));
@@ -417,6 +472,22 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 
 		SanguineShapedLight* bloodLogo = new SanguineShapedLight(module, "res/blood_glowy_small.svg", 35.585, 112.707);
 		addChild(bloodLogo);
+	}
+
+	void appendContextMenu(Menu* menu) override {
+		SanguineModuleWidget::appendContextMenu(menu);
+
+		SuperSwitch81* superSwitch81 = dynamic_cast<SuperSwitch81*>(this->module);
+
+		menu->addChild(new MenuSeparator());
+		const Module* expander = superSwitch81->leftExpander.module;
+		if (expander && expander->model == modelManus) {
+			menu->addChild(createMenuLabel("Manus expander already connected"));
+		} else {
+			menu->addChild(createMenuItem("Add Manus expander", "", [=]() {
+				superSwitch81->addExpander(modelManus, this, true);
+				}));
+		}
 	}
 };
 
