@@ -31,7 +31,8 @@ struct DenkiWidget : SanguineModuleWidget {
 
 		makePanel();
 
-		addScrews(SCREW_TOP_RIGHT | SCREW_BOTTOM_RIGHT);
+		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 1 * RACK_GRID_WIDTH, 0)));
+		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 1 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.769, 5.573), module, Denki::LIGHT_MASTER_MODULE));
 
