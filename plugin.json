@@ -13,7 +13,7 @@
     {
       "slug" : "Sanguine-SuperSwitch81",
       "name" : "Hydra",
-      "description" : "An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
+      "description" : "8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step",
       "tags" : [
         "Switch",
         "Random",
@@ -24,7 +24,7 @@
     {
       "slug" : "Sanguine-SuperSwitch18",
       "name" : "Gegenees",
-      "description" : "A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.",
+      "description" : "1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step",
       "tags" : [
         "Switch",
         "Random",
@@ -54,7 +54,7 @@
     {
       "slug" : "Sanguine-Monsters-Oraculus",
       "name" : "Oraculus",
-      "description" : "n to 1 switch/sequencer that takes a polyphonic cable input.",
+      "description" : "n to 1 switch/sequencer that can select its output from a polyphonic cable input",
       "tags" : [
         "Utility",
         "Polyphonic",
@@ -64,7 +64,7 @@
     {
       "slug" : "Sanguine-Monsters-Raiju",
       "name" : "Raiju",
-      "description" : "A flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage.",
+      "description" : "Flexible, fixed voltage source that can clone its output up to 16 channels and has one channel with a single copy of every selected voltage",
       "tags" : [
         "Utility",
         "Polyphonic"
@@ -73,7 +73,7 @@
     {
       "slug" : "Sanguine-Monsters-Sphinx",
       "name" : "Sphinx",
-      "description" : "An euclidean sequencer with different modes.",
+      "description" : "Euclidean sequencer with different modes",
       "tags" : [
         "Sequencer"
       ]
@@ -81,7 +81,7 @@
     {
       "slug" : "Sanguine-Monsters-Brainz",
       "name" : "Brainz",
-      "description" : "A master control center intended to make synchronizing audio and video files from different recorders easier.",
+      "description" : "Master control center intended to make synchronizing audio and video files from different recorders easier",
       "tags" : [
         "Sequencer",
         "Utility",
@@ -91,7 +91,7 @@
     {
       "slug" : "Sanguine-Monsters-Bukavac",
       "name" : "Bukavac",
-      "description" : "A noise generator with a plethora of colors... and Perlin",
+      "description" : "Noise generator with a plethora of colors... and Perlin",
       "tags" : [
         "Noise"
       ]
@@ -99,7 +99,7 @@
     {
       "slug" : "Sanguine-Monsters-Dungeon",
       "name" : "Dungeon",
-      "description" : "A sample and hold, track and hold, hold and track and white noise source.",
+      "description" : "Sample and hold, track and hold, hold and track and white noise source with light up faceplate",
       "tags" : [
         "Noise",
         "Sample and hold",
@@ -109,7 +109,7 @@
     {
       "slug" : "Sanguine-Kitsune",
       "name" : "Kitsune",
-      "description" : "Attenuate; invert, and offset up to 4 voltages",
+      "description" : "Four scalers and offseters for polyphonic voltages",
       "tags" : [
         "Attenuator",
         "Quad",
@@ -119,7 +119,7 @@
     {
       "slug" : "Sanguine-Oubliette",
       "name" : "Oubliette",
-      "description" : "A null sink and cable holder for your input and output wires. Also works as a null voltage source.",
+      "description" : "Null sink and cable holder for input and output wires... doubles as a null voltage source",
       "tags" : [
         "Utility"
       ]
@@ -127,7 +127,7 @@
     {
       "slug" : "Sanguine-Medusa",
       "name" : "Medusa",
-      "description" : "A normalled, polyphonic mega multiple with 32 inputs and outputs",
+      "description" : "Normalled, polyphonic smart mega multiple with 32 inputs and outputs",
       "tags" : [
         "Multiple",
         "Polyphonic"
@@ -164,7 +164,7 @@
     {
       "slug" : "Sanguine-Alembic",
       "name" : "Alembic",
-      "description" : "An expander for Alchemist providing gain CV control for every channel and individual post-fader channel outputs",
+      "description" : "Expander for Alchemist that provides gain CV control for every channel and individual post-fader channel outputs",
       "tags" : [
         "Expander"
       ]
@@ -172,7 +172,7 @@
     {
       "slug" : "Sanguine-Denki",
       "name" : "Denki",
-      "description" : "An expander for Kitsune providing gain CV control for every channel",
+      "description" : "Expander for Kitsune providing gain and offset CV control for every channel",
       "tags" : [
         "Expander",
         "Polyphonic"
