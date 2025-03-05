@@ -14,7 +14,7 @@ void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
     } else {
         lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(0.f);
         for (int light = 0; light < kMaxSteps; ++light) {
-            const int currentLight = LIGHT_STEP_1_LEFT + light * 3;
+            const int currentLight = LIGHT_STEP_1_LEFT + light;
             lights[currentLight].setBrightness(0.f);
         }
     }
@@ -23,19 +23,19 @@ void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
     } else {
         lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(0.f);
         for (int light = 0; light < kMaxSteps; ++light) {
-            const int currentLight = LIGHT_STEP_1_RIGHT + light * 3;
+            const int currentLight = LIGHT_STEP_1_RIGHT + light;
             lights[currentLight].setBrightness(0.f);
         }
     }
 }
 
-struct AcrylicLeftTriangle : SanguineShapedAcrylicLed {
+struct AcrylicLeftTriangle : SanguineShapedAcrylicLed<RedLight> {
     AcrylicLeftTriangle() {
         setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/light_triangle_left.svg")));
     }
 };
 
-struct AcrylicRightTriangle : SanguineShapedAcrylicLed {
+struct AcrylicRightTriangle : SanguineShapedAcrylicLed<RedLight> {
     AcrylicRightTriangle() {
         setSvg(Svg::load(asset::plugin(pluginInstance, "res/components/light_triangle_right.svg")));
     }
