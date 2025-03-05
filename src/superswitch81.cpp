@@ -485,7 +485,7 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 			menu->addChild(createMenuLabel("Manus expander already connected"));
 		} else {
 			menu->addChild(createMenuItem("Add Manus expander", "", [=]() {
-				superSwitch81->addExpander(modelManus, this, true);
+				superSwitch81->addExpander(modelManus, this, SanguineModule::EXPANDER_LEFT);
 				}));
 		}
 	}
