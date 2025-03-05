@@ -55,7 +55,7 @@ struct Dungeon : SanguineModule {
 
 	bool bStoreVoltageInPatch = true;
 
-	HaloType haloType = HALO_CIRCULAR;
+	HaloTypes haloType = HALO_CIRCULAR;
 
 	std::string modeLabel = dungeonModeLabels[0];
 
@@ -262,7 +262,7 @@ struct Dungeon : SanguineModule {
 		json_t* haloTypeJ = json_object_get(rootJ, "haloType");
 
 		if (haloTypeJ) {
-			haloType = static_cast<HaloType>(json_integer_value(haloTypeJ));
+			haloType = static_cast<HaloTypes>(json_integer_value(haloTypeJ));
 		}
 	}
 };
