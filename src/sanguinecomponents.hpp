@@ -4,10 +4,23 @@
 #include <color.hpp>
 #include "sanguinehelpers.hpp"
 #include "themes.hpp"
+#include "sanguinedrawing.hpp"
 
 using namespace rack;
 
 enum HaloType { HALO_CIRCULAR, HALO_RECTANGULAR, HALO_NONE };
+
+// Light colors.
+
+struct RGBLightColor {
+	float red;
+	float green;
+	float blue;
+};
+
+// Color constants for decorative lights
+static const unsigned int kSanguineBlueLight = rgbColorToInt(0, 167, 255);
+static const unsigned int kSanguineYellowLight = rgbColorToInt(239, 250, 100);
 
 // Ports
 
@@ -284,12 +297,53 @@ struct Rogan6PSLight : Base {
 	}
 };
 
-struct SanguineShapedAcrylicLed : TSvgLight<RedGreenBlueLight> {
+template <typename TBase>
+struct SanguineShapedAcrylicLed : TSvgLight<TBase> {
 	static constexpr float backgroundGrey = 30.f / 255.f;
 
-	void draw(const DrawArgs& args) override;
+	void draw(const Widget::DrawArgs& args) override {
+		// Drawn in the background: these lights should include a background, otherwise designs show: they include transparency.
+	}
 
-	void drawLayer(const DrawArgs& args, int layer) override;
+	// drawLayer logic partially based on code by BaconPaul and Hemmer.
+	void drawLayer(const Widget::DrawArgs& args, int layer) override {
+		if (layer == 1) {
+
+			if (!this->sw->svg) {
+				return;
+			}
+
+			if (this->module && !this->module->isBypassed()) {
+				// When LED is off, draw the background (grey value #1E1E1E), but if on then progressively blend away to zero.
+				float backgroundFactor = std::max(0.f, 1.f - this->color.a) * backgroundGrey;
+
+				if (backgroundFactor > 0.f) {
+					NVGcolor blendedColor = nvgRGBf(backgroundFactor, backgroundFactor, backgroundFactor);
+
+					const NSVGimage* mySvg = this->sw->svg->handle;
+					const int fillColor = rgbColorToInt(static_cast<int>(blendedColor.r * 255), static_cast<int>(blendedColor.g * 255),
+						static_cast<int>(blendedColor.b * 255), static_cast<int>(blendedColor.a * 255));
+
+					fillSvgSolidColor(mySvg, fillColor);
+
+					nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
+					svgDraw(args.vg, this->sw->svg->handle);
+				}
+
+				// Main RGB color.
+				const NSVGimage* mySvg = this->sw->svg->handle;
+				const int fillColor = rgbColorToInt(static_cast<int>(this->color.r * 255), static_cast<int>(this->color.g * 255),
+					static_cast<int>(this->color.b * 255), static_cast<int>(this->color.a * 255));
+
+				fillSvgSolidColor(mySvg, fillColor);
+
+				nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
+				svgDraw(args.vg, this->sw->svg->handle);
+				this->drawHalo(args);
+			}
+		}
+		Widget::drawLayer(args, layer);
+	}
 };
 
 // Light states
@@ -386,33 +440,3 @@ struct SanguineModuleWidget : ModuleWidget {
 	void makePanel();
 	void step() override;
 };
-
-// Drawing utils
-void drawCircularHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
-	const unsigned char haloOpacity, const float radiusFactor);
-void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
-	const unsigned char haloOpacity, const float positionX);
-
-inline void fillSvgSolidColor(const NSVGimage* svgImage, const unsigned int fillColor) {
-	for (NSVGshape* shape = svgImage->shapes; shape; shape = shape->next) {
-		shape->fill.color = fillColor;
-		shape->fill.type = NSVG_PAINT_COLOR;
-	}
-}
-
-// utils
-inline unsigned int rgbColorToInt(const uint8_t red, const uint8_t green, const uint8_t blue, const uint8_t alpha = 255) {
-	return (alpha << 24) + (blue << 16) + (green << 8) + red;
-}
-
-// Light colors.
-
-struct RGBLightColor {
-	float red;
-	float green;
-	float blue;
-};
-
-// Color constants for decorative lights
-static const unsigned int kSanguineBlueLight = rgbColorToInt(0, 167, 255);
-static const unsigned int kSanguineYellowLight = rgbColorToInt(239, 250, 100);

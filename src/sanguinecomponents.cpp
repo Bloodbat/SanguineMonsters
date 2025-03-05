@@ -1,5 +1,4 @@
 ﻿#include "sanguinecomponents.hpp"
-#include <color.hpp>
 
 using namespace rack;
 
@@ -713,50 +712,6 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 	}
 }
 
-void SanguineShapedAcrylicLed::draw(const DrawArgs& args) {
-	// Drawn in the background: these lights should include a background, otherwise designs show: they include transparency.
-}
-
-// drawLayer logic partially based on code by BaconPaul and Hemmer.
-void SanguineShapedAcrylicLed::drawLayer(const DrawArgs& args, int layer) {
-	if (layer == 1) {
-
-		if (!sw->svg) {
-			return;
-		}
-
-		if (module && !module->isBypassed()) {
-			// When LED is off, draw the background (grey value #1E1E1E), but if on then progressively blend away to zero.
-			float backgroundFactor = std::max(0.f, 1.f - color.a) * backgroundGrey;
-
-			if (backgroundFactor > 0.f) {
-				NVGcolor blendedColor = nvgRGBf(backgroundFactor, backgroundFactor, backgroundFactor);
-
-				const NSVGimage* mySvg = sw->svg->handle;
-				const int fillColor = rgbColorToInt(static_cast<int>(blendedColor.r * 255), static_cast<int>(blendedColor.g * 255),
-					static_cast<int>(blendedColor.b * 255), static_cast<int>(blendedColor.a * 255));
-
-				fillSvgSolidColor(mySvg, fillColor);
-
-				nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
-				svgDraw(args.vg, sw->svg->handle);
-			}
-
-			// Main RGB color.
-			const NSVGimage* mySvg = sw->svg->handle;
-			const int fillColor = rgbColorToInt(static_cast<int>(color.r * 255), static_cast<int>(color.g * 255),
-				static_cast<int>(color.b * 255), static_cast<int>(color.a * 255));
-
-			fillSvgSolidColor(mySvg, fillColor);
-
-			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
-			svgDraw(args.vg, sw->svg->handle);
-			drawHalo(args);
-		}
-	}
-	Widget::drawLayer(args, layer);
-}
-
 // Decorations
 SanguineShapedLight::SanguineShapedLight(Module* theModule, const std::string& shapeFileName, const float X, const float Y, bool createCentered) {
 	module = theModule;
@@ -1031,67 +986,6 @@ void SanguineModuleWidget::step() {
 		}
 	}
 	Widget::step();
-}
-
-// Drawing utils
-
-void drawCircularHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
-	const unsigned char haloOpacity, const float radiusFactor) {
-	// Adapted from LightWidget
-	// Don't draw halo if rendering in a framebuffer, e.g. screenshots or Module Browser
-	if (args.fb) {
-		return;
-	}
-
-	const float halo = settings::haloBrightness;
-	if (halo == 0.f) {
-		return;
-	}
-
-	nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
-
-	math::Vec c = boxSize.div(2);
-	float radius = std::min(boxSize.x, boxSize.y) / radiusFactor;
-	float oradius = radius + std::min(radius * 4.f, 15.f);
-
-	nvgBeginPath(args.vg);
-	nvgRect(args.vg, c.x - oradius, c.y - oradius, 2 * oradius, 2 * oradius);
-
-	NVGcolor icol = color::mult(nvgTransRGBA(haloColor, haloOpacity), halo);
-
-	NVGcolor ocol = nvgRGBA(0, 0, 0, 0);
-	NVGpaint paint = nvgRadialGradient(args.vg, c.x, c.y, radius, oradius, icol, ocol);
-	nvgFillPaint(args.vg, paint);
-	nvgFill(args.vg);
-}
-
-void drawRectHalo(const Widget::DrawArgs& args, const Vec boxSize, const NVGcolor haloColor,
-	const unsigned char haloOpacity, const float positionX) {
-	// Adapted from MindMeld & LightWidget.
-	if (args.fb) {
-		return;
-	}
-
-	const float halo = settings::haloBrightness;
-	if (halo == 0.f) {
-		return;
-	}
-
-	nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
-
-	nvgBeginPath(args.vg);
-	nvgRect(args.vg, -9 + positionX, -9, boxSize.x + 9, boxSize.y + 9);
-
-	NVGcolor icol = color::mult(nvgTransRGBA(haloColor, haloOpacity), halo);
-
-	NVGcolor ocol = nvgRGBA(0, 0, 0, 0);
-	NVGpaint paint = nvgBoxGradient(args.vg, 4.5f + positionX, 4.5f, boxSize.x - 4.5f, boxSize.y - 4.5f, 5.f, 8.f, icol, ocol);
-	nvgFillPaint(args.vg, paint);
-	nvgFill(args.vg);
-
-	nvgFillPaint(args.vg, paint);
-	nvgFill(args.vg);
-	nvgGlobalCompositeOperation(args.vg, NVG_SOURCE_OVER);
 }
 
 FaceplateThemes defaultTheme = THEME_VITRIOL;
