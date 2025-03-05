@@ -2,6 +2,10 @@
 
 Manus::Manus() {
     config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
+
+    for (int input = 0; input < kMaxSteps; ++input) {
+        configInput(INPUT_STEP_1 + input, string::f("Step %d", input + 1));
+    }
 }
 
 void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
