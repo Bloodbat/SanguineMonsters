@@ -216,7 +216,7 @@ struct SuperSwitch18 : SanguineModule {
 
 			if (bHasExpander) {
 				for (int step = 0; step < kMaxSteps; ++step) {
-					int currentLight = Manus::LIGHT_STEP_1_LEFT + step * 3;
+					int currentLight = Manus::LIGHT_STEP_1_LEFT + step;
 					if (step < stepCount) {
 						manusExpander->getLight(currentLight).setBrightnessSmooth(0.75f, sampleTime);
 					} else {
