@@ -124,6 +124,9 @@ struct Alchemist : SanguineModule {
 		bool bHaveExpanderMuteCv = false;
 		bool bHaveExpanderSoloCv = false;
 
+		bool bIgnoreMuteAll = false;
+		bool bIgnoreSoloAll = false;
+
 		if (bHasLeftExpander) {
 			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
 			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
@@ -161,6 +164,12 @@ struct Alchemist : SanguineModule {
 				if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
 					bMutedChannels[channel] = !bMutedChannels[channel];
 					if (bHasLeftExpander) {
+						if ((bMuteAllEnabled && bLastAllMuted) && !bMutedChannels[channel]) {
+							bMuteAllEnabled = false;
+							crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+							bIgnoreMuteAll = true;
+						}
+
 						if (exclusiveMuteChannel != channel) {
 							exclusiveMuteChannel = channel;
 						} else {
@@ -176,6 +185,12 @@ struct Alchemist : SanguineModule {
 				if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
 					bSoloedChannels[channel] = !bSoloedChannels[channel];
 					if (bHasLeftExpander) {
+						if ((bSoloAllEnabled && bLastAllSoloed) && !bSoloedChannels[channel]) {
+							bSoloAllEnabled = false;
+							crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
+							bIgnoreSoloAll = true;
+						}
+
 						if (exclusiveSoloChannel != channel) {
 							exclusiveSoloChannel = channel;
 						} else {
@@ -192,12 +207,12 @@ struct Alchemist : SanguineModule {
 			soloCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				if (bHasLeftExpander) {
-					if (!bMuteExclusiveEnabled && ((bLastAllMuted != bMuteAllEnabled) ||
+					if (!bMuteExclusiveEnabled && !bIgnoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) ||
 						(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
 						bMutedChannels[channel] = bMuteAllEnabled;
 					}
 
-					if (!bSoloExclusiveEnabled && ((bLastAllSoloed != bSoloAllEnabled) ||
+					if (!bSoloExclusiveEnabled && !bIgnoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) ||
 						(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
 						bSoloedChannels[channel] = bSoloAllEnabled;
 					}
@@ -331,6 +346,9 @@ struct Alchemist : SanguineModule {
 				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled ? 0.75f : 0.f, sampleTime);
 			}
 		}
+
+		bIgnoreMuteAll = false;
+		bIgnoreSoloAll = false;
 	}
 
 	void onBypass(const BypassEvent& e) override {
