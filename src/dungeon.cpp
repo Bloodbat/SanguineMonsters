@@ -195,7 +195,7 @@ struct Dungeon : SanguineModule {
 			outputs[OUTPUT_VOLTAGE].setVoltage(engine.sampleFilter.process(inVoltage, slewDelta));
 		}
 
-		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.bState ? 0.75f : 0.f, args.sampleTime);
+		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.bState ? kSanguineButtonLightValue : 0.f, args.sampleTime);
 
 		if (clockDivider.process()) {
 			moduleMode = ModuleModes(params[PARAM_MODE].getValue());
