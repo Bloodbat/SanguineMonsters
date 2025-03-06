@@ -327,8 +327,8 @@ struct Chronos : SanguineModule {
                     lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
                 }
-                lights[LIGHT_BIPOLAR_1 + section].setBrightnessSmooth(!bHasOffset ? 0.75f : 0.f, sampleTime);
-                lights[LIGHT_INVERT_1 + section].setBrightnessSmooth(bIsInverted ? 0.75f : 0.f, sampleTime);
+                lights[LIGHT_BIPOLAR_1 + section].setBrightnessSmooth(!bHasOffset ? kSanguineButtonLightValue : 0.f, sampleTime);
+                lights[LIGHT_INVERT_1 + section].setBrightnessSmooth(bIsInverted ? kSanguineButtonLightValue : 0.f, sampleTime);
             }
         }
     }

@@ -212,13 +212,13 @@ struct SuperSwitch18 : SanguineModule {
 				}
 			}
 
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.75f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 
 			if (bHasExpander) {
 				for (int step = 0; step < kMaxSteps; ++step) {
 					int currentLight = Manus::LIGHT_STEP_1_LEFT + step;
 					if (step < stepCount) {
-						manusExpander->getLight(currentLight).setBrightnessSmooth(0.75f, sampleTime);
+						manusExpander->getLight(currentLight).setBrightnessSmooth(kSanguineButtonLightValue, sampleTime);
 					} else {
 						manusExpander->getLight(currentLight).setBrightnessSmooth(0.f, sampleTime);
 					}
@@ -351,7 +351,7 @@ struct SuperSwitch18 : SanguineModule {
 	void onUnBypass(const UnBypassEvent& e) override {
 		if (bHasExpander) {
 			Module* manusExpander = getRightExpander().module;
-			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(0.75f);
+			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
 	}
