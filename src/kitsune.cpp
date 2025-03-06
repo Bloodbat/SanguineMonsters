@@ -179,7 +179,7 @@ struct Kitsune : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.75f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 		}
 	}
 
@@ -194,7 +194,7 @@ struct Kitsune : SanguineModule {
 	void onUnBypass(const UnBypassEvent& e) override {
 		if (bHasExpander) {
 			Module* denkiExpander = getRightExpander().module;
-			denkiExpander->getLight(Denki::LIGHT_MASTER_MODULE).setBrightness(0.75f);
+			denkiExpander->getLight(Denki::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
 	}
