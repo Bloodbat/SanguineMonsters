@@ -24,6 +24,10 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
 
     An expander for Alchemist that provides individual post-mix channel outputs and gain CV control.
 
+  - ### Crucible
+  
+    An expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode
+
 - ### Brainz
 
   A utility to control multiple recorders and ease synchronizing their outputs in post.
