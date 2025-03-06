@@ -325,8 +325,8 @@ struct Alchemist : SanguineModule {
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 
-				lights[LIGHT_MUTE + channel].setBrightnessSmooth(bMutedChannels[channel] ? 0.75f : 0.f, sampleTime);
-				lights[LIGHT_SOLO + channel].setBrightnessSmooth(bSoloedChannels[channel] ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_MUTE + channel].setBrightnessSmooth(bMutedChannels[channel] ? kSanguineButtonLightValue : 0.f, sampleTime);
+				lights[LIGHT_SOLO + channel].setBrightnessSmooth(bSoloedChannels[channel] ? kSanguineButtonLightValue : 0.f, sampleTime);
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
@@ -334,16 +334,20 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
-			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander ? 0.75f : 0.f, sampleTime);
-			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander ? 0.75f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 
-			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted ? 0.75f : 0.f, sampleTime);
+			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted ? kSanguineButtonLightValue : 0.f, sampleTime);
 
 			if (bHasLeftExpander) {
-				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled ? 0.75f : 0.f, sampleTime);
-				crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled ? 0.75f : 0.f, sampleTime);
-				crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled ? 0.75f : 0.f, sampleTime);
-				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled ? 0.75f : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled ?
+					kSanguineButtonLightValue : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled ?
+					kSanguineButtonLightValue : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled ?
+					kSanguineButtonLightValue : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled ?
+					kSanguineButtonLightValue : 0.f, sampleTime);
 			}
 		}
 
@@ -367,12 +371,12 @@ struct Alchemist : SanguineModule {
 	void onUnBypass(const UnBypassEvent& e) override {
 		if (bHasRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
-			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.75f);
+			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 
 		if (bHasLeftExpander) {
 			Module* crucibleExpander = getLeftExpander().module;
-			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(0.75f);
+			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
 	}
