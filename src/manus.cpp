@@ -14,7 +14,7 @@ void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
     bool bHasLeftMaster = gegeenesMaster && gegeenesMaster->getModel() == modelSuperSwitch18;
     bool bHasRightMaster = hydraMaster && hydraMaster->getModel() == modelSuperSwitch81;
     if (bHasLeftMaster) {
-        lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(0.75f);
+        lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(kSanguineButtonLightValue);
     } else {
         lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(0.f);
         for (int light = 0; light < kMaxSteps; ++light) {
@@ -23,7 +23,7 @@ void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
         }
     }
     if (bHasRightMaster) {
-        lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(0.75f);
+        lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(kSanguineButtonLightValue);
     } else {
         lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(0.f);
         for (int light = 0; light < kMaxSteps; ++light) {
