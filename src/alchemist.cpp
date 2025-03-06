@@ -75,6 +75,9 @@ struct Alchemist : SanguineModule {
 	dsp::BooleanTrigger btMuteButtons[PORT_MAX_CHANNELS];
 	dsp::BooleanTrigger btSoloButtons[PORT_MAX_CHANNELS];
 
+	Module* alembicExpander = {};
+	Module* crucibleExpander = {};
+
 	float muteVoltages[PORT_MAX_CHANNELS] = {};
 	float soloVoltages[PORT_MAX_CHANNELS] = {};
 
@@ -114,14 +117,9 @@ struct Alchemist : SanguineModule {
 		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) || inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f;
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
-		Module* alembicExpander = getRightExpander().module;
-		Module* crucibleExpander = getLeftExpander().module;
-
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
-		bHasRightExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
-		bHasLeftExpander = (crucibleExpander && crucibleExpander->getModel() == modelCrucible && !crucibleExpander->isBypassed());
 
 		bool bHaveExpanderMuteCv = false;
 		bool bHaveExpanderSoloCv = false;
@@ -362,8 +360,10 @@ struct Alchemist : SanguineModule {
 	}
 
 	void onExpanderChange(const ExpanderChangeEvent& e) override {
-		Module* crucibleExpander = getLeftExpander().module;
-		bool bHasLeftExpander = crucibleExpander && crucibleExpander->getModel() == modelCrucible;
+		alembicExpander = getRightExpander().module;
+		crucibleExpander = getLeftExpander().module;
+		bHasRightExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
+		bHasLeftExpander = (crucibleExpander && crucibleExpander->getModel() == modelCrucible && !crucibleExpander->isBypassed());
 
 		if (!bHasLeftExpander) {
 			exclusiveMuteChannel = -1;
