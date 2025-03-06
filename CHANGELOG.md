@@ -52,6 +52,8 @@
 
 - Alchemist: ability to add expander from context menu.
 
+- Alchemist: master mute button and CV input.
+
 - Brainz: knob borders.
 
 - Bukavac: knob borders.
