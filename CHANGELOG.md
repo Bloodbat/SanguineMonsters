@@ -18,6 +18,10 @@
 
 - Expander for Gegeenes and Hydra that provides CV trigger step selection.
 
+### Crucible
+
+- Expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode.
+
 ---
 
 ## Fixes

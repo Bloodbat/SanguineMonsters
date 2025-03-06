@@ -4,6 +4,7 @@
 #include "sanguinedsp.hpp"
 #include "alembic.hpp"
 #include "alchemist.hpp"
+#include "crucible.hpp"
 
 struct Alchemist : SanguineModule {
 
@@ -32,7 +33,8 @@ struct Alchemist : SanguineModule {
 		ENUMS(LIGHT_MUTE, PORT_MAX_CHANNELS),
 		ENUMS(LIGHT_SOLO, PORT_MAX_CHANNELS),
 		ENUMS(LIGHT_VU, 4),
-		LIGHT_EXPANDER,
+		LIGHT_EXPANDER_RIGHT,
+		LIGHT_EXPANDER_LEFT,
 		LIGHTS_COUNT
 	};
 
@@ -40,14 +42,38 @@ struct Alchemist : SanguineModule {
 
 	int soloCount = 0;
 
-	bool bChannelMuted[PORT_MAX_CHANNELS] = {};
-	bool bChannelSoloed[PORT_MAX_CHANNELS] = {};
+	int exclusiveMuteChannel = -1;
+	int exclusiveSoloChannel = -1;
 
-	bool bHasExpander = false;
+	int expanderMuteCount = 0;
+	int expanderSoloCount = 0;
+
+	bool bChannelMuted[PORT_MAX_CHANNELS] = {};
+	bool bLastAllMuted = false;
+
+	bool bChannelSoloed[PORT_MAX_CHANNELS] = {};
+	bool bLastAllSoloed = false;
+
+	bool bLastHaveExpanderMuteCv = false;
+	bool bLastHaveExpanderSoloCv = false;
+
+	bool bHasRightExpander = false;
+	bool bHasLeftExpander = false;
+
+	bool bMuteAllEnabled = false;
+	bool bSoloAllEnabled = false;
+
+	bool bMuteExclusiveEnabled = false;
+	bool bSoloExclusiveEnabled = false;
 
 	dsp::ClockDivider lightsDivider;
 	dsp::VuMeter2 vuMeterMix;
 	dsp::VuMeter2 vuMetersGain[PORT_MAX_CHANNELS];
+	dsp::BooleanTrigger btMuteButtons[PORT_MAX_CHANNELS];
+	dsp::BooleanTrigger btSoloButtons[PORT_MAX_CHANNELS];
+
+	float muteVoltages[PORT_MAX_CHANNELS] = {};
+	float soloVoltages[PORT_MAX_CHANNELS] = {};
 
 	SaturatorFloat saturatorFloat;
 
@@ -81,43 +107,144 @@ struct Alchemist : SanguineModule {
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
 		Module* alembicExpander = getRightExpander().module;
+		Module* crucibleExpander = getLeftExpander().module;
 
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
-		bHasExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
+		bHasRightExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
+		bHasLeftExpander = (crucibleExpander && crucibleExpander->getModel() == modelCrucible && !crucibleExpander->isBypassed());
+
+		bool bHaveExpanderMuteCv = false;
+		bool bHaveExpanderSoloCv = false;
+
+		if (bHasLeftExpander) {
+			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
+			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
+
+			bMuteAllEnabled = !bMuteExclusiveEnabled && (crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue() ||
+				crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f);
+			bSoloAllEnabled = bSoloExclusiveEnabled == false && (crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue() ||
+				crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f);
+
+			if (bMuteExclusiveEnabled) {
+				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+			}
+
+			if (bSoloExclusiveEnabled) {
+				crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
+			}
+
+			expanderMuteCount = crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).getChannels();
+			expanderSoloCount = crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).getChannels();
+
+			bHaveExpanderMuteCv = expanderMuteCount > 0;
+			bHaveExpanderSoloCv = expanderSoloCount > 0;
+
+			if (expanderMuteCount > 0) {
+				crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).readVoltages(muteVoltages);
+			}
+
+			if (expanderSoloCount > 0) {
+				crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).readVoltages(soloVoltages);
+			}
+		}
 
 		if (bIsLightsTurn) {
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+				if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
+					bChannelMuted[channel] = !bChannelMuted[channel];
+					if (bHasLeftExpander) {
+						if (exclusiveMuteChannel != channel) {
+							exclusiveMuteChannel = channel;
+						} else {
+							exclusiveMuteChannel = -1;
+						}
+					}
+				}
+				if (expanderMuteCount > 0 && channel < channelCount) {
+					bChannelMuted[channel] = muteVoltages[channel] >= 1.f;
+					exclusiveMuteChannel = -1;
+				}
+
+				if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
+					bChannelSoloed[channel] = !bChannelSoloed[channel];
+					if (bHasLeftExpander) {
+						if (exclusiveSoloChannel != channel) {
+							exclusiveSoloChannel = channel;
+						} else {
+							exclusiveSoloChannel = -1;
+						}
+					}
+				}
+				if (expanderSoloCount > 0 && channel < channelCount) {
+					bChannelSoloed[channel] = soloVoltages[channel] >= 1.f;
+					exclusiveSoloChannel = -1;
+				}
+			}
+
 			soloCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-				bChannelMuted[channel] = static_cast<bool>(params[PARAM_MUTE + channel].getValue());
-				if (channel < channelCount) {
-					bChannelSoloed[channel] = static_cast<bool>(params[PARAM_SOLO + channel].getValue());
-					if (bChannelSoloed[channel]) {
-						++soloCount;
+				if (bHasLeftExpander) {
+					if (!bMuteExclusiveEnabled && ((bLastAllMuted != bMuteAllEnabled) ||
+						(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
+						bChannelMuted[channel] = bMuteAllEnabled;
 					}
-				} else {
-					bChannelSoloed[channel] = false;
+
+					if (!bSoloExclusiveEnabled && ((bLastAllSoloed != bSoloAllEnabled) ||
+						(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
+						bChannelSoloed[channel] = bSoloAllEnabled;
+					}
+
+					if (bMuteExclusiveEnabled) {
+						if (channel != exclusiveMuteChannel && exclusiveMuteChannel >= 0) {
+							bChannelMuted[channel] = false;
+						}
+					}
+
+					if (bSoloExclusiveEnabled) {
+						if (channel != exclusiveSoloChannel && exclusiveSoloChannel >= 0) {
+							bChannelSoloed[channel] = false;
+						}
+					}
 				}
-				if (params[PARAM_SOLO + channel].getValue()) {
+
+				if (bChannelSoloed[channel]) {
+					++soloCount;
+				}
+
+				if (bChannelSoloed[channel]) {
 					if (bChannelMuted[channel]) {
 						bChannelMuted[channel] = false;
-						params[PARAM_MUTE + channel].setValue(0.f);
 					}
 				}
 			}
+
+			if (bHasLeftExpander) {
+				if (bLastAllMuted != bMuteAllEnabled) {
+					bLastAllMuted = bMuteAllEnabled;
+				}
+
+				if (bLastAllSoloed != bSoloAllEnabled) {
+					bLastAllSoloed = bSoloAllEnabled;
+				}
+			}
+
+			bLastHaveExpanderMuteCv = bHaveExpanderMuteCv;
+			bLastHaveExpanderSoloCv = bHaveExpanderSoloCv;
 		}
 
 		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 			if (channel < channelCount) {
-				if (bHasExpander) {
+				if (!bHasRightExpander) {
+					outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
+				} else {
 					outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
 						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
-				} else {
-					outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
 				}
 
+				// TODO: this should be flat 10.f.
 				if (std::fabs(outVoltages[channel]) >= 10.1f) {
 					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
 				}
@@ -128,14 +255,14 @@ struct Alchemist : SanguineModule {
 				} else {
 					masterOutVoltages[channel] = 0.f;
 				}
-				if (bHasExpander) {
+				if (bHasRightExpander) {
 					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).isConnected()) {
 						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).setVoltage(masterOutVoltages[channel]);
 					}
 				}
 			} else {
 				outVoltages[channel] = 0.f;
-				if (bHasExpander) {
+				if (bHasRightExpander) {
 					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).isConnected()) {
 						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).setVoltage(0.f);
 					}
@@ -178,8 +305,8 @@ struct Alchemist : SanguineModule {
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 
-				lights[LIGHT_MUTE + channel].setBrightnessSmooth(params[PARAM_MUTE + channel].getValue() ? 0.75f : 0.f, sampleTime);
-				lights[LIGHT_SOLO + channel].setBrightnessSmooth(params[PARAM_SOLO + channel].getValue() ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_MUTE + channel].setBrightnessSmooth(bChannelMuted[channel] ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_SOLO + channel].setBrightnessSmooth(bChannelSoloed[channel] ? 0.75f : 0.f, sampleTime);
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
@@ -187,24 +314,109 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? 0.75f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander ? 0.75f : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander ? 0.75f : 0.f, sampleTime);
+
+			if (bHasLeftExpander) {
+				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled ? 0.75f : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled ? 0.75f : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled ? 0.75f : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled ? 0.75f : 0.f, sampleTime);
+			}
 		}
 	}
 
 	void onBypass(const BypassEvent& e) override {
-		if (bHasExpander) {
+		if (bHasRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
 			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.f);
+		}
+
+		if (bHasLeftExpander) {
+			Module* crucibleExpander = getLeftExpander().module;
+			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
 		Module::onBypass(e);
 	}
 
 	void onUnBypass(const UnBypassEvent& e) override {
-		if (bHasExpander) {
+		if (bHasRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
 			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.75f);
 		}
+
+		if (bHasLeftExpander) {
+			Module* crucibleExpander = getLeftExpander().module;
+			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(0.75f);
+		}
 		Module::onUnBypass(e);
+	}
+
+	void onExpanderChange(const ExpanderChangeEvent& e) override {
+		Module* crucibleExpander = getLeftExpander().module;
+		bool bHasLeftExpander = crucibleExpander && crucibleExpander->getModel() == modelCrucible;
+
+		if (!bHasLeftExpander) {
+			exclusiveMuteChannel = -1;
+			exclusiveSoloChannel = -1;
+
+			bMuteAllEnabled = false;
+			bSoloAllEnabled = false;
+			bMuteExclusiveEnabled = false;
+			bSoloExclusiveEnabled = false;
+
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+				muteVoltages[channel] = 0.f;
+				soloVoltages[channel] = 0.f;
+			}
+
+			expanderMuteCount = 0;
+			expanderSoloCount = 0;
+		}
+	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = SanguineModule::dataToJson();
+
+		json_t* mutedChannelsJ = json_array();
+		json_t* soloedChannelsJ = json_array();
+
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+			json_array_insert_new(mutedChannelsJ, channel, json_boolean(bChannelMuted[channel]));
+			json_array_insert_new(soloedChannelsJ, channel, json_boolean(bChannelSoloed[channel]));
+		}
+
+		json_object_set_new(rootJ, "mutedChannels", mutedChannelsJ);
+		json_object_set_new(rootJ, "soloedChannels", soloedChannelsJ);
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
+		json_t* mutedChannelsJ = json_object_get(rootJ, "mutedChannels");
+		json_t* soloedChannelsJ = json_object_get(rootJ, "soloedChannels");
+
+		if (mutedChannelsJ || soloedChannelsJ) {
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+				if (mutedChannelsJ) {
+					json_t* mutedJ = json_array_get(mutedChannelsJ, channel);
+
+					if (mutedJ) {
+						bChannelMuted[channel] = json_boolean_value(mutedJ);
+					}
+				}
+
+				if (soloedChannelsJ) {
+					json_t* soloedJ = json_array_get(soloedChannelsJ, channel);
+
+					if (soloedJ) {
+						bChannelSoloed[channel] = json_boolean_value(soloedJ);
+					}
+				}
+			}
+		}
 	}
 };
 
@@ -221,7 +433,8 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 9.672), module, Alchemist::LIGHT_EXPANDER));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 9.672), module, Alchemist::LIGHT_EXPANDER_LEFT));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 9.672), module, Alchemist::LIGHT_EXPANDER_RIGHT));
 
 		static const int offset = 8;
 
@@ -236,14 +449,14 @@ struct AlchemistWidget : SanguineModuleWidget {
 			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 73.478),
 				module, Alchemist::PARAM_GAIN + component + offset, (Alchemist::LIGHT_GAIN + component + offset) * 2));
 
-			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
+			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
 				module, Alchemist::PARAM_MUTE + component, Alchemist::LIGHT_MUTE + component));
-			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 92.218),
+			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 92.218),
 				module, Alchemist::PARAM_MUTE + component + offset, Alchemist::LIGHT_MUTE + component + offset));
 
-			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
+			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
 				module, Alchemist::PARAM_SOLO + component, Alchemist::LIGHT_SOLO + component));
-			addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 99.855),
+			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 99.855),
 				module, Alchemist::PARAM_SOLO + component + offset, Alchemist::LIGHT_SOLO + component + offset));
 
 			currentSliderX += deltaX;
@@ -288,8 +501,18 @@ struct AlchemistWidget : SanguineModuleWidget {
 		Alchemist* alchemist = dynamic_cast<Alchemist*>(this->module);
 
 		menu->addChild(new MenuSeparator());
-		const Module* expander = alchemist->rightExpander.module;
-		if (expander && expander->model == modelAlembic) {
+		const Module* leftExpander = alchemist->leftExpander.module;
+		if (leftExpander && leftExpander->model == modelCrucible) {
+			menu->addChild(createMenuLabel("Crucible expander already connected"));
+		} else {
+			menu->addChild(createMenuItem("Add Crucible expander", "", [=]() {
+				alchemist->addExpander(modelCrucible, this, SanguineModule::EXPANDER_LEFT);
+				}));
+		}
+
+		menu->addChild(new MenuSeparator());
+		const Module* rightExpander = alchemist->rightExpander.module;
+		if (rightExpander && rightExpander->model == modelAlembic) {
 			menu->addChild(createMenuLabel("Alembic expander already connected"));
 		} else {
 			menu->addChild(createMenuItem("Add Alembic expander", "", [=]() {
