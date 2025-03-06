@@ -277,16 +277,19 @@ struct Alchemist : SanguineModule {
 				} else {
 					masterOutVoltages[channel] = 0.f;
 				}
+
 				if (bHasRightExpander) {
-					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).isConnected()) {
-						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).setVoltage(masterOutVoltages[channel]);
+					Output output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
+					if (output.isConnected()) {
+						output.setVoltage(masterOutVoltages[channel]);
 					}
 				}
 			} else {
 				outVoltages[channel] = 0.f;
 				if (bHasRightExpander) {
-					if (alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).isConnected()) {
-						alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel).setVoltage(0.f);
+					Output output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
+					if (output.isConnected()) {
+						output.setVoltage(0.f);
 					}
 				}
 			}
