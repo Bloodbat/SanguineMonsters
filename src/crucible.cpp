@@ -18,7 +18,7 @@ void Crucible::onExpanderChange(const ExpanderChangeEvent& e) {
     bool bHasRightMaster = alchemistMaster && alchemistMaster->getModel() == modelAlchemist;
 
     if (bHasRightMaster) {
-        lights[LIGHT_MASTER_MODULE].setBrightness(0.75f);
+        lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
     } else {
         lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 
