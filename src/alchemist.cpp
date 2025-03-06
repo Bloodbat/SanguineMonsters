@@ -13,12 +13,14 @@ struct Alchemist : SanguineModule {
 		PARAM_MIX,
 		ENUMS(PARAM_MUTE, PORT_MAX_CHANNELS),
 		ENUMS(PARAM_SOLO, PORT_MAX_CHANNELS),
+		PARAM_MASTER_MUTE,
 		PARAMS_COUNT
 	};
 
 	enum InputIds {
 		INPUT_POLYPHONIC,
 		INPUT_MIX_CV,
+		INPUT_MASTER_MUTE,
 		INPUTS_COUNT
 	};
 
@@ -35,6 +37,7 @@ struct Alchemist : SanguineModule {
 		ENUMS(LIGHT_VU, 4),
 		LIGHT_EXPANDER_RIGHT,
 		LIGHT_EXPANDER_LEFT,
+		LIGHT_MASTER_MUTE,
 		LIGHTS_COUNT
 	};
 
@@ -87,8 +90,12 @@ struct Alchemist : SanguineModule {
 			configButton(PARAM_SOLO + channel, string::f("Channel %d solo", channelNumber));
 		}
 
-		configParam(PARAM_MIX, 0.f, 1.f, 1.f, "Master mix", "%", 0.f, 100.f);
+		configInput(INPUT_MASTER_MUTE, "Master mute CV");
+		configButton(PARAM_MASTER_MUTE, "Master mute");
+
 		configInput(INPUT_MIX_CV, "Master mix CV");
+		configParam(PARAM_MIX, 0.f, 1.f, 1.f, "Master mix", "%", 0.f, 100.f);
+
 
 		configInput(INPUT_POLYPHONIC, "Polyphonic");
 
@@ -104,6 +111,7 @@ struct Alchemist : SanguineModule {
 		float monoMix = 0.f;
 		float outVoltages[PORT_MAX_CHANNELS] = {};
 		float masterOutVoltages[PORT_MAX_CHANNELS] = {};
+		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) || inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f;
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
 		Module* alembicExpander = getRightExpander().module;
@@ -248,7 +256,7 @@ struct Alchemist : SanguineModule {
 					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
 				}
 
-				if (!bMutedChannels[channel] && (soloCount == 0 || bSoloedChannels[channel])) {
+				if (!bMutedChannels[channel] && (soloCount == 0 || bSoloedChannels[channel]) && !bMasterMuted) {
 					monoMix += outVoltages[channel];
 					masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
 				} else {
@@ -315,6 +323,8 @@ struct Alchemist : SanguineModule {
 
 			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander ? 0.75f : 0.f, sampleTime);
 			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander ? 0.75f : 0.f, sampleTime);
+
+			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted ? 0.75f : 0.f, sampleTime);
 
 			if (bHasLeftExpander) {
 				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled ? 0.75f : 0.f, sampleTime);
@@ -464,18 +474,22 @@ struct AlchemistWidget : SanguineModuleWidget {
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 7.876, 108.973);
 		addChild(inLight);
 
-		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 22.43, 110.65);
-		addChild(bloodLight);
+		SanguineShapedLight* bloodLogo = new SanguineShapedLight(module, "res/blood_glowy_small.svg", 16.419, 112.181);
+		addChild(bloodLogo);
 
-		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 35.563, 117.606);
-		addChild(monstersLight);
-
-		SanguineStaticRGBLight* sumLight = new SanguineStaticRGBLight(module, "res/sum_light_on.svg", 62.155, 108.973, true, kSanguineBlueLight);
+		SanguineStaticRGBLight* sumLight = new SanguineStaticRGBLight(module, "res/sum_light_on.svg", 56.096, 107.473, true, kSanguineBlueLight);
 		addChild(sumLight);
 
-		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(53.657, 114.094), module, Alchemist::INPUT_MIX_CV));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(31.615, 114.094), module, Alchemist::INPUT_MASTER_MUTE));
 
-		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(72.754, 114.094), module, Alchemist::PARAM_MIX));
+		addParam(createParamCentered<SanguineBezel115>(millimetersToPixelsVec(44.332, 114.094), module,
+			Alchemist::PARAM_MASTER_MUTE));
+		addChild(createLightCentered<SanguineBezelLight115<RedLight>>(millimetersToPixelsVec(44.332, 114.094), module,
+			Alchemist::LIGHT_MASTER_MUTE));
+
+		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(57.048, 114.094), module, Alchemist::INPUT_MIX_CV));
+
+		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(71.373, 114.094), module, Alchemist::PARAM_MIX));
 
 		SanguinePolyOutputLight* outPolyLight = new SanguinePolyOutputLight(module, 95.442, 108.973);
 		addChild(outPolyLight);
@@ -483,10 +497,10 @@ struct AlchemistWidget : SanguineModuleWidget {
 		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight(module, 108.963, 108.973);
 		addChild(outMonoLight);
 
-		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 120.011), module, Alchemist::LIGHT_VU));
-		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 115.955), module, Alchemist::LIGHT_VU + 1));
-		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(84.329, 111.878), module, Alchemist::LIGHT_VU + 2));
-		addChild(createLightCentered<MediumLight<RedLight>>(millimetersToPixelsVec(84.329, 107.776), module, Alchemist::LIGHT_VU + 3));
+		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 120.785), module, Alchemist::LIGHT_VU));
+		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 116.729), module, Alchemist::LIGHT_VU + 1));
+		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(84.329, 112.652), module, Alchemist::LIGHT_VU + 2));
+		addChild(createLightCentered<MediumLight<RedLight>>(millimetersToPixelsVec(84.329, 108.55), module, Alchemist::LIGHT_VU + 3));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(7.876, 116.769), module, Alchemist::INPUT_POLYPHONIC));
 
