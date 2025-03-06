@@ -27,3 +27,4 @@ extern Model* modelDenki;
 extern Model* modelChronos;
 extern Model* modelFortuna;
 extern Model* modelManus;
+extern Model* modelCrucible;
