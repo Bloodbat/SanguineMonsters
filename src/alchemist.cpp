@@ -244,8 +244,7 @@ struct Alchemist : SanguineModule {
 						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
 				}
 
-				// TODO: this should be flat 10.f.
-				if (std::fabs(outVoltages[channel]) >= 10.1f) {
+				if (std::fabs(outVoltages[channel]) >= 10.f) {
 					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
 				}
 
