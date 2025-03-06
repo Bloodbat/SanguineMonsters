@@ -84,9 +84,9 @@ struct Brainz : SanguineModule {
 	};
 
 	const RGBLightColor stepDirectionsLightColors[DIRECTIONS_COUNT]{
-		{0.75f, 0.f, 0.75f},
-		{0.75f, 0.f, 0.f},
-		{0.f, 0.f, 0.75f},
+		{kSanguineButtonLightValue, 0.f, kSanguineButtonLightValue},
+		{kSanguineButtonLightValue, 0.f, 0.f},
+		{0.f, 0.f, kSanguineButtonLightValue},
 	};
 
 	static const int kClockDivider = 64;
@@ -510,9 +510,12 @@ struct Brainz : SanguineModule {
 				for (int step = 0; step < kMaxSteps; ++step) {
 					bStepEnabled[step] = params[PARAM_A_ENABLED + step].getValue();
 
-					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() ? 0.75f : 0.f, sampleTime);
-					lights[LIGHT_STEP_A_TRIGGERS + step].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + step].getValue() ? 0.75f : 0.f, sampleTime);
-					lights[LIGHT_STEP_A_METRONOME + step].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + step].getValue() ? 0.75f : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() ?
+						kSanguineButtonLightValue : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_TRIGGERS + step].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + step].getValue() ?
+						kSanguineButtonLightValue : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_METRONOME + step].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + step].getValue() ?
+						kSanguineButtonLightValue : 0.f, sampleTime);
 
 					if (step < 2) {
 						stepDirections[step] = StepDirections(params[PARAM_A_DIRECTION + step].getValue());
@@ -549,8 +552,8 @@ struct Brainz : SanguineModule {
 
 
 
-				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue() ? 0.75f : 0.f, sampleTime);
-				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue() ? 0.75f : 0.f, sampleTime);
+				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue() ? kSanguineButtonLightValue : 0.f, sampleTime);
+				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue() ? kSanguineButtonLightValue : 0.f, sampleTime);
 
 				lights[LIGHT_OUT_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 0.f : 1.f, sampleTime);
 				lights[LIGHT_OUT_ENABLED + 1].setBrightnessSmooth(1.f, sampleTime);
