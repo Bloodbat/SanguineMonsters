@@ -3,7 +3,7 @@
 #include "bjorklund.hpp"
 #include <array>
 #include "sanguinehelpers.hpp"
-#include "pcg_variants.h"
+#include "pcg_random.hpp"
 #include "sphinx.hpp"
 
 struct Sphinx : SanguineModule {
@@ -101,7 +101,7 @@ struct Sphinx : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
-	pcg32_random_t pcgRng;
+	pcg32 pcgRng;
 
 	enum GateMode {
 		GM_TRIGGER,
@@ -166,7 +166,7 @@ struct Sphinx : SanguineModule {
 
 		clockDivider.setDivision(kClockDivider);
 
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 	}
 
 	int getFibonacci(int n) {
@@ -211,7 +211,7 @@ struct Sphinx : SanguineModule {
 					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 					int fill = 0;
 					while (fill < patternFill) {
-						if (ldexpf(pcg32_random_r(&pcgRng), -32) < static_cast<float>(patternFill) / static_cast<float>(patternLength)) {
+						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternFill) / static_cast<float>(patternLength)) {
 							calculatedSequence[num % patternLength] = 1;
 							++fill;
 						}
@@ -225,7 +225,7 @@ struct Sphinx : SanguineModule {
 					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 					int accentNum = 0;
 					while (accentNum < patternAccents) {
-						if (ldexpf(pcg32_random_r(&pcgRng), -32) < static_cast<float>(patternAccents) / static_cast<float>(patternFill)) {
+						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternAccents) / static_cast<float>(patternFill)) {
 							calculatedAccents[num % patternFill] = 1;
 							++accentNum;
 						}
