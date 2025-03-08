@@ -2,6 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "bukavac.hpp"
+#include "sanguinerandom.hpp"
 
 struct Bukavac : SanguineModule {
 	enum ParamIds {
@@ -119,7 +120,7 @@ struct Bukavac : SanguineModule {
 
 		if (outputs[OUTPUT_WHITE].isConnected() || outputs[OUTPUT_RED].isConnected() || outputs[OUTPUT_VIOLET].isConnected() || outputs[OUTPUT_GRAY].isConnected()) {
 			// White noise: equal power density
-			float white = random::normal();
+			float white = sanguineRandom::normal();
 			outputs[OUTPUT_WHITE].setVoltage(white * gain);
 
 			// Red/Brownian noise: -6dB/oct
