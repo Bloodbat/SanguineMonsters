@@ -2,7 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "pcg_variants.h"
+#include "pcg_random.hpp"
 #include "switches.hpp"
 #include "manus.hpp"
 
@@ -87,7 +87,7 @@ struct SuperSwitch81 : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
-	pcg32_random_t pcgRng;
+	pcg32 pcgRng;
 
 	SuperSwitch81() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -117,7 +117,7 @@ struct SuperSwitch81 : SanguineModule {
 		configOutput(OUTPUT_OUT, "Voltage");
 		params[PARAM_STEP1].setValue(1);
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 
 		clockDivider.setDivision(kClockDivider);
 	};
@@ -156,11 +156,11 @@ struct SuperSwitch81 : SanguineModule {
 
 	void doRandomTrigger() {
 		if (!bNoRepeats) {
-			selectedIn = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
+			selectedIn = pcgRng(stepCount);
 		} else {
 			randomNum = selectedIn;
 			while (randomNum == selectedIn)
-				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
+				randomNum = pcgRng(stepCount);
 			selectedIn = randomNum;
 		}
 		bClockReceived = true;
@@ -308,8 +308,8 @@ struct SuperSwitch81 : SanguineModule {
 	}
 
 	void onRandomize() override {
-		stepCount = static_cast<int>(pcg32_boundedrand_r(&pcgRng, kMaxSteps)) + 1;
-		selectedIn = static_cast<int>(pcg32_boundedrand_r(&pcgRng, stepCount));
+		stepCount = pcgRng(kMaxSteps) + 1;
+		selectedIn = pcgRng(stepCount);
 	}
 
 	json_t* dataToJson() override {
