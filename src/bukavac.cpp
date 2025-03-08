@@ -58,7 +58,7 @@ struct Bukavac : SanguineModule {
 	float* noise;
 	const float maxTime = 511; //FLT_MAX-1000; <-- this needs some more love
 
-	pcg32_random_t pcgRng;
+	pcg32 pcgRng;
 
 	Bukavac() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -104,7 +104,7 @@ struct Bukavac : SanguineModule {
 
 		noise = new float[kPerlinOctaves];
 
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pcgRng = pcg32(std::round(system::getUnixTime()));
 		pinkNoiseGenerator.init();
 	}
 
@@ -159,7 +159,7 @@ struct Bukavac : SanguineModule {
 		/* Note: Black noise was the original definition, made up by VCV.
 		   Amended by me to be Prism(for light ring convenience)... also completely made up. */
 		if (outputs[OUTPUT_PRISM].isConnected()) {
-			float uniformNoise = ldexpf(pcg32_random_r(&pcgRng), -32);
+			float uniformNoise = ldexpf(pcgRng(), -32);
 			outputs[OUTPUT_PRISM].setVoltage(uniformNoise * 10.f - 5.f);
 		}
 

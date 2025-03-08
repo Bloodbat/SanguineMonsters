@@ -1,5 +1,6 @@
 #pragma once
-#include "pcg_variants.h"
+
+#include "pcg_random.hpp"
 
 /** Based on "The Voss algorithm"
 http://www.firstpr.com.au/dsp/pink-noise/
@@ -7,10 +8,10 @@ http://www.firstpr.com.au/dsp/pink-noise/
 template <int QUALITY = 8>
 struct PinkNoiseGenerator {
 private:
-    pcg32_random_t pinkRng;
+    pcg32 pinkRng;
 public:
     void init() {
-        pcg32_srandom_r(&pinkRng, std::round(system::getUnixTime()), (intptr_t)&pinkRng);
+        pinkRng = pcg32(std::round(system::getUnixTime()));
     }
 
     int frame = -1;
@@ -26,7 +27,7 @@ public:
         float sum = 0.f;
         for (int value = 0; value < QUALITY; ++value) {
             if (diff & (1 << value)) {
-                values[value] = (ldexpf(pcg32_random_r(&pinkRng), -32)) - 0.5f;
+                values[value] = (ldexpf(pinkRng(), -32)) - 0.5f;
             }
             sum += values[value];
         }

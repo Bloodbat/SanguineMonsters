@@ -2,7 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "pcg_variants.h"
+#include "pcg_random.hpp"
 
 struct Oraculus : SanguineModule {
 
@@ -60,7 +60,7 @@ struct Oraculus : SanguineModule {
 
 	const static int kClockUpdateFrequency = 16;
 
-	pcg32_random_t pcgRng;
+	pcg32 pcgRng;
 
 	Oraculus() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -82,7 +82,7 @@ struct Oraculus : SanguineModule {
 
 		configOutput(OUTPUT_MONOPHONIC, "Monophonic");
 
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 
 		clockDivider.setDivision(kClockUpdateFrequency);
 		onReset();
@@ -98,11 +98,11 @@ struct Oraculus : SanguineModule {
 
 	void doRandomTrigger() {
 		if (!bNoRepeats) {
-			selectedChannel = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
+			selectedChannel = pcgRng(channelCount);
 		} else {
 			int randomNum = selectedChannel;
 			while (randomNum == selectedChannel)
-				randomNum = static_cast<int>(pcg32_boundedrand_r(&pcgRng, channelCount));
+				randomNum = pcgRng(channelCount);
 			selectedChannel = randomNum;
 		}
 	};
