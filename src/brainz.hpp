@@ -1,3 +1,5 @@
+#pragma once
+
 enum ModuleStages {
     MODULE_STAGE_INIT,
     MODULE_STAGE_ROUND_1,
