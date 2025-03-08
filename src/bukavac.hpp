@@ -1,3 +1,6 @@
+#pragma once
+#include "pcg_variants.h"
+
 /** Based on "The Voss algorithm"
 http://www.firstpr.com.au/dsp/pink-noise/
 */
