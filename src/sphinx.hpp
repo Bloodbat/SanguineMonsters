@@ -1,3 +1,5 @@
+#pragma once
+
 static const int kMaxSphinxLength = 32;
 
 enum PatternStyle {
