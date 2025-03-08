@@ -1,3 +1,5 @@
+#pragma once
+
 static const int kMedusaMaxPorts = 32;
 
 static const std::vector<RGBLightColor> paletteMedusaLights{
