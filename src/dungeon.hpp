@@ -1,3 +1,5 @@
+#pragma once
+
 struct GradientColors {
     NVGcolor innerColor;
     NVGcolor outerColor;
