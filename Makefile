@@ -1,4 +1,4 @@
-FLAGS += -I./pcg
+FLAGS += -I./pcgcpp
 
 ifndef DEBUGBUILD
 EXTRA_FLAGS =
