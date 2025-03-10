@@ -107,7 +107,7 @@ struct Chronos : SanguineModule {
     dsp::TSchmittTrigger<float_4> stResetTriggers[kMaxSections][4];
     dsp::SchmittTrigger stClockTriggers[kMaxSections];
 
-    struct FrequencyParam : ParamQuantity {
+    struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
             const Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
             if (paramId >= PARAM_FREQUENCY_1 && paramId <= PARAM_FREQUENCY_4) {
@@ -160,7 +160,7 @@ struct Chronos : SanguineModule {
 
         for (int section = 0; section < kMaxSections; ++section) {
             int lfoNumber = section + 1;
-            configParam<FrequencyParam>(PARAM_FREQUENCY_1 + section, -8.f, 10.f, 1.f,
+            configParam<FrequencyQuantity>(PARAM_FREQUENCY_1 + section, -8.f, 10.f, 1.f,
                 string::f("LFO %d frequency", lfoNumber), " Hz", 2, 1);
 
             configInput(INPUT_CLOCK_1 + section, string::f("LFO %d clock", lfoNumber));
