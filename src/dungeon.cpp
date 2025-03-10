@@ -2,6 +2,7 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "dungeon.hpp"
+#include "sanguinerandom.hpp"
 
 struct Dungeon : SanguineModule {
 
@@ -92,7 +93,7 @@ struct Dungeon : SanguineModule {
 			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
 		} else {
 			if (!bHaveWhiteNoise) {
-				whiteNoise = 2.f * random::normal();
+				whiteNoise = 2.f * sanguineRandom::normal();
 			}
 			inVoltage = whiteNoise;
 		}
@@ -105,7 +106,7 @@ struct Dungeon : SanguineModule {
 		bool bHaveInVoltage = inputs[INPUT_VOLTAGE].isConnected();
 
 		if (bHaveWhiteNoise) {
-			whiteNoise = 2.f * random::normal();
+			whiteNoise = 2.f * sanguineRandom::normal();
 			if (outputs[OUTPUT_NOISE].isConnected()) {
 				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 			}
