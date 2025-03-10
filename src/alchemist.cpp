@@ -355,9 +355,6 @@ struct Alchemist : SanguineModule {
 					kSanguineButtonLightValue : 0.f, sampleTime);
 			}
 		}
-
-		bIgnoreMuteAll = false;
-		bIgnoreSoloAll = false;
 	}
 
 	void onBypass(const BypassEvent& e) override {
