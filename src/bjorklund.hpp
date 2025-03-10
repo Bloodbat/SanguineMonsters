@@ -37,8 +37,14 @@ struct Bjorklund {
 		lengthOfSeq = step;
 		pulseAmt = pulse;
 	}
-	int getSequence(int index) { return sequence.at(index); };
-	int size() { return static_cast<int>(sequence.size()); };
+
+	int getSequence(int index) {
+		return sequence.at(index);
+	};
+
+	int size() {
+		return static_cast<int>(sequence.size());
+	};
 
 	void iter() {
 		// Bjorklund algorithm
@@ -62,7 +68,7 @@ struct Bjorklund {
 		buildSeq(index); //place one's and zero's
 		reverse(sequence.begin(), sequence.end());
 
-		// Position correction. some of result of algorithm is one step rotated.		
+		// Position correction. some of result of algorithm is one step rotated.
 		if (sequence.at(0) != 1) {
 			int zeroCount = 0;
 			do {
