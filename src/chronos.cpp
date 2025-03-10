@@ -110,46 +110,44 @@ struct Chronos : SanguineModule {
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
             const Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
-            if (paramId >= PARAM_FREQUENCY_1 && paramId <= PARAM_FREQUENCY_4) {
-                switch (paramId)
-                {
-                case PARAM_FREQUENCY_1:
-                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_1] == 2.f) {
-                        unit = " Hz";
-                        displayMultiplier = 1.f;
-                    } else {
-                        unit = "x";
-                        displayMultiplier = 1 / 2.f;
-                    }
-                    break;
-                case PARAM_FREQUENCY_2:
-                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_2] == 2.f) {
-                        unit = " Hz";
-                        displayMultiplier = 1.f;
-                    } else {
-                        unit = "x";
-                        displayMultiplier = 1 / 2.f;
-                    }
-                    break;
-                case PARAM_FREQUENCY_3:
-                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_3] == 2.f) {
-                        unit = " Hz";
-                        displayMultiplier = 1.f;
-                    } else {
-                        unit = "x";
-                        displayMultiplier = 1 / 2.f;
-                    }
-                    break;
-                case PARAM_FREQUENCY_4:
-                    if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_4] == 2.f) {
-                        unit = " Hz";
-                        displayMultiplier = 1.f;
-                    } else {
-                        unit = "x";
-                        displayMultiplier = 1 / 2.f;
-                    }
-                    break;
+            switch (paramId)
+            {
+            case PARAM_FREQUENCY_1:
+                if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_1] == 2.f) {
+                    unit = " Hz";
+                    displayMultiplier = 1.f;
+                } else {
+                    unit = "x";
+                    displayMultiplier = 1 / 2.f;
                 }
+                break;
+            case PARAM_FREQUENCY_2:
+                if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_2] == 2.f) {
+                    unit = " Hz";
+                    displayMultiplier = 1.f;
+                } else {
+                    unit = "x";
+                    displayMultiplier = 1 / 2.f;
+                }
+                break;
+            case PARAM_FREQUENCY_3:
+                if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_3] == 2.f) {
+                    unit = " Hz";
+                    displayMultiplier = 1.f;
+                } else {
+                    unit = "x";
+                    displayMultiplier = 1 / 2.f;
+                }
+                break;
+            case PARAM_FREQUENCY_4:
+                if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_4] == 2.f) {
+                    unit = " Hz";
+                    displayMultiplier = 1.f;
+                } else {
+                    unit = "x";
+                    displayMultiplier = 1 / 2.f;
+                }
+                break;
             }
             return ParamQuantity::getDisplayValue();
         }
