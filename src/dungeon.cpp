@@ -65,7 +65,6 @@ struct Dungeon : SanguineModule {
 	Dungeon() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 		configSwitch(PARAM_MODE, 0.f, 2.f, 0.f, "Mode", { "Sample and hold", "Track and hold", "Hold and track" });
-		paramQuantities[PARAM_MODE]->snapEnabled = true;
 
 		configButton(PARAM_TRIGGER, "Trigger");
 
