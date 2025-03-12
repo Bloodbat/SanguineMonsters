@@ -41,9 +41,9 @@ struct CrucibleWidget : SanguineModuleWidget {
 
         makePanel();
 
-        addChild(createWidget<ScrewBlack>(Vec(0.f, 0)));
+        addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, 0)));
 
-        addChild(createWidget<ScrewBlack>(Vec(0.f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+        addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
         addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(22.8, 9.672), module,
             Crucible::LIGHT_MASTER_MODULE));
@@ -59,13 +59,13 @@ struct CrucibleWidget : SanguineModuleWidget {
             module, Crucible::PARAM_MUTE_EXCLUSIVE, Crucible::LIGHT_MUTE_EXCLUSIVE));
 
         // Solo section
-        addParam(createParamCentered<SanguineBezel115>(millimetersToPixelsVec(12.7, 88.716), module,
+        addParam(createParamCentered<SanguineBezel115>(millimetersToPixelsVec(12.7, 86.616), module,
             Crucible::PARAM_SOLO_ALL));
-        addChild(createLightCentered<SanguineBezelLight115<GreenLight>>(millimetersToPixelsVec(12.7, 88.716), module,
+        addChild(createLightCentered<SanguineBezelLight115<GreenLight>>(millimetersToPixelsVec(12.7, 86.616), module,
             Crucible::LIGHT_SOLO_ALL));
-        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(12.7, 102.452), module, Crucible::INPUT_SOLO_ALL));
-        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(5.664, 114.972), module, Crucible::INPUT_SOLO_POLY));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(20.259, 114.972),
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(12.7, 100.352), module, Crucible::INPUT_SOLO_ALL));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(5.664, 112.872), module, Crucible::INPUT_SOLO_POLY));
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(20.259, 112.872),
             module, Crucible::PARAM_SOLO_EXCLUSIVE, Crucible::LIGHT_SOLO_EXCLUSIVE));
     }
 };
