@@ -374,7 +374,7 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6f, 9.672f), module, SuperSwitch81::LIGHT_EXPANDER));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6f, 5.573f), module, SuperSwitch81::LIGHT_EXPANDER));
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(56.197, 18.272), module, SuperSwitch81::PARAM_STEPS));
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(56.197, 32.461), module, SuperSwitch81::INPUT_STEPS));
