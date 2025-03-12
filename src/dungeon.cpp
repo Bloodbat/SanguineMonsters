@@ -278,6 +278,8 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		makePanel();
 
+		addScrews(SCREW_ALL);
+
 		FramebufferWidget* dungeonFrameBuffer = new FramebufferWidget();
 		addChild(dungeonFrameBuffer);
 

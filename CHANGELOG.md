@@ -30,6 +30,8 @@
 
 - Gegeenes: button lights turning on when steps are clicked when single shot has ended.
 
+- Dungeon: module was falling off the Rack: it was missing screws.
+
 ---
 
 ## Additions
