@@ -464,8 +464,8 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 9.672), module, Alchemist::LIGHT_EXPANDER_LEFT));
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 9.672), module, Alchemist::LIGHT_EXPANDER_RIGHT));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573), module, Alchemist::LIGHT_EXPANDER_LEFT));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 5.573), module, Alchemist::LIGHT_EXPANDER_RIGHT));
 
 		static const int offset = 8;
 
