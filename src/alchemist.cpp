@@ -165,11 +165,22 @@ struct Alchemist : SanguineModule {
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
 					bMutedChannels[channel] = !bMutedChannels[channel];
+
+					if (bSoloedChannels[channel]) {
+						bSoloedChannels[channel] = false;
+					}
+
 					if (bHasLeftExpander) {
 						if ((bMuteAllEnabled && bLastAllMuted) && !bMutedChannels[channel]) {
 							bMuteAllEnabled = false;
 							crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
 							bIgnoreMuteAll = true;
+						}
+
+						if ((bSoloAllEnabled && bLastAllSoloed)) {
+							bSoloAllEnabled = false;
+							crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
+							bIgnoreSoloAll = true;
 						}
 
 						if (exclusiveMuteChannel != channel) {
@@ -186,7 +197,18 @@ struct Alchemist : SanguineModule {
 
 				if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
 					bSoloedChannels[channel] = !bSoloedChannels[channel];
+
+					if (bMutedChannels[channel]) {
+						bMutedChannels[channel] = false;
+					}
+
 					if (bHasLeftExpander) {
+						if ((bMuteAllEnabled && bLastAllMuted)) {
+							bMuteAllEnabled = false;
+							crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+							bIgnoreMuteAll = true;
+						}
+
 						if ((bSoloAllEnabled && bLastAllSoloed) && !bSoloedChannels[channel]) {
 							bSoloAllEnabled = false;
 							crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
@@ -246,10 +268,32 @@ struct Alchemist : SanguineModule {
 			if (bHasLeftExpander) {
 				if (bLastAllMuted != bMuteAllEnabled) {
 					bLastAllMuted = bMuteAllEnabled;
+
+					if (bMuteAllEnabled) {
+						memset(bMutedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
+						memset(bSoloedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
+					}
+
+					if (bSoloAllEnabled) {
+						bSoloAllEnabled = false;
+						bLastAllSoloed = false;
+						crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
+					}
 				}
 
 				if (bLastAllSoloed != bSoloAllEnabled) {
 					bLastAllSoloed = bSoloAllEnabled;
+
+					if (bSoloAllEnabled) {
+						memset(bSoloedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
+						memset(bMutedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
+					}
+
+					if (bMuteAllEnabled) {
+						bMuteAllEnabled = false;
+						bLastAllMuted = false;
+						crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+					}
 				}
 			}
 
