@@ -36,7 +36,7 @@ struct AlembicWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 9.672), module, Alembic::LIGHT_MASTER_MODULE));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573), module, Alembic::LIGHT_MASTER_MODULE));
 
 		SanguineMonoOutputLight* outMonoLight1 = new SanguineMonoOutputLight(module, 6.466, 17.494);
 		addChild(outMonoLight1);

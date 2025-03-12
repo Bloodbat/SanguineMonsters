@@ -45,7 +45,7 @@ struct CrucibleWidget : SanguineModuleWidget {
 
         addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-        addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(22.8, 9.672), module,
+        addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(22.8, 5.573), module,
             Crucible::LIGHT_MASTER_MODULE));
 
         // Mute section
