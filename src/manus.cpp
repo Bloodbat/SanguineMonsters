@@ -50,55 +50,55 @@ struct ManusWidget : SanguineModuleWidget {
         setModule(module);
 
         moduleName = "manus";
-        panelSize = SIZE_4;
+        panelSize = SIZE_5;
         backplateColor = PLATE_PURPLE;
         bFaceplateSuffix = false;
 
         makePanel();
 
-        addChild(createWidget<ScrewBlack>(Vec(0.f, 0)));
+        addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, 0)));
 
-        addChild(createWidget<ScrewBlack>(Vec(0.f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+        addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
         addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573),
             module, Manus::LIGHT_MASTER_MODULE_LEFT));
 
-        addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(17.72, 5.573),
+        addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(22.8, 5.573),
             module, Manus::LIGHT_MASTER_MODULE_RIGHT));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 19.916), module, Manus::INPUT_STEP_1));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 19.904), module, Manus::INPUT_STEP_1));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 33.045), module, Manus::INPUT_STEP_2));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 33.033), module, Manus::INPUT_STEP_2));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 46.174), module, Manus::INPUT_STEP_3));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 46.162), module, Manus::INPUT_STEP_3));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 59.304), module, Manus::INPUT_STEP_4));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 59.292), module, Manus::INPUT_STEP_4));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 72.433), module, Manus::INPUT_STEP_5));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 72.421), module, Manus::INPUT_STEP_5));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 85.562), module, Manus::INPUT_STEP_6));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 85.55), module, Manus::INPUT_STEP_6));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 98.691), module, Manus::INPUT_STEP_7));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 98.679), module, Manus::INPUT_STEP_7));
 
-        addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 111.820), module, Manus::INPUT_STEP_8));
+        addInput(createInput<BananutPurple>(millimetersToPixelsVec(8.7, 111.808), module, Manus::INPUT_STEP_8));
 
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 23.905), module, Manus::LIGHT_STEP_1_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 37.034), module, Manus::LIGHT_STEP_2_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 50.163), module, Manus::LIGHT_STEP_3_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 63.292), module, Manus::LIGHT_STEP_4_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 76.421), module, Manus::LIGHT_STEP_5_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 89.55), module, Manus::LIGHT_STEP_6_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 102.679), module, Manus::LIGHT_STEP_7_LEFT));
-        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 115.808), module, Manus::LIGHT_STEP_8_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 23.905), module, Manus::LIGHT_STEP_1_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 37.034), module, Manus::LIGHT_STEP_2_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 50.163), module, Manus::LIGHT_STEP_3_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 63.292), module, Manus::LIGHT_STEP_4_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 76.421), module, Manus::LIGHT_STEP_5_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 89.55), module, Manus::LIGHT_STEP_6_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 102.679), module, Manus::LIGHT_STEP_7_LEFT));
+        addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(5.194, 115.808), module, Manus::LIGHT_STEP_8_LEFT));
 
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 23.905), module, Manus::LIGHT_STEP_1_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 37.034), module, Manus::LIGHT_STEP_2_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 50.163), module, Manus::LIGHT_STEP_3_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 63.292), module, Manus::LIGHT_STEP_4_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 76.421), module, Manus::LIGHT_STEP_5_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 89.55), module, Manus::LIGHT_STEP_6_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 102.679), module, Manus::LIGHT_STEP_7_RIGHT));
-        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(16.994, 115.808), module, Manus::LIGHT_STEP_8_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 23.905), module, Manus::LIGHT_STEP_1_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 37.034), module, Manus::LIGHT_STEP_2_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 50.163), module, Manus::LIGHT_STEP_3_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 63.292), module, Manus::LIGHT_STEP_4_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 76.421), module, Manus::LIGHT_STEP_5_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 89.55), module, Manus::LIGHT_STEP_6_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 102.679), module, Manus::LIGHT_STEP_7_RIGHT));
+        addChild(createLightCentered<AcrylicRightTriangle>(millimetersToPixelsVec(20.209, 115.808), module, Manus::LIGHT_STEP_8_RIGHT));
     }
 };
 
