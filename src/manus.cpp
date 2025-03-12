@@ -60,6 +60,12 @@ struct ManusWidget : SanguineModuleWidget {
 
         addChild(createWidget<ScrewBlack>(Vec(0.f, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
+        addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573),
+            module, Manus::LIGHT_MASTER_MODULE_LEFT));
+
+        addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(17.72, 5.573),
+            module, Manus::LIGHT_MASTER_MODULE_RIGHT));
+
         addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 19.916), module, Manus::INPUT_STEP_1));
 
         addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 33.045), module, Manus::INPUT_STEP_2));
@@ -75,10 +81,6 @@ struct ManusWidget : SanguineModuleWidget {
         addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 98.691), module, Manus::INPUT_STEP_7));
 
         addInput(createInput<BananutPurple>(millimetersToPixelsVec(6.160, 111.820), module, Manus::INPUT_STEP_8));
-
-        addChild(createLight<SmallLight<OrangeLight>>(millimetersToPixelsVec(1.562, 8.646), module, Manus::LIGHT_MASTER_MODULE_LEFT));
-
-        addChild(createLight<SmallLight<OrangeLight>>(millimetersToPixelsVec(16.682, 8.646), module, Manus::LIGHT_MASTER_MODULE_RIGHT));
 
         addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 23.905), module, Manus::LIGHT_STEP_1_LEFT));
         addChild(createLightCentered<AcrylicLeftTriangle>(millimetersToPixelsVec(3.338, 37.034), module, Manus::LIGHT_STEP_2_LEFT));
