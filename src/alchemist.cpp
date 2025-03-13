@@ -126,9 +126,6 @@ struct Alchemist : SanguineModule {
 		bool bHaveExpanderMuteCv = false;
 		bool bHaveExpanderSoloCv = false;
 
-		bool bIgnoreMuteAll = false;
-		bool bIgnoreSoloAll = false;
-
 		if (bHasLeftExpander) {
 			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
 			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
@@ -162,6 +159,9 @@ struct Alchemist : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
+			bool bIgnoreMuteAll = false;
+			bool bIgnoreSoloAll = false;
+
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
 					bMutedChannels[channel] = !bMutedChannels[channel];
