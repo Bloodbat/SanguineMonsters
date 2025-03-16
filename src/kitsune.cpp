@@ -51,7 +51,7 @@ struct Kitsune : SanguineModule {
 	Kitsune() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int section = 0; section < kMaxSections; ++section) {
+		for (int section = 0; section < kitsune::kMaxSections; ++section) {
 			configParam(PARAM_ATTENUATOR1 + section, -1.f, 1.f, 0.f, string::f("Channel %d gain", section + 1), "%", 0, 100);
 			configParam(PARAM_OFFSET1 + section, -10.f, 10.f, 0.f, string::f("Channel %d offset", section + 1), " V");
 			configOutput(OUTPUT_VOLTAGE1 + section, string::f("Channel %d", section + 1));
@@ -78,7 +78,7 @@ struct Kitsune : SanguineModule {
 
 		bHasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki && !denkiExpander->isBypassed());
 
-		for (int section = 0; section < kMaxSections; ++section) {
+		for (int section = 0; section < kitsune::kMaxSections; ++section) {
 			int channelSource = section;
 
 			if ((section == 1 || section == 3) && !inputs[INPUT_VOLTAGE1 + section].isConnected()) {

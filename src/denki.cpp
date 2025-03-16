@@ -3,7 +3,7 @@
 Denki::Denki() {
 	config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-	for (int section = 0; section < kMaxSections; ++section) {
+	for (int section = 0; section < kitsune::kMaxSections; ++section) {
 		int channelNumber = section + 1;
 		configInput(INPUT_GAIN_CV + section, string::f("Channel %d gain CV", channelNumber));
 		configInput(INPUT_OFFSET_CV + section, string::f("Channel %d offset CV", channelNumber));
