@@ -1,3 +1,5 @@
 #pragma once
 
-static const int kMaxSections = 4;
+namespace kitsune {
+    static const int kMaxSections = 4;
+}
