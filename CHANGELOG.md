@@ -94,6 +94,8 @@
 
 - Brainz: performance tweaks.
 
+- Brainz: better tooltips.
+
 - Bukavac: faceplate tweaks.
 
 - Bukavac: attenuators into attenuverters with more traditional response.
