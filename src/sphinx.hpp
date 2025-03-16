@@ -1,10 +1,30 @@
 #pragma once
 
-static const int kMaxSphinxLength = 32;
+namespace sphinx {
+    static const int kMaxLength = 32;
 
-enum PatternStyle {
-    EUCLIDEAN_PATTERN,
-    RANDOM_PATTERN,
-    FIBONACCI_PATTERN,
-    LINEAR_PATTERN
-};
+    enum PatternStyle {
+        EUCLIDEAN_PATTERN,
+        RANDOM_PATTERN,
+        FIBONACCI_PATTERN,
+        LINEAR_PATTERN
+    };
+
+    static const std::array<bool, kMaxLength / 2> browserSequence = { true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+    };
+}
