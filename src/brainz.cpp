@@ -748,9 +748,8 @@ struct Brainz : SanguineModule {
 	}
 
 	void killVoltages() {
-		// TODO: This is probably wrong.
-		for (int input = 0; input < INPUTS_COUNT; ++input) {
-			outputs[OUTPUT_METRONOME + input].setVoltage(0);
+		for (int output = OUTPUT_METRONOME; output < OUTPUTS_COUNT; ++output) {
+			outputs[output].setVoltage(0);
 		}
 	}
 
