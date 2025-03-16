@@ -76,14 +76,14 @@ struct Brainz : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	const RGBLightColor moduleStagesLightColors[MODULE_STAGE_STATES_COUNT]{
+	const RGBLightColor moduleStagesLightColors[brainz::MODULE_STAGE_STATES_COUNT]{
 		{0.f, 1.f, 0.f},
 		{1.f, 1.f, 0.f},
 		{0.f, 0.f, 1.f},
 		{1.f, 0.f, 0.f},
 	};
 
-	const RGBLightColor stepDirectionsLightColors[DIRECTIONS_COUNT]{
+	const RGBLightColor stepDirectionsLightColors[brainz::DIRECTIONS_COUNT]{
 		{kSanguineButtonLightValue, 0.f, kSanguineButtonLightValue},
 		{kSanguineButtonLightValue, 0.f, 0.f},
 		{0.f, 0.f, kSanguineButtonLightValue},
@@ -103,14 +103,14 @@ struct Brainz : SanguineModule {
 	bool bTriggersDone[kMaxOutTriggers];
 	bool bTriggersSent = false;
 
-	StepDirections moduleDirection = DIRECTION_BIDIRECTIONAL;
-	StepDirections stepDirections[2] = { DIRECTION_BIDIRECTIONAL, DIRECTION_BIDIRECTIONAL };
-	ModuleStages lastModuleStage = MODULE_STAGE_INIT;
-	ModuleStates lastModuleState = MODULE_STATE_READY;
-	ModuleStages moduleStage = MODULE_STAGE_INIT;
-	ModuleStates moduleState = MODULE_STATE_READY;
-	StepStates stepState = STEP_STATE_READY;
-	
+	brainz::StepDirections moduleDirection = brainz::DIRECTION_BIDIRECTIONAL;
+	brainz::StepDirections stepDirections[2] = { brainz::DIRECTION_BIDIRECTIONAL, brainz::DIRECTION_BIDIRECTIONAL };
+	brainz::ModuleStages lastModuleStage = brainz::MODULE_STAGE_INIT;
+	brainz::ModuleStates lastModuleState = brainz::MODULE_STATE_READY;
+	brainz::ModuleStages moduleStage = brainz::MODULE_STAGE_INIT;
+	brainz::ModuleStates moduleState = brainz::MODULE_STATE_READY;
+	brainz::StepStates stepState = brainz::STEP_STATE_READY;
+
 	std::chrono::time_point<std::chrono::steady_clock> startTime;
 
 	int* metronomeCounterPtr;
@@ -137,61 +137,59 @@ struct Brainz : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
-	// TODO: This needs more constants!
-
 	Brainz() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		configSwitch(PARAM_MODULE_DIRECTION, 0.f, 2.f, 0.f, "Module cycle", { "Bidirectional", "Forward", "Backward" });
-		configSwitch(PARAM_LOGIC_ENABLED, 0.f, 1.f, 1.f, "Toggle logic", { "Disabled", "Enabled" });
+		configSwitch(PARAM_MODULE_DIRECTION, 0.f, 2.f, 0.f, "Module cycle", brainz::directionToolTips);
+		configSwitch(PARAM_LOGIC_ENABLED, 0.f, 1.f, 1.f, "Step logic", brainz::stateToolTips);
 
-		configParam(PARAM_A_DELAY, 1.f, 99.f, 1.f, "Trigger A delay", " seconds");
+		configParam(PARAM_A_DELAY, 1.f, 99.f, 1.f, "A trigger delay", " seconds");
 		paramQuantities[PARAM_A_DELAY]->snapEnabled = true;
-		configParam(PARAM_B_DELAY, 1.f, 99.f, 1.f, "Trigger B delay", " seconds");
+		configParam(PARAM_B_DELAY, 1.f, 99.f, 1.f, "B trigger delay", " seconds");
 		paramQuantities[PARAM_B_DELAY]->snapEnabled = true;
-		configParam(PARAM_C_DELAY, 1.f, 99.f, 1.f, "Trigger C delay", " seconds");
+		configParam(PARAM_C_DELAY, 1.f, 99.f, 1.f, "C trigger delay", " seconds");
 		paramQuantities[PARAM_C_DELAY]->snapEnabled = true;
 		configParam(PARAM_METRONOME_SPEED, 15.f, 99.f, 60.f, "BPM", " beats");
 		paramQuantities[PARAM_METRONOME_SPEED]->snapEnabled = true;
 		configParam(PARAM_METRONOME_STEPS, 5.f, 99.f, 10.f, "Steps", "");
 		paramQuantities[PARAM_METRONOME_STEPS]->snapEnabled = true;
 
-		configButton(PARAM_A_ENABLED, "Step A enabled");
-		configButton(PARAM_B_ENABLED, "Step B enabled");
-		configButton(PARAM_C_ENABLED, "Step C enabled");
+		configButton(PARAM_A_ENABLED, "Step A");
+		configButton(PARAM_B_ENABLED, "Step B");
+		configButton(PARAM_C_ENABLED, "Step C");
 
-		configButton(PARAM_START_TRIGGERS, "Toggle global triggers on start");
+		configButton(PARAM_START_TRIGGERS, "Global triggers on start");
 		params[PARAM_START_TRIGGERS].setValue(1);
-		configButton(PARAM_END_TRIGGERS, "Toggle global triggers on end");
+		configButton(PARAM_END_TRIGGERS, "Global triggers on end");
 		params[PARAM_END_TRIGGERS].setValue(1);
 
-		configButton(PARAM_A_DO_TRIGGERS, "Send global triggers at the end of countdown A");
-		configButton(PARAM_B_DO_TRIGGERS, "Send global triggers at the end of countdown B");
-		configButton(PARAM_C_DO_TRIGGERS, "Send global triggers at the end of countdown C");
+		configButton(PARAM_A_DO_TRIGGERS, "A global triggers on end");
+		configButton(PARAM_B_DO_TRIGGERS, "B global triggers on end");
+		configButton(PARAM_C_DO_TRIGGERS, "C global triggers on end");
 
-		configButton(PARAM_A_IS_METRONOME, "Step A is metronome");
-		configButton(PARAM_B_IS_METRONOME, "Step B is metronome");
-		configButton(PARAM_C_IS_METRONOME, "Step C is metronome");
+		configButton(PARAM_A_IS_METRONOME, "A is metronome");
+		configButton(PARAM_B_IS_METRONOME, "B is metronome");
+		configButton(PARAM_C_IS_METRONOME, "C is metronome");
 
-		configSwitch(PARAM_A_DIRECTION, 0.f, 2.f, 0.f, "Step A direction", { "Bidirectional", "Forward", "Backward" });
-		configSwitch(PARAM_B_DIRECTION, 0.f, 2.f, 0.f, "Step A direction", { "Bidirectional", "Forward", "Backward" });
+		configSwitch(PARAM_A_DIRECTION, 0.f, 2.f, 0.f, "A step direction", brainz::directionToolTips);
+		configSwitch(PARAM_B_DIRECTION, 0.f, 2.f, 0.f, "B step direction", brainz::directionToolTips);
 
-		configInput(INPUT_TRIGGER, "Start/stop trigger");
-		configInput(INPUT_RESET, "Reset trigger");
+		configInput(INPUT_TRIGGER, "Start/stop");
+		configInput(INPUT_RESET, "Reset");
 
-		configOutput(OUTPUT_RUN, "Run pass-through");
+		configOutput(OUTPUT_RUN, "Run");
 		configOutput(OUTPUT_RESET, "Reset");
-		configOutput(OUTPUT_METRONOME, "Metronome audio");
+		configOutput(OUTPUT_METRONOME, "Metronome signal");
 		configOutput(OUTPUT_OUT_1, "Global trigger 1");
 		configOutput(OUTPUT_OUT_2, "Global trigger 2");
 		configOutput(OUTPUT_OUT_3, "Global trigger 3");
 		configOutput(OUTPUT_OUT_4, "Global trigger 4");
 
-		configOutput(OUTPUT_STAGE_A, "Stage A end of count");
-		configOutput(OUTPUT_STAGE_B, "Stage B end of count");
-		configOutput(OUTPUT_STAGE_C, "Stage C end of count");
+		configOutput(OUTPUT_STAGE_A, "Step A end");
+		configOutput(OUTPUT_STAGE_B, "Step B end");
+		configOutput(OUTPUT_STAGE_C, "Step C end");
 
-		configButton(PARAM_ONE_SHOT, "Toggle one-shot");
+		configSwitch(PARAM_ONE_SHOT, 0.f, 1.f, 0.f, "One-shot", brainz::stateToolTips);
 		configButton(PARAM_PLAY_BUTTON, "Start/stop");
 		configButton(PARAM_RESET_BUTTON, "Reset");
 
@@ -230,12 +228,12 @@ struct Brainz : SanguineModule {
 
 				if (params[PARAM_LOGIC_ENABLED].getValue()) {
 					switch (moduleState) {
-					case MODULE_STATE_READY:
-					case MODULE_STATE_WAIT_FOR_RESET:
-					case MODULE_STATE_ROUND_1_END:
+					case brainz::MODULE_STATE_READY:
+					case brainz::MODULE_STATE_WAIT_FOR_RESET:
+					case brainz::MODULE_STATE_ROUND_1_END:
 						break;
 
-					case MODULE_STATE_ROUND_1_START:
+					case brainz::MODULE_STATE_ROUND_1_START:
 						resetGlobalTriggers();
 						if (params[PARAM_START_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
@@ -248,19 +246,19 @@ struct Brainz : SanguineModule {
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
 							resetStep();
 							if (bStepEnabled[0]) {
-								moduleState = MODULE_STATE_ROUND_1_STEP_A;
-							} else if (stepDirections[0] < DIRECTION_BACKWARD && bStepEnabled[1]) {
-								moduleState = MODULE_STATE_ROUND_1_STEP_B;
-							} else if (bStepEnabled[2] && stepDirections[1] < DIRECTION_BACKWARD) {
-								moduleState = MODULE_STATE_ROUND_1_STEP_C;
+								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_A;
+							} else if (stepDirections[0] < brainz::DIRECTION_BACKWARD && bStepEnabled[1]) {
+								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_B;
+							} else if (bStepEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
+								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_C;
 							} else {
-								moduleState = MODULE_STATE_ROUND_1_END;
+								moduleState = brainz::MODULE_STATE_ROUND_1_END;
 							}
 						}
 						break;
 
 
-					case MODULE_STATE_ROUND_1_STEP_A:
+					case brainz::MODULE_STATE_ROUND_1_STEP_A:
 						resetGlobalTriggers();
 						if (params[PARAM_A_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -284,19 +282,19 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[1] && stepDirections[0] < DIRECTION_BACKWARD) {
-								moduleState = MODULE_STATE_ROUND_1_STEP_B;
-							} else if (bStepEnabled[2] && stepDirections[1] < DIRECTION_BACKWARD) {
-								moduleState = MODULE_STATE_ROUND_1_STEP_C;
+							if (bStepEnabled[1] && stepDirections[0] < brainz::DIRECTION_BACKWARD) {
+								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_B;
+							} else if (bStepEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
+								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_C;
 							} else {
-								moduleState = MODULE_STATE_ROUND_1_END;
+								moduleState = brainz::MODULE_STATE_ROUND_1_END;
 							}
 							resetStep();
 						}
 						break;
 
 
-					case MODULE_STATE_ROUND_1_STEP_B:
+					case brainz::MODULE_STATE_ROUND_1_STEP_B:
 						resetGlobalTriggers();
 						if (params[PARAM_B_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -320,17 +318,17 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[2] && stepDirections[1] < DIRECTION_BACKWARD) {
-								moduleState = MODULE_STATE_ROUND_1_STEP_C;
+							if (bStepEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
+								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_C;
 							} else {
-								moduleState = MODULE_STATE_ROUND_1_END;
+								moduleState = brainz::MODULE_STATE_ROUND_1_END;
 							}
 							resetStep();
 						}
 						break;
 
 
-					case MODULE_STATE_ROUND_1_STEP_C:
+					case brainz::MODULE_STATE_ROUND_1_STEP_C:
 						resetGlobalTriggers();
 						if (params[PARAM_C_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -353,16 +351,16 @@ struct Brainz : SanguineModule {
 							}
 
 							if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-								if (moduleDirection == DIRECTION_BIDIRECTIONAL) {
-									moduleState = MODULE_STATE_ROUND_1_END;
-									stepState = STEP_STATE_READY;
+								if (moduleDirection == brainz::DIRECTION_BIDIRECTIONAL) {
+									moduleState = brainz::MODULE_STATE_ROUND_1_END;
+									stepState = brainz::STEP_STATE_READY;
 								} else {
 									if (!params[PARAM_ONE_SHOT].getValue()) {
-										moduleState = MODULE_STATE_READY;
-										moduleStage = MODULE_STAGE_INIT;
+										moduleState = brainz::MODULE_STATE_READY;
+										moduleStage = brainz::MODULE_STAGE_INIT;
 									} else {
-										moduleState = MODULE_STATE_WAIT_FOR_RESET;
-										moduleStage = MODULE_STAGE_ONE_SHOT_END;
+										moduleState = brainz::MODULE_STATE_WAIT_FOR_RESET;
+										moduleStage = brainz::MODULE_STAGE_ONE_SHOT_END;
 									}
 								}
 								resetStep();
@@ -370,20 +368,22 @@ struct Brainz : SanguineModule {
 						}
 						break;
 
-					case MODULE_STATE_ROUND_2_START:
+					case brainz::MODULE_STATE_ROUND_2_START:
 						resetStep();
 						if (bStepEnabled[2]) {
-							moduleState = MODULE_STATE_ROUND_2_STEP_C;
-						} else if ((stepDirections[1] == DIRECTION_BIDIRECTIONAL || stepDirections[1] == DIRECTION_BACKWARD) && bStepEnabled[1]) {
-							moduleState = MODULE_STATE_ROUND_2_STEP_B;
-						} else if (bStepEnabled[0] && (stepDirections[0] == DIRECTION_BIDIRECTIONAL || stepDirections[0] == DIRECTION_BACKWARD)) {
-							moduleState = MODULE_STATE_ROUND_2_STEP_A;
+							moduleState = brainz::MODULE_STATE_ROUND_2_STEP_C;
+						} else if ((stepDirections[1] == brainz::DIRECTION_BIDIRECTIONAL
+							|| stepDirections[1] == brainz::DIRECTION_BACKWARD) && bStepEnabled[1]) {
+							moduleState = brainz::MODULE_STATE_ROUND_2_STEP_B;
+						} else if (bStepEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL
+							|| stepDirections[0] == brainz::DIRECTION_BACKWARD)) {
+							moduleState = brainz::MODULE_STATE_ROUND_2_STEP_A;
 						} else {
-							moduleState = MODULE_STATE_ROUND_2_END;
+							moduleState = brainz::MODULE_STATE_ROUND_2_END;
 						}
 						break;
 
-					case MODULE_STATE_ROUND_2_STEP_C:
+					case brainz::MODULE_STATE_ROUND_2_STEP_C:
 						resetGlobalTriggers();
 						if (params[PARAM_C_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -407,19 +407,21 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[1] && (stepDirections[1] == DIRECTION_BACKWARD || stepDirections[1] == DIRECTION_BIDIRECTIONAL)) {
-								moduleState = MODULE_STATE_ROUND_2_STEP_B;
-							} else if (bStepEnabled[0] && (stepDirections[0] == DIRECTION_BACKWARD || stepDirections[0] == DIRECTION_BIDIRECTIONAL)) {
-								moduleState = MODULE_STATE_ROUND_2_STEP_A;
+							if (bStepEnabled[1] && (stepDirections[1] == brainz::DIRECTION_BACKWARD
+								|| stepDirections[1] == brainz::DIRECTION_BIDIRECTIONAL)) {
+								moduleState = brainz::MODULE_STATE_ROUND_2_STEP_B;
+							} else if (bStepEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BACKWARD
+								|| stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL)) {
+								moduleState = brainz::MODULE_STATE_ROUND_2_STEP_A;
 							} else {
-								moduleState = MODULE_STATE_ROUND_2_END;
+								moduleState = brainz::MODULE_STATE_ROUND_2_END;
 							}
 							resetStep();
 						}
 						break;
 
 
-					case MODULE_STATE_ROUND_2_STEP_B:
+					case brainz::MODULE_STATE_ROUND_2_STEP_B:
 						resetGlobalTriggers();
 						if (params[PARAM_B_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -443,16 +445,17 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[0] && (stepDirections[0] == DIRECTION_BACKWARD || stepDirections[0] == DIRECTION_BIDIRECTIONAL)) {
-								moduleState = MODULE_STATE_ROUND_2_STEP_A;
+							if (bStepEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BACKWARD
+								|| stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL)) {
+								moduleState = brainz::MODULE_STATE_ROUND_2_STEP_A;
 							} else {
-								moduleState = MODULE_STATE_ROUND_2_END;
+								moduleState = brainz::MODULE_STATE_ROUND_2_END;
 							}
 							resetStep();
 						}
 						break;
 
-					case MODULE_STATE_ROUND_2_STEP_A:
+					case brainz::MODULE_STATE_ROUND_2_STEP_A:
 						resetGlobalTriggers();
 						if (params[PARAM_A_IS_METRONOME].getValue()) {
 							if (!bEnteredMetronome) {
@@ -476,12 +479,12 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							moduleState = MODULE_STATE_ROUND_2_END;
+							moduleState = brainz::MODULE_STATE_ROUND_2_END;
 							resetStep();
 						}
 						break;
 
-					case MODULE_STATE_ROUND_2_END:
+					case brainz::MODULE_STATE_ROUND_2_END:
 						resetGlobalTriggers();
 						if (params[PARAM_END_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
@@ -493,11 +496,11 @@ struct Brainz : SanguineModule {
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
 							if (!params[PARAM_ONE_SHOT].getValue()) {
-								moduleState = MODULE_STATE_READY;
-								moduleStage = MODULE_STAGE_INIT;
+								moduleState = brainz::MODULE_STATE_READY;
+								moduleStage = brainz::MODULE_STAGE_INIT;
 							} else {
-								moduleState = MODULE_STATE_WAIT_FOR_RESET;
-								moduleStage = MODULE_STAGE_ONE_SHOT_END;
+								moduleState = brainz::MODULE_STATE_WAIT_FOR_RESET;
+								moduleStage = brainz::MODULE_STAGE_ONE_SHOT_END;
 							}
 						}
 						break;
@@ -518,7 +521,7 @@ struct Brainz : SanguineModule {
 						kSanguineButtonLightValue : 0.f, sampleTime);
 
 					if (step < 2) {
-						stepDirections[step] = StepDirections(params[PARAM_A_DIRECTION + step].getValue());
+						stepDirections[step] = brainz::StepDirections(params[PARAM_A_DIRECTION + step].getValue());
 
 						int currentLight = LIGHT_STEP_A_DIRECTION + step * 3;
 						lights[currentLight + 0].setBrightness(stepDirectionsLightColors[stepDirections[step]].red);
@@ -563,12 +566,12 @@ struct Brainz : SanguineModule {
 
 				handleStepLights(sampleTime);
 
-				if (moduleState == MODULE_STATE_READY) {
-					moduleDirection = StepDirections(params[PARAM_MODULE_DIRECTION].getValue());
-					if (moduleState < MODULE_STATE_WAIT_FOR_RESET) {
-						moduleStage = MODULE_STAGE_INIT;
+				if (moduleState == brainz::MODULE_STATE_READY) {
+					moduleDirection = brainz::StepDirections(params[PARAM_MODULE_DIRECTION].getValue());
+					if (moduleState < brainz::MODULE_STATE_WAIT_FOR_RESET) {
+						moduleStage = brainz::MODULE_STAGE_INIT;
 					} else {
-						moduleStage = MODULE_STAGE_ONE_SHOT_END;
+						moduleStage = brainz::MODULE_STAGE_ONE_SHOT_END;
 					}
 					moduleState = lastModuleState;
 				}
@@ -653,19 +656,19 @@ struct Brainz : SanguineModule {
 	}
 
 	void handleAfterMetronomeTriggers(OutputIds output, const float sampleTime) {
-		if (stepState < STEP_STATE_TRIGGER_SENT) {
+		if (stepState < brainz::STEP_STATE_TRIGGER_SENT) {
 			if (outputs[output].isConnected()) {
 				pgTrigger.trigger();
 				outputs[output].setVoltage(pgTrigger.process(1.f / sampleTime) ? 10.f : 0.f);
 			}
-			stepState = STEP_STATE_TRIGGER_SENT;
+			stepState = brainz::STEP_STATE_TRIGGER_SENT;
 		} else {
 			bStepTrigger = pgTrigger.process(1.f / sampleTime);
 			if (outputs[output].isConnected()) {
 				outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
 			}
 			if (!bStepTrigger) {
-				stepState = STEP_STATE_TRIGGER_DONE;
+				stepState = brainz::STEP_STATE_TRIGGER_DONE;
 			}
 		}
 	}
@@ -675,50 +678,51 @@ struct Brainz : SanguineModule {
 			if (bInMetronome) {
 				bInMetronome = false;
 				killVoltages();
-				moduleState = MODULE_STATE_READY;
-				moduleStage = MODULE_STAGE_INIT;
+				moduleState = brainz::MODULE_STATE_READY;
+				moduleStage = brainz::MODULE_STAGE_INIT;
 			} else {
 				switch (moduleState) {
-				case MODULE_STATE_READY:
+				case brainz::MODULE_STATE_READY:
 					bTriggersSent = false;
-					if (moduleDirection < DIRECTION_BACKWARD) {
-						moduleStage = MODULE_STAGE_ROUND_1;
-						moduleState = MODULE_STATE_ROUND_1_START;
-					} else if (moduleDirection == DIRECTION_BACKWARD) {
-						moduleState = MODULE_STATE_ROUND_2_START;
-						moduleStage = MODULE_STAGE_ROUND_2;
+					if (moduleDirection < brainz::DIRECTION_BACKWARD) {
+						moduleStage = brainz::MODULE_STAGE_ROUND_1;
+						moduleState = brainz::MODULE_STATE_ROUND_1_START;
+					} else if (moduleDirection == brainz::DIRECTION_BACKWARD) {
+						moduleState = brainz::MODULE_STATE_ROUND_2_START;
+						moduleStage = brainz::MODULE_STAGE_ROUND_2;
 					}
 					break;
 
-				case MODULE_STATE_ROUND_1_START:
-				case MODULE_STATE_ROUND_1_STEP_A:
-				case MODULE_STATE_ROUND_1_STEP_B:
-				case MODULE_STATE_ROUND_1_STEP_C:
+				case brainz::MODULE_STATE_ROUND_1_START:
+				case brainz::MODULE_STATE_ROUND_1_STEP_A:
+				case brainz::MODULE_STATE_ROUND_1_STEP_B:
+				case brainz::MODULE_STATE_ROUND_1_STEP_C:
 					killVoltages();
-					moduleState = MODULE_STATE_READY;
-					moduleStage = MODULE_STAGE_INIT;
+					moduleState = brainz::MODULE_STATE_READY;
+					moduleStage = brainz::MODULE_STAGE_INIT;
 					break;
 
 
-				case MODULE_STATE_ROUND_1_END:
-					if (moduleDirection == DIRECTION_BACKWARD || moduleDirection == DIRECTION_BIDIRECTIONAL) {
+				case brainz::MODULE_STATE_ROUND_1_END:
+					if (moduleDirection == brainz::DIRECTION_BACKWARD
+						|| moduleDirection == brainz::DIRECTION_BIDIRECTIONAL) {
 						memset(currentCounters, 0, sizeof(int) * kMaxSteps);
-						moduleStage = MODULE_STAGE_ROUND_2;
-						moduleState = MODULE_STATE_ROUND_2_START;
+						moduleStage = brainz::MODULE_STAGE_ROUND_2;
+						moduleState = brainz::MODULE_STATE_ROUND_2_START;
 					}
 					break;
 
-				case MODULE_STATE_ROUND_2_START:
-				case MODULE_STATE_ROUND_2_STEP_A:
-				case MODULE_STATE_ROUND_2_STEP_B:
-				case MODULE_STATE_ROUND_2_STEP_C:
-				case MODULE_STATE_ROUND_2_END:
+				case brainz::MODULE_STATE_ROUND_2_START:
+				case brainz::MODULE_STATE_ROUND_2_STEP_A:
+				case brainz::MODULE_STATE_ROUND_2_STEP_B:
+				case brainz::MODULE_STATE_ROUND_2_STEP_C:
+				case brainz::MODULE_STATE_ROUND_2_END:
 					killVoltages();
-					moduleState = MODULE_STATE_READY;
-					moduleStage = MODULE_STAGE_INIT;
+					moduleState = brainz::MODULE_STATE_READY;
+					moduleStage = brainz::MODULE_STAGE_INIT;
 					break;
 
-				case MODULE_STATE_WAIT_FOR_RESET:
+				case brainz::MODULE_STATE_WAIT_FOR_RESET:
 					break;
 				}
 			}
@@ -735,8 +739,8 @@ struct Brainz : SanguineModule {
 		killVoltages();
 		memset(currentCounters, 0, sizeof(int) * kMaxSteps);
 		metronomeStepsDone = 0;
-		moduleState = MODULE_STATE_READY;
-		moduleStage = MODULE_STAGE_INIT;
+		moduleState = brainz::MODULE_STATE_READY;
+		moduleStage = brainz::MODULE_STAGE_INIT;
 		if (outputs[OUTPUT_RESET].isConnected()) {
 			bResetSent = true;
 			pgReset.trigger();
@@ -758,7 +762,7 @@ struct Brainz : SanguineModule {
 	}
 
 	void doStepTrigger(OutputIds output, int* counter, const float sampleTime) {
-		if (stepState < STEP_STATE_TRIGGER_SENT) {
+		if (stepState < brainz::STEP_STATE_TRIGGER_SENT) {
 			std::chrono::time_point<std::chrono::steady_clock> currentTime = std::chrono::steady_clock::now();
 			int elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
 			*counter = elapsedTime / 1000;
@@ -767,7 +771,7 @@ struct Brainz : SanguineModule {
 					pgTrigger.trigger();
 					outputs[output].setVoltage(pgTrigger.process(1.f / sampleTime) ? 10.f : 0.f);
 				}
-				stepState = STEP_STATE_TRIGGER_SENT;
+				stepState = brainz::STEP_STATE_TRIGGER_SENT;
 			}
 		} else {
 			bStepTrigger = pgTrigger.process(1.f / sampleTime);
@@ -775,13 +779,13 @@ struct Brainz : SanguineModule {
 				outputs[output].setVoltage(bStepTrigger ? 10.f : 0.f);
 			}
 			if (!bStepTrigger) {
-				stepState = STEP_STATE_TRIGGER_DONE;
+				stepState = brainz::STEP_STATE_TRIGGER_DONE;
 			}
 		}
 	}
 
 	void doEndOfStepTriggers(ParamIds checkParam, const float sampleTime) {
-		if (bStepStarted && stepState == STEP_STATE_TRIGGER_DONE) {
+		if (bStepStarted && stepState == brainz::STEP_STATE_TRIGGER_DONE) {
 			if (!params[checkParam].getValue()) {
 				for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
 					bTriggersDone[trigger] = true;
@@ -796,13 +800,16 @@ struct Brainz : SanguineModule {
 		bStepStarted = false;
 		bStepTrigger = false;
 		bEnteredMetronome = false;
-		stepState = STEP_STATE_READY;
+		stepState = brainz::STEP_STATE_READY;
 	}
 
 	void handleStepLights(float sampleTime) {
-		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_A || moduleState == MODULE_STATE_ROUND_2_STEP_A) ? 1.f : 0.f, sampleTime);
-		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_B || moduleState == MODULE_STATE_ROUND_2_STEP_B) ? 1.f : 0.f, sampleTime);
-		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == MODULE_STATE_ROUND_1_STEP_C || moduleState == MODULE_STATE_ROUND_2_STEP_C) ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_A
+			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_A) ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_B
+			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_B) ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_C
+			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_C) ? 1.f : 0.f, sampleTime);
 		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.f : 0.f, sampleTime);
 	}
 };
