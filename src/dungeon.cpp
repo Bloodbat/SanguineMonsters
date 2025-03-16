@@ -44,10 +44,10 @@ struct Dungeon : SanguineModule {
 		MODE_HOLD_AND_TRACK
 	} moduleMode = MODE_SAMPLE_AND_HOLD;
 
-	NVGcolor innerMoon = moonColors[1].innerColor;
-	NVGcolor outerMoon = moonColors[1].outerColor;
+	NVGcolor innerMoon = dungeon::moonColors[1].innerColor;
+	NVGcolor outerMoon = dungeon::moonColors[1].outerColor;
 
-	const int kClockDividerFrequency = 512;
+	static const int kClockDividerFrequency = 512;
 
 	float minSlew = std::log2(1e-3f);
 	float maxSlew = std::log2(10.f);
@@ -58,7 +58,7 @@ struct Dungeon : SanguineModule {
 
 	HaloTypes haloType = HALO_CIRCULAR;
 
-	std::string modeLabel = dungeonModeLabels[0];
+	std::string modeLabel = dungeon::modeLabels[0];
 
 	dsp::ClockDivider clockDivider;
 
@@ -199,7 +199,7 @@ struct Dungeon : SanguineModule {
 
 		if (clockDivider.process()) {
 			moduleMode = ModuleModes(params[PARAM_MODE].getValue());
-			modeLabel = dungeonModeLabels[moduleMode];
+			modeLabel = dungeon::modeLabels[moduleMode];
 
 			const float sampleTime = args.sampleTime * kClockDividerFrequency;
 
@@ -213,20 +213,29 @@ struct Dungeon : SanguineModule {
 			}
 
 			if (inVoltage >= 1.f) {
-				outerMoon = moonColors[2].outerColor;
-				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.r, moonColors[2].innerColor.r);
-				innerMoon.g = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.g, moonColors[2].innerColor.g);
-				innerMoon.b = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.b, moonColors[2].innerColor.b);
+				outerMoon = dungeon::moonColors[2].outerColor;
+				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.r,
+					dungeon::moonColors[2].innerColor.r);
+				innerMoon.g = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.g,
+					dungeon::moonColors[2].innerColor.g);
+				innerMoon.b = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.b,
+					dungeon::moonColors[2].innerColor.b);
 			} else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
-				outerMoon = moonColors[1].outerColor;
-				innerMoon.r = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.r, moonColors[1].innerColor.r);
-				innerMoon.g = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.g, moonColors[1].innerColor.g);
-				innerMoon.b = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.b, moonColors[1].innerColor.b);
+				outerMoon = dungeon::moonColors[1].outerColor;
+				innerMoon.r = math::rescale(inVoltage, -0.99f, 0.99f, dungeon::moonColors[1].outerColor.r,
+					dungeon::moonColors[1].innerColor.r);
+				innerMoon.g = math::rescale(inVoltage, -0.99f, 0.99f, dungeon::moonColors[1].outerColor.g,
+					dungeon::moonColors[1].innerColor.g);
+				innerMoon.b = math::rescale(inVoltage, -0.99f, 0.99f, dungeon::moonColors[1].outerColor.b,
+					dungeon::moonColors[1].innerColor.b);
 			} else {
-				outerMoon = moonColors[0].outerColor;
-				innerMoon.r = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.r, moonColors[0].innerColor.r);
-				innerMoon.g = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.g, moonColors[0].innerColor.g);
-				innerMoon.b = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.b, moonColors[0].innerColor.b);
+				outerMoon = dungeon::moonColors[0].outerColor;
+				innerMoon.r = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.r,
+					dungeon::moonColors[0].innerColor.r);
+				innerMoon.g = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.g,
+					dungeon::moonColors[0].innerColor.g);
+				innerMoon.b = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.b,
+					dungeon::moonColors[0].innerColor.b);
 			}
 		}
 	}
@@ -299,7 +308,7 @@ struct DungeonWidget : SanguineModuleWidget {
 		SanguineTinyNumericDisplay* displayMode = new SanguineTinyNumericDisplay(2, module, 35.56, 16.934);
 		displayMode->displayType = DISPLAY_STRING;
 		dungeonFrameBuffer->addChild(displayMode);
-		displayMode->fallbackString = dungeonModeLabels[0];
+		displayMode->fallbackString = dungeon::modeLabels[0];
 
 		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module,
 			Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
