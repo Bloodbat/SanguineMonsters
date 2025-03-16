@@ -61,12 +61,12 @@ struct SuperSwitch18 : SanguineModule {
 	dsp::BooleanTrigger btIncrease;
 	dsp::BooleanTrigger btRandom;
 	dsp::BooleanTrigger btReset;
-	dsp::BooleanTrigger btSteps[kMaxSteps];
+	dsp::BooleanTrigger btSteps[superSwitches::kMaxSteps];
 	dsp::SchmittTrigger stInputDecrease;
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
 	dsp::SchmittTrigger stInputReset;
-	dsp::SchmittTrigger stDirectSteps[kMaxSteps];
+	dsp::SchmittTrigger stDirectSteps[superSwitches::kMaxSteps];
 	bool bClockReceived = false;
 	bool bLastOneShotValue = false;
 	bool bLastResetToFirstStepValue = true;
@@ -78,7 +78,7 @@ struct SuperSwitch18 : SanguineModule {
 	int channelCount = 0;
 	int randomNum = 0;
 	int selectedOut = 0;
-	int stepCount = kMaxSteps;
+	int stepCount = superSwitches::kMaxSteps;
 	int stepsDone = 0;
 
 	static const int kClockDivider = 16;
@@ -99,7 +99,7 @@ struct SuperSwitch18 : SanguineModule {
 		configButton(PARAM_RESET_TO_FIRST_STEP, "Reset to first step");
 		configButton(PARAM_ONE_SHOT, "One shot");
 
-		for (int component = 0; component < kMaxSteps; ++component) {
+		for (int component = 0; component < superSwitches::kMaxSteps; ++component) {
 			configButton(PARAM_STEP1 + component, "Step " + std::to_string(component + 1));
 			configOutput(OUTPUT_OUT1 + component, "Voltage " + std::to_string(component + 1));
 		}
@@ -177,7 +177,7 @@ struct SuperSwitch18 : SanguineModule {
 				outVoltages[channel / 4] = 0.F;
 			}
 
-			for (int output = 0; output < kMaxSteps; ++output) {
+			for (int output = 0; output < superSwitches::kMaxSteps; ++output) {
 				outputs[OUTPUT_OUT1 + output].setChannels(0);
 			}
 			selectedOut = -1;
@@ -203,7 +203,7 @@ struct SuperSwitch18 : SanguineModule {
 				stepCount = params[PARAM_STEPS].getValue();
 			}
 
-			for (int step = 0; step < kMaxSteps; ++step)
+			for (int step = 0; step < superSwitches::kMaxSteps; ++step)
 			{
 				if (step < stepCount) {
 					params[PARAM_STEP1 + step].setValue(step == selectedOut ? 1 : 0);
@@ -215,7 +215,7 @@ struct SuperSwitch18 : SanguineModule {
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 
 			if (bHasExpander) {
-				for (int step = 0; step < kMaxSteps; ++step) {
+				for (int step = 0; step < superSwitches::kMaxSteps; ++step) {
 					int currentLight = Manus::LIGHT_STEP_1_LEFT + step;
 					if (step < stepCount) {
 						manusExpander->getLight(currentLight).setBrightnessSmooth(kSanguineButtonLightValue, sampleTime);
@@ -278,7 +278,7 @@ struct SuperSwitch18 : SanguineModule {
 				}
 			}
 
-			for (int step = 0; step < kMaxSteps; ++step)
+			for (int step = 0; step < superSwitches::kMaxSteps; ++step)
 			{
 				if (step < stepCount) {
 					if (step != selectedOut) {
@@ -325,18 +325,18 @@ struct SuperSwitch18 : SanguineModule {
 				outVoltages[channel / 4] = 0.f;
 			}
 
-			for (int output = 0; output < kMaxSteps; ++output) {
+			for (int output = 0; output < superSwitches::kMaxSteps; ++output) {
 				outputs[OUTPUT_OUT1 + output].setChannels(0);
 			}
 
 			selectedOut = -1;
 			bClockReceived = false;
 		}
-		stepCount = kMaxSteps;
+		stepCount = superSwitches::kMaxSteps;
 	}
 
 	void onRandomize() override {
-		stepCount = pcgRng(kMaxSteps) + 1;
+		stepCount = pcgRng(superSwitches::kMaxSteps) + 1;
 		selectedOut = pcgRng(stepCount);
 	}
 
@@ -483,7 +483,7 @@ struct SuperSwitch18Widget : SanguineModuleWidget {
 
 		SanguineLedNumberDisplay* display = new SanguineLedNumberDisplay(2, module, 26.644, 21.472);
 		switchFrameBuffer->addChild(display);
-		display->fallbackNumber = kMaxSteps;
+		display->fallbackNumber = superSwitches::kMaxSteps;
 
 		if (module) {
 			display->values.numberValue = (&module->stepCount);
