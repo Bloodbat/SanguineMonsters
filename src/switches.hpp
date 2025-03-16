@@ -1,3 +1,5 @@
 #pragma once
 
-static const int kMaxSteps = 8;
+namespace superSwitches {
+    static const int kMaxSteps = 8;
+}
