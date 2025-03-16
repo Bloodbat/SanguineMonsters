@@ -63,8 +63,8 @@ struct Sphinx : SanguineModule {
 	std::vector<bool> calculatedAccents;
 
 	// Padded + rotated + distributed
-	std::array<bool, kMaxSphinxLength * 2> finalSequence;
-	std::array<bool, kMaxSphinxLength * 2> finalAccents;
+	std::array<bool, sphinx::kMaxLength * 2> finalSequence;
+	std::array<bool, sphinx::kMaxLength * 2> finalAccents;
 
 	bool bAccentOn = false;
 	bool bCalculate;
@@ -87,8 +87,8 @@ struct Sphinx : SanguineModule {
 	int currentStep = 0;
 	int turing = 0;
 
-	PatternStyle lastPatternStyle = EUCLIDEAN_PATTERN;
-	PatternStyle patternStyle = EUCLIDEAN_PATTERN;
+	sphinx::PatternStyle lastPatternStyle = sphinx::EUCLIDEAN_PATTERN;
+	sphinx::PatternStyle patternStyle = sphinx::EUCLIDEAN_PATTERN;
 
 	static const int kClockDivider = 16;
 
@@ -188,7 +188,7 @@ struct Sphinx : SanguineModule {
 			}
 
 			switch (patternStyle) {
-			case EUCLIDEAN_PATTERN: {
+			case sphinx::EUCLIDEAN_PATTERN: {
 				euclid.reset();
 				euclid.init(patternLength, patternFill);
 				euclid.iter();
@@ -203,7 +203,7 @@ struct Sphinx : SanguineModule {
 				break;
 			}
 
-			case RANDOM_PATTERN: {
+			case sphinx::RANDOM_PATTERN: {
 				if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
 					lastPatternStyle != patternStyle) {
 					int num = 0;
@@ -235,7 +235,7 @@ struct Sphinx : SanguineModule {
 				break;
 			}
 
-			case FIBONACCI_PATTERN: {
+			case sphinx::FIBONACCI_PATTERN: {
 				calculatedSequence.resize(patternLength);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 				for (int num = 0; num < patternFill; ++num) {
@@ -250,7 +250,7 @@ struct Sphinx : SanguineModule {
 				break;
 			}
 
-			case LINEAR_PATTERN: {
+			case sphinx::LINEAR_PATTERN: {
 				calculatedSequence.resize(patternLength);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 				for (int num = 0; num < patternFill; ++num) {
@@ -411,7 +411,7 @@ struct Sphinx : SanguineModule {
 				bCalculate = true;
 			}
 
-			patternStyle = PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
+			patternStyle = sphinx::PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
 			if (patternStyle != lastPatternStyle) {
 				bCalculate = true;
 			}
@@ -449,17 +449,15 @@ struct Sphinx : SanguineModule {
 	}
 };
 
-static const std::array<bool, kMaxSphinxLength / 2> browserSequence = { true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false };
-
 struct SphinxDisplay : TransparentWidget {
 	Sphinx* module = nullptr;
-	std::array<bool, kMaxSphinxLength * 2>* sequence = nullptr;
-	std::array<bool, kMaxSphinxLength * 2>* accents = nullptr;
+	std::array<bool, sphinx::kMaxLength * 2>* sequence = nullptr;
+	std::array<bool, sphinx::kMaxLength * 2>* accents = nullptr;
 	int* currentStep = nullptr;
 	int* patternFill = nullptr;
 	int* patternLength = nullptr;
 	int* patternPadding = nullptr;
-	PatternStyle* patternStyle = nullptr;
+	sphinx::PatternStyle* patternStyle = nullptr;
 	struct DisplayColors {
 		NVGcolor backgroundColor;
 		NVGcolor inactiveColor;
@@ -540,7 +538,7 @@ struct SphinxDisplay : TransparentWidget {
 					nvgStroke(vg);
 				}
 			} else if (!module) {
-				if (!browserSequence[step]) {
+				if (!sphinx::browserSequence[step]) {
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
 					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
@@ -584,7 +582,7 @@ struct SphinxDisplay : TransparentWidget {
 					}
 				}
 			} else if (!module) {
-				if (browserSequence[step]) {
+				if (sphinx::browserSequence[step]) {
 					float a = step / static_cast<float>(length);
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
@@ -620,7 +618,7 @@ struct SphinxDisplay : TransparentWidget {
 					nvgStroke(vg);
 				}
 			} else if (!module) {
-				if (browserSequence[step]) {
+				if (sphinx::browserSequence[step]) {
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
 					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
@@ -657,7 +655,7 @@ struct SphinxDisplay : TransparentWidget {
 			float y = circleY + r * sinf(2.f * M_PI * 0 / length - 0.5f * M_PI);
 			nvgBeginPath(vg);
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
-			if (browserSequence[0]) {
+			if (sphinx::browserSequence[0]) {
 				nvgFillColor(vg, arrayDisplayColors[0].activeColor);
 			} else {
 				nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
