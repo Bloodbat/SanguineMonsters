@@ -2,7 +2,10 @@
 #include "sanguinecomponents.hpp"
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
 #include "pcg_random.hpp"
+#pragma GCC diagnostic pop
 
 struct Oraculus : SanguineModule {
 
