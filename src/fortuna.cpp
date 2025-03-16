@@ -53,10 +53,10 @@ struct Fortuna : SanguineModule {
     dsp::ClockDivider lightsDivider;
     RampGenerator rampGenerators[kMaxModuleSections][PORT_MAX_CHANNELS];
 
-    RollResults rollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
-    RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    fortuna::RollResults rollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    fortuna::RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
-    RollModes rollModes[kMaxModuleSections] = { ROLL_DIRECT, ROLL_DIRECT };
+    fortuna::RollModes rollModes[kMaxModuleSections] = { fortuna::ROLL_DIRECT, fortuna::ROLL_DIRECT };
     bool bOutputsConnected[OUTPUTS_COUNT] = {};
 
     Fortuna() {
@@ -72,7 +72,7 @@ struct Fortuna : SanguineModule {
             configOutput(OUTPUT_OUT_1A + section, string::f("Channel %d A", section + 1));
             configOutput(OUTPUT_OUT_1B + section, string::f("Channel %d B", section + 1));
             for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-                lastRollResults[section][channel] = ROLL_HEADS;
+                lastRollResults[section][channel] = fortuna::ROLL_HEADS;
             }
             lightsDivider.setDivision(kLightFrequency);
         }
@@ -104,7 +104,7 @@ struct Fortuna : SanguineModule {
 
             channelCount = std::max(std::max(input->getChannels(), trigger->getChannels()), 1);
 
-            rollModes[section] = static_cast<RollModes>(params[PARAM_ROLL_MODE_1 + section].getValue());
+            rollModes[section] = static_cast<fortuna::RollModes>(params[PARAM_ROLL_MODE_1 + section].getValue());
 
             float rampDuration = params[PARAM_CROSSFADE_A + section].getValue();
 
@@ -116,9 +116,10 @@ struct Fortuna : SanguineModule {
                 if (btGateTriggers[section][channel].process(bGatePresent)) {
                     // Trigger.
                     float threshold = clamp(params[PARAM_THRESHOLD_1 + section].getValue() + cvVoltages[section][channel] / 5.f, 0.f, 1.f);
-                    rollResults[section][channel] = (random::uniform() >= threshold) ? ROLL_HEADS : ROLL_TAILS;
-                    if (rollModes[section] == ROLL_TOGGLE) {
-                        rollResults[section][channel] = static_cast<RollResults>(lastRollResults[section][channel] ^ rollResults[section][channel]);
+                    rollResults[section][channel] = (random::uniform() >= threshold) ? fortuna::ROLL_HEADS : fortuna::ROLL_TAILS;
+                    if (rollModes[section] == fortuna::ROLL_TOGGLE) {
+                        rollResults[section][channel] =
+                            static_cast<fortuna::RollResults>(lastRollResults[section][channel] ^ rollResults[section][channel]);
                     }
                     if (lastRollResults[section][channel] != rollResults[section][channel]) {
                         rampGenerators[section][channel].trigger(rampDuration);
@@ -134,10 +135,10 @@ struct Fortuna : SanguineModule {
                 float fadingOutVoltage = inVoltages[section][channel] * (clamp(1.f - rampGenerators[section][channel].rampVoltage, 0.f, 1.f));
                 float fadingInVoltage = inVoltages[section][channel] * rampGenerators[section][channel].rampVoltage;
 
-                outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != ROLL_TAILS ?
+                outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != fortuna::ROLL_TAILS ?
                     fadingInVoltage : fadingOutVoltage, channel);
 
-                outputs[OUTPUT_OUT_1B + section].setVoltage(rollResults[section][channel] == ROLL_TAILS ?
+                outputs[OUTPUT_OUT_1B + section].setVoltage(rollResults[section][channel] == fortuna::ROLL_TAILS ?
                     fadingInVoltage : fadingOutVoltage, channel);
             }
 
@@ -168,9 +169,9 @@ struct Fortuna : SanguineModule {
                 lights[currentLight + 0].setSmoothBrightness(rescaledLight, sampleTime);
 
                 currentLight = LIGHTS_ROLL_MODE + section * 2;
-                lights[currentLight + 0].setBrightnessSmooth(rollModes[section] == ROLL_DIRECT ?
+                lights[currentLight + 0].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
                     kSanguineButtonLightValue : 0.f, sampleTime);
-                lights[currentLight + 1].setBrightnessSmooth(rollModes[section] == ROLL_DIRECT ?
+                lights[currentLight + 1].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
                     0.f : kSanguineButtonLightValue, sampleTime);
             }
         }
@@ -180,7 +181,7 @@ struct Fortuna : SanguineModule {
         for (int section = 0; section < kMaxModuleSections; ++section) {
             params[PARAM_ROLL_MODE_1 + section].setValue(0);
             for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-                lastRollResults[section][channel] = ROLL_HEADS;
+                lastRollResults[section][channel] = fortuna::ROLL_HEADS;
             }
         }
     }
