@@ -3,7 +3,7 @@
 Manus::Manus() {
     config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-    for (int input = 0; input < kMaxSteps; ++input) {
+    for (int input = 0; input < superSwitches::kMaxSteps; ++input) {
         configInput(INPUT_STEP_1 + input, string::f("Step %d", input + 1));
     }
 }
@@ -17,7 +17,7 @@ void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
         lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(kSanguineButtonLightValue);
     } else {
         lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(0.f);
-        for (int light = 0; light < kMaxSteps; ++light) {
+        for (int light = 0; light < superSwitches::kMaxSteps; ++light) {
             const int currentLight = LIGHT_STEP_1_LEFT + light;
             lights[currentLight].setBrightness(0.f);
         }
@@ -26,7 +26,7 @@ void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
         lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(kSanguineButtonLightValue);
     } else {
         lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(0.f);
-        for (int light = 0; light < kMaxSteps; ++light) {
+        for (int light = 0; light < superSwitches::kMaxSteps; ++light) {
             const int currentLight = LIGHT_STEP_1_RIGHT + light;
             lights[currentLight].setBrightness(0.f);
         }
