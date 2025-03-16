@@ -12,17 +12,17 @@ struct Medusa : SanguineModule {
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_VOLTAGE, kMedusaMaxPorts),
+		ENUMS(INPUT_VOLTAGE, medusa::kMedusaMaxPorts),
 		INPUTS_COUNT
 	};
 
 	enum OutputIds {
-		ENUMS(OUTPUT_VOLTAGE, kMedusaMaxPorts),
+		ENUMS(OUTPUT_VOLTAGE, medusa::kMedusaMaxPorts),
 		OUTPUTS_COUNT
 	};
 
 	enum LightIds {
-		ENUMS(LIGHT_NORMALLED_PORT, kMedusaMaxPorts * 3),
+		ENUMS(LIGHT_NORMALLED_PORT, medusa::kMedusaMaxPorts * 3),
 		LIGHTS_COUNT
 	};
 
@@ -33,7 +33,7 @@ struct Medusa : SanguineModule {
 	Medusa() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int port = 0; port < kMedusaMaxPorts; ++port) {
+		for (int port = 0; port < medusa::kMedusaMaxPorts; ++port) {
 			configInput(INPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 			configOutput(OUTPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 		}
@@ -51,7 +51,7 @@ struct Medusa : SanguineModule {
 
 		bool bIsLightsTurn = lightDivider.process();
 
-		for (int port = 0; port < kMedusaMaxPorts; ++port) {
+		for (int port = 0; port < medusa::kMedusaMaxPorts; ++port) {
 			if (inputs[INPUT_VOLTAGE + port].isConnected()) {
 				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
 				activePort = port;
@@ -78,9 +78,9 @@ struct Medusa : SanguineModule {
 
 				int currentLight = LIGHT_NORMALLED_PORT + port * 3;
 				if (connectedCount > 0) {
-					lights[currentLight + 0].setBrightnessSmooth(paletteMedusaLights[currentPalette].red, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(paletteMedusaLights[currentPalette].green, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(paletteMedusaLights[currentPalette].blue, sampleTime);
+					lights[currentLight + 0].setBrightnessSmooth(medusa::paletteLights[currentPalette].red, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(medusa::paletteLights[currentPalette].green, sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(medusa::paletteLights[currentPalette].blue, sampleTime);
 				} else {
 					lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
