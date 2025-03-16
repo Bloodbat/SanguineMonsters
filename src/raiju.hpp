@@ -1,3 +1,5 @@
 #pragma once
 
-static const std::string kBrowserDisplayText = "00.000";
+namespace raiju {
+    static const std::string kBrowserDisplayText = "00.000";
+}
