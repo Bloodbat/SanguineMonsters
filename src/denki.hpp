@@ -12,8 +12,8 @@ struct Denki : SanguineModule {
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_GAIN_CV, kMaxSections),
-		ENUMS(INPUT_OFFSET_CV, kMaxSections),
+		ENUMS(INPUT_GAIN_CV, kitsune::kMaxSections),
+		ENUMS(INPUT_OFFSET_CV, kitsune::kMaxSections),
 		INPUTS_COUNT
 	};
 
@@ -24,8 +24,8 @@ struct Denki : SanguineModule {
 
 	enum LightIds {
 		LIGHT_MASTER_MODULE,
-		ENUMS(LIGHT_GAIN_CV, kMaxSections * 3),
-		ENUMS(LIGHT_OFFSET_CV, kMaxSections * 3),
+		ENUMS(LIGHT_GAIN_CV, kitsune::kMaxSections * 3),
+		ENUMS(LIGHT_OFFSET_CV, kitsune::kMaxSections * 3),
 		LIGHTS_COUNT
 	};
 
