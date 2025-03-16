@@ -1,3 +1,5 @@
 #pragma once
 
-static const int kMaxSections = 4;
+namespace chronos {
+    static const int kMaxSections = 4;
+}
