@@ -225,35 +225,35 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		SanguineMatrixDisplay* displayVoltage1 = new SanguineMatrixDisplay(7, module, 45.663, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage1);
-		displayVoltage1->fallbackString = kBrowserDisplayText;
+		displayVoltage1->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage2 = new SanguineMatrixDisplay(7, module, 45.663, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage2);
-		displayVoltage2->fallbackString = kBrowserDisplayText;
+		displayVoltage2->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage3 = new SanguineMatrixDisplay(7, module, 45.663, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage3);
-		displayVoltage3->fallbackString = kBrowserDisplayText;
+		displayVoltage3->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage4 = new SanguineMatrixDisplay(7, module, 45.663, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage4);
-		displayVoltage4->fallbackString = kBrowserDisplayText;
+		displayVoltage4->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage5 = new SanguineMatrixDisplay(7, module, 91.495, 32.982);
 		raijuFrameBuffer->addChild(displayVoltage5);
-		displayVoltage5->fallbackString = kBrowserDisplayText;
+		displayVoltage5->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage6 = new SanguineMatrixDisplay(7, module, 91.495, 52.67);
 		raijuFrameBuffer->addChild(displayVoltage6);
-		displayVoltage6->fallbackString = kBrowserDisplayText;
+		displayVoltage6->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage7 = new SanguineMatrixDisplay(7, module, 91.495, 72.359);
 		raijuFrameBuffer->addChild(displayVoltage7);
-		displayVoltage7->fallbackString = kBrowserDisplayText;
+		displayVoltage7->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineMatrixDisplay* displayVoltage8 = new SanguineMatrixDisplay(7, module, 91.495, 92.048);
 		raijuFrameBuffer->addChild(displayVoltage8);
-		displayVoltage8->fallbackString = kBrowserDisplayText;
+		displayVoltage8->fallbackString = raiju::kBrowserDisplayText;
 
 		SanguineStaticRGBLight* channelsLight = new SanguineStaticRGBLight(module, "res/channels_lit.svg",
 			127.365, 20.199, true, kSanguineBlueLight);
