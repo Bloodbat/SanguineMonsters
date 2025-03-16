@@ -94,18 +94,18 @@ struct Chronos : SanguineModule {
 
     static const int kLightsDivision = 64;
 
-    int channelCounts[kMaxSections] = {};
-    int ledsChannel[kMaxSections] = {};
+    int channelCounts[chronos::kMaxSections] = {};
+    int ledsChannel[chronos::kMaxSections] = {};
 
-    float clockFrequencies[kMaxSections] = {};
+    float clockFrequencies[chronos::kMaxSections] = {};
 
-    float_4 phases[kMaxSections][4];
-    float_4 sineVoltages[kMaxSections][4];
+    float_4 phases[chronos::kMaxSections][4];
+    float_4 sineVoltages[chronos::kMaxSections][4];
 
     dsp::ClockDivider lightsDivider;
-    dsp::Timer clockTimers[kMaxSections];
-    dsp::TSchmittTrigger<float_4> stResetTriggers[kMaxSections][4];
-    dsp::SchmittTrigger stClockTriggers[kMaxSections];
+    dsp::Timer clockTimers[chronos::kMaxSections];
+    dsp::TSchmittTrigger<float_4> stResetTriggers[chronos::kMaxSections][4];
+    dsp::SchmittTrigger stClockTriggers[chronos::kMaxSections];
 
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
@@ -156,7 +156,7 @@ struct Chronos : SanguineModule {
     Chronos() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-        for (int section = 0; section < kMaxSections; ++section) {
+        for (int section = 0; section < chronos::kMaxSections; ++section) {
             int lfoNumber = section + 1;
             configParam<FrequencyQuantity>(PARAM_FREQUENCY_1 + section, -8.f, 10.f, 1.f,
                 string::f("LFO %d frequency", lfoNumber), " Hz", 2, 1);
@@ -191,7 +191,7 @@ struct Chronos : SanguineModule {
     void process(const ProcessArgs& args) override {
         bool bIsLightsTurn = lightsDivider.process();
 
-        for (int section = 0; section < kMaxSections; ++section) {
+        for (int section = 0; section < chronos::kMaxSections; ++section) {
             float paramFrequency = params[PARAM_FREQUENCY_1 + section].getValue();
             float paramFm = params[PARAM_FM_1 + section].getValue();
             float paramPulsewidth = params[PARAM_PULSEWIDTH_1 + section].getValue();
@@ -335,7 +335,7 @@ struct Chronos : SanguineModule {
         float newPhase = 0.f;
         // Offset each phase by 90º
         const float phaseOffset = 0.25f;
-        for (int section = 0; section < kMaxSections; ++section) {
+        for (int section = 0; section < chronos::kMaxSections; ++section) {
             for (int channel = 0; channel < 16; channel += 4) {
                 phases[section][channel >> 2] = newPhase;
             }
@@ -348,7 +348,7 @@ struct Chronos : SanguineModule {
     json_t* dataToJson() override {
         json_t* rootJ = SanguineModule::dataToJson();
 
-        for (int section = 0; section < kMaxSections; ++section) {
+        for (int section = 0; section < chronos::kMaxSections; ++section) {
             json_object_set_new(rootJ, string::f("ledsChannel%d", section).c_str(), json_integer(ledsChannel[section]));
         }
         return rootJ;
@@ -357,7 +357,7 @@ struct Chronos : SanguineModule {
     void dataFromJson(json_t* rootJ) override {
         SanguineModule::dataFromJson(rootJ);
 
-        for (int section = 0; section < kMaxSections; ++section) {
+        for (int section = 0; section < chronos::kMaxSections; ++section) {
             json_t* ledsChannelJ = json_object_get(rootJ, string::f("ledsChannel%d", section).c_str());
             if (ledsChannelJ) {
                 ledsChannel[section] = json_integer_value(ledsChannelJ);
@@ -545,7 +545,7 @@ struct ChronosWidget : SanguineModuleWidget {
 
         std::vector<std::string> availableChannels = {};
 
-        for (int section = 0; section < kMaxSections; ++section) {
+        for (int section = 0; section < chronos::kMaxSections; ++section) {
             availableChannels.clear();
             for (int channel = 0; channel < module->channelCounts[section]; ++channel) {
                 availableChannels.push_back(channelNumbers[channel]);
