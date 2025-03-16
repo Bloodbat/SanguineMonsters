@@ -3,7 +3,10 @@
 #include "bjorklund.hpp"
 #include <array>
 #include "sanguinehelpers.hpp"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
 #include "pcg_random.hpp"
+#pragma GCC diagnostic pop
 #include "sphinx.hpp"
 
 struct Sphinx : SanguineModule {
