@@ -222,9 +222,9 @@ struct Bukavac : SanguineModule {
 		float n1;
 		float t0 = 1.0 - x0 * x0;
 		t0 *= t0;
-		n0 = t0 * t0 * makePerlinGradient(perm[i0 & 0xff], x0);
+		n0 = t0 * t0 * makePerlinGradient(bukavac::permutations[i0 & 0xff], x0);
 		t1 *= t1;
-		n1 = t1 * t1 * makePerlinGradient(perm[i1 & 0xff], x1);
+		n1 = t1 * t1 * makePerlinGradient(bukavac::permutations[i1 & 0xff], x1);
 		return (0.25f * (n0 + n1));
 	}
 
