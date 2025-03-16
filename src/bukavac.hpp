@@ -1,6 +1,9 @@
 #pragma once
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
 #include "pcg_random.hpp"
+#pragma GCC diagnostic pop
 
 /** Based on "The Voss algorithm"
 http://www.firstpr.com.au/dsp/pink-noise/
