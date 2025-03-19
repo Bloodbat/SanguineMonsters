@@ -3,6 +3,7 @@
 #include "sanguinehelpers.hpp"
 #include "sanguinechannels.hpp"
 #include "chronos.hpp"
+#include "seqcomponents.hpp"
 
 using simd::float_4;
 
@@ -81,14 +82,6 @@ struct Chronos : SanguineModule {
         ENUMS(LIGHT_PHASE_2, 3),
         ENUMS(LIGHT_PHASE_3, 3),
         ENUMS(LIGHT_PHASE_4, 3),
-        LIGHT_INVERT_1,
-        LIGHT_INVERT_2,
-        LIGHT_INVERT_3,
-        LIGHT_INVERT_4,
-        LIGHT_BIPOLAR_1,
-        LIGHT_BIPOLAR_2,
-        LIGHT_BIPOLAR_3,
-        LIGHT_BIPOLAR_4,
         LIGHTS_COUNT
     };
 
@@ -325,8 +318,6 @@ struct Chronos : SanguineModule {
                     lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
                 }
-                lights[LIGHT_BIPOLAR_1 + section].setBrightnessSmooth(!bHasOffset ? kSanguineButtonLightValue : 0.f, sampleTime);
-                lights[LIGHT_INVERT_1 + section].setBrightnessSmooth(bIsInverted ? kSanguineButtonLightValue : 0.f, sampleTime);
             }
         }
     }
@@ -367,6 +358,28 @@ struct Chronos : SanguineModule {
 };
 
 struct ChronosWidget : SanguineModuleWidget {
+    struct ButtonInvertWaveSmall : SeqButtonRoundSmall {
+        ButtonInvertWaveSmall() {
+            setGlyph("res/sine_inverted.svg", 0.453f, 0.623f);
+            addColor(40, 10, 0);
+            addColor(255, 71, 0);
+            addHalo(nvgRGB(0, 0, 0));
+            addHalo(nvgRGB(255, 71, 0));
+            momentary = false;
+        }
+    };
+
+    struct ButtonBipolarSmall : SeqButtonRoundSmall {
+        ButtonBipolarSmall() {
+            setGlyph("res/bipolar.svg", 0.453f, 1.126f);
+            addColor(36, 36, 0);
+            addColor(255, 255, 89);
+            addHalo(nvgRGB(0, 0, 0));
+            addHalo(nvgRGB(255, 255, 89));
+            momentary = false;
+        }
+    };
+
     explicit ChronosWidget(Chronos* module) {
         setModule(module);
 
@@ -386,10 +399,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(10.545, 21.83), module, Chronos::PARAM_FREQUENCY_1));
 
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(22.771, 20.33), module, Chronos::INPUT_CLOCK_1));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(34.212, 18.33),
-            module, Chronos::PARAM_INVERT_1, Chronos::LIGHT_INVERT_1));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(45.652, 18.33),
-            module, Chronos::PARAM_BIPOLAR_1, Chronos::LIGHT_BIPOLAR_1));
+
+        addParam(createParamCentered<ButtonInvertWaveSmall>(millimetersToPixelsVec(34.212, 20.33), module, Chronos::PARAM_INVERT_1));
+        addParam(createParamCentered<ButtonBipolarSmall>(millimetersToPixelsVec(45.652, 20.33), module, Chronos::PARAM_BIPOLAR_1));
 
         addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(22.771, 30.093), module, Chronos::LIGHT_PHASE_1));
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(34.212, 29.993), module, Chronos::PARAM_FM_1));
@@ -424,10 +436,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(65.691, 21.83), module, Chronos::PARAM_FREQUENCY_2));
 
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(77.917, 20.33), module, Chronos::INPUT_CLOCK_2));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(89.357, 18.33),
-            module, Chronos::PARAM_INVERT_2, Chronos::LIGHT_INVERT_2));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(100.798, 18.33),
-            module, Chronos::PARAM_BIPOLAR_2, Chronos::LIGHT_BIPOLAR_2));
+
+        addParam(createParamCentered<ButtonInvertWaveSmall>(millimetersToPixelsVec(89.357, 20.33), module, Chronos::PARAM_INVERT_2));
+        addParam(createParamCentered<ButtonBipolarSmall>(millimetersToPixelsVec(100.798, 20.33), module, Chronos::PARAM_BIPOLAR_2));
 
         addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(77.917, 30.093), module, Chronos::LIGHT_PHASE_2));
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(89.357, 29.993), module, Chronos::PARAM_FM_2));
@@ -462,10 +473,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(10.545, 81.313), module, Chronos::PARAM_FREQUENCY_3));
 
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(22.771, 79.813), module, Chronos::INPUT_CLOCK_3));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(34.212, 77.813),
-            module, Chronos::PARAM_INVERT_3, Chronos::LIGHT_INVERT_3));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(45.652, 77.813),
-            module, Chronos::PARAM_BIPOLAR_3, Chronos::LIGHT_BIPOLAR_3));
+
+        addParam(createParamCentered<ButtonInvertWaveSmall>(millimetersToPixelsVec(34.212, 79.813), module, Chronos::PARAM_INVERT_3));
+        addParam(createParamCentered<ButtonBipolarSmall>(millimetersToPixelsVec(45.652, 79.813), module, Chronos::PARAM_BIPOLAR_3));
 
         addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(22.771, 89.576), module, Chronos::LIGHT_PHASE_3));
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(34.212, 89.476), module, Chronos::PARAM_FM_3));
@@ -500,10 +510,9 @@ struct ChronosWidget : SanguineModuleWidget {
         addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(65.691, 81.313), module, Chronos::PARAM_FREQUENCY_4));
 
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(77.917, 79.813), module, Chronos::INPUT_CLOCK_4));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(89.357, 77.813),
-            module, Chronos::PARAM_INVERT_4, Chronos::LIGHT_INVERT_4));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(100.798, 77.813),
-            module, Chronos::PARAM_BIPOLAR_4, Chronos::LIGHT_BIPOLAR_4));
+
+        addParam(createParamCentered<ButtonInvertWaveSmall>(millimetersToPixelsVec(89.357, 79.813), module, Chronos::PARAM_INVERT_4));
+        addParam(createParamCentered<ButtonBipolarSmall>(millimetersToPixelsVec(100.798, 79.813), module, Chronos::PARAM_BIPOLAR_4));
 
         addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(77.917, 89.576), module, Chronos::LIGHT_PHASE_4));
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(89.357, 89.476), module, Chronos::PARAM_FM_4));
