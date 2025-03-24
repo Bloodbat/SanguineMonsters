@@ -2,13 +2,17 @@
 
 ## New Modules
 
-### Denki
-
-- Polyphonic expander for Kitsune: adds Gain and Offset CV control.
-
 ### Chronos
 
 - Polyphonic collection of four low-frequency oscillators.
+
+### Crucible
+
+- Expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode.
+
+### Denki
+
+- Polyphonic expander for Kitsune: adds Gain and Offset CV control.
 
 ### Fortuna
 
@@ -18,35 +22,19 @@
 
 - Expander for Gegeenes and Hydra that provides CV trigger step selection.
 
-### Crucible
-
-- Expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode.
-
 ---
 
 ## Fixes
 
-- Hydra: button lights turning on when steps are clicked and single shot has ended.
+- Dungeon: module was falling off the Rack: it was missing screws.
 
 - Gegeenes: button lights turning on when steps are clicked when single shot has ended.
 
-- Dungeon: module was falling off the Rack: it was missing screws.
+- Hydra: button lights turning on when steps are clicked and single shot has ended.
 
 ---
 
 ## Additions
-
-- Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
-
-- Werewolf: knob borders.
-
-- Werewolf: normal left and right inputs to each other.
-
-- Werewolf: normal left and right outputs to each other.
-
-- Dungeon: optional moon halo (on by default).
-
-- Dungeon: knob border.
 
 - Aion: faceplate knob borders and knob labels.
 
@@ -64,9 +52,9 @@
 
 - Dolly-X: knob borders.
 
-- Raiju: knob borders.
+- Dungeon: optional moon halo (on by default).
 
-- Sphinx: knob borders.
+- Dungeon: knob border.
 
 - Gegeenes: knob border.
 
@@ -76,23 +64,35 @@
 
 - Hydra: Manus expander.
 
+- Raiju: knob borders.
+
+- Sphinx: knob borders.
+
+- Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
+
+- Werewolf: knob borders.
+
+- Werewolf: normal left and right inputs to each other.
+
+- Werewolf: normal left and right outputs to each other.
+
 ---
 
 ## Changes
 
-- Separate Sanguine Monsters and Sanguine Mutants in the browser.
+- Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser.
 
-- Performance tweaks.
+- Plugin: performance tweaks.
+
+- Plugin: bring indicator lights in line with the ones from the Mutants.
+
+- Aion: faceplate tweaks.
 
 - Alchemist: use light bezels instead of light buttons.
 
 - Alchemist: tweak faceplate.
 
-- Dim LED button's light intensity a little.
-
-- Dungeon: mellower moon light colors.
-
-- Kitsune: prettify faceplate.
+- Alembic: faceplate tweaks.
 
 - Brainz: faceplate tweaks.
 
@@ -106,25 +106,23 @@
 
 - Chronos: faceplate tweaks.
 
-- Aion: faceplate tweaks.
-
 - Dolly-X: faceplate tweaks.
 
-- Raiju: make it clear every output can be polyphonic.
+- Dungeon: mellower moon light colors.
 
-- Werewolf: reorganize faceplate.
-
-- Sphinx: reorganize faceplate.
-
-- Plugin: bring indicator lights in line with the ones from the Mutants.
-
-- Alembic: faceplate tweaks.
-
-- Oraculus: faceplate tweaks.
+- Gegeenes: performance tweaks.
 
 - Hydra: performance tweaks.
 
-- Gegeenes: performance tweaks.
+- Kitsune: prettify faceplate.
+
+- Oraculus: faceplate tweaks.
+
+- Raiju: make it clear every output can be polyphonic.
+
+- Sphinx: reorganize faceplate.
+
+- Werewolf: reorganize faceplate.
 
 
 ---
