@@ -84,6 +84,10 @@
 
 - Performance tweaks.
 
+- Alchemist: use light bezels instead of light buttons.
+
+- Alchemist: tweak faceplate.
+
 - Dim LED button's light intensity a little.
 
 - Dungeon: mellower moon light colors.
