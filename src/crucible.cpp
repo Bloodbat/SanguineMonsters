@@ -55,7 +55,7 @@ struct CrucibleWidget : SanguineModuleWidget {
             Crucible::LIGHT_MUTE_ALL));
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(12.7, 38.979), module, Crucible::INPUT_MUTE_ALL));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(5.664, 51.499), module, Crucible::INPUT_MUTE_POLY));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(20.259, 51.499),
+        addParam(createLightParamCentered<VCVLightBezelLatch<RedLight>>(millimetersToPixelsVec(20.259, 51.499),
             module, Crucible::PARAM_MUTE_EXCLUSIVE, Crucible::LIGHT_MUTE_EXCLUSIVE));
 
         // Solo section
@@ -65,7 +65,7 @@ struct CrucibleWidget : SanguineModuleWidget {
             Crucible::LIGHT_SOLO_ALL));
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(12.7, 100.352), module, Crucible::INPUT_SOLO_ALL));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(5.664, 112.872), module, Crucible::INPUT_SOLO_POLY));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(20.259, 112.872),
+        addParam(createLightParamCentered<VCVLightBezelLatch<GreenLight>>(millimetersToPixelsVec(20.259, 112.872),
             module, Crucible::PARAM_SOLO_EXCLUSIVE, Crucible::LIGHT_SOLO_EXCLUSIVE));
     }
 };
