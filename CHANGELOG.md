@@ -28,9 +28,9 @@
 
 - Dungeon: module was falling off the Rack: it was missing screws.
 
-- Gegeenes: button lights turning on when steps are clicked when single shot has ended.
+- Gegeenes: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
-- Hydra: button lights turning on when steps are clicked and single shot has ended.
+- Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
 ---
 
