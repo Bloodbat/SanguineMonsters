@@ -511,30 +511,30 @@ struct AlchemistWidget : SanguineModuleWidget {
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573), module, Alchemist::LIGHT_EXPANDER_LEFT));
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 5.573), module, Alchemist::LIGHT_EXPANDER_RIGHT));
 
-		static const int offset = 8;
+		static const int componentIdOffset = 8;
 
-		static const float sliderBaseX = 8.329;
-		static const float deltaX = 14.307;
+		static const float componentBaseX = 8.329;
+		static const float componentDeltaX = 14.307;
 
-		float currentSliderX = sliderBaseX;
+		float componentX = componentBaseX;
 
 		for (int component = 0; component < 8; ++component) {
-			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 28.145),
+			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(componentX, 27.245),
 				module, Alchemist::PARAM_GAIN + component, Alchemist::LIGHT_GAIN + component * 2));
-			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(currentSliderX, 73.478),
-				module, Alchemist::PARAM_GAIN + component + offset, (Alchemist::LIGHT_GAIN + component + offset) * 2));
+			addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(componentX, 72.578),
+				module, Alchemist::PARAM_GAIN + component + componentIdOffset, (Alchemist::LIGHT_GAIN + component + componentIdOffset) * 2));
 
-			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 46.911),
+			addParam(createLightParamCentered<VCVLightBezel<RedLight>>(millimetersToPixelsVec(componentX, 45.411),
 				module, Alchemist::PARAM_MUTE + component, Alchemist::LIGHT_MUTE + component));
-			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(currentSliderX, 92.218),
-				module, Alchemist::PARAM_MUTE + component + offset, Alchemist::LIGHT_MUTE + component + offset));
+			addParam(createLightParamCentered<VCVLightBezel<RedLight>>(millimetersToPixelsVec(componentX, 90.749),
+				module, Alchemist::PARAM_MUTE + component + componentIdOffset, Alchemist::LIGHT_MUTE + component + componentIdOffset));
 
-			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 54.549),
+			addParam(createLightParamCentered<VCVLightBezel<GreenLight>>(millimetersToPixelsVec(componentX, 54.249),
 				module, Alchemist::PARAM_SOLO + component, Alchemist::LIGHT_SOLO + component));
-			addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(currentSliderX, 99.855),
-				module, Alchemist::PARAM_SOLO + component + offset, Alchemist::LIGHT_SOLO + component + offset));
+			addParam(createLightParamCentered<VCVLightBezel<GreenLight>>(millimetersToPixelsVec(componentX, 99.6),
+				module, Alchemist::PARAM_SOLO + component + componentIdOffset, Alchemist::LIGHT_SOLO + component + componentIdOffset));
 
-			currentSliderX += deltaX;
+			componentX += componentDeltaX;
 		}
 
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 7.876, 108.973);
