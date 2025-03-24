@@ -228,13 +228,13 @@ struct FortunaWidget : SanguineModuleWidget {
 
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 26.411), module, Fortuna::INPUT_IN_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 26.411), module, Fortuna::OUTPUT_OUT_1A));
-        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(20.288, 14.368), module,
+        addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(20.32, 14.368), module,
             Fortuna::PARAM_ROLL_MODE_1, Fortuna::LIGHTS_ROLL_MODE + 0 * 2));
         addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(20.32, 35.367), module,
             Fortuna::Fortuna::PARAM_THRESHOLD_1, Fortuna::LIGHTS_PROBABILITY + 0 * 2));
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(34.212, 35.014), module, Fortuna::PARAM_CROSSFADE_A));
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 44.323), module, Fortuna::INPUT_TRIGGER_1));
-        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.288, 53.515), module, Fortuna::INPUT_P_1));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.32, 53.515), module, Fortuna::INPUT_P_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 44.323), module, Fortuna::OUTPUT_OUT_1B));
 
         SanguineStaticRGBLight* triggerLight1 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 51.36, true, kSanguineBlueLight);
@@ -251,7 +251,7 @@ struct FortunaWidget : SanguineModuleWidget {
             Fortuna::LIGHT_GATE_STATE_2_A));
 
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 85.796), module, Fortuna::INPUT_IN_2));
-        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.288, 76.605), module, Fortuna::INPUT_P_2));
+        addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.32, 76.605), module, Fortuna::INPUT_P_2));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 85.796), module, Fortuna::OUTPUT_OUT_2A));
         addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(20.32, 94.753), module,
             Fortuna::Fortuna::PARAM_THRESHOLD_2, Fortuna::LIGHTS_PROBABILITY + 1 * 2));
