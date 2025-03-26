@@ -1,3 +1,14 @@
+# 2.3.2
+
+## Fixes
+
+- Manual link.
+
+## Changes
+
+- Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser. Monsters are grouped in the "Sanguine Monsters" brand.
+
+
 # 2.3.1
 
 ## Additions
