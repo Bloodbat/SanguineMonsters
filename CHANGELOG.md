@@ -80,8 +80,6 @@
 
 ## Changes
 
-- Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser.
-
 - Plugin: performance tweaks.
 
 - Plugin: bring indicator lights in line with the ones from the Mutants.
