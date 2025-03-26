@@ -17,6 +17,8 @@
 - Werewolf Gain and Fold now respect polyphonic CV.
 
 
+---
+
 # 2.3.0
 
 ## New Modules
@@ -80,6 +82,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 - Brainz CV trigger detection.
 
 
+---
+
 # 2.2.0
 
 ## New Modules
@@ -99,12 +103,16 @@ A monster with a plethora of noise colors... and Perlin.
 - Light behavior.
 
 
+---
+
 # 2.1.1
 
 ## Fixes
 
 - Sphinx fix
 
+
+---
 
 # 2.1.0
 
@@ -144,6 +152,8 @@ A monophonic to polyphonic channel cloner.
 
 - Animation should not play when clicking step buttons in Hydra and Gegenees.
 
+
+---
 
 # 2.0.0
 
