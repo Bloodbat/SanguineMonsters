@@ -51,10 +51,10 @@ struct Alchemist : SanguineModule {
 	int expanderMuteCount = 0;
 	int expanderSoloCount = 0;
 
-	bool bMutedChannels[PORT_MAX_CHANNELS] = {};
+	bool mutedChannels[PORT_MAX_CHANNELS] = {};
 	bool bLastAllMuted = false;
 
-	bool bSoloedChannels[PORT_MAX_CHANNELS] = {};
+	bool soloedChannels[PORT_MAX_CHANNELS] = {};
 	bool bLastAllSoloed = false;
 
 	bool bLastHaveExpanderMuteCv = false;
@@ -164,14 +164,14 @@ struct Alchemist : SanguineModule {
 
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
-					bMutedChannels[channel] = !bMutedChannels[channel];
+					mutedChannels[channel] = !mutedChannels[channel];
 
-					if (bSoloedChannels[channel]) {
-						bSoloedChannels[channel] = false;
+					if (soloedChannels[channel]) {
+						soloedChannels[channel] = false;
 					}
 
 					if (bHasLeftExpander) {
-						if ((bMuteAllEnabled && bLastAllMuted) && !bMutedChannels[channel]) {
+						if ((bMuteAllEnabled && bLastAllMuted) && !mutedChannels[channel]) {
 							bMuteAllEnabled = false;
 							crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
 							bIgnoreMuteAll = true;
@@ -191,15 +191,15 @@ struct Alchemist : SanguineModule {
 					}
 				}
 				if (expanderMuteCount > 0 && channel < channelCount) {
-					bMutedChannels[channel] = muteVoltages[channel] >= 1.f;
+					mutedChannels[channel] = muteVoltages[channel] >= 1.f;
 					exclusiveMuteChannel = -1;
 				}
 
 				if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
-					bSoloedChannels[channel] = !bSoloedChannels[channel];
+					soloedChannels[channel] = !soloedChannels[channel];
 
-					if (bMutedChannels[channel]) {
-						bMutedChannels[channel] = false;
+					if (mutedChannels[channel]) {
+						mutedChannels[channel] = false;
 					}
 
 					if (bHasLeftExpander) {
@@ -209,7 +209,7 @@ struct Alchemist : SanguineModule {
 							bIgnoreMuteAll = true;
 						}
 
-						if ((bSoloAllEnabled && bLastAllSoloed) && !bSoloedChannels[channel]) {
+						if ((bSoloAllEnabled && bLastAllSoloed) && !soloedChannels[channel]) {
 							bSoloAllEnabled = false;
 							crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
 							bIgnoreSoloAll = true;
@@ -223,7 +223,7 @@ struct Alchemist : SanguineModule {
 					}
 				}
 				if (expanderSoloCount > 0 && channel < channelCount) {
-					bSoloedChannels[channel] = soloVoltages[channel] >= 1.f;
+					soloedChannels[channel] = soloVoltages[channel] >= 1.f;
 					exclusiveSoloChannel = -1;
 				}
 			}
@@ -233,34 +233,34 @@ struct Alchemist : SanguineModule {
 				if (bHasLeftExpander) {
 					if (!bMuteExclusiveEnabled && !bIgnoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) ||
 						(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
-						bMutedChannels[channel] = bMuteAllEnabled;
+						mutedChannels[channel] = bMuteAllEnabled;
 					}
 
 					if (!bSoloExclusiveEnabled && !bIgnoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) ||
 						(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
-						bSoloedChannels[channel] = bSoloAllEnabled;
+						soloedChannels[channel] = bSoloAllEnabled;
 					}
 
 					if (bMuteExclusiveEnabled) {
 						if (channel != exclusiveMuteChannel && exclusiveMuteChannel >= 0) {
-							bMutedChannels[channel] = false;
+							mutedChannels[channel] = false;
 						}
 					}
 
 					if (bSoloExclusiveEnabled) {
 						if (channel != exclusiveSoloChannel && exclusiveSoloChannel >= 0) {
-							bSoloedChannels[channel] = false;
+							soloedChannels[channel] = false;
 						}
 					}
 				}
 
-				if (bSoloedChannels[channel]) {
+				if (soloedChannels[channel]) {
 					++soloCount;
 				}
 
-				if (bSoloedChannels[channel]) {
-					if (bMutedChannels[channel]) {
-						bMutedChannels[channel] = false;
+				if (soloedChannels[channel]) {
+					if (mutedChannels[channel]) {
+						mutedChannels[channel] = false;
 					}
 				}
 			}
@@ -270,8 +270,8 @@ struct Alchemist : SanguineModule {
 					bLastAllMuted = bMuteAllEnabled;
 
 					if (bMuteAllEnabled) {
-						memset(bMutedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
-						memset(bSoloedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
+						memset(mutedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
+						memset(soloedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
 					}
 
 					if (bSoloAllEnabled) {
@@ -285,8 +285,8 @@ struct Alchemist : SanguineModule {
 					bLastAllSoloed = bSoloAllEnabled;
 
 					if (bSoloAllEnabled) {
-						memset(bSoloedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
-						memset(bMutedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
+						memset(soloedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
+						memset(mutedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
 					}
 
 					if (bMuteAllEnabled) {
@@ -315,7 +315,7 @@ struct Alchemist : SanguineModule {
 					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
 				}
 
-				if (!bMutedChannels[channel] && (soloCount == 0 || bSoloedChannels[channel]) && !bMasterMuted) {
+				if (!mutedChannels[channel] && (soloCount == 0 || soloedChannels[channel]) && !bMasterMuted) {
 					monoMix += outVoltages[channel];
 					masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
 				} else {
@@ -374,8 +374,10 @@ struct Alchemist : SanguineModule {
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 
-				lights[LIGHT_MUTE + channel].setBrightnessSmooth(bMutedChannels[channel] ? kSanguineButtonLightValue : 0.f, sampleTime);
-				lights[LIGHT_SOLO + channel].setBrightnessSmooth(bSoloedChannels[channel] ? kSanguineButtonLightValue : 0.f, sampleTime);
+				lights[LIGHT_MUTE + channel].setBrightnessSmooth(mutedChannels[channel] ?
+					kSanguineButtonLightValue : 0.f, sampleTime);
+				lights[LIGHT_SOLO + channel].setBrightnessSmooth(soloedChannels[channel] ?
+					kSanguineButtonLightValue : 0.f, sampleTime);
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
@@ -457,8 +459,8 @@ struct Alchemist : SanguineModule {
 		json_t* soloedChannelsJ = json_array();
 
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-			json_array_insert_new(mutedChannelsJ, channel, json_boolean(bMutedChannels[channel]));
-			json_array_insert_new(soloedChannelsJ, channel, json_boolean(bSoloedChannels[channel]));
+			json_array_insert_new(mutedChannelsJ, channel, json_boolean(mutedChannels[channel]));
+			json_array_insert_new(soloedChannelsJ, channel, json_boolean(soloedChannels[channel]));
 		}
 
 		json_object_set_new(rootJ, "mutedChannels", mutedChannelsJ);
@@ -479,7 +481,7 @@ struct Alchemist : SanguineModule {
 					json_t* mutedJ = json_array_get(mutedChannelsJ, channel);
 
 					if (mutedJ) {
-						bMutedChannels[channel] = json_boolean_value(mutedJ);
+						mutedChannels[channel] = json_boolean_value(mutedJ);
 					}
 				}
 
@@ -487,7 +489,7 @@ struct Alchemist : SanguineModule {
 					json_t* soloedJ = json_array_get(soloedChannelsJ, channel);
 
 					if (soloedJ) {
-						bSoloedChannels[channel] = json_boolean_value(soloedJ);
+						soloedChannels[channel] = json_boolean_value(soloedJ);
 					}
 				}
 			}
