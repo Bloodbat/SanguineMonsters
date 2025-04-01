@@ -31,9 +31,9 @@ struct DollyX : SanguineModule {
 
 	int cloneCounts[kSubmodules];
 
-	bool bCvConnected[kSubmodules] = {};
-	bool bInputConnected[kSubmodules] = {};
-	bool bOutputConnected[kSubmodules] = {};
+	bool cvsConnected[kSubmodules] = {};
+	bool inputsConnected[kSubmodules] = {};
+	bool outputsConnected[kSubmodules] = {};
 
 	dsp::ClockDivider clockDivider;
 
@@ -68,11 +68,11 @@ struct DollyX : SanguineModule {
 		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			float_4 voltages[4] = {};
 
-			if (bOutputConnected[submodule]) {
+			if (outputsConnected[submodule]) {
 				for (int channel = 0; channel < cloneCounts[submodule]; channel += 4) {
 					uint8_t currentChannel = channel >> 2;
 
-					if (bInputConnected[submodule]) {
+					if (inputsConnected[submodule]) {
 						voltages[currentChannel] = inputs[INPUT_MONO_IN1 + submodule].getVoltage();
 					}
 					outputs[OUTPUT_POLYOUT_1 + submodule].setVoltageSimd(voltages[currentChannel], channel);
@@ -84,7 +84,7 @@ struct DollyX : SanguineModule {
 	}
 
 	int getChannelCloneCount(int channel) {
-		if (bCvConnected[channel]) {
+		if (cvsConnected[channel]) {
 			float inputValue = math::clamp(inputs[INPUT_CHANNELS1_CV + channel].getVoltage(), 0.f, 10.f);
 			int steps = static_cast<int>(rescale(inputValue, 0.f, 10.f, 1.f, 16.f));
 			return steps;
@@ -108,9 +108,9 @@ struct DollyX : SanguineModule {
 
 	void checkConnections() {
 		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
-			bCvConnected[submodule] = inputs[INPUT_CHANNELS1_CV + submodule].isConnected();
-			bInputConnected[submodule] = inputs[INPUT_MONO_IN1 + submodule].isConnected();
-			bOutputConnected[submodule] = outputs[OUTPUT_POLYOUT_1 + submodule].isConnected();
+			cvsConnected[submodule] = inputs[INPUT_CHANNELS1_CV + submodule].isConnected();
+			inputsConnected[submodule] = inputs[INPUT_MONO_IN1 + submodule].isConnected();
+			outputsConnected[submodule] = outputs[OUTPUT_POLYOUT_1 + submodule].isConnected();
 		}
 	}
 };
