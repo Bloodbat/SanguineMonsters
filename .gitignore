@@ -2,11 +2,4 @@
 build
 dep
 dist
-/.settings
-/.cproject
-/.project
 *.so
-/.vscode
-/SanguineMonsters.code-workspace
-/sanguine_monsters_check-cppcheck-build-dir
-/sanguine_monsters_check.cppcheck
