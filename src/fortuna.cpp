@@ -57,7 +57,7 @@ struct Fortuna : SanguineModule {
     fortuna::RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
     fortuna::RollModes rollModes[kMaxModuleSections] = { fortuna::ROLL_DIRECT, fortuna::ROLL_DIRECT };
-    bool bOutputsConnected[OUTPUTS_COUNT] = {};
+    bool outputsConnected[OUTPUTS_COUNT] = {};
 
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -79,10 +79,10 @@ struct Fortuna : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        bOutputsConnected[0] = outputs[OUTPUT_OUT_1A].isConnected();
-        bOutputsConnected[1] = outputs[OUTPUT_OUT_2A].isConnected();
-        bOutputsConnected[2] = outputs[OUTPUT_OUT_1B].isConnected();
-        bOutputsConnected[3] = outputs[OUTPUT_OUT_2B].isConnected();
+        outputsConnected[0] = outputs[OUTPUT_OUT_1A].isConnected();
+        outputsConnected[1] = outputs[OUTPUT_OUT_2A].isConnected();
+        outputsConnected[2] = outputs[OUTPUT_OUT_1B].isConnected();
+        outputsConnected[3] = outputs[OUTPUT_OUT_2B].isConnected();
 
         float inVoltages[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
         float cvVoltages[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
@@ -142,10 +142,10 @@ struct Fortuna : SanguineModule {
                     fadingInVoltage : fadingOutVoltage, channel);
             }
 
-            if (bOutputsConnected[0 + section]) {
+            if (outputsConnected[0 + section]) {
                 outputs[OUTPUT_OUT_1A + section].setChannels(channelCount);
             }
-            if (bOutputsConnected[2 + section]) {
+            if (outputsConnected[2 + section]) {
                 outputs[OUTPUT_OUT_1B + section].setChannels(channelCount);
             }
 
