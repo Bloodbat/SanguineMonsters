@@ -33,7 +33,7 @@ struct Dungeon : SanguineModule {
 	};
 
 	struct Engine {
-		bool bState = false;
+		bool isTriggered = false;
 		float voltage = 0.f;
 		SlewFilter sampleFilter;
 	} engine;
@@ -115,17 +115,17 @@ struct Dungeon : SanguineModule {
 		{
 		case Dungeon::MODE_SAMPLE_AND_HOLD: {
 			// Gate trigger/untrigger
-			if (!engine.bState) {
+			if (!engine.isTriggered) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
-					engine.bState = true;
+					engine.isTriggered = true;
 					getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 					engine.voltage = inVoltage;
 				}
 			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
-					engine.bState = false;
+					engine.isTriggered = false;
 				}
 			}
 
@@ -136,20 +136,20 @@ struct Dungeon : SanguineModule {
 			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 
 			// Gate trigger/untrigger
-			if (!engine.bState) {
+			if (!engine.isTriggered) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
-					engine.bState = true;
+					engine.isTriggered = true;
 				}
 			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
-					engine.bState = false;
+					engine.isTriggered = false;
 					// Track and hold
 					engine.voltage = inVoltage;
 				}
 			}
-			if (engine.bState) {
+			if (engine.isTriggered) {
 				inVoltage = engine.voltage;
 			}
 			break;
@@ -158,20 +158,20 @@ struct Dungeon : SanguineModule {
 			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 
 			// Gate trigger/untrigger
-			if (!engine.bState) {
+			if (!engine.isTriggered) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
-					engine.bState = true;
+					engine.isTriggered = true;
 				}
 			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
-					engine.bState = false;
+					engine.isTriggered = false;
 					// Track and hold
 					engine.voltage = inVoltage;
 				}
 			}
-			if (!engine.bState) {
+			if (!engine.isTriggered) {
 				inVoltage = engine.voltage;
 			}
 			break;
@@ -195,7 +195,7 @@ struct Dungeon : SanguineModule {
 			outputs[OUTPUT_VOLTAGE].setVoltage(engine.sampleFilter.process(inVoltage, slewDelta));
 		}
 
-		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.bState ? kSanguineButtonLightValue : 0.f, args.sampleTime);
+		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.isTriggered ? kSanguineButtonLightValue : 0.f, args.sampleTime);
 
 		if (clockDivider.process()) {
 			moduleMode = ModuleModes(params[PARAM_MODE].getValue());
