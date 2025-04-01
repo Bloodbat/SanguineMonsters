@@ -97,7 +97,7 @@ struct Brainz : SanguineModule {
 	bool bInMetronome = false;
 	bool bResetSent;
 	bool bRunSent;
-	bool bStepEnabled[kMaxSteps] = { true, true, true };
+	bool stepsEnabled[kMaxSteps] = { true, true, true };
 	bool bStepStarted = false;
 	bool bStepTrigger = false;
 	bool bTriggersDone[kMaxOutTriggers];
@@ -245,11 +245,11 @@ struct Brainz : SanguineModule {
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
 							resetStep();
-							if (bStepEnabled[0]) {
+							if (stepsEnabled[0]) {
 								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_A;
-							} else if (stepDirections[0] < brainz::DIRECTION_BACKWARD && bStepEnabled[1]) {
+							} else if (stepDirections[0] < brainz::DIRECTION_BACKWARD && stepsEnabled[1]) {
 								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_B;
-							} else if (bStepEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
+							} else if (stepsEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
 								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_C;
 							} else {
 								moduleState = brainz::MODULE_STATE_ROUND_1_END;
@@ -282,9 +282,9 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[1] && stepDirections[0] < brainz::DIRECTION_BACKWARD) {
+							if (stepsEnabled[1] && stepDirections[0] < brainz::DIRECTION_BACKWARD) {
 								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_B;
-							} else if (bStepEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
+							} else if (stepsEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
 								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_C;
 							} else {
 								moduleState = brainz::MODULE_STATE_ROUND_1_END;
@@ -318,7 +318,7 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
+							if (stepsEnabled[2] && stepDirections[1] < brainz::DIRECTION_BACKWARD) {
 								moduleState = brainz::MODULE_STATE_ROUND_1_STEP_C;
 							} else {
 								moduleState = brainz::MODULE_STATE_ROUND_1_END;
@@ -370,12 +370,12 @@ struct Brainz : SanguineModule {
 
 					case brainz::MODULE_STATE_ROUND_2_START:
 						resetStep();
-						if (bStepEnabled[2]) {
+						if (stepsEnabled[2]) {
 							moduleState = brainz::MODULE_STATE_ROUND_2_STEP_C;
 						} else if ((stepDirections[1] == brainz::DIRECTION_BIDIRECTIONAL
-							|| stepDirections[1] == brainz::DIRECTION_BACKWARD) && bStepEnabled[1]) {
+							|| stepDirections[1] == brainz::DIRECTION_BACKWARD) && stepsEnabled[1]) {
 							moduleState = brainz::MODULE_STATE_ROUND_2_STEP_B;
-						} else if (bStepEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL
+						} else if (stepsEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL
 							|| stepDirections[0] == brainz::DIRECTION_BACKWARD)) {
 							moduleState = brainz::MODULE_STATE_ROUND_2_STEP_A;
 						} else {
@@ -407,10 +407,10 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[1] && (stepDirections[1] == brainz::DIRECTION_BACKWARD
+							if (stepsEnabled[1] && (stepDirections[1] == brainz::DIRECTION_BACKWARD
 								|| stepDirections[1] == brainz::DIRECTION_BIDIRECTIONAL)) {
 								moduleState = brainz::MODULE_STATE_ROUND_2_STEP_B;
-							} else if (bStepEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BACKWARD
+							} else if (stepsEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BACKWARD
 								|| stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL)) {
 								moduleState = brainz::MODULE_STATE_ROUND_2_STEP_A;
 							} else {
@@ -445,7 +445,7 @@ struct Brainz : SanguineModule {
 						}
 
 						if (bTriggersDone[0] && bTriggersDone[1] && bTriggersDone[2] && bTriggersDone[3]) {
-							if (bStepEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BACKWARD
+							if (stepsEnabled[0] && (stepDirections[0] == brainz::DIRECTION_BACKWARD
 								|| stepDirections[0] == brainz::DIRECTION_BIDIRECTIONAL)) {
 								moduleState = brainz::MODULE_STATE_ROUND_2_STEP_A;
 							} else {
@@ -511,7 +511,7 @@ struct Brainz : SanguineModule {
 				metronomeSteps = params[PARAM_METRONOME_STEPS].getValue();
 
 				for (int step = 0; step < kMaxSteps; ++step) {
-					bStepEnabled[step] = params[PARAM_A_ENABLED + step].getValue();
+					stepsEnabled[step] = params[PARAM_A_ENABLED + step].getValue();
 
 					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() ?
 						kSanguineButtonLightValue : 0.f, sampleTime);
