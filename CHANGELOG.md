@@ -84,6 +84,8 @@
 
 - Plugin: bring indicator lights in line with the ones from the Mutants.
 
+- Plugin source: move common Sanguine Modules sources to submodule.
+
 - Aion: faceplate tweaks.
 
 - Alchemist: use light bezels instead of light buttons.

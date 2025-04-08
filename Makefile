@@ -1,4 +1,5 @@
-FLAGS += -I./pcgcpp
+FLAGS += -I./pcgcpp \
+  -I./SanguineModulesCommon/src
 
 ifndef DEBUGBUILD
 EXTRA_FLAGS =
@@ -7,6 +8,10 @@ EXTRA_FLAGS = -Og
 endif
 
 SOURCES += $(wildcard src/*.cpp)
+
+SOURCES += SanguineModulesCommon/src/sanguinecomponents.cpp
+SOURCES += SanguineModulesCommon/src/sanguinehelpers.cpp
+SOURCES += SanguineModulesCommon/src/themes.cpp
 
 DISTRIBUTABLES += $(wildcard LICENSE*) res
 
