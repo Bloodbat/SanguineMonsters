@@ -141,7 +141,7 @@ struct Brainz : SanguineModule {
 	ModuleStages moduleStage = MODULE_STAGE_INIT;
 	ModuleStates moduleState = MODULE_STATE_READY;
 	StepStates stepState = STEP_STATE_READY;
-
+	
 	std::chrono::time_point<std::chrono::steady_clock> startTime;
 
 	int* metronomeCounterPtr;

@@ -417,7 +417,9 @@ void SanguineLightUpSwitch::drawLayer(const DrawArgs& args, int layer) {
 			if (!svg)
 				return;
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
+			#ifndef METAMODULE
 			rack::window::svgDraw(args.vg, svg->handle);
+			#endif
 			if (frameNum < halos.size()) {
 				drawCircularHalo(args, box.size, halos[frameNum], 175, 8.f);
 			}
@@ -453,18 +455,24 @@ void SanguineLightUpRGBSwitch::drawLayer(const DrawArgs& args, int layer) {
 	// Programmers responsibility: set both a background and glyph or Rack will crash here. You've been warned.
 	if (layer == 1) {
 		if (module && !module->isBypassed() && sw->svg) {
+			#ifndef METAMODULE
 			svgDraw(args.vg, sw->svg->handle);
+			#endif
 			uint32_t frameNum = getParamQuantity()->getValue();
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
 			/*
 			Programmer responsibility : make sure there are enough colors here for every switch state
 			or Rack will go bye-bye.
 			*/
+			#ifndef METAMODULE
 			fillSvgSolidColor(glyph->svg->handle, colors[frameNum]);
+			#endif
 			nvgSave(args.vg);
 			nvgTransform(args.vg, transformWidget->transform[0], transformWidget->transform[1], transformWidget->transform[2],
 				transformWidget->transform[3], transformWidget->transform[4], transformWidget->transform[5]);
+			#ifndef METAMODULE
 			svgDraw(args.vg, glyph->svg->handle);
+			#endif
 			nvgRestore(args.vg);
 			/*
 			Programmer responsibility: make sure there are enough halos here for  every switch state
@@ -474,12 +482,16 @@ void SanguineLightUpRGBSwitch::drawLayer(const DrawArgs& args, int layer) {
 		}
 		// For module browser
 		else if (!module && sw->svg) {
+			#ifndef METAMODULE
 			svgDraw(args.vg, sw->svg->handle);
 			fillSvgSolidColor(glyph->svg->handle, colors[0]);
+			#endif
 			nvgSave(args.vg);
 			nvgTransform(args.vg, transformWidget->transform[0], transformWidget->transform[1], transformWidget->transform[2],
 				transformWidget->transform[3], transformWidget->transform[4], transformWidget->transform[5]);
+			#ifndef METAMODULE
 			svgDraw(args.vg, glyph->svg->handle);
+			#endif
 			nvgRestore(args.vg);
 		}
 	}
@@ -554,6 +566,7 @@ NVGpaint SanguineMultiColoredShapedLight::getPaint(NVGcontext* vg, NSVGpaint* p,
 void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer) {
 	if (innerColor && svg) {
 		if (layer == 1) {
+			#ifndef METAMODULE
 			if (module && !module->isBypassed()) {
 				int shapeIndex = 0;
 				NSVGimage* mySvg = svg->handle;
@@ -672,6 +685,7 @@ void SanguineMultiColoredShapedLight::drawLayer(const DrawArgs& args, int layer)
 					nvgRestore(args.vg);
 				}
 			}
+			#endif
 		}
 	}
 }
@@ -706,7 +720,9 @@ void SanguineShapedLight::drawLayer(const DrawArgs& args, int layer) {
 			return;
 		if (module && !module->isBypassed()) {
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
+			#ifndef METAMODULE
 			rack::window::svgDraw(args.vg, sw->svg->handle);
+			#endif
 		}
 	}
 	Widget::drawLayer(args, layer);
@@ -749,10 +765,12 @@ void SanguineStaticRGBLight::draw(const DrawArgs& args) {
 		if (!sw->svg)
 			return;
 
+		#ifndef METAMODULE
 		NSVGimage* mySvg = sw->svg->handle;
 
 		fillSvgSolidColor(mySvg, lightColor);
 		svgDraw(args.vg, sw->svg->handle);
+		#endif
 	}
 	// else do not call Widget::draw: it draws on the wrong layer.
 }
@@ -763,12 +781,14 @@ void SanguineStaticRGBLight::drawLayer(const DrawArgs& args, int layer) {
 		if (!sw->svg)
 			return;
 		if (module && !module->isBypassed()) {
+			#ifndef METAMODULE
 			NSVGimage* mySvg = sw->svg->handle;
 
 			fillSvgSolidColor(mySvg, lightColor);
 			nvgGlobalCompositeBlendFunc(args.vg, NVG_ONE_MINUS_DST_COLOR, NVG_ONE);
 
 			svgDraw(args.vg, sw->svg->handle);
+			#endif
 		}
 	}
 	Widget::drawLayer(args, layer);
