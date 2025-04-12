@@ -908,6 +908,9 @@ void SanguineModuleWidget::makePanel() {
 	SanguinePanel* panel = new SanguinePanel(backplateFileName, faceplateFileName);
 	#ifdef METAMODULE
 	setPanel(panel);
+	SvgWidget* faceplate = new SvgWidget();
+	faceplate->setSvg(Svg::load(asset::plugin(pluginInstance, faceplateFileName)));
+	addChild(faceplate);
 	if (bHasCommon) {
 		SvgWidget* overlay = createWidget<SvgWidget>(Vec(0, 0));
  		overlay->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/" + moduleName + "_common.svg")));
