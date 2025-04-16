@@ -5,8 +5,8 @@
 struct SeqSwitchSquare : SanguineLightUpRGBSwitch {
 	SeqSwitchSquare() {
 		setBackground("res/seqs/square_button_bg.svg");
-		addHalo(nvgRGB(0, 167, 255));
-		addHalo(nvgRGB(239, 250, 110));
+		addHalo(nvgRGB(22, 167, 252));
+		addHalo(nvgRGB(238, 249, 113));
 	}
 };
 
