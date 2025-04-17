@@ -135,7 +135,7 @@ struct Aion : SanguineModule {
 						lastTimerEdges[section] = bInternalTimerSecond;
 					}
 
-					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(1.f, args.sampleTime);
+					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(timersStarted[section] ? 1.f : 0.f, args.sampleTime);
 				}
 			} else {
 				if (!inputs[INPUT_TRIGGER_1 + section].isConnected()) {
