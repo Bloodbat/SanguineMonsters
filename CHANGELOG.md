@@ -26,6 +26,8 @@
 
 ## Fixes
 
+- Plugin: output gate glypg drawing.
+
 - Dungeon: module was falling off the Rack: it was missing screws.
 
 - Gegeenes: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
