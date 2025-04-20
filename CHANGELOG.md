@@ -108,7 +108,7 @@
 
 - Dolly-X: faceplate tweaks.
 
-- Dungeon: mellower moon light colors.
+- Dungeon: better moon light colors.
 
 - Gegeenes: performance tweaks.
 
