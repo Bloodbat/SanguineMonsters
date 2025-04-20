@@ -7,9 +7,9 @@ namespace dungeon {
     };
 
     static const std::vector<GradientColors> moonColors{
-        { nvgRGB(246, 228, 228), nvgRGB(242, 160, 160) },
+        { nvgRGB(251, 157, 157), nvgRGB(192, 124, 124) },
         { nvgRGB(228, 228, 228), nvgRGB(161, 161, 161) },
-        { nvgRGB(244, 244, 250), nvgRGB(140, 195, 238) }
+        { nvgRGB(181, 211, 237), nvgRGB(117, 172, 215) }
     };
 
     static const std::vector<std::string> modeLabels{
