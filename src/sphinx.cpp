@@ -61,11 +61,11 @@ struct Sphinx : SanguineModule {
 	Bjorklund euclid;
 	Bjorklund euclid2;
 
-	// Calculated sequence/accents
+	// Calculated sequence/accents.
 	std::vector<bool> calculatedSequence;
 	std::vector<bool> calculatedAccents;
 
-	// Padded + rotated + distributed
+	// Padded + rotated + distributed.
 	std::array<bool, sphinx::kMaxLength * 2> finalSequence;
 	std::array<bool, sphinx::kMaxLength * 2> finalAccents;
 
@@ -270,7 +270,7 @@ struct Sphinx : SanguineModule {
 			}
 		}
 
-		// Distribute accents on sequence
+		// Distribute accents on sequence.
 		finalSequence.fill(0);
 		finalAccents.fill(0);
 		int accent = patternFill - patternAccentRotation;
@@ -423,7 +423,7 @@ struct Sphinx : SanguineModule {
 
 			const float sampleTime = args.sampleTime * kClockDivider;
 
-			// Update lights
+			// Update lights.
 			float lightVoltage1;
 
 			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage();
@@ -494,7 +494,7 @@ struct SphinxDisplay : TransparentWidget {
 		const float radius1 = 0.45f * polyBoxSize.size.x;
 		const float radius2 = 0.35f * polyBoxSize.size.x;
 
-		// Circles
+		// Circles.
 		nvgBeginPath(vg);
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
@@ -524,7 +524,7 @@ struct SphinxDisplay : TransparentWidget {
 		nvgBeginPath(vg);
 		bool bFirst = true;
 
-		// inactive Step Rings
+		// Inactive step rings.
 		for (unsigned step = 0; step < length; ++step) {
 			if (module && !module->isBypassed()) {
 				if (!sequence->at(step)) {
@@ -557,7 +557,7 @@ struct SphinxDisplay : TransparentWidget {
 			}
 		}
 
-		// Path
+		// Path.
 		nvgBeginPath(vg);
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
@@ -604,7 +604,7 @@ struct SphinxDisplay : TransparentWidget {
 		nvgClosePath(vg);
 		nvgStroke(vg);
 
-		// Active Step Rings
+		// Active step rings.
 		for (unsigned step = 0; step < length; ++step) {
 			if (module && !module->isBypassed()) {
 				if (sequence->at(step)) {
@@ -690,7 +690,7 @@ struct SphinxDisplay : TransparentWidget {
 				nvgFillColor(args.vg, arrayDisplayColors[*patternStyle].backgroundColor);
 				nvgFill(args.vg);
 
-				// Shape
+				// Shape.
 				if (accents && currentStep && patternFill && patternLength && patternPadding && patternStyle) {
 					drawPolygon(args.vg);
 					drawRectHalo(args, box.size, arrayDisplayColors[*patternStyle].activeColor, 55, 0.f);
@@ -701,7 +701,7 @@ struct SphinxDisplay : TransparentWidget {
 				nvgFillColor(args.vg, arrayDisplayColors[0].backgroundColor);
 				nvgFill(args.vg);
 
-				// Shape
+				// Shape.
 				drawPolygon(args.vg);
 			}
 		}
