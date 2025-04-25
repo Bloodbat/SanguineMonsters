@@ -114,7 +114,7 @@ struct Kitsune : SanguineModule {
 
 				if (channelCount == 1) {
 					float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltage();
-					float rescaledLight = math::rescale(lightValue, 0.f, 5.f, 0.f, 1.f);
+					float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
 					lights[currentLight + 0].setBrightnessSmooth(-rescaledLight, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
@@ -122,14 +122,14 @@ struct Kitsune : SanguineModule {
 					if (bHasExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 						float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
-						rescaledLight = math::rescale(cvGainLightValue, 0.f, 5.f, 0.f, 1.f);
+						rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
 						denkiExpander->getLight(currentExpanderGainLight + 0).setBrightnessSmooth(-rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(0.f, sampleTime);
 
 						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
 						float cvOffsetLightValue = denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage();
-						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 5.f, 0.f, 1.f);
+						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
 						denkiExpander->getLight(currentExpanderOffsetLight + 0).setBrightnessSmooth(-rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);

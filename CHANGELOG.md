@@ -118,6 +118,8 @@
 
 - Kitsune: prettify faceplate.
 
+- Kitsune: expand indicator light range to 10V.
+
 - Oraculus: faceplate tweaks.
 
 - Raiju: make it clear every output can be polyphonic.
