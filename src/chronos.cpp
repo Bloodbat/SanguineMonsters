@@ -362,9 +362,9 @@ struct ChronosWidget : SanguineModuleWidget {
         ButtonInvertWaveSmall() {
             setGlyph("res/sine_inverted.svg", 0.453f, 0.623f);
             addColor(40, 10, 0);
-            addColor(255, 71, 0);
+            addColor(255, 70, 3);
             addHalo(nvgRGB(0, 0, 0));
-            addHalo(nvgRGB(255, 71, 0));
+            addHalo(nvgRGB(255, 70, 3));
             momentary = false;
         }
     };
@@ -372,10 +372,10 @@ struct ChronosWidget : SanguineModuleWidget {
     struct ButtonBipolarSmall : SeqButtonRoundSmall {
         ButtonBipolarSmall() {
             setGlyph("res/bipolar.svg", 0.453f, 1.126f);
-            addColor(36, 36, 0);
-            addColor(255, 255, 89);
+            addColor(34, 34, 2);
+            addColor(252, 252, 54);
             addHalo(nvgRGB(0, 0, 0));
-            addHalo(nvgRGB(255, 255, 89));
+            addHalo(nvgRGB(252, 252, 54));
             momentary = false;
         }
     };
