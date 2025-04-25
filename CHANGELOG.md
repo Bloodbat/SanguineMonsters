@@ -26,6 +26,8 @@
 
 ## Fixes
 
+- Plugin: faceplate colors.
+
 - Plugin: output gate glypg drawing.
 
 - Dungeon: module was falling off the Rack: it was missing screws.
@@ -87,6 +89,8 @@
 - Plugin: bring indicator lights in line with the ones from the Mutants.
 
 - Plugin source: move common Sanguine Modules sources to submodule.
+
+- Plugin: faceplate color tweaks.
 
 - Aion: faceplate tweaks.
 
