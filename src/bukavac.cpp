@@ -306,7 +306,7 @@ struct BukavacWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 106.724), module, Bukavac::OUTPUT_WHITE));
 
-		SanguineCirclePortLight* pinkLight = new SanguineCirclePortLight(module, 17.583, 106.724, true, rgbColorToInt(255, 153, 204));
+		SanguineCirclePortLight* pinkLight = new SanguineCirclePortLight(module, 17.583, 106.724, true, rgbColorToInt(255, 153, 203));
 		addChild(pinkLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 106.724), module, Bukavac::OUTPUT_PINK));
@@ -316,17 +316,17 @@ struct BukavacWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 106.724), module, Bukavac::OUTPUT_RED));
 
-		SanguineCirclePortLight* purpleLight = new SanguineCirclePortLight(module, 38.67, 106.724, true, rgbColorToInt(180, 70, 218));
+		SanguineCirclePortLight* purpleLight = new SanguineCirclePortLight(module, 38.67, 106.724, true, rgbColorToInt(180, 71, 216));
 		addChild(purpleLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 106.724), module, Bukavac::OUTPUT_VIOLET));
 
-		SanguineCirclePortLight* blueLight = new SanguineCirclePortLight(module, 7.04, 117.456, true, rgbColorToInt(0, 167, 255));
+		SanguineCirclePortLight* blueLight = new SanguineCirclePortLight(module, 7.04, 117.456, true, kSanguineBlueLight);
 		addChild(blueLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 117.456), module, Bukavac::OUTPUT_BLUE));
 
-		SanguineCirclePortLight* grayLight = new SanguineCirclePortLight(module, 17.583, 117.456, true, rgbColorToInt(102, 102, 102));
+		SanguineCirclePortLight* grayLight = new SanguineCirclePortLight(module, 17.583, 117.456, true, rgbColorToInt(101, 101, 101));
 		addChild(grayLight);
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 117.456), module, Bukavac::OUTPUT_GRAY));
