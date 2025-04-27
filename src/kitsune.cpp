@@ -1,4 +1,4 @@
-#include "plugin.hpp"
+﻿#include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "kitsune.hpp"
@@ -39,6 +39,10 @@ struct Kitsune : SanguineModule {
 		ENUMS(LIGHT_VOLTAGE2, 3),
 		ENUMS(LIGHT_VOLTAGE3, 3),
 		ENUMS(LIGHT_VOLTAGE4, 3),
+		LIGHT_NORMALLED1,
+		LIGHT_NORMALLED2,
+		ENUMS(LIGHT_NORMALLED3, 2),
+		ENUMS(LIGHT_NORMALLED4, 2),
 		LIGHT_EXPANDER,
 		LIGHTS_COUNT
 	};
@@ -47,6 +51,8 @@ struct Kitsune : SanguineModule {
 	const int kLightDivisor = 64;
 
 	bool bHasExpander = false;
+
+	kitsune::NormalledModes normalledMode = kitsune::NORMAL_2_TO_1_4_TO_3;
 
 	Kitsune() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -80,9 +86,24 @@ struct Kitsune : SanguineModule {
 
 		for (int section = 0; section < kitsune::kMaxSections; ++section) {
 			int channelSource = section;
+			int currentInput = INPUT_VOLTAGE1 + section;
 
-			if ((section == 1 || section == 3) && !inputs[INPUT_VOLTAGE1 + section].isConnected()) {
-				channelSource = section - 1;
+			switch (normalledMode)
+			{
+			case kitsune::NORMAL_2_TO_1_4_TO_3:
+				if ((section == 1 || section == 3) && !inputs[INPUT_VOLTAGE1 + section].isConnected() &&
+					inputs[currentInput - 1].isConnected()) {
+					channelSource = section - 1;
+				}
+				break;
+
+			case kitsune::NORMAL_ALL_TO_1:
+				if (!inputs[INPUT_VOLTAGE1 + section].isConnected()) {
+					channelSource = 0;
+				}
+				break;
+			default:
+				break;
 			}
 
 			int channelCount = inputs[INPUT_VOLTAGE1 + channelSource].getChannels() > 0 ? inputs[INPUT_VOLTAGE1 + channelSource].getChannels() : 1;
@@ -179,6 +200,17 @@ struct Kitsune : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
+			lights[LIGHT_NORMALLED1].setBrightnessSmooth(normalledMode != kitsune::NORMAL_NONE ? 1.f : 0.f, sampleTime);
+
+			lights[LIGHT_NORMALLED2].setBrightnessSmooth(normalledMode != kitsune::NORMAL_NONE ? 1.f : 0.f, sampleTime);
+
+			lights[LIGHT_NORMALLED3 + 0].setBrightnessSmooth(normalledMode == kitsune::NORMAL_2_TO_1_4_TO_3 ? 1.f : 0.f, sampleTime);
+			lights[LIGHT_NORMALLED3 + 1].setBrightnessSmooth(normalledMode == kitsune::NORMAL_ALL_TO_1 ? 1.f : 0.f, sampleTime);
+
+			lights[LIGHT_NORMALLED4 + 0].setBrightnessSmooth(normalledMode == kitsune::NORMAL_2_TO_1_4_TO_3 ? 1.f : 0.f, sampleTime);
+			lights[LIGHT_NORMALLED4 + 1].setBrightnessSmooth(normalledMode == kitsune::NORMAL_ALL_TO_1 ? 1.f : 0.f, sampleTime);
+
+
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 		}
 	}
@@ -198,6 +230,28 @@ struct Kitsune : SanguineModule {
 		}
 		Module::onUnBypass(e);
 	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = SanguineModule::dataToJson();
+
+		json_object_set_new(rootJ, "normalledMode", json_integer(static_cast<int>(normalledMode)));
+
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
+		json_t* normalledModeJ = json_object_get(rootJ, "normalledMode");
+
+		if (normalledModeJ) {
+			normalledMode = static_cast<kitsune::NormalledModes>(json_integer_value(normalledModeJ));
+		}
+	}
+
+	void setNormalledMode(const kitsune::NormalledModes newMode) {
+		normalledMode = newMode;
+	}
 };
 
 struct KitsuneWidget : SanguineModuleWidget {
@@ -215,13 +269,15 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(48.017, 5.573), module, Kitsune::LIGHT_EXPANDER));
 
-		// Section 1
+		// Section 1.
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(12.7, 11.198), module, Kitsune::PARAM_ATTENUATOR1));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(12.7, 30.085), module, Kitsune::PARAM_OFFSET1));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(12.701, 41.9), module, Kitsune::LIGHT_VOLTAGE1));
 
 		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight(module, 5.988, 48.4);
 		addChild(lightInput1);
+
+		addChild(createLightCentered<TinyLight<RedLight>>(millimetersToPixelsVec(2.869, 51.176), module, Kitsune::LIGHT_NORMALLED1));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(5.988, 55.888), module, Kitsune::INPUT_VOLTAGE1));
 
@@ -230,7 +286,7 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(19.099, 55.888), module, Kitsune::OUTPUT_VOLTAGE1));
 
-		// Section 2
+		// Section 2.
 		addParam(createParamCentered<Davies1900hWhiteKnob>(millimetersToPixelsVec(12.7, 73.732), module, Kitsune::PARAM_ATTENUATOR2));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(12.7, 92.618), module, Kitsune::PARAM_OFFSET2));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(12.701, 104.433), module, Kitsune::LIGHT_VOLTAGE2));
@@ -238,21 +294,24 @@ struct KitsuneWidget : SanguineModuleWidget {
 		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight(module, 5.988, 110.933);
 		addChild(lightInput2);
 
-		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(5.988, 118.422), module, Kitsune::INPUT_VOLTAGE2));
+		addChild(createLightCentered<TinyLight<RedLight>>(millimetersToPixelsVec(2.869, 113.71), module, Kitsune::LIGHT_NORMALLED2));
 
+		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(5.988, 118.422), module, Kitsune::INPUT_VOLTAGE2));
 
 		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 19.099, 110.533);
 		addChild(lightOutput2);
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(19.099, 118.422), module, Kitsune::OUTPUT_VOLTAGE2));
 
-		// Section 3
+		// Section 3.
 		addParam(createParamCentered<Davies1900hWhiteKnob>(millimetersToPixelsVec(38.099, 11.198), module, Kitsune::PARAM_ATTENUATOR3));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.099, 30.085), module, Kitsune::PARAM_OFFSET3));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.1, 41.9), module, Kitsune::LIGHT_VOLTAGE3));
 
 		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight(module, 31.387, 48.4);
 		addChild(lightInput3);
+
+		addChild(createLightCentered<TinyLight<GreenRedLight>>(millimetersToPixelsVec(28.249, 51.176), module, Kitsune::LIGHT_NORMALLED3));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(31.387, 55.888), module, Kitsune::INPUT_VOLTAGE3));
 
@@ -261,13 +320,15 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(44.498, 55.888), module, Kitsune::OUTPUT_VOLTAGE3));
 
-		// Section 4
+		// Section 4.
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(38.099, 73.732), module, Kitsune::PARAM_ATTENUATOR4));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.099, 92.618), module, Kitsune::PARAM_OFFSET4));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.1, 104.433), module, Kitsune::LIGHT_VOLTAGE4));
 
 		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight(module, 31.387, 110.933);
 		addChild(lightInput4);
+
+		addChild(createLightCentered<TinyLight<GreenRedLight>>(millimetersToPixelsVec(28.249, 113.71), module, Kitsune::LIGHT_NORMALLED4));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(31.387, 118.422), module, Kitsune::INPUT_VOLTAGE4));
 
@@ -281,6 +342,24 @@ struct KitsuneWidget : SanguineModuleWidget {
 		SanguineModuleWidget::appendContextMenu(menu);
 
 		Kitsune* kitsune = dynamic_cast<Kitsune*>(this->module);
+
+		menu->addChild(new MenuSeparator);
+
+		menu->addChild(createSubmenuItem("Input normalling", "",
+			[=](Menu* menu) {
+				menu->addChild(createCheckMenuItem("None", "",
+					[=]() {return kitsune->normalledMode == kitsune::NORMAL_NONE; },
+					[=]() {kitsune->setNormalledMode(kitsune::NORMAL_NONE); }));
+
+				menu->addChild(createCheckMenuItem("1 → 2; 3 → 4", "",
+					[=]() {return kitsune->normalledMode == kitsune::NORMAL_2_TO_1_4_TO_3; },
+					[=]() {kitsune->setNormalledMode(kitsune::NORMAL_2_TO_1_4_TO_3); }));
+
+				menu->addChild(createCheckMenuItem("1 → All", "",
+					[=]() {return kitsune->normalledMode == kitsune::NORMAL_ALL_TO_1; },
+					[=]() {kitsune->setNormalledMode(kitsune::NORMAL_ALL_TO_1); }));
+			}
+		));
 
 		menu->addChild(new MenuSeparator);
 		const Module* expander = kitsune->rightExpander.module;

@@ -68,6 +68,8 @@
 
 - Hydra: Manus expander.
 
+- Kitsune: more flexible input normalling (selected using the context menu).
+
 - Raiju: knob borders.
 
 - Sphinx: knob borders.
