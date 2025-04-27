@@ -246,8 +246,8 @@ struct Dungeon : SanguineModule {
 		if (bStoreVoltageInPatch) {
 			json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
 			json_object_set_new(rootJ, "heldVoltage", json_real(engine.voltage));
-			json_object_set_new(rootJ, "haloType", json_integer(static_cast<int>(haloType)));
 		}
+		json_object_set_new(rootJ, "haloType", json_integer(static_cast<int>(haloType)));
 
 		return rootJ;
 	}
