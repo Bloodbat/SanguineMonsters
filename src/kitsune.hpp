@@ -17,4 +17,9 @@ namespace kitsune {
         { 0.f, 0.f, 1.f },
         { 1.f, 1.f, 1.f }
     };
+
+    static const std::vector<std::string> normallingModes = {
+        "Off",
+        "Smart"
+    };
 }
