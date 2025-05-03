@@ -68,7 +68,7 @@
 
 - Hydra: Manus expander.
 
-- Kitsune: smart input normalling (can be turned off using the context menu, should not impact patches using old 1->2, 3->4 normalling).
+- Kitsune: smart input normalling (can be turned off using the context menu or the switch on the faceplate, should not impact patches using old 1->2, 3->4 normalling).
 
 - Raiju: knob borders.
 
