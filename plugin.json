@@ -109,7 +109,7 @@
     {
       "slug" : "Sanguine-Kitsune",
       "name" : "Kitsune",
-      "description" : "Four scalers and offseters for polyphonic voltages",
+      "description" : "Four polyphonic attenuverters, offsetters and inverters with user selectable smart input normalling.",
       "tags" : [
         "Attenuator",
         "Quad",

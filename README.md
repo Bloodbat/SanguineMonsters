@@ -70,7 +70,7 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
 
 - ### Kitsune
 
-  An attenuverter, offsetter and inverter with four channels.
+  Four polyphonic attenuverters, offsetters and inverters with user selectable smart input normalling.
 
   - ### Denki
 
