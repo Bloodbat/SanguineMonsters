@@ -13,6 +13,7 @@ struct Kitsune : SanguineModule {
 		PARAM_OFFSET2,
 		PARAM_OFFSET3,
 		PARAM_OFFSET4,
+		PARAM_NORMALLING_MODE,
 		PARAMS_COUNT
 	};
 
@@ -65,6 +66,8 @@ struct Kitsune : SanguineModule {
 
 			lightsDivider.setDivision(kLightDivisor);
 		}
+
+		configSwitch(PARAM_NORMALLING_MODE, 0.f, 1.f, 1.f, "Input normalling", kitsune::normallingModes);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -83,6 +86,8 @@ struct Kitsune : SanguineModule {
 
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 		}
+
+		normalledMode = kitsune::NormalledModes(params[PARAM_NORMALLING_MODE].getValue());
 
 		int channelSources[kitsune::kMaxSections] = { 0, 1, 2, 3 };
 		int lastChannelSource = -1;
@@ -238,7 +243,7 @@ struct Kitsune : SanguineModule {
 	}
 
 	void setNormalledMode(const kitsune::NormalledModes newMode) {
-		normalledMode = newMode;
+		params[PARAM_NORMALLING_MODE].setValue(static_cast<float>(newMode));
 	}
 };
 
@@ -324,6 +329,8 @@ struct KitsuneWidget : SanguineModuleWidget {
 		addChild(lightOutput4);
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(44.498, 118.422), module, Kitsune::OUTPUT_VOLTAGE4));
+
+		addParam(createParamCentered<CKSS>(millimetersToPixelsVec(25.4, 102.699), module, Kitsune::PARAM_NORMALLING_MODE));
 	}
 
 	void appendContextMenu(Menu* menu) override {
@@ -335,11 +342,11 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		menu->addChild(createSubmenuItem("Input normalling", "",
 			[=](Menu* menu) {
-				menu->addChild(createCheckMenuItem("None", "",
+				menu->addChild(createCheckMenuItem(kitsune::normallingModes[0], "",
 					[=]() {return kitsune->normalledMode == kitsune::NORMAL_NONE; },
 					[=]() {kitsune->setNormalledMode(kitsune::NORMAL_NONE); }));
 
-				menu->addChild(createCheckMenuItem("Smart", "",
+				menu->addChild(createCheckMenuItem(kitsune::normallingModes[1], "",
 					[=]() {return kitsune->normalledMode == kitsune::NORMAL_SMART; },
 					[=]() {kitsune->setNormalledMode(kitsune::NORMAL_SMART); }));
 			}
