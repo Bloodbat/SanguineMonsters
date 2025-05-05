@@ -559,7 +559,7 @@ struct ChronosWidget : SanguineModuleWidget {
             for (int channel = 0; channel < module->channelCounts[section]; ++channel) {
                 availableChannels.push_back(channelNumbers[channel]);
             }
-            menu->addChild(createIndexSubmenuItem(string::f("Section %d LEDs channel", section + 1), availableChannels,
+            menu->addChild(createIndexSubmenuItem(string::f("Section %d LED channel", section + 1), availableChannels,
                 [=]() {return module->ledsChannel[section]; },
                 [=](int i) {module->ledsChannel[section] = i; }
             ));
