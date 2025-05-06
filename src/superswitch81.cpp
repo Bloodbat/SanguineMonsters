@@ -320,8 +320,7 @@ struct SuperSwitch81 : SanguineModule {
 
 		setJsonBoolean(rootJ, "noRepeats", bNoRepeats);
 		setJsonBoolean(rootJ, "resetToFirstStep", bResetToFirstStep);
-
-		// TODO: one shot should be stored here!
+		setJsonBoolean(rootJ, "oneShot", bOneShot);
 
 		return rootJ;
 	}
@@ -340,7 +339,10 @@ struct SuperSwitch81 : SanguineModule {
 		} else {
 			selectedIn = 0;
 		}
-		bOneShot = params[PARAM_ONE_SHOT].getValue();
+
+		getJsonBoolean(rootJ, "oneShot", bOneShot);
+		params[PARAM_ONE_SHOT].setValue(bOneShot);
+
 		if (bOneShot && bOneShot != bLastOneShotValue) {
 			bOneShotDone = false;
 		}
