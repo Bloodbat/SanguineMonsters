@@ -242,9 +242,10 @@ struct Dungeon : SanguineModule {
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
+		
+		json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
 
-		if (bStoreVoltageInPatch) {
-			json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
+		if (bStoreVoltageInPatch) {			
 			json_object_set_new(rootJ, "heldVoltage", json_real(engine.voltage));
 		}
 		json_object_set_new(rootJ, "haloType", json_integer(static_cast<int>(haloType)));
@@ -258,14 +259,14 @@ struct Dungeon : SanguineModule {
 		json_t* storeVoltageInPatchJ = json_object_get(rootJ, "storeVoltageInPatch");
 		if (storeVoltageInPatchJ) {
 			bStoreVoltageInPatch = json_boolean_value(storeVoltageInPatchJ);
-			if (bStoreVoltageInPatch) {
+		if (bStoreVoltageInPatch) {
 				json_t* heldVoltageJ = json_object_get(rootJ, "heldVoltage");
 				if (heldVoltageJ) {
 					engine.voltage = json_number_value(heldVoltageJ);
-					outputs[OUTPUT_VOLTAGE].setChannels(1);
-					outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
-				}
+				outputs[OUTPUT_VOLTAGE].setChannels(1);
+				outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
 			}
+		}
 		}
 
 		json_t* haloTypeJ = json_object_get(rootJ, "haloType");
