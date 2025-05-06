@@ -4,6 +4,7 @@
 #include "sanguinechannels.hpp"
 #include "chronos.hpp"
 #include "seqcomponents.hpp"
+#include "sanguinejson.hpp"
 
 using simd::float_4;
 
@@ -340,7 +341,7 @@ struct Chronos : SanguineModule {
         json_t* rootJ = SanguineModule::dataToJson();
 
         for (int section = 0; section < chronos::kMaxSections; ++section) {
-            json_object_set_new(rootJ, string::f("ledsChannel%d", section).c_str(), json_integer(ledsChannel[section]));
+            setJsonInt(rootJ, string::f("ledsChannel%d", section).c_str(), ledsChannel[section]);
         }
         return rootJ;
     }
@@ -349,9 +350,10 @@ struct Chronos : SanguineModule {
         SanguineModule::dataFromJson(rootJ);
 
         for (int section = 0; section < chronos::kMaxSections; ++section) {
-            json_t* ledsChannelJ = json_object_get(rootJ, string::f("ledsChannel%d", section).c_str());
-            if (ledsChannelJ) {
-                ledsChannel[section] = json_integer_value(ledsChannelJ);
+            json_int_t intValue;
+
+            if (getJsonInt(rootJ, string::f("ledsChannel%d", section).c_str(), intValue)) {
+                ledsChannel[section] = intValue;
             }
         }
     }

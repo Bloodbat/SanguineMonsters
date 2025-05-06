@@ -3,6 +3,7 @@
 #include "sanguinehelpers.hpp"
 #include "dungeon.hpp"
 #include "sanguinerandom.hpp"
+#include "sanguinejson.hpp"
 
 struct Dungeon : SanguineModule {
 
@@ -242,13 +243,13 @@ struct Dungeon : SanguineModule {
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
-		
-		json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
 
-		if (bStoreVoltageInPatch) {			
-			json_object_set_new(rootJ, "heldVoltage", json_real(engine.voltage));
+		setJsonBoolean(rootJ, "storeVoltageInPatch", bStoreVoltageInPatch);
+
+		if (bStoreVoltageInPatch) {
+			setJsonFloat(rootJ, "heldVoltage", engine.voltage);
 		}
-		json_object_set_new(rootJ, "haloType", json_integer(static_cast<int>(haloType)));
+		setJsonInt(rootJ, "haloType", static_cast<int>(haloType));
 
 		return rootJ;
 	}
@@ -256,23 +257,18 @@ struct Dungeon : SanguineModule {
 	void dataFromJson(json_t* rootJ) override {
 		SanguineModule::dataFromJson(rootJ);
 
-		json_t* storeVoltageInPatchJ = json_object_get(rootJ, "storeVoltageInPatch");
-		if (storeVoltageInPatchJ) {
-			bStoreVoltageInPatch = json_boolean_value(storeVoltageInPatchJ);
+		getJsonBoolean(rootJ, "storeVoltageInPatch", bStoreVoltageInPatch);
 		if (bStoreVoltageInPatch) {
-				json_t* heldVoltageJ = json_object_get(rootJ, "heldVoltage");
-				if (heldVoltageJ) {
-					engine.voltage = json_number_value(heldVoltageJ);
+			if (getJsonFloat(rootJ, "heldVoltage", engine.voltage)) {
 				outputs[OUTPUT_VOLTAGE].setChannels(1);
 				outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
 			}
 		}
-		}
 
-		json_t* haloTypeJ = json_object_get(rootJ, "haloType");
+		json_int_t intValue;
 
-		if (haloTypeJ) {
-			haloType = static_cast<HaloTypes>(json_integer_value(haloTypeJ));
+		if (getJsonInt(rootJ, "haloType", intValue)) {
+			haloType = static_cast<HaloTypes>(intValue);
 		}
 	}
 };

@@ -227,7 +227,7 @@ struct Kitsune : SanguineModule {
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
 
-		json_object_set_new(rootJ, "normalledMode", json_integer(static_cast<int>(normalledMode)));
+		setJsonInt(rootJ, "normalledMode", static_cast<int>(normalledMode));
 
 		return rootJ;
 	}
@@ -235,10 +235,10 @@ struct Kitsune : SanguineModule {
 	void dataFromJson(json_t* rootJ) override {
 		SanguineModule::dataFromJson(rootJ);
 
-		json_t* normalledModeJ = json_object_get(rootJ, "normalledMode");
+		json_int_t intValue;
 
-		if (normalledModeJ) {
-			normalledMode = static_cast<kitsune::NormalledModes>(json_integer_value(normalledModeJ));
+		if (getJsonInt(rootJ, "normalledMode", intValue)) {
+			normalledMode = static_cast<kitsune::NormalledModes>(intValue);
 		}
 	}
 
