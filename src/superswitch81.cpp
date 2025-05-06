@@ -318,9 +318,33 @@ struct SuperSwitch81 : SanguineModule {
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
 
-		json_object_set_new(rootJ, "noRepeats", json_boolean(bNoRepeats));
-		json_object_set_new(rootJ, "resetToFirstStep", json_boolean(bResetToFirstStep));
+		setJsonBoolean(rootJ, "noRepeats", bNoRepeats);
+		setJsonBoolean(rootJ, "resetToFirstStep", bResetToFirstStep);
+
+		// TODO: one shot should be stored here!
+
 		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		SanguineModule::dataFromJson(rootJ);
+
+		getJsonBoolean(rootJ, "noRepeats", bNoRepeats);
+
+		getJsonBoolean(rootJ, "resetToFirstStep", bResetToFirstStep);
+
+		bLastResetToFirstStepValue = bResetToFirstStep;
+		if (!bResetToFirstStep) {
+			selectedIn = -1;
+			bClockReceived = false;
+		} else {
+			selectedIn = 0;
+		}
+		bOneShot = params[PARAM_ONE_SHOT].getValue();
+		if (bOneShot && bOneShot != bLastOneShotValue) {
+			bOneShotDone = false;
+		}
+		bLastOneShotValue = bOneShot;
 	}
 
 	void onBypass(const BypassEvent& e) override {
@@ -337,30 +361,6 @@ struct SuperSwitch81 : SanguineModule {
 			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
-	}
-
-	void dataFromJson(json_t* rootJ) override {
-		SanguineModule::dataFromJson(rootJ);
-
-		json_t* noRepeatsJ = json_object_get(rootJ, "noRepeats");
-		if (noRepeatsJ) {
-			bNoRepeats = json_boolean_value(noRepeatsJ);
-		}
-
-		json_t* resetToFirstStepJ = json_object_get(rootJ, "resetToFirstStep");
-		bResetToFirstStep = json_boolean_value(resetToFirstStepJ);
-		bLastResetToFirstStepValue = bResetToFirstStep;
-		if (!bResetToFirstStep) {
-			selectedIn = -1;
-			bClockReceived = false;
-		} else {
-			selectedIn = 0;
-		}
-		bOneShot = params[PARAM_ONE_SHOT].getValue();
-		if (bOneShot && bOneShot != bLastOneShotValue) {
-			bOneShotDone = false;
-		}
-		bLastOneShotValue = bOneShot;
 	}
 };
 
