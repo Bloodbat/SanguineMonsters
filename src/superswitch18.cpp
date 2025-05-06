@@ -362,21 +362,21 @@ struct SuperSwitch18 : SanguineModule {
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
 
-		json_object_set_new(rootJ, "noRepeats", json_boolean(bNoRepeats));
-		json_object_set_new(rootJ, "ResetToFirstStep", json_boolean(bResetToFirstStep));
+		setJsonBoolean(rootJ, "noRepeats", bNoRepeats);
+		setJsonBoolean(rootJ, "ResetToFirstStep", bResetToFirstStep);
+
+		// TODO: one shot should be stored here!
+
 		return rootJ;
 	}
 
 	void dataFromJson(json_t* rootJ) override {
 		SanguineModule::dataFromJson(rootJ);
 
-		json_t* noRepeatsJ = json_object_get(rootJ, "noRepeats");
-		if (noRepeatsJ) {
-			bNoRepeats = json_boolean_value(noRepeatsJ);
-		}
+		getJsonBoolean(rootJ, "noRepeats", bNoRepeats);
 
-		json_t* ResetToFirstStepJ = json_object_get(rootJ, "ResetToFirstStep");
-		bResetToFirstStep = json_boolean_value(ResetToFirstStepJ);
+		getJsonBoolean(rootJ, "ResetToFirstStep", bResetToFirstStep);
+
 		bLastResetToFirstStepValue = bResetToFirstStep;
 		if (!bResetToFirstStep) {
 			selectedOut = -1;

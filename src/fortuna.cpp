@@ -4,6 +4,7 @@
 #include "sanguinechannels.hpp"
 #include "fortuna.hpp"
 #include "sanguinedsp.hpp"
+#include "sanguinejson.hpp"
 
 // Based on LittleUtils PulseGenerator, EUPL-1.2 GPL 3 compatible license.
 // Modified by Bloodbat, 2025.
@@ -189,8 +190,7 @@ struct Fortuna : SanguineModule {
     json_t* dataToJson() override {
         json_t* rootJ = SanguineModule::dataToJson();
 
-        json_t* ledsChannelJ = json_integer(ledsChannel);
-        json_object_set_new(rootJ, "ledsChannel", ledsChannelJ);
+        setJsonInt(rootJ, "ledsChannel", ledsChannel);
 
         return rootJ;
     }
@@ -198,9 +198,10 @@ struct Fortuna : SanguineModule {
     void dataFromJson(json_t* rootJ) override {
         SanguineModule::dataFromJson(rootJ);
 
-        json_t* ledsChannelJ = json_object_get(rootJ, "ledsChannel");
-        if (ledsChannelJ) {
-            ledsChannel = json_integer_value(ledsChannelJ);
+        json_int_t intValue;
+
+        if (getJsonInt(rootJ, "ledsChannel", intValue)) {
+            ledsChannel = intValue;
         }
     }
 };
