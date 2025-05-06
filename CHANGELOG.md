@@ -32,6 +32,8 @@
 
 - Dungeon: module was falling off the Rack: it was missing screws.
 
+- Dungeon: actually store user preference when "Store voltage in patch" is disabled.
+
 - Gegeenes: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
 - Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
