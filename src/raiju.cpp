@@ -117,8 +117,8 @@ struct Raiju : SanguineModule {
 
 		json_t* channelCountsJ = json_array();
 		for (int channelCount : channelCounts) {
-			json_t* cJ = json_integer(channelCount);
-			json_array_append_new(channelCountsJ, cJ);
+			json_t* cloneCountJ = json_integer(channelCount);
+			json_array_append_new(channelCountsJ, cloneCountJ);
 		}
 		json_object_set_new(rootJ, "channelCounts", channelCountsJ);
 
@@ -130,9 +130,9 @@ struct Raiju : SanguineModule {
 
 		json_t* channelCountsJ = json_object_get(rootJ, "channelCounts");
 		size_t idx;
-		json_t* cJ;
-		json_array_foreach(channelCountsJ, idx, cJ) {
-			channelCounts[idx] = json_integer_value(cJ);
+		json_t* cloneCountJ;
+		json_array_foreach(channelCountsJ, idx, cloneCountJ) {
+			channelCounts[idx] = json_integer_value(cloneCountJ);
 		}
 	}
 };
