@@ -36,7 +36,11 @@
 
 - Gegeenes: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
+- Gegeenes: store and restore "One Shot" user preference.
+
 - Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
+
+- Hydra: store and restore "One Shot" user preference.
 
 ---
 
