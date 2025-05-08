@@ -1,7 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
-#include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "sanguinejson.hpp"
+#include "seqcomponents.hpp"
 
 struct Aion : SanguineModule {
 

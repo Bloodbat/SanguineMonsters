@@ -1,8 +1,11 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
-#include <iomanip>
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "sanguinejson.hpp"
+
+#include <iomanip>
+
 #include "raiju.hpp"
 
 struct Raiju : SanguineModule {
