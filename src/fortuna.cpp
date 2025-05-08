@@ -2,12 +2,10 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "sanguinechannels.hpp"
-#include "fortuna.hpp"
 #include "sanguinedsp.hpp"
 #include "sanguinejson.hpp"
 
-// Based on LittleUtils PulseGenerator, EUPL-1.2 GPL 3 compatible license.
-// Modified by Bloodbat, 2025.
+#include "fortuna.hpp"
 
 struct Fortuna : SanguineModule {
     enum ParamIds {

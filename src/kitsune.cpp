@@ -1,4 +1,6 @@
 #include "sanguinehelpers.hpp"
+#include "sanguinejson.hpp"
+
 #include "kitsune.hpp"
 #include "denki.hpp"
 

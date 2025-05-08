@@ -2,9 +2,10 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "sanguinechannels.hpp"
-#include "chronos.hpp"
-#include "seqcomponents.hpp"
 #include "sanguinejson.hpp"
+#include "seqcomponents.hpp"
+
+#include "chronos.hpp"
 
 using simd::float_4;
 
