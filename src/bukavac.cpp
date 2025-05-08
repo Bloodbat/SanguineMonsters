@@ -1,8 +1,9 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "bukavac.hpp"
 #include "sanguinerandom.hpp"
+
+#include "bukavac.hpp"
 
 struct Bukavac : SanguineModule {
 	enum ParamIds {

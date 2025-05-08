@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "sanguinedsp.hpp"
+#include "sanguinejson.hpp"
+
 #include "alembic.hpp"
 #include "alchemist.hpp"
 #include "crucible.hpp"

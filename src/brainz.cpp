@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "seqcomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "sanguinejson.hpp"
+
 #include "brainz.hpp"
 
 struct Brainz : SanguineModule {

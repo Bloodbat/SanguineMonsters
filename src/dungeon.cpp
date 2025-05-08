@@ -1,9 +1,10 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "dungeon.hpp"
 #include "sanguinerandom.hpp"
 #include "sanguinejson.hpp"
+
+#include "dungeon.hpp"
 
 struct Dungeon : SanguineModule {
 
