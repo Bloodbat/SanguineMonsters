@@ -100,6 +100,8 @@
 
 - Plugin: faceplate color tweaks.
 
+- Plugin: simplify the vampire logo so it looks better when drawn by Rack's SVG renderer.
+
 - Aion: faceplate tweaks.
 
 - Alchemist: use light bezels instead of light buttons.
