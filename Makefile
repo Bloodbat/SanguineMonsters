@@ -1,4 +1,4 @@
-FLAGS += -I./pcgcpp \
+FLAGS += -I./SanguineModulesCommon/pcgcpp \
   -I./SanguineModulesCommon/src
 
 SOURCES += $(wildcard src/*.cpp)
