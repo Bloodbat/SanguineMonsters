@@ -250,6 +250,7 @@ struct Bukavac : SanguineModule {
 	}
 };
 
+#ifndef METAMODULE
 struct SanguineCirclePortLight : SanguineStaticRGBLight {
 	SvgWidget* blackBorder;
 	SanguineCirclePortLight(Module* theModule, const float X, const float Y, bool createCentered, unsigned int newLightColor) :
@@ -259,6 +260,7 @@ struct SanguineCirclePortLight : SanguineStaticRGBLight {
 		fb->addChildBelow(blackBorder, sw);
 	};
 };
+#endif
 
 struct BukavacWidget : SanguineModuleWidget {
 	explicit BukavacWidget(Bukavac* module) {
@@ -273,15 +275,17 @@ struct BukavacWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+#ifndef METAMODULE
 		SanguineStaticRGBLight* speedLight = new SanguineStaticRGBLight(module, "res/speed_lit.svg", 4.199, 23.402, true, kSanguineBlueLight);
 		addChild(speedLight);
+
+		SanguineStaticRGBLight* amplifierLight = new SanguineStaticRGBLight(module, "res/amplifier_lit.svg", 4.199, 42.098, true, kSanguineBlueLight);
+		addChild(amplifierLight);
+#endif
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 23.402), module, Bukavac::INPUT_PERLIN_SPEED));
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(22.484, 23.402), module, Bukavac::PARAM_PERLIN_SPEED_CV));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(36.827, 23.402), module, Bukavac::PARAM_PERLIN_SPEED));
-
-		SanguineStaticRGBLight* amplifierLight = new SanguineStaticRGBLight(module, "res/amplifier_lit.svg", 4.199, 42.098, true, kSanguineBlueLight);
-		addChild(amplifierLight);
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(10.941, 42.098), module, Bukavac::INPUT_PERLIN_AMP));
 		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(22.484, 42.098), module, Bukavac::PARAM_PERLIN_AMP_CV));
@@ -296,6 +300,7 @@ struct BukavacWidget : SanguineModuleWidget {
 		addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(40.33, 70.387), module, Bukavac::PARAM_PERLIN_WEIGHT3));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.132, 70.387), module, Bukavac::OUTPUT_PERLIN_NOISE3));
 
+#ifndef METAMODULE
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 13.096, 86.429);
 		addChild(bloodLight);
 
@@ -305,41 +310,35 @@ struct BukavacWidget : SanguineModuleWidget {
 		SanguineCirclePortLight* whiteLight = new SanguineCirclePortLight(module, 7.04, 106.724, true, rgbColorToInt(204, 204, 204));
 		addChild(whiteLight);
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 106.724), module, Bukavac::OUTPUT_WHITE));
-
 		SanguineCirclePortLight* pinkLight = new SanguineCirclePortLight(module, 17.583, 106.724, true, rgbColorToInt(255, 153, 203));
 		addChild(pinkLight);
-
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 106.724), module, Bukavac::OUTPUT_PINK));
 
 		SanguineCirclePortLight* redLight = new SanguineCirclePortLight(module, 28.127, 106.724, true, rgbColorToInt(255, 0, 0));
 		addChild(redLight);
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 106.724), module, Bukavac::OUTPUT_RED));
-
 		SanguineCirclePortLight* purpleLight = new SanguineCirclePortLight(module, 38.67, 106.724, true, rgbColorToInt(180, 71, 216));
 		addChild(purpleLight);
-
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 106.724), module, Bukavac::OUTPUT_VIOLET));
 
 		SanguineCirclePortLight* blueLight = new SanguineCirclePortLight(module, 7.04, 117.456, true, kSanguineBlueLight);
 		addChild(blueLight);
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 117.456), module, Bukavac::OUTPUT_BLUE));
-
 		SanguineCirclePortLight* grayLight = new SanguineCirclePortLight(module, 17.583, 117.456, true, rgbColorToInt(101, 101, 101));
 		addChild(grayLight);
-
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 117.456), module, Bukavac::OUTPUT_GRAY));
 
 		SanguineShapedLight* randomLight = new SanguineShapedLight(module, "res/random_ring_lit.svg", 28.127, 117.456);
 		addChild(randomLight);
 
-		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 117.456), module, Bukavac::OUTPUT_PRISM));
-
 		SanguineShapedLight* perlinLight = new SanguineShapedLight(module, "res/perlin_ring_lit.svg", 38.67, 117.456);
 		addChild(perlinLight);
+#endif
 
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 106.724), module, Bukavac::OUTPUT_WHITE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 106.724), module, Bukavac::OUTPUT_PINK));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 106.724), module, Bukavac::OUTPUT_RED));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 106.724), module, Bukavac::OUTPUT_VIOLET));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(7.04, 117.456), module, Bukavac::OUTPUT_BLUE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.583, 117.456), module, Bukavac::OUTPUT_GRAY));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(28.127, 117.456), module, Bukavac::OUTPUT_PRISM));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(38.67, 117.456), module, Bukavac::OUTPUT_PERLIN_NOISE_MIX));
 	}
 };
