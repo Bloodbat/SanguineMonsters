@@ -2,7 +2,9 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
+#ifndef METAMODULE
 #include "seqcomponents.hpp"
+#endif
 
 struct Aion : SanguineModule {
 
@@ -59,6 +61,12 @@ struct Aion : SanguineModule {
 		LIGHT_TIMER_2,
 		LIGHT_TIMER_3,
 		LIGHT_TIMER_4,
+#ifdef METAMODULE
+		LIGHT_RESTART_1,
+		LIGHT_RESTART_2,
+		LIGHT_RESTART_3,
+		LIGHT_RESTART_4,
+#endif
 		LIGHTS_COUNT
 	};
 
@@ -176,6 +184,11 @@ struct Aion : SanguineModule {
 					setTimerValues[section] = params[PARAM_TIMER_1 + section].getValue();
 					currentTimerValues[section] = params[PARAM_TIMER_1 + section].getValue();
 				}
+
+#ifdef METAMODULE
+				lights[LIGHT_RESTART_1 + section].setBrightness(static_cast<bool>(params[PARAM_RESTART_1 + section].getValue()) ?
+					kSanguineButtonLightValue : 0.f);
+#endif
 			}
 
 			if (outputs[OUTPUT_TRIGGER_1 + section].isConnected()) {
@@ -246,7 +259,6 @@ struct AionWidget : SanguineModuleWidget {
 		addChild(aionFramebuffer);
 
 		// Timer 1
-
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(6.75, 26.424), module, Aion::LIGHT_TIMER_1));
 
 		SanguineTinyNumericDisplay* displayTimer1 = new SanguineTinyNumericDisplay(2, module, 19.775, 27.047);
@@ -255,27 +267,27 @@ struct AionWidget : SanguineModuleWidget {
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.411, 23.671), module, Aion::PARAM_TIMER_1));
 
+#ifndef METAMODULE
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 14.631), module, Aion::PARAM_RESTART_1));
-
 		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(6.75, 40.397), module, Aion::PARAM_START_1));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 51.545), module, Aion::INPUT_RUN_1));
-
 		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(20.446, 40.397), module, Aion::PARAM_TRIGGER_1));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 51.545), module, Aion::INPUT_TRIGGER_1));
-
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(34.161, 40.397), module, Aion::PARAM_RESET_1));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.161, 51.545), module, Aion::INPUT_RESET_1));
-
 		SanguineStaticRGBLight* lightOutput1 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 47.87, 44.546, true, kSanguineYellowLight);
 		addChild(lightOutput1);
+#else
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(49.77, 16.631), module,
+			Aion::PARAM_RESTART_1, Aion::LIGHT_RESTART_1));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(6.75, 42.897), module, Aion::PARAM_START_1));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(20.446, 42.897), module, Aion::PARAM_TRIGGER_1));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(34.161, 42.897), module, Aion::PARAM_RESET_1));
+#endif
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 51.545), module, Aion::INPUT_RUN_1));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 51.545), module, Aion::INPUT_TRIGGER_1));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.161, 51.545), module, Aion::INPUT_RESET_1));
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(47.87, 51.545), module, Aion::OUTPUT_TRIGGER_1));
 
 		// Timer 2
-
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(62.515, 27.047), module, Aion::LIGHT_TIMER_2));
 
 		SanguineTinyNumericDisplay* displayTimer2 = new SanguineTinyNumericDisplay(2, module, 75.54, 27.047);
@@ -284,27 +296,27 @@ struct AionWidget : SanguineModuleWidget {
 
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(94.176, 23.671), module, Aion::PARAM_TIMER_2));
 
+#ifndef METAMODULE
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 14.631), module, Aion::PARAM_RESTART_2));
-
 		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(62.515, 40.397), module, Aion::PARAM_START_2));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 51.545), module, Aion::INPUT_RUN_2));
-
 		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(76.211, 40.397), module, Aion::PARAM_TRIGGER_2));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 51.545), module, Aion::INPUT_TRIGGER_2));
-
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(90.026, 40.397), module, Aion::PARAM_RESET_2));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.026, 51.545), module, Aion::INPUT_RESET_2));
-
 		SanguineStaticRGBLight* lightOutput2 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 103.635, 44.546, true, kSanguineYellowLight);
 		addChild(lightOutput2);
+#else
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(105.534, 16.631), module,
+			Aion::PARAM_RESTART_2, Aion::LIGHT_RESTART_2));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(62.515, 42.897), module, Aion::PARAM_START_2));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(76.211, 42.897), module, Aion::PARAM_TRIGGER_2));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(90.026, 42.897), module, Aion::PARAM_RESET_2));
+#endif
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 51.545), module, Aion::INPUT_RUN_2));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 51.545), module, Aion::INPUT_TRIGGER_2));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.026, 51.545), module, Aion::INPUT_RESET_2));
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(103.635, 51.545), module, Aion::OUTPUT_TRIGGER_2));
 
 		// Timer 3
-
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(6.75, 73.246), module, Aion::LIGHT_TIMER_3));
 
 		SanguineTinyNumericDisplay* displayTimer3 = new SanguineTinyNumericDisplay(2, module, 19.775, 73.246);
@@ -313,27 +325,27 @@ struct AionWidget : SanguineModuleWidget {
 
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(38.411, 69.871), module, Aion::PARAM_TIMER_3));
 
+#ifndef METAMODULE
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(45.87, 60.833), module, Aion::PARAM_RESTART_3));
-
 		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(6.75, 86.6), module, Aion::PARAM_START_3));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 97.748), module, Aion::INPUT_RUN_3));
-
 		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(20.446, 86.6), module, Aion::PARAM_TRIGGER_3));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 97.748), module, Aion::INPUT_TRIGGER_3));
-
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(34.261, 86.6), module, Aion::PARAM_RESET_3));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.261, 97.748), module, Aion::INPUT_RESET_3));
-
 		SanguineStaticRGBLight* lightOutput3 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 47.87, 90.749, true, kSanguineYellowLight);
 		addChild(lightOutput3);
+#else
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(49.77, 62.833), module,
+			Aion::PARAM_RESTART_3, Aion::LIGHT_RESTART_3));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(6.75, 89.1), module, Aion::PARAM_START_3));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(20.446, 89.1), module, Aion::PARAM_TRIGGER_3));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(34.261, 89.1), module, Aion::PARAM_RESET_3));
+#endif
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.75, 97.748), module, Aion::INPUT_RUN_3));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(20.446, 97.748), module, Aion::INPUT_TRIGGER_3));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(34.261, 97.748), module, Aion::INPUT_RESET_3));
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(47.87, 97.748), module, Aion::OUTPUT_TRIGGER_3));
 
 		// Timer 4
-
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(62.515, 73.246), module, Aion::LIGHT_TIMER_4));
 
 		SanguineTinyNumericDisplay* displayTimer4 = new SanguineTinyNumericDisplay(2, module, 75.54, 73.246);
@@ -342,32 +354,34 @@ struct AionWidget : SanguineModuleWidget {
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(94.176, 69.871), module, Aion::PARAM_TIMER_4));
 
+#ifndef METAMODULE
 		addParam(createParam<SeqButtonRestartSmall>(millimetersToPixelsVec(101.635, 60.833), module, Aion::PARAM_RESTART_4));
-
 		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(62.515, 86.6), module, Aion::PARAM_START_4));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 97.748), module, Aion::INPUT_RUN_4));
-
 		addParam(createParamCentered<SeqButtonClock>(millimetersToPixelsVec(76.211, 86.6), module, Aion::PARAM_TRIGGER_4));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 97.748), module, Aion::INPUT_TRIGGER_4));
-
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(90.026, 86.6), module, Aion::PARAM_RESET_4));
-
-		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.026, 97.748), module, Aion::INPUT_RESET_4));
-
 		SanguineStaticRGBLight* lightOutput4 = new SanguineStaticRGBLight(module, "res/gate_lit.svg", 103.635, 90.749, true, kSanguineYellowLight);
 		addChild(lightOutput4);
+#else
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenLight>>>(millimetersToPixelsVec(105.534, 62.833), module,
+			Aion::PARAM_RESTART_4, Aion::LIGHT_RESTART_4));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(62.515, 89.1), module, Aion::PARAM_START_4));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(76.211, 89.1), module, Aion::PARAM_TRIGGER_4));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(90.026, 89.1), module, Aion::PARAM_RESET_4));
+#endif
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(62.515, 97.748), module, Aion::INPUT_RUN_4));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(76.211, 97.748), module, Aion::INPUT_TRIGGER_4));
+		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(90.026, 97.748), module, Aion::INPUT_RESET_4));
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(103.635, 97.748), module, Aion::OUTPUT_TRIGGER_4));
 
+#ifndef METAMODULE
 		// Sanguine logo lights
-
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 46.116, 113.48);
 		addChild(bloodLight);
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 59.248, 120.435);
 		addChild(monstersLight);
+#endif
 
 		if (module) {
 			displayTimer1->values.numberValue = &module->currentTimerValues[0];
