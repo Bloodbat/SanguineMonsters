@@ -4,9 +4,11 @@
 #include "sanguinedsp.hpp"
 #include "sanguinejson.hpp"
 
-#include "alembic.hpp"
 #include "alchemist.hpp"
+#ifndef METAMODULE
+#include "alembic.hpp"
 #include "crucible.hpp"
+#endif
 
 struct Alchemist : SanguineModule {
 
@@ -37,8 +39,10 @@ struct Alchemist : SanguineModule {
 		ENUMS(LIGHT_MUTE, PORT_MAX_CHANNELS),
 		ENUMS(LIGHT_SOLO, PORT_MAX_CHANNELS),
 		ENUMS(LIGHT_VU, 4),
+#ifndef METAMODULE
 		LIGHT_EXPANDER_RIGHT,
 		LIGHT_EXPANDER_LEFT,
+#endif
 		LIGHT_MASTER_MUTE,
 		LIGHTS_COUNT
 	};
@@ -50,8 +54,10 @@ struct Alchemist : SanguineModule {
 	int exclusiveMuteChannel = -1;
 	int exclusiveSoloChannel = -1;
 
+#ifndef METAMODULE
 	int expanderMuteCount = 0;
 	int expanderSoloCount = 0;
+#endif
 
 	bool mutedChannels[PORT_MAX_CHANNELS] = {};
 	bool bLastAllMuted = false;
@@ -59,11 +65,13 @@ struct Alchemist : SanguineModule {
 	bool soloedChannels[PORT_MAX_CHANNELS] = {};
 	bool bLastAllSoloed = false;
 
+#ifndef METAMODULE
 	bool bLastHaveExpanderMuteCv = false;
 	bool bLastHaveExpanderSoloCv = false;
 
 	bool bHasRightExpander = false;
 	bool bHasLeftExpander = false;
+#endif
 
 	bool bMuteAllEnabled = false;
 	bool bSoloAllEnabled = false;
@@ -116,18 +124,24 @@ struct Alchemist : SanguineModule {
 		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) || inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f;
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
+#ifndef METAMODULE
 		Module* alembicExpander = getRightExpander().module;
 		Module* crucibleExpander = getLeftExpander().module;
+#endif
 
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
+
+#ifndef METAMODULE
 		bHasRightExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
 		bHasLeftExpander = (crucibleExpander && crucibleExpander->getModel() == modelCrucible && !crucibleExpander->isBypassed());
 
 		bool bHaveExpanderMuteCv = false;
 		bool bHaveExpanderSoloCv = false;
+#endif
 
+#ifndef METAMODULE
 		if (bHasLeftExpander) {
 			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
 			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
@@ -159,6 +173,7 @@ struct Alchemist : SanguineModule {
 				crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).readVoltages(soloVoltages);
 			}
 		}
+#endif
 
 		if (bIsLightsTurn) {
 			bool bIgnoreMuteAll = false;
@@ -171,7 +186,7 @@ struct Alchemist : SanguineModule {
 					if (soloedChannels[channel]) {
 						soloedChannels[channel] = false;
 					}
-
+#ifndef METAMODULE
 					if (bHasLeftExpander) {
 						if ((bMuteAllEnabled && bLastAllMuted) && !mutedChannels[channel]) {
 							bMuteAllEnabled = false;
@@ -191,11 +206,14 @@ struct Alchemist : SanguineModule {
 							exclusiveMuteChannel = -1;
 						}
 					}
+#endif
 				}
+#ifndef METAMODULE
 				if (expanderMuteCount > 0 && channel < channelCount) {
 					mutedChannels[channel] = muteVoltages[channel] >= 1.f;
 					exclusiveMuteChannel = -1;
 				}
+#endif
 
 				if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
 					soloedChannels[channel] = !soloedChannels[channel];
@@ -204,6 +222,7 @@ struct Alchemist : SanguineModule {
 						mutedChannels[channel] = false;
 					}
 
+#ifndef METAMODULE
 					if (bHasLeftExpander) {
 						if ((bMuteAllEnabled && bLastAllMuted)) {
 							bMuteAllEnabled = false;
@@ -223,15 +242,19 @@ struct Alchemist : SanguineModule {
 							exclusiveSoloChannel = -1;
 						}
 					}
+#endif
 				}
+#ifndef METAMODULE
 				if (expanderSoloCount > 0 && channel < channelCount) {
 					soloedChannels[channel] = soloVoltages[channel] >= 1.f;
 					exclusiveSoloChannel = -1;
 				}
+#endif
 			}
 
 			soloCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+#ifndef METAMODULE
 				if (bHasLeftExpander) {
 					if (!bMuteExclusiveEnabled && !bIgnoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) ||
 						(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
@@ -255,6 +278,7 @@ struct Alchemist : SanguineModule {
 						}
 					}
 				}
+#endif
 
 				if (soloedChannels[channel]) {
 					++soloCount;
@@ -267,6 +291,7 @@ struct Alchemist : SanguineModule {
 				}
 			}
 
+#ifndef METAMODULE
 			if (bHasLeftExpander) {
 				if (bLastAllMuted != bMuteAllEnabled) {
 					bLastAllMuted = bMuteAllEnabled;
@@ -301,17 +326,22 @@ struct Alchemist : SanguineModule {
 
 			bLastHaveExpanderMuteCv = bHaveExpanderMuteCv;
 			bLastHaveExpanderSoloCv = bHaveExpanderSoloCv;
+#endif
 		}
 
 		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 			if (channel < channelCount) {
+#ifndef METAMODULE
 				if (!bHasRightExpander) {
 					outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
 				} else {
 					outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
 						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
 				}
+#else
+				outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
+#endif
 
 				if (std::fabs(outVoltages[channel]) >= 10.f) {
 					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
@@ -324,20 +354,24 @@ struct Alchemist : SanguineModule {
 					masterOutVoltages[channel] = 0.f;
 				}
 
+#ifndef METAMODULE
 				if (bHasRightExpander) {
 					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
 					if (output.isConnected()) {
 						output.setVoltage(masterOutVoltages[channel]);
 					}
 				}
+#endif
 			} else {
 				outVoltages[channel] = 0.f;
+#ifndef METAMODULE
 				if (bHasRightExpander) {
 					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
 					if (output.isConnected()) {
 						output.setVoltage(0.f);
 					}
 				}
+#endif
 			}
 		}
 
@@ -387,11 +421,14 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
+#ifndef METAMODULE
 			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
+#endif
 
 			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted ? kSanguineButtonLightValue : 0.f, sampleTime);
 
+#ifndef METAMODULE
 			if (bHasLeftExpander) {
 				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled ?
 					kSanguineButtonLightValue : 0.f, sampleTime);
@@ -402,9 +439,11 @@ struct Alchemist : SanguineModule {
 				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled ?
 					kSanguineButtonLightValue : 0.f, sampleTime);
 			}
+#endif
 		}
 	}
 
+#ifndef METAMODULE
 	void onBypass(const BypassEvent& e) override {
 		if (bHasRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
@@ -453,6 +492,7 @@ struct Alchemist : SanguineModule {
 			expanderSoloCount = 0;
 		}
 	}
+#endif
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
@@ -512,8 +552,12 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573), module, Alchemist::LIGHT_EXPANDER_LEFT));
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 5.573), module, Alchemist::LIGHT_EXPANDER_RIGHT));
+#ifndef METAMODULE
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573), module,
+			Alchemist::LIGHT_EXPANDER_LEFT));
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(114.24, 5.573), module,
+			Alchemist::LIGHT_EXPANDER_RIGHT));
+#endif
 
 		static const int componentIdOffset = 8;
 
@@ -541,6 +585,7 @@ struct AlchemistWidget : SanguineModuleWidget {
 			componentX += componentDeltaX;
 		}
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 7.876, 108.973);
 		addChild(inLight);
 
@@ -549,6 +594,13 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		SanguineStaticRGBLight* sumLight = new SanguineStaticRGBLight(module, "res/sum_light_on.svg", 56.096, 107.473, true, kSanguineBlueLight);
 		addChild(sumLight);
+
+		SanguinePolyOutputLight* outPolyLight = new SanguinePolyOutputLight(module, 95.442, 108.973);
+		addChild(outPolyLight);
+
+		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight(module, 108.963, 108.973);
+		addChild(outMonoLight);
+#endif
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(31.615, 114.094), module, Alchemist::INPUT_MASTER_MUTE));
 
@@ -561,12 +613,6 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(71.373, 114.094), module, Alchemist::PARAM_MIX));
 
-		SanguinePolyOutputLight* outPolyLight = new SanguinePolyOutputLight(module, 95.442, 108.973);
-		addChild(outPolyLight);
-
-		SanguineMonoOutputLight* outMonoLight = new SanguineMonoOutputLight(module, 108.963, 108.973);
-		addChild(outMonoLight);
-
 		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 120.785), module, Alchemist::LIGHT_VU));
 		addChild(createLightCentered<MediumLight<GreenLight>>(millimetersToPixelsVec(84.329, 116.729), module, Alchemist::LIGHT_VU + 1));
 		addChild(createLightCentered<MediumLight<YellowLight>>(millimetersToPixelsVec(84.329, 112.652), module, Alchemist::LIGHT_VU + 2));
@@ -578,6 +624,7 @@ struct AlchemistWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(108.963, 116.769), module, Alchemist::OUTPUT_MONO_MIX));
 	}
 
+#ifndef METAMODULE
 	void appendContextMenu(Menu* menu) override {
 		SanguineModuleWidget::appendContextMenu(menu);
 
@@ -603,6 +650,7 @@ struct AlchemistWidget : SanguineModuleWidget {
 				}));
 		}
 	}
+#endif
 };
 
 Model* modelAlchemist = createModel<Alchemist, AlchemistWidget>("Sanguine-Alchemist");
