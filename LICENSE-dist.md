@@ -1,4 +1,4 @@
-#pcg Applies to the PCG family of random number generators.
+# PCG (applies to the PCG family of random number generators)
 
 Copyright (c) 2014-2017 Melissa O'Neill and PCG Project contributors
 
@@ -20,7 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-The cf plugin used as the base for Werewolf is
+---
+
+# The cf plugin used as the base for Werewolf is
 
 BSD 3-Clause License
 Copyright (c) 2019, Clement Foulc
