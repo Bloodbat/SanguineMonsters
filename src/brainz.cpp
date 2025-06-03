@@ -1,6 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#ifndef METAMODULE
 #include "seqcomponents.hpp"
+#endif
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
 
@@ -75,6 +77,9 @@ struct Brainz : SanguineModule {
 		LIGHT_START_TRIGGERS,
 		LIGHT_END_TRIGGERS,
 		ENUMS(LIGHT_OUT_ENABLED, 7),
+#ifdef METAMODULE
+		LIGHT_ONE_SHOT,
+#endif
 		LIGHTS_COUNT
 	};
 
@@ -555,8 +560,6 @@ struct Brainz : SanguineModule {
 					lights[LIGHT_MODULE_STAGE + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
 
-
-
 				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue() ? kSanguineButtonLightValue : 0.f, sampleTime);
 				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue() ? kSanguineButtonLightValue : 0.f, sampleTime);
 
@@ -565,6 +568,10 @@ struct Brainz : SanguineModule {
 				for (int light = 2; light < 7; ++light) {
 					lights[LIGHT_OUT_ENABLED + light].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
 				}
+
+#ifdef METAMODULE
+				lights[LIGHT_ONE_SHOT].setBrightness(static_cast<bool>(params[PARAM_ONE_SHOT].getValue()) ? kSanguineButtonLightValue : 0.f);
+#endif
 
 				handleStepLights(sampleTime);
 
@@ -815,6 +822,7 @@ struct Brainz : SanguineModule {
 	}
 };
 
+#ifndef METAMODULE
 struct YellowGateLight : SanguineStaticRGBLight {
 	YellowGateLight(Module* theModule, const float X, const float Y, bool createCentered = true) :
 		SanguineStaticRGBLight(theModule, "res/gate_lit.svg", X, Y, createCentered, kSanguineYellowLight) {
@@ -850,6 +858,7 @@ struct BlueQuarterNoteLight : SanguineStaticRGBLight {
 		SanguineStaticRGBLight(theModule, "res/quarter_note_lit.svg", X, Y, createCentered, kSanguineBlueLight) {
 	}
 };
+#endif
 
 struct BrainzWidget : SanguineModuleWidget {
 	explicit BrainzWidget(Brainz* module) {
@@ -864,11 +873,19 @@ struct BrainzWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+#ifndef METAMODULE
 		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(97.39, 11.87), module,
 			Brainz::PARAM_PLAY_BUTTON));
 
 		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(109.556, 11.87), module,
 			Brainz::PARAM_RESET_BUTTON));
+#else
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(97.39, 11.87), module,
+			Brainz::PARAM_PLAY_BUTTON));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(109.556, 11.87), module,
+			Brainz::PARAM_RESET_BUTTON));
+#endif
 
 		CKD6* btnModuleDirection = createParamCentered<CKD6>(millimetersToPixelsVec(81.319, 59.888), module, Brainz::PARAM_MODULE_DIRECTION);
 		btnModuleDirection->momentary = false;
@@ -950,7 +967,12 @@ struct BrainzWidget : SanguineModuleWidget {
 			currentX += deltaX;
 		}
 
+#ifndef METAMODULE
 		addParam(createParam<SeqButtonOneShotSmall>(millimetersToPixelsVec(91.231, 57.888), module, Brainz::PARAM_ONE_SHOT));
+#else
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(91.231, 59.888),
+			module, Brainz::PARAM_ONE_SHOT, Brainz::LIGHT_ONE_SHOT));
+#endif
 
 		FramebufferWidget* brainzFrameBuffer = new FramebufferWidget();
 		addChild(brainzFrameBuffer);
@@ -987,6 +1009,7 @@ struct BrainzWidget : SanguineModuleWidget {
 		brainzFrameBuffer->addChild(displayMetronomeTotalSteps);
 		displayMetronomeTotalSteps->fallbackNumber = 10;
 
+#ifndef METAMODULE
 		SanguineStaticRGBLight* inPlayLight = new SanguineStaticRGBLight(module, "res/play_lit.svg", 7.402, 109.601,
 			true, kSanguineYellowLight);
 		addChild(inPlayLight);
@@ -1089,6 +1112,7 @@ struct BrainzWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 44.248, 116.867);
 		addChild(monstersLight);
+#endif
 
 		if (module) {
 			displayStepsACurrent->values.numberValue = &module->currentCounters[0];
