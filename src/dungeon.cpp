@@ -214,6 +214,7 @@ struct Dungeon : SanguineModule {
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
 			}
 
+			// TODO: MetaModule can't do this at all!
 			if (inVoltage >= 1.f) {
 				outerMoon = dungeon::moonColors[2].outerColor;
 				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.r,
