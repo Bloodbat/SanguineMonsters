@@ -1,6 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#ifndef METAMODULE
 #include "seqcomponents.hpp"
+#endif
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
 
@@ -18,10 +20,28 @@ struct Raiju : SanguineModule {
 		PARAMS_COUNT
 	};
 
+	enum InputIds {
+		INPUTS_COUNT
+	};
+
 	enum OutputIds {
 		ENUMS(OUTPUT_VOLTAGE, kVoltagesCount),
 		OUTPUT_EIGHT_CHANNELS,
 		OUTPUTS_COUNT
+	};
+
+	enum LightIds {
+#ifdef METAMODULE
+		ENUMS(LIGHT_SELECTED_CHANNEL_1, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_2, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_3, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_4, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_5, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_6, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_7, 2),
+		ENUMS(LIGHT_SELECTED_CHANNEL_8, 2),
+#endif
+		LIGHTS_COUNT
 	};
 
 	bool bOutputConnected = false;
@@ -43,7 +63,7 @@ struct Raiju : SanguineModule {
 	dsp::ClockDivider clockDivider;
 
 	Raiju() {
-		config(PARAMS_COUNT, 0, OUTPUTS_COUNT, 0);
+		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
 		configParam(PARAM_CHANNEL_COUNT, 1.f, 16.f, 1.f, "Polyphonic output channels", "", 0.f, 1.f, 0.f);
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
@@ -58,14 +78,6 @@ struct Raiju : SanguineModule {
 		memset(voltages, 0, sizeof(float) * kVoltagesCount);
 
 		clockDivider.setDivision(kClockDivision);
-	}
-
-	void pollSwitches() {
-		for (uint8_t button = 0; button < kVoltagesCount; ++button) {
-			if (btButtons[button].process(params[PARAM_VOLTAGE_SELECTOR + button].getValue())) {
-				selectedVoltage = button;
-			}
-		}
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -106,11 +118,26 @@ struct Raiju : SanguineModule {
 					std::fill(outputVoltages, outputVoltages + PORT_MAX_CHANNELS, voltages[voltage]);
 					outputs[OUTPUT_VOLTAGE + voltage].writeVoltages(outputVoltages);
 				}
+
+#ifdef METAMODULE
+				int currentLight = LIGHT_SELECTED_CHANNEL_1 + voltage * 2;
+				bool bIsSelectedVoltage = selectedVoltage == voltage;
+				lights[currentLight + 0].setBrightness(!bIsSelectedVoltage ? kSanguineButtonLightValue : 0.f);
+				lights[currentLight + 1].setBrightness(bIsSelectedVoltage ? kSanguineButtonLightValue : 0.f);
+#endif
 			}
 
 			if (bPolyOutConnected) {
 				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
 				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
+			}
+		}
+	}
+
+	void pollSwitches() {
+		for (uint8_t button = 0; button < kVoltagesCount; ++button) {
+			if (btButtons[button].process(params[PARAM_VOLTAGE_SELECTOR + button].getValue())) {
+				selectedVoltage = button;
 			}
 		}
 	}
@@ -186,6 +213,7 @@ struct RaijuWidget : SanguineModuleWidget {
 		FramebufferWidget* raijuFrameBuffer = new FramebufferWidget();
 		addChild(raijuFrameBuffer);
 
+#ifndef METAMODULE
 		currentY = 29.182f;
 		yDistance = 19.689f;
 
@@ -221,6 +249,43 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		addParam(createParam<SeqStep8Big>(millimetersToPixelsVec(125.548, currentY),
 			module, Raiju::PARAM_VOLTAGE_SELECTOR + 7));
+#else
+		currentY = 32.982f;
+		yDistance = 19.688f;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(9.412, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0, Raiju::LIGHT_SELECTED_CHANNEL_1));
+		currentY += yDistance;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(9.412, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 1, Raiju::LIGHT_SELECTED_CHANNEL_2));
+		currentY += yDistance;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(9.412, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 2, Raiju::LIGHT_SELECTED_CHANNEL_3));
+		currentY += yDistance;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(9.412, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 3, Raiju::LIGHT_SELECTED_CHANNEL_4));
+
+		currentY = 32.982f;
+		yDistance = 19.688f;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(127.748, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 4, Raiju::LIGHT_SELECTED_CHANNEL_5));
+		currentY += yDistance;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(127.748, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 5, Raiju::LIGHT_SELECTED_CHANNEL_6));
+		currentY += yDistance;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(127.748, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 6, Raiju::LIGHT_SELECTED_CHANNEL_7));
+		currentY += yDistance;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(127.748, currentY),
+			module, Raiju::PARAM_VOLTAGE_SELECTOR + 7, Raiju::LIGHT_SELECTED_CHANNEL_8));
+#endif
 
 		SanguineLedNumberDisplay* displayChannelCount = new SanguineLedNumberDisplay(2, module, 112.331, 15.197);
 		raijuFrameBuffer->addChild(displayChannelCount);
@@ -258,6 +323,7 @@ struct RaijuWidget : SanguineModuleWidget {
 		raijuFrameBuffer->addChild(displayVoltage8);
 		displayVoltage8->fallbackString = raiju::kBrowserDisplayText;
 
+#ifndef METAMODULE
 		SanguineStaticRGBLight* channelsLight = new SanguineStaticRGBLight(module, "res/channels_lit.svg",
 			127.365, 20.199, true, kSanguineBlueLight);
 		addChild(channelsLight);
@@ -270,6 +336,7 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 19.747, 116.774);
 		addChild(monstersLight);
+#endif
 
 		if (module) {
 			displayChannelCount->values.numberValue = (&module->currentChannelCount);
