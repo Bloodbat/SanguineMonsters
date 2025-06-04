@@ -219,8 +219,14 @@ struct FortunaWidget : SanguineModuleWidget {
         addScrews(SCREW_ALL);
 
         // Switch #1
+#ifndef METAMODULE
         SanguinePolyInputLight* inLight1 = new SanguinePolyInputLight(module, 6.413, 19.362);
         addChild(inLight1);
+
+        SanguineStaticRGBLight* triggerLight1 = new SanguineStaticRGBLight(module,
+            "res/trigger_in_lit.svg", 6.413, 51.36, true, kSanguineBlueLight);
+        addChild(triggerLight1);
+#endif
 
         addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(34.212, 20.521), module,
             Fortuna::LIGHT_GATE_STATE_1_A));
@@ -236,15 +242,18 @@ struct FortunaWidget : SanguineModuleWidget {
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.32, 53.515), module, Fortuna::INPUT_P_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 44.323), module, Fortuna::OUTPUT_OUT_1B));
 
-        SanguineStaticRGBLight* triggerLight1 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 51.36, true, kSanguineBlueLight);
-        addChild(triggerLight1);
-
         addChild(createLightCentered<SmallLight<GreenLight>>(millimetersToPixelsVec(34.212, 50.01), module,
             Fortuna::LIGHT_GATE_STATE_1_B));
 
         // Switch #2
+#ifndef METAMODULE
         SanguinePolyInputLight* inLight2 = new SanguinePolyInputLight(module, 6.413, 78.759);
         addChild(inLight2);
+
+        SanguineStaticRGBLight* triggerLight2 = new SanguineStaticRGBLight(module,
+            "res/trigger_in_lit.svg", 6.413, 110.757, true, kSanguineBlueLight);
+        addChild(triggerLight2);
+#endif
 
         addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(34.212, 79.916), module,
             Fortuna::LIGHT_GATE_STATE_2_A));
@@ -259,9 +268,6 @@ struct FortunaWidget : SanguineModuleWidget {
             Fortuna::PARAM_ROLL_MODE_2, Fortuna::LIGHTS_ROLL_MODE + 1 * 2));
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 103.709), module, Fortuna::INPUT_TRIGGER_2));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 103.709), module, Fortuna::OUTPUT_OUT_2B));
-
-        SanguineStaticRGBLight* triggerLight2 = new SanguineStaticRGBLight(module, "res/trigger_in_lit.svg", 6.413, 110.757, true, kSanguineBlueLight);
-        addChild(triggerLight2);
 
         addChild(createLightCentered<SmallLight<GreenLight>>(millimetersToPixelsVec(34.212, 109.408), module,
             Fortuna::LIGHT_GATE_STATE_2_B));
