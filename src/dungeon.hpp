@@ -1,6 +1,7 @@
 #pragma once
 
 namespace dungeon {
+#ifndef METAMODULE
     struct GradientColors {
         NVGcolor innerColor;
         NVGcolor outerColor;
@@ -11,6 +12,7 @@ namespace dungeon {
         { nvgRGB(228, 228, 228), nvgRGB(161, 161, 161) },
         { nvgRGB(181, 211, 237), nvgRGB(117, 172, 215) }
     };
+#endif
 
     static const std::vector<std::string> modeLabels{
         "SH ",
