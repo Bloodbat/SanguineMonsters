@@ -1,6 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#ifndef METAMODULE
 #include "seqcomponents.hpp"
+#endif
 #include "sanguinehelpers.hpp"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
@@ -35,6 +37,9 @@ struct Oraculus : SanguineModule {
 
 	enum LightIds {
 		ENUMS(LIGHT_CHANNEL, 16 * 3),
+#ifdef METAMODULE
+		LIGHT_NO_REPEATS,
+#endif
 		LIGHTS_COUNT
 	};
 
@@ -205,6 +210,11 @@ struct Oraculus : SanguineModule {
 				lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
 			}
 		}
+
+#ifdef METAMODULE
+		lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) ?
+			kSanguineButtonLightValue : 0.f);
+#endif
 	}
 };
 
@@ -232,9 +242,7 @@ struct OraculusWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.78, 113.488), module, Oraculus::OUTPUT_MONOPHONIC));
 
-		FramebufferWidget* oraculusFrameBuffer = new FramebufferWidget();
-		addChild(oraculusFrameBuffer);
-
+#ifndef METAMODULE
 		addParam(createParamCentered<SeqButtonUp>(millimetersToPixelsVec(25.451, 55.801), module, Oraculus::PARAM_INCREASE));
 
 		addParam(createParamCentered<SeqButtonDown>(millimetersToPixelsVec(25.451f, 68.984f), module, Oraculus::PARAM_DECREASE));
@@ -250,6 +258,18 @@ struct OraculusWidget : SanguineModuleWidget {
 		addChild(outMonoLight);
 
 		addParam(createParam<SeqButtonNoRepeatsSmall>(millimetersToPixelsVec(9.454, 41.189), module, Oraculus::PARAM_NO_REPEATS));
+#else
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 55.801f), module, Oraculus::PARAM_INCREASE));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 68.984f), module, Oraculus::PARAM_DECREASE));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 82.168f), module, Oraculus::PARAM_RANDOM));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 95.351f), module, Oraculus::PARAM_RESET));
+
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<PurpleLight>>>(millimetersToPixelsVec(11.454, 44.889), module,
+			Oraculus::PARAM_NO_REPEATS, Oraculus::LIGHT_NO_REPEATS));
+#endif
 
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(23.734, 15.11), module, Oraculus::LIGHT_CHANNEL + 0 * 3));
 
