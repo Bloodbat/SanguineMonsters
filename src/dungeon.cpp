@@ -31,6 +31,9 @@ struct Dungeon : SanguineModule {
 	enum LightIds {
 		LIGHT_TRIGGER,
 		ENUMS(LIGHT_SLEW, 2),
+#ifdef METAMODULE
+		ENUMS(LIGHT_VOLTAGE, 3),
+#endif
 		LIGHTS_COUNT
 	};
 
@@ -46,8 +49,10 @@ struct Dungeon : SanguineModule {
 		MODE_HOLD_AND_TRACK
 	} moduleMode = MODE_SAMPLE_AND_HOLD;
 
+#ifndef METAMODULE
 	NVGcolor innerMoon = dungeon::moonColors[1].innerColor;
 	NVGcolor outerMoon = dungeon::moonColors[1].outerColor;
+#endif
 
 	static const int kClockDividerFrequency = 512;
 
@@ -58,7 +63,9 @@ struct Dungeon : SanguineModule {
 
 	bool bStoreVoltageInPatch = true;
 
+#ifndef METAMODULE
 	HaloTypes haloType = HALO_CIRCULAR;
+#endif
 
 	std::string modeLabel = dungeon::modeLabels[0];
 
@@ -214,7 +221,7 @@ struct Dungeon : SanguineModule {
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
 			}
 
-			// TODO: MetaModule can't do this at all!
+#ifndef METAMODULE
 			if (inVoltage >= 1.f) {
 				outerMoon = dungeon::moonColors[2].outerColor;
 				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.r,
@@ -240,6 +247,22 @@ struct Dungeon : SanguineModule {
 				innerMoon.b = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.b,
 					dungeon::moonColors[0].innerColor.b);
 			}
+#else
+			if (inVoltage >= 1.f) {
+				lights[LIGHT_VOLTAGE + 0].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE + 1].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE + 2].setBrightness(rescale(inVoltage, 1.f, 10.f, 0.f, 1.f));
+			} else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
+				float rescaledVoltage = rescale(inVoltage, -0.99f, 0.99f, 0.f, 1.f);
+				lights[LIGHT_VOLTAGE + 0].setBrightness(rescaledVoltage);
+				lights[LIGHT_VOLTAGE + 1].setBrightness(rescaledVoltage);
+				lights[LIGHT_VOLTAGE + 2].setBrightness(rescaledVoltage);
+			} else {
+				lights[LIGHT_VOLTAGE + 0].setBrightness(rescale(inVoltage, -10.f, -1.f, 0.f, 1.f));
+				lights[LIGHT_VOLTAGE + 1].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE + 2].setBrightness(0.f);
+			}
+#endif
 		}
 	}
 
@@ -251,7 +274,9 @@ struct Dungeon : SanguineModule {
 		if (bStoreVoltageInPatch) {
 			setJsonFloat(rootJ, "heldVoltage", engine.voltage);
 		}
+#ifndef METAMODULE
 		setJsonInt(rootJ, "haloType", static_cast<int>(haloType));
+#endif
 
 		return rootJ;
 	}
@@ -269,9 +294,11 @@ struct Dungeon : SanguineModule {
 
 		json_int_t intValue;
 
+#ifndef METAMODULE
 		if (getJsonInt(rootJ, "haloType", intValue)) {
 			haloType = static_cast<HaloTypes>(intValue);
 		}
+#endif
 	}
 };
 
@@ -291,6 +318,7 @@ struct DungeonWidget : SanguineModuleWidget {
 		FramebufferWidget* dungeonFrameBuffer = new FramebufferWidget();
 		addChild(dungeonFrameBuffer);
 
+#ifndef METAMODULE
 		SanguineMultiColoredShapedLight* moonLight = new SanguineMultiColoredShapedLight();
 		moonLight->box.pos = millimetersToPixelsVec(3.361, 27.351);
 		moonLight->module = module;
@@ -298,6 +326,10 @@ struct DungeonWidget : SanguineModuleWidget {
 		moonLight->svgGradient = Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_gradient.svg"));
 		moonLight->haloRadiusFactor = 2.1f;
 		dungeonFrameBuffer->addChild(moonLight);
+#else
+		addChild(createLightCentered<LargeLight<RedGreenBlueLight>>(millimetersToPixelsVec(36.76, 55.256), module,
+			Dungeon::LIGHT_VOLTAGE));
+#endif
 
 		addParam(createParamCentered<CKD6>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::PARAM_TRIGGER));
 		addChild(createLightCentered<CKD6Light<RedLight>>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::LIGHT_TRIGGER));
@@ -319,6 +351,7 @@ struct DungeonWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 100.733), module, Dungeon::OUTPUT_NOISE));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 116.011), module, Dungeon::OUTPUT_VOLTAGE));
 
+#ifndef METAMODULE
 		SanguineStaticRGBLight* clockLight = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 8.762, 93.246, true, kSanguineYellowLight);
 		addChild(clockLight);
 
@@ -336,11 +369,14 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 38.928, 116.658);
 		addChild(monstersLight);
+#endif
 
 		if (module) {
+#ifndef METAMODULE
 			moonLight->innerColor = &module->innerMoon;
 			moonLight->outerColor = &module->outerMoon;
 			moonLight->haloType = &module->haloType;
+#endif
 
 			displayMode->values.displayText = &module->modeLabel;
 		}
@@ -359,11 +395,13 @@ struct DungeonWidget : SanguineModuleWidget {
 					[=]() {return module->bStoreVoltageInPatch; },
 					[=]() {module->bStoreVoltageInPatch = !module->bStoreVoltageInPatch; }));
 
+#ifndef METAMODULE
 				menu->addChild(new MenuSeparator);
 
 				menu->addChild(createCheckMenuItem("Draw moon halo", "",
 					[=]() { return module->haloType == HALO_CIRCULAR ? true : false; },
 					[=]() { module->haloType == HALO_CIRCULAR ? module->haloType = HALO_NONE : module->haloType = HALO_CIRCULAR; }));
+#endif
 			}
 		));
 	}
