@@ -105,13 +105,12 @@ struct MedusaWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight(module, 8.119, 22.162);
 		addChild(lightInput1);
 
 		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight(module, 24.625, 22.162);
 		addChild(lightOutput1);
-
-		createComponentColumn(10, 8.119, 24.625, 16.378, 0);
 
 		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight(module, 42.912, 22.162);
 		addChild(lightInput2);
@@ -119,15 +118,11 @@ struct MedusaWidget : SanguineModuleWidget {
 		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 59.418, 22.162);
 		addChild(lightOutput2);
 
-		createComponentColumn(6, 42.912, 59.418, 51.171, 10);
-
 		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight(module, 77.742, 22.162);
 		addChild(lightInput3);
 
 		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight(module, 94.248, 22.162);
 		addChild(lightOutput3);
-
-		createComponentColumn(6, 77.742, 94.248, 86.001, 16);
 
 		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight(module, 112.535, 22.162);
 		addChild(lightInput4);
@@ -135,13 +130,24 @@ struct MedusaWidget : SanguineModuleWidget {
 		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight(module, 129.041, 22.162);
 		addChild(lightOutput4);
 
-		createComponentColumn(10, 112.535, 129.041, 120.794, 22);
-
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 58.816, 110.201);
 		addChild(bloodLight);
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 71.948, 117.156);
 		addChild(monstersLight);
+#endif
+
+		// 1st column
+		createComponentColumn(10, 8.119, 24.625, 16.378, 0);
+
+		// 2nd column
+		createComponentColumn(6, 42.912, 59.418, 51.171, 10);
+
+		// 3rd column
+		createComponentColumn(6, 77.742, 94.248, 86.001, 16);
+
+		// 4th column
+		createComponentColumn(10, 112.535, 129.041, 120.794, 22);
 	}
 
 	void createComponentColumn(const int componentCount, const float inputsX,
