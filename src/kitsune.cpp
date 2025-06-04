@@ -2,7 +2,9 @@
 #include "sanguinejson.hpp"
 
 #include "kitsune.hpp"
+#ifndef METAMODULE
 #include "denki.hpp"
+#endif
 
 struct Kitsune : SanguineModule {
 
@@ -44,14 +46,18 @@ struct Kitsune : SanguineModule {
 		ENUMS(LIGHT_NORMALLED2, 3),
 		ENUMS(LIGHT_NORMALLED3, 3),
 		ENUMS(LIGHT_NORMALLED4, 3),
+#ifndef METAMODULE
 		LIGHT_EXPANDER,
+#endif
 		LIGHTS_COUNT
 	};
 
 	dsp::ClockDivider lightsDivider;
 	const int kLightDivisor = 64;
 
+#ifndef METAMODULE
 	bool bHasExpander = false;
+#endif
 
 	kitsune::NormalledModes normalledMode = kitsune::NORMAL_SMART;
 
@@ -79,14 +85,17 @@ struct Kitsune : SanguineModule {
 
 		bool bIsLightsTurn = lightsDivider.process();
 
+#ifndef METAMODULE
 		Module* denkiExpander = getRightExpander().module;
 
 		bHasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki && !denkiExpander->isBypassed());
+#endif
 
 		if (bIsLightsTurn) {
 			sampleTime = kLightDivisor * args.sampleTime;
-
+#ifndef METAMODULE
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
+#endif
 		}
 
 		normalledMode = kitsune::NormalledModes(params[PARAM_NORMALLING_MODE].getValue());
@@ -116,6 +125,7 @@ struct Kitsune : SanguineModule {
 				float_4 gains = params[PARAM_ATTENUATOR1 + section].getValue();
 				float_4 offsets = params[PARAM_OFFSET1 + section].getValue();
 
+#ifndef METAMODULE
 				if (bHasExpander) {
 					if (denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).isConnected()) {
 						gains *= denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
@@ -126,6 +136,7 @@ struct Kitsune : SanguineModule {
 						offsets = simd::clamp(offsets, -10.f, 10.f);
 					}
 				}
+#endif
 
 				voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
 
@@ -150,6 +161,7 @@ struct Kitsune : SanguineModule {
 					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
 
+#ifndef METAMODULE
 					if (bHasExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 						float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
@@ -165,6 +177,7 @@ struct Kitsune : SanguineModule {
 						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);
 					}
+#endif
 				} else {
 					float* outputVoltages = outputs[OUTPUT_VOLTAGE1 + section].getVoltages();
 					float lightValue = 0;
@@ -173,10 +186,12 @@ struct Kitsune : SanguineModule {
 					for (int channel = 0; channel < channelCount; ++channel) {
 						lightValue += outputVoltages[channel];
 
+#ifndef METAMODULE
 						if (bHasExpander) {
 							cvGainLightValue += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage(channel);
 							cvOffsetLightValue += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage(channel);
 						}
+#endif
 					}
 					lightValue /= channelCount;
 
@@ -185,6 +200,7 @@ struct Kitsune : SanguineModule {
 					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 
+#ifndef METAMODULE
 					if (bHasExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 
@@ -205,11 +221,13 @@ struct Kitsune : SanguineModule {
 						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
 						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(cvOffsetLightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 					}
+#endif
 				}
 			}
 		}
 	}
 
+#ifndef METAMODULE
 	void onBypass(const BypassEvent& e) override {
 		if (bHasExpander) {
 			Module* denkiExpander = getRightExpander().module;
@@ -225,6 +243,7 @@ struct Kitsune : SanguineModule {
 		}
 		Module::onUnBypass(e);
 	}
+#endif
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
@@ -262,22 +281,26 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+#ifndef METAMODULE
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(48.017, 5.573), module, Kitsune::LIGHT_EXPANDER));
+#endif
 
 		// Section 1.
 		addParam(createParamCentered<Davies1900hBlackKnob>(millimetersToPixelsVec(12.7, 11.198), module, Kitsune::PARAM_ATTENUATOR1));
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(12.7, 30.085), module, Kitsune::PARAM_OFFSET1));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(12.701, 41.9), module, Kitsune::LIGHT_VOLTAGE1));
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight(module, 5.988, 48.4);
 		addChild(lightInput1);
+
+		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight(module, 19.099, 47.999);
+		addChild(lightOutput1);
+#endif
 
 		addChild(createLightCentered<TinyLight<RedGreenBlueLight>>(millimetersToPixelsVec(2.869, 51.176), module, Kitsune::LIGHT_NORMALLED1));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(5.988, 55.888), module, Kitsune::INPUT_VOLTAGE1));
-
-		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight(module, 19.099, 47.999);
-		addChild(lightOutput1);
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(19.099, 55.888), module, Kitsune::OUTPUT_VOLTAGE1));
 
@@ -286,15 +309,17 @@ struct KitsuneWidget : SanguineModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(12.7, 92.618), module, Kitsune::PARAM_OFFSET2));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(12.701, 104.433), module, Kitsune::LIGHT_VOLTAGE2));
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight(module, 5.988, 110.933);
 		addChild(lightInput2);
+
+		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 19.099, 110.533);
+		addChild(lightOutput2);
+#endif
 
 		addChild(createLightCentered<TinyLight<RedGreenBlueLight>>(millimetersToPixelsVec(2.869, 113.71), module, Kitsune::LIGHT_NORMALLED2));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(5.988, 118.422), module, Kitsune::INPUT_VOLTAGE2));
-
-		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 19.099, 110.533);
-		addChild(lightOutput2);
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(19.099, 118.422), module, Kitsune::OUTPUT_VOLTAGE2));
 
@@ -303,15 +328,17 @@ struct KitsuneWidget : SanguineModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.099, 30.085), module, Kitsune::PARAM_OFFSET3));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.1, 41.9), module, Kitsune::LIGHT_VOLTAGE3));
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight(module, 31.387, 48.4);
 		addChild(lightInput3);
+
+		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight(module, 44.498, 47.999);
+		addChild(lightOutput3);
+#endif
 
 		addChild(createLightCentered<TinyLight<RedGreenBlueLight>>(millimetersToPixelsVec(28.249, 51.176), module, Kitsune::LIGHT_NORMALLED3));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(31.387, 55.888), module, Kitsune::INPUT_VOLTAGE3));
-
-		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight(module, 44.498, 47.999);
-		addChild(lightOutput3);
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(44.498, 55.888), module, Kitsune::OUTPUT_VOLTAGE3));
 
@@ -320,15 +347,17 @@ struct KitsuneWidget : SanguineModuleWidget {
 		addParam(createParamCentered<Davies1900hRedKnob>(millimetersToPixelsVec(38.099, 92.618), module, Kitsune::PARAM_OFFSET4));
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.1, 104.433), module, Kitsune::LIGHT_VOLTAGE4));
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight(module, 31.387, 110.933);
 		addChild(lightInput4);
+
+		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight(module, 44.498, 110.533);
+		addChild(lightOutput4);
+#endif
 
 		addChild(createLightCentered<TinyLight<RedGreenBlueLight>>(millimetersToPixelsVec(28.249, 113.71), module, Kitsune::LIGHT_NORMALLED4));
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(31.387, 118.422), module, Kitsune::INPUT_VOLTAGE4));
-
-		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight(module, 44.498, 110.533);
-		addChild(lightOutput4);
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(44.498, 118.422), module, Kitsune::OUTPUT_VOLTAGE4));
 
@@ -354,6 +383,7 @@ struct KitsuneWidget : SanguineModuleWidget {
 			}
 		));
 
+#ifndef METAMODULE
 		menu->addChild(new MenuSeparator);
 		const Module* expander = kitsune->rightExpander.module;
 		if (expander && expander->model == modelDenki) {
@@ -363,6 +393,7 @@ struct KitsuneWidget : SanguineModuleWidget {
 				kitsune->addExpander(modelDenki, this);
 				}));
 		}
+#endif
 	}
 };
 
