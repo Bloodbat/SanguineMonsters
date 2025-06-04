@@ -218,7 +218,7 @@ struct FortunaWidget : SanguineModuleWidget {
 
         addScrews(SCREW_ALL);
 
-        // Switch #1
+        // Section 1
 #ifndef METAMODULE
         SanguinePolyInputLight* inLight1 = new SanguinePolyInputLight(module, 6.413, 19.362);
         addChild(inLight1);
@@ -245,7 +245,7 @@ struct FortunaWidget : SanguineModuleWidget {
         addChild(createLightCentered<SmallLight<GreenLight>>(millimetersToPixelsVec(34.212, 50.01), module,
             Fortuna::LIGHT_GATE_STATE_1_B));
 
-        // Switch #2
+        // Section 2
 #ifndef METAMODULE
         SanguinePolyInputLight* inLight2 = new SanguinePolyInputLight(module, 6.413, 78.759);
         addChild(inLight2);
