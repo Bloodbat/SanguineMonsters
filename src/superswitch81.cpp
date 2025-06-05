@@ -1,6 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#ifndef METAMODULE
 #include "seqcomponents.hpp"
+#endif
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
 
@@ -10,7 +12,9 @@
 #pragma GCC diagnostic pop
 
 #include "switches.hpp"
+#ifndef METAMODULE
 #include "manus.hpp"
+#endif
 
 using simd::float_4;
 
@@ -59,7 +63,22 @@ struct SuperSwitch81 : SanguineModule {
 	};
 
 	enum LightIds {
+#ifndef METAMODULE
 		LIGHT_EXPANDER,
+#endif
+#ifdef METAMODULE
+		LIGHT_NO_REPEATS,
+		LIGHT_RESET_TO_FIRST_STEP,
+		LIGHT_ONE_SHOT,
+		ENUMS(LIGHT_STEP_1, 2),
+		ENUMS(LIGHT_STEP_2, 2),
+		ENUMS(LIGHT_STEP_3, 2),
+		ENUMS(LIGHT_STEP_4, 2),
+		ENUMS(LIGHT_STEP_5, 2),
+		ENUMS(LIGHT_STEP_6, 2),
+		ENUMS(LIGHT_STEP_7, 2),
+		ENUMS(LIGHT_STEP_8, 2),
+#endif
 		LIGHTS_COUNT
 	};
 
@@ -80,7 +99,9 @@ struct SuperSwitch81 : SanguineModule {
 	bool bOneShot = false;
 	bool bOneShotDone = false;
 	bool bResetToFirstStep = true;
+#ifndef METAMODULE
 	bool bHasExpander = false;
+#endif
 	int inChannelCount = 0;
 	int randomNum = 0;
 	int selectedIn = 0;
@@ -193,9 +214,11 @@ struct SuperSwitch81 : SanguineModule {
 	};
 
 	void process(const ProcessArgs& args) override {
+#ifndef METAMODULE
 		Module* manusExpander = getLeftExpander().module;
 
 		bHasExpander = (manusExpander && manusExpander->getModel() == modelManus && !manusExpander->isBypassed());
+#endif
 
 		if (clockDivider.process()) {
 			const float sampleTime = args.sampleTime * kClockDivider;
@@ -212,8 +235,20 @@ struct SuperSwitch81 : SanguineModule {
 				} else {
 					params[PARAM_STEP1 + step].setValue(2);
 				}
+
+#ifdef METAMODULE
+				int currentLight = LIGHT_STEP_1 + step * 2;
+				if (step < stepCount) {
+					lights[currentLight + 0].setBrightness(step == selectedIn ? 0.f : kSanguineButtonLightValue);
+					lights[currentLight + 1].setBrightness(step == selectedIn ? kSanguineButtonLightValue : 0.f);
+				} else {
+					lights[currentLight + 0].setBrightness(0.f);
+					lights[currentLight + 1].setBrightness(0.f);
+				}
+#endif
 			}
 
+#ifndef METAMODULE
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 
 			if (bHasExpander) {
@@ -226,14 +261,23 @@ struct SuperSwitch81 : SanguineModule {
 					}
 				}
 			}
+#endif
+#ifdef METAMODULE
+			lights[LIGHT_RESET_TO_FIRST_STEP].setBrightness(static_cast<bool>(params[PARAM_RESET_TO_FIRST_STEP].getValue()) ?
+				kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_ONE_SHOT].setBrightness(static_cast<bool>(params[PARAM_ONE_SHOT].getValue()) ?
+				kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) ?
+				kSanguineButtonLightValue : 0.f);
+#endif
 		}
 
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
 			outVoltages[channel / 4] = 0.f;
 		}
 
-		if ((inputs[INPUT_RESET].isConnected() && stInputReset.process(inputs[INPUT_RESET].getVoltage()))
-			|| btReset.process(params[PARAM_RESET].getValue())) {
+		if ((inputs[INPUT_RESET].isConnected() && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
+			btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
 		}
 
@@ -255,12 +299,14 @@ struct SuperSwitch81 : SanguineModule {
 
 			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
 				for (int step = 0; step < stepCount; ++step) {
+#ifndef METAMODULE
 					if (bHasExpander) {
 						const int currentInput = Manus::INPUT_STEP_1 + step;
 						if (stDirectSteps[step].process(manusExpander->getInput(currentInput).getVoltage()) && step < stepCount) {
 							selectedIn = step;
 						}
 					}
+#endif
 
 					if (btSteps[step].process(params[PARAM_STEP1 + step].getValue()) && step < stepCount) {
 						selectedIn = step;
@@ -352,6 +398,7 @@ struct SuperSwitch81 : SanguineModule {
 		bLastOneShotValue = bOneShot;
 	}
 
+#ifndef METAMODULE
 	void onBypass(const BypassEvent& e) override {
 		if (bHasExpander) {
 			Module* manusExpander = getRightExpander().module;
@@ -367,6 +414,7 @@ struct SuperSwitch81 : SanguineModule {
 		}
 		Module::onUnBypass(e);
 	}
+#endif
 };
 
 struct SuperSwitch81Widget : SanguineModuleWidget {
@@ -382,7 +430,10 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6f, 5.573f), module, SuperSwitch81::LIGHT_EXPANDER));
+#ifndef METAMODULE
+		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6f, 5.573f), module,
+			SuperSwitch81::LIGHT_EXPANDER));
+#endif
 
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(56.197, 18.272), module, SuperSwitch81::PARAM_STEPS));
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(56.197, 32.461), module, SuperSwitch81::INPUT_STEPS));
@@ -405,6 +456,7 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 		currentY += deltaY;
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.153, currentY), module, SuperSwitch81::INPUT_IN8));
 
+#ifndef METAMODULE
 		currentY = 20.104f;
 
 		addParam(createParam<SeqStep1Big>(millimetersToPixelsVec(18.763, currentY), module, SuperSwitch81::PARAM_STEP1));
@@ -430,13 +482,62 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 
 		addParam(createParam<SeqStep8Big>(millimetersToPixelsVec(18.763, currentY), module, SuperSwitch81::PARAM_STEP8));
 
-		currentY = 43.085f;
+		addParam(createParam<SeqButtonNoRepeatsSmall>(millimetersToPixelsVec(33.4, 43.085f), module, SuperSwitch81::PARAM_NO_REPEATS));
+		addParam(createParam<SeqButtonOneShotSmall>(millimetersToPixelsVec(46.3, 43.085f), module, SuperSwitch81::PARAM_ONE_SHOT));
+		addParam(createParam<SeqButtonResetToOne>(millimetersToPixelsVec(59.2, 43.085f), module, SuperSwitch81::PARAM_RESET_TO_FIRST_STEP));
 
-		addParam(createParam<SeqButtonNoRepeatsSmall>(millimetersToPixelsVec(33.4, currentY), module, SuperSwitch81::PARAM_NO_REPEATS));
+		addParam(createParamCentered<SeqButtonUp>(millimetersToPixelsVec(40.692, 55.292), module, SuperSwitch81::PARAM_INCREASE));
+		addParam(createParamCentered<SeqButtonDown>(millimetersToPixelsVec(40.692, 69.922), module, SuperSwitch81::PARAM_DECREASE));
+		addParam(createParamCentered<SeqButtonRandom>(millimetersToPixelsVec(40.692, 84.553), module, SuperSwitch81::PARAM_RANDOM));
+		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(40.692, 99.184), module, SuperSwitch81::PARAM_RESET));
+#else
+		currentY = 23.904f;
 
-		addParam(createParam<SeqButtonOneShotSmall>(millimetersToPixelsVec(46.3, currentY), module, SuperSwitch81::PARAM_ONE_SHOT));
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP1, SuperSwitch81::LIGHT_STEP_1));
+		currentY += deltaY;
 
-		addParam(createParam<SeqButtonResetToOne>(millimetersToPixelsVec(59.2, currentY), module, SuperSwitch81::PARAM_RESET_TO_FIRST_STEP));
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP2, SuperSwitch81::LIGHT_STEP_2));
+		currentY += deltaY;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP3, SuperSwitch81::LIGHT_STEP_3));
+		currentY += deltaY;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP4, SuperSwitch81::LIGHT_STEP_4));
+		currentY += deltaY;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP5, SuperSwitch81::LIGHT_STEP_5));
+		currentY += deltaY;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP6, SuperSwitch81::LIGHT_STEP_6));
+		currentY += deltaY;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP7, SuperSwitch81::LIGHT_STEP_7));
+		currentY += deltaY;
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(21.231, currentY),
+			module, SuperSwitch81::PARAM_STEP8, SuperSwitch81::LIGHT_STEP_8));
+
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(millimetersToPixelsVec(61.063, 43.985), module,
+			SuperSwitch81::PARAM_RESET_TO_FIRST_STEP, SuperSwitch81::LIGHT_RESET_TO_FIRST_STEP));
+
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedLight>>>(millimetersToPixelsVec(48.196, 43.985), module,
+			SuperSwitch81::PARAM_ONE_SHOT, SuperSwitch81::LIGHT_ONE_SHOT));
+
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<PurpleLight>>>(millimetersToPixelsVec(35.329, 43.985), module,
+			SuperSwitch81::PARAM_NO_REPEATS, SuperSwitch81::LIGHT_NO_REPEATS));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(37.807, 55.291), module, SuperSwitch81::PARAM_INCREASE));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(37.807, 69.922), module, SuperSwitch81::PARAM_DECREASE));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(37.807, 84.553), module, SuperSwitch81::PARAM_RANDOM));
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(37.807, 99.184), module, SuperSwitch81::PARAM_RESET));
+#endif
 
 		currentY = 55.291f;
 		deltaY = 14.631f;
@@ -447,14 +548,6 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(59.553, currentY), module, SuperSwitch81::INPUT_RANDOM));
 		currentY += deltaY;
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(59.553, currentY), module, SuperSwitch81::INPUT_RESET));
-
-		addParam(createParamCentered<SeqButtonUp>(millimetersToPixelsVec(40.692, 55.292), module, SuperSwitch81::PARAM_INCREASE));
-
-		addParam(createParamCentered<SeqButtonDown>(millimetersToPixelsVec(40.692, 69.922), module, SuperSwitch81::PARAM_DECREASE));
-
-		addParam(createParamCentered<SeqButtonRandom>(millimetersToPixelsVec(40.692, 84.553), module, SuperSwitch81::PARAM_RANDOM));
-
-		addParam(createParamCentered<SeqButtonReset>(millimetersToPixelsVec(40.692, 99.184), module, SuperSwitch81::PARAM_RESET));
 
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(55.803, 116.012), module, SuperSwitch81::OUTPUT_OUT));
 
@@ -469,6 +562,7 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 			display->values.numberValue = (&module->stepCount);
 		}
 
+#ifndef METAMODULE
 		SanguineStaticRGBLight* stepsLight = new SanguineStaticRGBLight(module, "res/seqs/light_steps.svg", 39.026, 34.372, true, kSanguineBlueLight);
 		addChild(stepsLight);
 
@@ -480,8 +574,10 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 
 		SanguineShapedLight* bloodLogo = new SanguineShapedLight(module, "res/blood_glowy_small.svg", 35.585, 112.707);
 		addChild(bloodLogo);
+#endif
 	}
 
+#ifndef METAMODULE
 	void appendContextMenu(Menu* menu) override {
 		SanguineModuleWidget::appendContextMenu(menu);
 
@@ -497,6 +593,7 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 				}));
 		}
 	}
+#endif
 };
 
 Model* modelSuperSwitch81 = createModel<SuperSwitch81, SuperSwitch81Widget>("Sanguine-SuperSwitch81");
