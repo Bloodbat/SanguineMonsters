@@ -1,5 +1,8 @@
 #include "plugin.hpp"
 
+/* TODO: expanders have been disabled for MetaModule: it doesn't support them.
+   If MetaModule ever supports them, re-enable them here and add them to the MetaModule json manifest. */
+
 Plugin* pluginInstance;
 
 void init(rack::Plugin* p) {
@@ -21,12 +24,16 @@ void init(rack::Plugin* p) {
 	p->addModel(modelAion);
 	p->addModel(modelWerewolf);
 	p->addModel(modelAlchemist);
+#ifndef METAMODULE
 	p->addModel(modelAlembic);
 	p->addModel(modelDenki);
+#endif
 	p->addModel(modelChronos);
 	p->addModel(modelFortuna);
+#ifndef METAMODULE
 	p->addModel(modelManus);
 	p->addModel(modelCrucible);
+#endif
 
 	getDefaultTheme();
 }
