@@ -96,29 +96,6 @@ struct Oraculus : SanguineModule {
 		onReset();
 	};
 
-	void doDecreaseTrigger() {
-		selectedChannel = ((selectedChannel - 1) + channelCount) % channelCount;
-	};
-
-	void doIncreaseTrigger() {
-		selectedChannel = (selectedChannel + 1) % channelCount;
-	};
-
-	void doRandomTrigger() {
-		if (!bNoRepeats) {
-			selectedChannel = pcgRng(channelCount);
-		} else {
-			int randomNum = selectedChannel;
-			while (randomNum == selectedChannel)
-				randomNum = pcgRng(channelCount);
-			selectedChannel = randomNum;
-		}
-	};
-
-	void doResetTrigger() {
-		selectedChannel = 0;
-	};
-
 	void process(const ProcessArgs& args) override {
 		channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
@@ -181,6 +158,29 @@ struct Oraculus : SanguineModule {
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
 	}
 
+	void doDecreaseTrigger() {
+		selectedChannel = ((selectedChannel - 1) + channelCount) % channelCount;
+	};
+
+	void doIncreaseTrigger() {
+		selectedChannel = (selectedChannel + 1) % channelCount;
+	};
+
+	void doRandomTrigger() {
+		if (!bNoRepeats) {
+			selectedChannel = pcgRng(channelCount);
+		} else {
+			int randomNum = selectedChannel;
+			while (randomNum == selectedChannel)
+				randomNum = pcgRng(channelCount);
+			selectedChannel = randomNum;
+		}
+	};
+
+	void doResetTrigger() {
+		selectedChannel = 0;
+	};
+
 	void checkConnections() {
 		bCvConnected = inputs[INPUT_CV_OFFSET].isConnected();
 		bIncreaseConnected = inputs[INPUT_INCREASE].isConnected();
@@ -199,6 +199,7 @@ struct Oraculus : SanguineModule {
 			if (light == finalChannel) {
 				lights[currentLight + 0].setBrightnessSmooth(0.59f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
+				// TODO: lower brightness of this pin!
 				lights[currentLight + 2].setBrightnessSmooth(1.f, sampleTime);
 			} else if (light < channelCount) {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
