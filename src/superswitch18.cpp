@@ -149,73 +149,6 @@ struct SuperSwitch18 : SanguineModule {
 		clockDivider.setDivision(kClockDivider);
 	};
 
-	void doDecreaseTrigger() {
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-			--selectedOut;
-
-			if (selectedOut < 0) {
-				selectedOut = stepCount - 1;
-			}
-		} else {
-			selectedOut = stepCount - 1;
-			bClockReceived = true;
-		}
-		++stepsDone;
-		if (stepsDone > stepCount) {
-			stepsDone = 0;
-		}
-	}
-
-	void doIncreaseTrigger() {
-		++selectedOut;
-
-		if (selectedOut >= stepCount) {
-			selectedOut = 0;
-		}
-		bClockReceived = true;
-		++stepsDone;
-		if (stepsDone > stepCount) {
-			stepsDone = 0;
-		}
-	};
-
-	void doRandomTrigger() {
-		if (!bNoRepeats) {
-			selectedOut = pcgRng(stepCount);
-		} else {
-			randomNum = selectedOut;
-			while (randomNum == selectedOut)
-				randomNum = pcgRng(stepCount);
-			selectedOut = randomNum;
-		}
-		bClockReceived = true;
-		++stepsDone;
-		if (stepsDone > stepCount) {
-			stepsDone = 0;
-		}
-	}
-
-	void doResetTrigger() {
-		if (bResetToFirstStep) {
-			selectedOut = 0;
-		} else {
-			channelCount = 0;
-			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-				outVoltages[channel / 4] = 0.F;
-			}
-
-			for (int output = 0; output < superSwitches::kMaxSteps; ++output) {
-				outputs[OUTPUT_OUT1 + output].setChannels(0);
-			}
-			selectedOut = -1;
-			bClockReceived = false;
-		}
-		stepsDone = 0;
-		if (bOneShot) {
-			bOneShotDone = false;
-		}
-	};
-
 	void process(const ProcessArgs& args) override {
 #ifndef METAMODULE
 		Module* manusExpander = getRightExpander().module;
@@ -367,6 +300,73 @@ struct SuperSwitch18 : SanguineModule {
 			bOneShotDone = false;
 		}
 		bLastOneShotValue = bOneShot;
+	};
+
+	void doDecreaseTrigger() {
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
+			--selectedOut;
+
+			if (selectedOut < 0) {
+				selectedOut = stepCount - 1;
+			}
+		} else {
+			selectedOut = stepCount - 1;
+			bClockReceived = true;
+		}
+		++stepsDone;
+		if (stepsDone > stepCount) {
+			stepsDone = 0;
+		}
+	}
+
+	void doIncreaseTrigger() {
+		++selectedOut;
+
+		if (selectedOut >= stepCount) {
+			selectedOut = 0;
+		}
+		bClockReceived = true;
+		++stepsDone;
+		if (stepsDone > stepCount) {
+			stepsDone = 0;
+		}
+	};
+
+	void doRandomTrigger() {
+		if (!bNoRepeats) {
+			selectedOut = pcgRng(stepCount);
+		} else {
+			randomNum = selectedOut;
+			while (randomNum == selectedOut)
+				randomNum = pcgRng(stepCount);
+			selectedOut = randomNum;
+		}
+		bClockReceived = true;
+		++stepsDone;
+		if (stepsDone > stepCount) {
+			stepsDone = 0;
+		}
+	}
+
+	void doResetTrigger() {
+		if (bResetToFirstStep) {
+			selectedOut = 0;
+		} else {
+			channelCount = 0;
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
+				outVoltages[channel / 4] = 0.F;
+			}
+
+			for (int output = 0; output < superSwitches::kMaxSteps; ++output) {
+				outputs[OUTPUT_OUT1 + output].setChannels(0);
+			}
+			selectedOut = -1;
+			bClockReceived = false;
+		}
+		stepsDone = 0;
+		if (bOneShot) {
+			bOneShotDone = false;
+		}
 	};
 
 	void onReset() override {

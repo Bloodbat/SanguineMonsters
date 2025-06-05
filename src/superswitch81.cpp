@@ -149,70 +149,6 @@ struct SuperSwitch81 : SanguineModule {
 		clockDivider.setDivision(kClockDivider);
 	};
 
-	void doDecreaseTrigger() {
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-			--selectedIn;
-
-			if (selectedIn < 0) {
-				selectedIn = stepCount - 1;
-			}
-		} else {
-			selectedIn = stepCount - 1;
-			bClockReceived = true;
-		}
-		++stepsDone;
-		if (stepsDone > stepCount) {
-			stepsDone = 0;
-		}
-	};
-
-	void doIncreaseTrigger() {
-		++selectedIn;
-
-		if (selectedIn >= stepCount) {
-			selectedIn = 0;
-		}
-
-		bClockReceived = true;
-		++stepsDone;
-
-		if (stepsDone > stepCount) {
-			stepsDone = 0;
-		}
-	};
-
-	void doRandomTrigger() {
-		if (!bNoRepeats) {
-			selectedIn = pcgRng(stepCount);
-		} else {
-			randomNum = selectedIn;
-			while (randomNum == selectedIn)
-				randomNum = pcgRng(stepCount);
-			selectedIn = randomNum;
-		}
-		bClockReceived = true;
-		++stepsDone;
-		if (stepsDone > stepCount) {
-			stepsDone = 0;
-		}
-	};
-
-	void doResetTrigger() {
-		if (bResetToFirstStep) {
-			selectedIn = 0;
-		} else {
-			selectedIn = -1;
-			bClockReceived = false;
-			outputs[OUTPUT_OUT].setChannels(0);
-			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-				outVoltages[channel / 4] = 0.f;
-			}
-		}
-		stepsDone = 0;
-		if (bOneShot)
-			bOneShotDone = false;
-	};
-
 	void process(const ProcessArgs& args) override {
 #ifndef METAMODULE
 		Module* manusExpander = getLeftExpander().module;
@@ -347,6 +283,70 @@ struct SuperSwitch81 : SanguineModule {
 			bOneShotDone = false;
 		}
 		bLastOneShotValue = bOneShot;
+	};
+
+	void doDecreaseTrigger() {
+		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
+			--selectedIn;
+
+			if (selectedIn < 0) {
+				selectedIn = stepCount - 1;
+			}
+		} else {
+			selectedIn = stepCount - 1;
+			bClockReceived = true;
+		}
+		++stepsDone;
+		if (stepsDone > stepCount) {
+			stepsDone = 0;
+		}
+	};
+
+	void doIncreaseTrigger() {
+		++selectedIn;
+
+		if (selectedIn >= stepCount) {
+			selectedIn = 0;
+		}
+
+		bClockReceived = true;
+		++stepsDone;
+
+		if (stepsDone > stepCount) {
+			stepsDone = 0;
+		}
+	};
+
+	void doRandomTrigger() {
+		if (!bNoRepeats) {
+			selectedIn = pcgRng(stepCount);
+		} else {
+			randomNum = selectedIn;
+			while (randomNum == selectedIn)
+				randomNum = pcgRng(stepCount);
+			selectedIn = randomNum;
+		}
+		bClockReceived = true;
+		++stepsDone;
+		if (stepsDone > stepCount) {
+			stepsDone = 0;
+		}
+	};
+
+	void doResetTrigger() {
+		if (bResetToFirstStep) {
+			selectedIn = 0;
+		} else {
+			selectedIn = -1;
+			bClockReceived = false;
+			outputs[OUTPUT_OUT].setChannels(0);
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
+				outVoltages[channel / 4] = 0.f;
+			}
+		}
+		stepsDone = 0;
+		if (bOneShot)
+			bOneShotDone = false;
 	};
 
 	void onReset() override {
