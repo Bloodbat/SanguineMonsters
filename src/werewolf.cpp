@@ -264,6 +264,7 @@ struct WerewolfWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(39.083, 112.894), module, Werewolf::OUTPUT_LEFT));
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(50.988, 112.894), module, Werewolf::OUTPUT_RIGHT));
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 15.819, 106.451);
 		addChild(inLight);
 
@@ -272,6 +273,7 @@ struct WerewolfWidget : SanguineModuleWidget {
 
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 30.48, 90.451);
 		addChild(bloodLight);
+#endif
 	}
 };
 
