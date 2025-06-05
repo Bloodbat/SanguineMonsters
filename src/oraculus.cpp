@@ -197,14 +197,13 @@ struct Oraculus : SanguineModule {
 		for (int light = 0; light < PORT_MAX_CHANNELS; ++light) {
 			int currentLight = light * 3;
 			if (light == finalChannel) {
-				lights[currentLight + 0].setBrightnessSmooth(0.59f, sampleTime);
+				lights[currentLight + 0].setBrightnessSmooth(0.5f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-				// TODO: lower brightness of this pin!
-				lights[currentLight + 2].setBrightnessSmooth(1.f, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(0.34f, sampleTime);
 			} else if (light < channelCount) {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0.28f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.15f, sampleTime);
+				lights[currentLight + 1].setBrightnessSmooth(0.18f, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(0.10f, sampleTime);
 			} else {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);

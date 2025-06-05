@@ -136,6 +136,8 @@
 
 - Oraculus: faceplate tweaks.
 
+- Oraculus: light tweaks.
+
 - Raiju: make it clear every output can be polyphonic.
 
 - Sphinx: reorganize faceplate.
