@@ -157,15 +157,15 @@ struct Fortuna : SanguineModule {
                 int currentLight = LIGHT_GATE_STATE_1_A + section * 2;
                 float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
                 lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);
-                lights[currentLight + 0].setSmoothBrightness(lightValueA, sampleTime);
+                lights[currentLight + 0].setBrightnessSmooth(lightValueA, sampleTime);
                 float lightValueB = outputs[OUTPUT_OUT_1B + section].getVoltage(ledsChannel);
                 lightValueB = rescale(lightValueB, 0.f, 5.f, 0.f, 1.f);
-                lights[currentLight + 1].setSmoothBrightness(lightValueB, sampleTime);
+                lights[currentLight + 1].setBrightnessSmooth(lightValueB, sampleTime);
 
                 currentLight = LIGHTS_PROBABILITY + section * 2;
                 float rescaledLight = rescale(cvVoltages[section][ledsChannel], 0.f, 5.f, 0.f, 1.f);
-                lights[currentLight + 1].setSmoothBrightness(-rescaledLight, sampleTime);
-                lights[currentLight + 0].setSmoothBrightness(rescaledLight, sampleTime);
+                lights[currentLight + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
+                lights[currentLight + 0].setBrightnessSmooth(rescaledLight, sampleTime);
 
                 currentLight = LIGHTS_ROLL_MODE + section * 2;
                 lights[currentLight + 0].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
