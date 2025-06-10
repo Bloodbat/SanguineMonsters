@@ -24,13 +24,14 @@ void init(rack::Plugin* p) {
 	p->addModel(modelAion);
 	p->addModel(modelWerewolf);
 	p->addModel(modelAlchemist);
+	p->addModel(modelChronos);
+	p->addModel(modelFortuna);
+
+	// MetaModule disabled modules go here!
+
 #ifndef METAMODULE
 	p->addModel(modelAlembic);
 	p->addModel(modelDenki);
-#endif
-	p->addModel(modelChronos);
-	p->addModel(modelFortuna);
-#ifndef METAMODULE
 	p->addModel(modelManus);
 	p->addModel(modelCrucible);
 #endif

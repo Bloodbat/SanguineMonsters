@@ -25,13 +25,14 @@ extern Model* modelMedusa;
 extern Model* modelAion;
 extern Model* modelWerewolf;
 extern Model* modelAlchemist;
+extern Model* modelChronos;
+extern Model* modelFortuna;
+
+// MetaModule disabled modules go here!
+
 #ifndef METAMODULE
 extern Model* modelAlembic;
 extern Model* modelDenki;
-#endif
-extern Model* modelChronos;
-extern Model* modelFortuna;
-#ifndef METAMODULE
 extern Model* modelManus;
 extern Model* modelCrucible;
 #endif
