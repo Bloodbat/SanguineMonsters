@@ -20,7 +20,7 @@
 
 ### Manus
 
-- Expander for Gegeenes and Hydra that provides CV trigger step selection.
+- Expander for Gegenees and Hydra that provides CV trigger step selection.
 
 ---
 
@@ -28,15 +28,15 @@
 
 - Plugin: faceplate colors.
 
-- Plugin: output gate glypg drawing.
+- Plugin: output gate glyph drawing.
 
 - Dungeon: module was falling off the Rack: it was missing screws.
 
 - Dungeon: actually store user preference when "Store voltage in patch" is disabled.
 
-- Gegeenes: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
+- Gegenees: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
-- Gegeenes: store and restore "One Shot" user preference.
+- Gegenees: store and restore "One Shot" user preference.
 
 - Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
@@ -66,9 +66,9 @@
 
 - Dungeon: knob border.
 
-- Gegeenes: knob border.
+- Gegenees: knob border.
 
-- Gegeenes: Manus expander.
+- Gegenees: Manus expander.
 
 - Hydra: knob border.
 
@@ -126,7 +126,7 @@
 
 - Dungeon: better moon light colors.
 
-- Gegeenes: performance tweaks.
+- Gegenees: performance tweaks.
 
 - Hydra: performance tweaks.
 
