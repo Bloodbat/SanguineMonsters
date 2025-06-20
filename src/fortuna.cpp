@@ -131,8 +131,8 @@ struct Fortuna : SanguineModule {
                 // Set output signals
                 inVoltages[section][channel] = input->getVoltage(channel);
 
-                float fadingOutVoltage = inVoltages[section][channel] * (clamp(1.f - rampGenerators[section][channel].rampVoltage, 0.f, 1.f));
-                float fadingInVoltage = inVoltages[section][channel] * rampGenerators[section][channel].rampVoltage;
+                float fadingOutVoltage = crossfade(inVoltages[section][channel], 0.f, rampGenerators[section][channel].rampVoltage);
+                float fadingInVoltage = crossfade(0.f, inVoltages[section][channel], rampGenerators[section][channel].rampVoltage);
 
                 outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != fortuna::ROLL_TAILS ?
                     fadingInVoltage : fadingOutVoltage, channel);
