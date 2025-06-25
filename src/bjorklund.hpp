@@ -1,6 +1,6 @@
 #pragma once
 
-// Bjorklunds algorithm for euclidean sequences
+// Bjorklund's algorithm for euclidean sequences
 //
 // Modified GIST from https://gist.github.com/unohee/d4f32b3222b42de84a5f
 
@@ -37,8 +37,14 @@ struct Bjorklund {
 		lengthOfSeq = step;
 		pulseAmt = pulse;
 	}
-	int getSequence(int index) { return sequence.at(index); };
-	int size() { return (int)sequence.size(); };
+
+	int getSequence(int index) {
+		return sequence.at(index);
+	};
+
+	int size() {
+		return static_cast<int>(sequence.size());
+	};
 
 	void iter() {
 		// Bjorklund algorithm
@@ -63,26 +69,24 @@ struct Bjorklund {
 		reverse(sequence.begin(), sequence.end());
 
 		// Position correction. some of result of algorithm is one step rotated.
-		int zeroCount = 0;
 		if (sequence.at(0) != 1) {
+			int zeroCount = 0;
 			do {
-				zeroCount++;
+				++zeroCount;
 			} while (sequence.at(zeroCount) == 0);
 			std::rotate(sequence.begin(), sequence.begin() + zeroCount, sequence.end());
 		}
 	}
 
 	void buildSeq(int slot) {
-		// Construct a binary sequence of n bits with k one‚Äôs, such that the k one‚Äôs are distributed as evenly as possible among the zero‚Äôs
+		// Construct a binary sequence of n bits with k one's, such that the k one's are distributed as evenly as possible among the zero's
 
 		if (slot == -1) {
 			sequence.push_back(0);
-		}
-		else if (slot == -2) {
+		} else if (slot == -2) {
 			sequence.push_back(1);
-		}
-		else {
-			for (int i = 0; i < count[slot]; i++)
+		} else {
+			for (int i = 0; i < count[slot]; ++i)
 				buildSeq(slot - 1);
 			if (remainder[slot] != 0)
 				buildSeq(slot - 2);

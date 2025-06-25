@@ -5,8 +5,8 @@
 struct SeqSwitchSquare : SanguineLightUpRGBSwitch {
 	SeqSwitchSquare() {
 		setBackground("res/seqs/square_button_bg.svg");
-		addHalo(nvgRGB(0, 167, 255));
-		addHalo(nvgRGB(239, 250, 110));
+		addHalo(nvgRGB(22, 167, 252));
+		addHalo(nvgRGB(238, 249, 113));
 	}
 };
 
@@ -73,10 +73,10 @@ struct SeqButtonRoundBig : SanguineLightUpRGBSwitch {
 struct SeqButtonNoRepeatsSmall : SeqButtonRoundSmall {
 	SeqButtonNoRepeatsSmall() {
 		setGlyph("res/seqs/no_repeats_glyph.svg", 0.782f, 0.876f);
-		addColor(39, 0, 52);
-		addColor(206, 61, 255);
+		addColor(38, 1, 51);
+		addColor(206, 63, 253);
 		addHalo(nvgRGB(0, 0, 0));
-		addHalo(nvgRGB(206, 61, 255));
+		addHalo(nvgRGB(206, 63, 253));
 		momentary = false;
 	}
 };
@@ -85,9 +85,9 @@ struct SeqButtonOneShotSmall : SeqButtonRoundSmall {
 	SeqButtonOneShotSmall() {
 		setGlyph("res/seqs/one_shot_glyph.svg", 0.356f, 0.356f);
 		addColor(52, 0, 0);
-		addColor(255, 11, 11);
+		addColor(255, 11, 9);
 		addHalo(nvgRGB(0, 0, 0));
-		addHalo(nvgRGB(255, 11, 11));
+		addHalo(nvgRGB(255, 11, 9));
 		momentary = false;
 	}
 };
@@ -106,10 +106,10 @@ struct SeqButtonResetToOne : SeqButtonRoundSmall {
 struct SeqButtonRestartSmall : SeqButtonRoundSmall {
 	SeqButtonRestartSmall() {
 		setGlyph("res/seqs/restart_glyph.svg", 0.714f, 0.356f);
-		addColor(0, 46, 0);
-		addColor(0, 255, 0);
+		addColor(0, 46, 9);
+		addColor(0, 252, 52);
 		addHalo(nvgRGB(0, 0, 0));
-		addHalo(nvgRGB(0, 255, 0));
+		addHalo(nvgRGB(0, 252, 52));
 		momentary = false;
 		latch = true;
 	}
@@ -117,11 +117,11 @@ struct SeqButtonRestartSmall : SeqButtonRoundSmall {
 
 struct SeqStepButtonBig : SeqButtonRoundBig {
 	SeqStepButtonBig() {
-		addColor(0, 206, 79);
-		addColor(207, 38, 0);
-		addColor(51, 51, 51);
-		addHalo(nvgRGB(0, 206, 79));
-		addHalo(nvgRGB(207, 38, 0));
+		addColor(0, 204, 83);
+		addColor(207, 35, 0);
+		addColor(49, 49, 49);
+		addHalo(nvgRGB(0, 204, 83));
+		addHalo(nvgRGB(207, 35, 0));
 		addHalo(nvgRGB(0, 0, 0));
 		momentary = false;
 	}

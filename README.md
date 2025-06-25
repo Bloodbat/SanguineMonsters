@@ -4,70 +4,102 @@ A collection of useful modules.
 
 You can find the manual [here](https://media.githubusercontent.com/media/Bloodbat/SanguineModulesManuals/refs/heads/main/monsters_manual.pdf).
 
+You can find the Nightly builds [here](https://github.com/Bloodbat/SanguineMonsters/releases/tag/Nightly).
+
 ## Modules
 
 ![alt text](pics/monster_modules.png)
 
-## Aion
+Base modules are listed in alphabetical order, with their alternative firmwares and expanders immediately following.
 
-A quad timer/counter that can be triggered externally or has an internal seconds clock.
+- ### Aion
 
-## Alchemist
+  A quad timer/counter that can be triggered externally or has an internal seconds clock.
 
-A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
+- ### Alchemist
 
-## Brainz
+  A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
 
-A utility to control multiple recorders and ease synchronizing their outputs in post.
+  - ### Alembic
 
-## Bukavac
+    An expander for Alchemist that provides individual post-mix channel outputs and gain CV control.
 
-A noise generator with a plethora of colors... and Perlin.
+  - ### Crucible
+  
+    An expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode
 
-## Dolly-X
+- ### Brainz
 
-A monophonic to polyphonic channel cloner.
+  A utility to control multiple recorders and ease synchronizing their outputs in post.
 
-## Dungeon
+- ### Bukavac
 
-A sample and hold; track and hold; hold and track, and white noise source.
+  A noise generator with a plethora of colors... and Perlin.
 
-## Gegenees
+- ### Chronos
 
-A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
+  Polyphonic collection of four low-frequency oscillators.
 
-## Hydra
+- ### Dolly-X
 
-An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
+  A monophonic to polyphonic channel cloner.
 
-## Kitsune
+- ### Dungeon
 
-An attenuverter, offsetter and inverter with four channels.
+  A sample and hold; track and hold; hold and track, and white noise source.
 
-## Medusa
+- ### Fortuna
 
-A normalled, polyphonic mega multiple with 32 inputs and outputs.
+  Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals, with integrated crossfader.
 
-# Monsters Blank
+- ### Gegenees
 
-Put a vampire and the Monsters logo in your rack!
+  A 1 to 8 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
-## Oraculus
+  - ### Manus
 
-A polyphonic to monophonic switch.
+    Expander for Gegeenes and Hydra that provides CV trigger step selection.
 
-## Oubliette
+- ### Hydra
 
-A null sink and cable parking for your wires. Also works as a null voltage source.
+  An 8 to 1 switch/sequencer that can avoid consecutive random repeated values; can be one shot, and can be reset to either no step value or the first step.
 
-## Raiju
+  - ### Manus
 
-A fixed voltages source.
+    Expander for Gegeenes and Hydra that provides CV trigger step selection.
 
-## Sphinx
+- ### Kitsune
 
-A Euclidean sequencer.
+  Four polyphonic attenuverters, offsetters and inverters with user selectable smart input normalling.
 
-## Werewolf
+  - ### Denki
 
-A polyphonic, stereo, dirty distortion.
+  Polyphonic expander for Kitsune: adds Gain and Offset CV control.
+
+- ### Medusa
+
+  A normalled, polyphonic mega multiple with 32 inputs and outputs.
+
+- ### Monsters Blank
+
+  Put a vampire and the Monsters logo in your rack!
+
+- ### Oraculus
+
+  A polyphonic to monophonic switch.
+
+- ### Oubliette
+
+  A null sink and cable parking for your wires. Also works as a null voltage source.
+
+- ### Raiju
+
+  A fixed voltages source.
+
+- ### Sphinx
+
+  A Euclidean sequencer.
+
+- ### Werewolf
+
+  A polyphonic, stereo, dirty distortion.

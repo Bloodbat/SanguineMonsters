@@ -59,76 +59,108 @@ struct Werewolf : SanguineModule {
 		bool bRightInConnected = inputs[INPUT_RIGHT].isConnected();
 		bool bIsNormalled = true;
 
-		float voltageInLeft = 0.f;
-		float voltageInRight = 0.f;
-		float voltageOutLeft = 0.f;
-		float voltageOutRight = 0.f;
 		float voltageSumLeft = 0.f;
 		float voltageSumRight = 0.f;
-		float fold = 0.f;
-		float gain = 0.f;
 		float foldSum = 0.f;
 		float gainSum = 0.f;
 
 		bool bIsLightsTurn = lightDivider.process();
-		const float sampleTime = args.sampleTime * kLightFrequency;
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
-		if (channelCount > 0) {
-			fold = params[PARAM_FOLD].getValue();
-			gain = params[PARAM_GAIN].getValue();
+		// Logical XOR
+		bIsNormalled = !bLeftInConnected != !bRightInConnected;
+		bool bOutputsNormalled = !outputs[OUTPUT_LEFT].isConnected() != !outputs[OUTPUT_RIGHT].isConnected();
 
-			for (int channel = 0; channel < channelCount; channel++) {
+		if (channelCount > 0) {
+			float fold = params[PARAM_FOLD].getValue();
+			float gain = params[PARAM_GAIN].getValue();
+
+			for (int channel = 0; channel < channelCount; ++channel) {
+				float voltageInLeft = 0.f;
+				float voltageInRight = 0.f;
+				float voltageOutLeft = 0.f;
+				float voltageOutRight = 0.f;
+
 				float channelFold = clamp(fold + inputs[INPUT_FOLD].getVoltage(channel), 0.f, 10.f);
 				float channelGain = clamp(gain + inputs[INPUT_GAIN].getVoltage(channel), 0.f, 20.f);
 
 				gainSum += channelGain;
 				foldSum += channelFold;
 
+				outputs[OUTPUT_LEFT].setChannels(channelCount);
+				outputs[OUTPUT_RIGHT].setChannels(channelCount);
+
 				if (bLeftInConnected) {
-					float newVoltage = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
-					voltageInLeft = newVoltage;
-					voltageInRight = newVoltage;
-					outputs[OUTPUT_LEFT].setChannels(channelCount);
-					outputs[OUTPUT_RIGHT].setChannels(channelCount);
+					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
+					if (bIsNormalled) {
+						voltageInRight = voltageInLeft;
+					}
 				}
 				if (bRightInConnected) {
-					bIsNormalled = false;
 					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
+					if (bIsNormalled) {
+						voltageInLeft = voltageInRight;
+					}
 				}
 
 				// Distortion
 				if (bLeftInConnected) {
 					doDistortion(voltageInLeft, voltageOutLeft, channelFold);
+					if (bIsNormalled) {
+						voltageOutRight = voltageOutLeft;
+					}
 				}
 
 				if (bRightInConnected) {
 					doDistortion(voltageInRight, voltageOutRight, channelFold);
-				}
-
-				voltageSumLeft += voltageOutLeft;
-
-				if (outputs[OUTPUT_LEFT].isConnected()) {
-					outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
-				}
-
-				if (bIsNormalled) {
-					if (outputs[OUTPUT_RIGHT].isConnected()) {
-						outputs[OUTPUT_RIGHT].setVoltage(voltageOutLeft, channel);
+					if (bIsNormalled) {
+						voltageOutLeft = voltageOutRight;
 					}
-					voltageSumRight += voltageOutLeft;
 				}
-				else {
+
+				float voltageMix = 0.f;
+
+				if (bOutputsNormalled) {
+					if (!bIsNormalled) {
+						voltageMix = voltageOutLeft + voltageOutRight;
+					} else {
+						voltageMix = voltageOutLeft;
+					}
+				}
+
+				if (!bOutputsNormalled) {
+					voltageSumLeft += voltageOutLeft;
+
+					if (outputs[OUTPUT_LEFT].isConnected()) {
+						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
+					}
+
+					if (bIsNormalled) {
+						voltageOutRight = voltageOutLeft;
+						voltageSumRight += voltageOutLeft;
+
+					}
 					if (outputs[OUTPUT_RIGHT].isConnected()) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
 					}
 					voltageSumRight += voltageOutRight;
+				} else {
+					if (outputs[OUTPUT_LEFT].isConnected()) {
+						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
+					}
+					if (outputs[OUTPUT_RIGHT].isConnected()) {
+						outputs[OUTPUT_RIGHT].setVoltage(voltageMix, channel);
+					}
+					voltageSumLeft += voltageMix;
+					voltageSumRight += voltageMix;
 				}
 			}
 		}
 
 		if (bIsLightsTurn) {
+			const float sampleTime = args.sampleTime * kLightFrequency;
+
 			if (channelCount < 2) {
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
@@ -137,8 +169,7 @@ struct Werewolf : SanguineModule {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
-				}
-				else {
+				} else {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumRight, 0.f, 5.f, 0.f, 1.f), sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
@@ -152,8 +183,7 @@ struct Werewolf : SanguineModule {
 				lights[LIGHT_FOLD + 0].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 2].setBrightnessSmooth(0.f, sampleTime);
-			}
-			else {
+			} else {
 				float rescaledLight = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
@@ -162,8 +192,7 @@ struct Werewolf : SanguineModule {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
-				}
-				else {
+				} else {
 					rescaledLight = math::rescale(voltageSumRight / channelCount, 0.f, 5.f, 0.f, 1.f);
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
@@ -183,7 +212,7 @@ struct Werewolf : SanguineModule {
 	}
 
 	inline void doDistortion(float inVoltage, float& outVoltage, const float fold) {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 100; ++i) {
 			if (inVoltage < -5.f) {
 				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
 			}
@@ -204,7 +233,7 @@ struct Werewolf : SanguineModule {
 };
 
 struct WerewolfWidget : SanguineModuleWidget {
-	WerewolfWidget(Werewolf* module) {
+	explicit WerewolfWidget(Werewolf* module) {
 		setModule(module);
 
 		moduleName = "werewolf";
@@ -212,22 +241,19 @@ struct WerewolfWidget : SanguineModuleWidget {
 		backplateColor = PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
-		makePanel();		
+		makePanel();
 
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addScrews(SCREW_ALL);
 
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(22.879, 39.583), module, Werewolf::LIGHT_EYE_1));
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.602, 39.583), module, Werewolf::LIGHT_EYE_2));
 
-		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(8.947, 83.56), module, Werewolf::PARAM_GAIN));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(11.947, 88.26), module, Werewolf::PARAM_GAIN));
 
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(8.947, 90.978), module, Werewolf::LIGHT_GAIN));
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(51.908, 90.978), module, Werewolf::LIGHT_FOLD));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(20.026, 83.56), module, Werewolf::LIGHT_GAIN));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(40.948, 83.56), module, Werewolf::LIGHT_FOLD));
 
-		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(51.908, 83.56), module, Werewolf::PARAM_FOLD));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(49.008, 88.26), module, Werewolf::PARAM_FOLD));
 
 		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(23.04, 98.047), module, Werewolf::INPUT_GAIN));
 		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(37.814, 98.047), module, Werewolf::INPUT_FOLD));
@@ -238,11 +264,16 @@ struct WerewolfWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(39.083, 112.894), module, Werewolf::OUTPUT_LEFT));
 		addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(50.988, 112.894), module, Werewolf::OUTPUT_RIGHT));
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* inLight = new SanguinePolyInputLight(module, 15.819, 106.451);
 		addChild(inLight);
 
 		SanguinePolyOutputLight* outLight = new SanguinePolyOutputLight(module, 45.036, 106.051);
 		addChild(outLight);
+
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 30.48, 90.451);
+		addChild(bloodLight);
+#endif
 	}
 };
 

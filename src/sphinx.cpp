@@ -1,18 +1,16 @@
-﻿#include "plugin.hpp"
+#include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#include "sanguinehelpers.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+#include "pcg_random.hpp"
+#pragma GCC diagnostic pop
+
 #include "bjorklund.hpp"
 #include <array>
-#include "sanguinehelpers.hpp"
-#include "pcg_variants.h"
 
-#define MAXLEN 32
-
-enum PatternStyle {
-	EUCLIDEAN_PATTERN,
-	RANDOM_PATTERN,
-	FIBONACCI_PATTERN,
-	LINEAR_PATTERN
-};
+#include "sphinx.hpp"
 
 struct Sphinx : SanguineModule {
 	enum ParamIds {
@@ -66,13 +64,13 @@ struct Sphinx : SanguineModule {
 	Bjorklund euclid;
 	Bjorklund euclid2;
 
-	// Calculated sequence/accents
+	// Calculated sequence/accents.
 	std::vector<bool> calculatedSequence;
 	std::vector<bool> calculatedAccents;
 
-	// Padded + rotated + distributed
-	std::array<bool, MAXLEN * 2> finalSequence;
-	std::array<bool, MAXLEN * 2> finalAccents;
+	// Padded + rotated + distributed.
+	std::array<bool, sphinx::kMaxLength * 2> finalSequence;
+	std::array<bool, sphinx::kMaxLength * 2> finalAccents;
 
 	bool bAccentOn = false;
 	bool bCalculate;
@@ -95,8 +93,8 @@ struct Sphinx : SanguineModule {
 	int currentStep = 0;
 	int turing = 0;
 
-	PatternStyle lastPatternStyle = EUCLIDEAN_PATTERN;
-	PatternStyle patternStyle = EUCLIDEAN_PATTERN;
+	sphinx::PatternStyle lastPatternStyle = sphinx::EUCLIDEAN_PATTERN;
+	sphinx::PatternStyle patternStyle = sphinx::EUCLIDEAN_PATTERN;
 
 	static const int kClockDivider = 16;
 
@@ -109,7 +107,7 @@ struct Sphinx : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
-	pcg32_random_t pcgRng;
+	pcg32 pcgRng;
 
 	enum GateMode {
 		GM_TRIGGER,
@@ -174,7 +172,7 @@ struct Sphinx : SanguineModule {
 
 		clockDivider.setDivision(kClockDivider);
 
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 	}
 
 	int getFibonacci(int n) {
@@ -184,7 +182,8 @@ struct Sphinx : SanguineModule {
 	void onReset() override {
 		int patternSize = patternLength + patternPadding;
 
-		if (lastPatternLength != patternLength || lastPatternFill != patternFill || lastPatternStyle != patternStyle || lastPatternAccents != patternAccents) {
+		if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
+			lastPatternStyle != patternStyle || lastPatternAccents != patternAccents) {
 			if (lastPatternLength != patternLength || lastPatternStyle != patternStyle) {
 				calculatedSequence.resize(patternSize);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
@@ -195,7 +194,7 @@ struct Sphinx : SanguineModule {
 			}
 
 			switch (patternStyle) {
-			case EUCLIDEAN_PATTERN: {
+			case sphinx::EUCLIDEAN_PATTERN: {
 				euclid.reset();
 				euclid.init(patternLength, patternFill);
 				euclid.iter();
@@ -210,61 +209,63 @@ struct Sphinx : SanguineModule {
 				break;
 			}
 
-			case RANDOM_PATTERN: {
-				if (lastPatternLength != patternLength || lastPatternFill != patternFill || lastPatternStyle != patternStyle) {
+			case sphinx::RANDOM_PATTERN: {
+				if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
+					lastPatternStyle != patternStyle) {
 					int num = 0;
 					calculatedSequence.resize(patternLength);
 					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
 					int fill = 0;
 					while (fill < patternFill) {
-						if (ldexpf(pcg32_random_r(&pcgRng), -32) < (float)patternFill / (float)patternLength) {
+						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternFill) / static_cast<float>(patternLength)) {
 							calculatedSequence[num % patternLength] = 1;
-							fill++;
+							++fill;
 						}
-						num++;
+						++num;
 					}
 				}
-				if (patternAccents && (lastPatternAccents != patternAccents || lastPatternFill != patternFill || patternStyle != lastPatternStyle)) {
+				if (patternAccents && (lastPatternAccents != patternAccents || lastPatternFill != patternFill ||
+					patternStyle != lastPatternStyle)) {
 					int num = 0;
 					calculatedAccents.resize(patternFill);
 					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
 					int accentNum = 0;
 					while (accentNum < patternAccents) {
-						if (ldexpf(pcg32_random_r(&pcgRng), -32) < (float)patternAccents / (float)patternFill) {
+						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternAccents) / static_cast<float>(patternFill)) {
 							calculatedAccents[num % patternFill] = 1;
-							accentNum++;
+							++accentNum;
 						}
-						num++;
+						++num;
 					}
 				}
 				break;
 			}
 
-			case FIBONACCI_PATTERN: {
+			case sphinx::FIBONACCI_PATTERN: {
 				calculatedSequence.resize(patternLength);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-				for (int num = 0; num < patternFill; num++) {
+				for (int num = 0; num < patternFill; ++num) {
 					calculatedSequence[getFibonacci(num) % patternLength] = 1;
 				}
 
 				calculatedAccents.resize(patternFill);
 				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-				for (int accent = 0; accent < patternAccents; accent++) {
+				for (int accent = 0; accent < patternAccents; ++accent) {
 					calculatedAccents[getFibonacci(accent) % patternFill] = 1;
 				}
 				break;
 			}
 
-			case LINEAR_PATTERN: {
+			case sphinx::LINEAR_PATTERN: {
 				calculatedSequence.resize(patternLength);
 				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-				for (int num = 0; num < patternFill; num++) {
+				for (int num = 0; num < patternFill; ++num) {
 					calculatedSequence[patternLength * num / patternFill] = 1;
 				}
 
 				calculatedAccents.resize(patternFill);
 				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-				for (int accent = 0; accent < patternAccents; accent++) {
+				for (int accent = 0; accent < patternAccents; ++accent) {
 					calculatedAccents[patternFill * accent / patternAccents] = 1;
 				}
 				break;
@@ -272,17 +273,17 @@ struct Sphinx : SanguineModule {
 			}
 		}
 
-		// Distribute accents on sequence
+		// Distribute accents on sequence.
 		finalSequence.fill(0);
 		finalAccents.fill(0);
-		int j = patternFill - patternAccentRotation;
-		for (int i = 0; i != int(calculatedSequence.size()); i++) {
-			int index = (i + patternRotation) % patternSize;
-			finalSequence[index] = calculatedSequence[i];
+		int accent = patternFill - patternAccentRotation;
+		for (int step = 0; step != static_cast<int>(calculatedSequence.size()); ++step) {
+			int index = (step + patternRotation) % patternSize;
+			finalSequence[index] = calculatedSequence[step];
 			finalAccents[index] = 0;
-			if (patternAccents && calculatedSequence[i]) {
-				finalAccents[index] = calculatedAccents[j % patternFill];
-				j++;
+			if (patternAccents && calculatedSequence[step]) {
+				finalAccents[index] = calculatedAccents[accent % patternFill];
+				++accent;
 			}
 		}
 
@@ -298,15 +299,14 @@ struct Sphinx : SanguineModule {
 			lastPatternStyle = patternStyle;
 		}
 
-		bool nextStep = false;
+		bool bNextStep = false;
 
 		// Reset sequence.
 		if (inputs[INPUT_RESET].isConnected()) {
 			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
 				if (!params[PARAM_REVERSE].getValue()) {
 					currentStep = patternLength + patternPadding;
-				}
-				else {
+				} else {
 					currentStep = 0;
 				}
 				bCycleReset = true;
@@ -315,21 +315,20 @@ struct Sphinx : SanguineModule {
 
 		if (inputs[INPUT_CLOCK].isConnected()) {
 			if (stClockInput.process(inputs[INPUT_CLOCK].getVoltage())) {
-				nextStep = true;
+				bNextStep = true;
 			}
 		}
 
-		if (nextStep) {
+		if (bNextStep) {
 			if (!params[PARAM_REVERSE].getValue()) {
-				currentStep++;
+				++currentStep;
 				if (currentStep >= patternLength + patternPadding) {
 					currentStep = 0;
 					if (!bCycleReset) {
 						pgEoc.trigger();
 					}
 				}
-			}
-			else {
+			} else {
 				currentStep--;
 				if (currentStep < 0) {
 					currentStep = patternLength + patternPadding - 1;
@@ -345,12 +344,11 @@ struct Sphinx : SanguineModule {
 
 			if (gateMode == GM_TURING) {
 				turing = 0;
-				for (int i = 0; i < patternLength; i++) {
-					turing |= finalSequence[(currentStep + i) % patternLength + patternPadding];
+				for (int step = 0; step < patternLength; ++step) {
+					turing |= finalSequence[(currentStep + step) % patternLength + patternPadding];
 					turing <<= 1;
 				}
-			}
-			else {
+			} else {
 				bGateOn = false;
 				if (finalSequence[currentStep]) {
 					pgGate.trigger();
@@ -376,7 +374,7 @@ struct Sphinx : SanguineModule {
 		{
 		case GM_TRIGGER:
 		case GM_GATE: {
-			outputs[OUTPUT_GATE].setVoltage(bGateOn || bGatePulse ? 10.0f : 0.f);
+			outputs[OUTPUT_GATE].setVoltage(bGateOn || bGatePulse ? 10.f : 0.f);
 			break;
 		}
 		case GM_TURING: {
@@ -385,9 +383,9 @@ struct Sphinx : SanguineModule {
 		}
 		}
 
-		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn || bAccentPulse ? 10.0f : 0.f);
+		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn || bAccentPulse ? 10.f : 0.f);
 
-		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.0f : 0.f);
+		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.f : 0.f);
 
 		if (clockDivider.process()) {
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
@@ -407,19 +405,19 @@ struct Sphinx : SanguineModule {
 
 			if (patternAccents == 0) {
 				patternAccentRotation = 0;
-			}
-			else {
+			} else {
 				patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
 					inputs[INPUT_SHIFT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
 			}
 
 			// New sequence in case of parameter change.
-			if (patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternAccentRotation != patternChecksum) {
+			if (patternLength + patternRotation + patternAccents + patternFill + patternPadding +
+				patternAccentRotation != patternChecksum) {
 				patternChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternAccentRotation;
 				bCalculate = true;
 			}
 
-			patternStyle = PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
+			patternStyle = sphinx::PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
 			if (patternStyle != lastPatternStyle) {
 				bCalculate = true;
 			}
@@ -428,21 +426,25 @@ struct Sphinx : SanguineModule {
 
 			const float sampleTime = args.sampleTime * kClockDivider;
 
-			// Update lights			
+			// Update lights.
 			float lightVoltage1;
 
 			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage();
 			lights[LIGHT_EOC].setBrightnessSmooth(lightVoltage1, sampleTime);
 
-			lights[LIGHT_PATTERN_STYLE + 0].setBrightness(patternLightColorTable[patternStyle].red);
-			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green);
-			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue);
+			lights[LIGHT_PATTERN_STYLE + 0].setBrightness(patternLightColorTable[patternStyle].red ?
+				kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green ?
+				kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue ?
+				kSanguineButtonLightValue : 0.f);
 
-			lights[LIGHT_REVERSE].setBrightnessSmooth(params[PARAM_REVERSE].getValue() ? 1.f : 0.f, sampleTime);
+			lights[LIGHT_REVERSE].setBrightnessSmooth(params[PARAM_REVERSE].getValue() ?
+				kSanguineButtonLightValue : 0.f, sampleTime);
 
-			lights[LIGHT_GATE_MODE + 0].setBrightness(gateModeLightColorTable[gateMode].red);
-			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green);
-			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue);
+			lights[LIGHT_GATE_MODE + 0].setBrightness(gateModeLightColorTable[gateMode].red ? kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green ? kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue ? kSanguineButtonLightValue : 0.f);
 
 			lightVoltage1 = outputs[OUTPUT_GATE].getVoltage() / 10.f;
 			float lightVoltage2 = outputs[OUTPUT_ACCENT].getVoltage() / 10.f;
@@ -453,17 +455,15 @@ struct Sphinx : SanguineModule {
 	}
 };
 
-static const std::array<bool, MAXLEN / 2> browserSequence = { true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false };
-
 struct SphinxDisplay : TransparentWidget {
-	Sphinx* module;
-	std::array<bool, MAXLEN * 2>* sequence = nullptr;
-	std::array<bool, MAXLEN * 2>* accents = nullptr;
+	Sphinx* module = nullptr;
+	std::array<bool, sphinx::kMaxLength * 2>* sequence = nullptr;
+	std::array<bool, sphinx::kMaxLength * 2>* accents = nullptr;
 	int* currentStep = nullptr;
 	int* patternFill = nullptr;
 	int* patternLength = nullptr;
 	int* patternPadding = nullptr;
-	PatternStyle* patternStyle = nullptr;
+	sphinx::PatternStyle* patternStyle = nullptr;
 	struct DisplayColors {
 		NVGcolor backgroundColor;
 		NVGcolor inactiveColor;
@@ -497,13 +497,12 @@ struct SphinxDisplay : TransparentWidget {
 		const float radius1 = 0.45f * polyBoxSize.size.x;
 		const float radius2 = 0.35f * polyBoxSize.size.x;
 
-		// Circles
+		// Circles.
 		nvgBeginPath(vg);
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
 			nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		}
-		else if (!module) {
+		} else if (!module) {
 			nvgStrokeColor(vg, arrayDisplayColors[0].inactiveColor);
 			nvgFillColor(vg, arrayDisplayColors[0].activeColor);
 		}
@@ -512,31 +511,29 @@ struct SphinxDisplay : TransparentWidget {
 		nvgCircle(vg, circleX, circleY, radius2);
 		nvgStroke(vg);
 
-		unsigned len = 0;
+		unsigned length = 0;
 
 		if (module && !module->isBypassed()) {
-			len = *patternLength + *patternPadding;
-		}
-		else if (!module) {
-			len = 16;
+			length = *patternLength + *patternPadding;
+		} else if (!module) {
+			length = 16;
 		}
 
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		}
-		else if (!module) {
+		} else if (!module) {
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
 		}
 		nvgBeginPath(vg);
-		bool first = true;
+		bool bFirst = true;
 
-		// inactive Step Rings
-		for (unsigned i = 0; i < len; i++) {
+		// Inactive step rings.
+		for (unsigned step = 0; step < length; ++step) {
 			if (module && !module->isBypassed()) {
-				if (!sequence->at(i)) {
-					float r = accents->at(i) ? radius1 : radius2;
-					float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * i / len - 0.5f * M_PI);
+				if (!sequence->at(step)) {
+					float r = accents->at(step) ? radius1 : radius2;
+					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
+					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
 
 					nvgBeginPath(vg);
 					nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
@@ -546,12 +543,11 @@ struct SphinxDisplay : TransparentWidget {
 					nvgFill(vg);
 					nvgStroke(vg);
 				}
-			}
-			else if (!module) {
-				if (!browserSequence[i]) {
+			} else if (!module) {
+				if (!sphinx::browserSequence[step]) {
 					float r = radius2;
-					float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * i / len - 0.5f * M_PI);
+					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
+					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
 
 					nvgBeginPath(vg);
 					nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
@@ -564,48 +560,45 @@ struct SphinxDisplay : TransparentWidget {
 			}
 		}
 
-		// Path
+		// Path.
 		nvgBeginPath(vg);
 		if (module && !module->isBypassed()) {
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		}
-		else if (!module) {
+		} else if (!module) {
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
 		}
 		nvgStrokeWidth(vg, 1.f);
-		for (unsigned int i = 0; i < len; i++) {
+		for (unsigned int step = 0; step < length; ++step) {
 			if (module && !module->isBypassed()) {
-				if (sequence->at(i)) {
-					float a = i / float(len);
-					float r = accents->at(i) ? radius1 : radius2;
+				if (sequence->at(step)) {
+					float a = step / static_cast<float>(length);
+					float r = accents->at(step) ? radius1 : radius2;
 					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
 					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
 
 					Vec p(x, y);
-					if (*patternFill == 1)
+					if (*patternFill == 1) {
 						nvgCircle(vg, x, y, 2.f);
-					if (first) {
-						nvgMoveTo(vg, p.x, p.y);
-						first = false;
 					}
-					else {
+					if (bFirst) {
+						nvgMoveTo(vg, p.x, p.y);
+						bFirst = false;
+					} else {
 						nvgLineTo(vg, p.x, p.y);
 					}
 				}
-			}
-			else if (!module) {
-				if (browserSequence[i]) {
-					float a = i / float(len);
+			} else if (!module) {
+				if (sphinx::browserSequence[step]) {
+					float a = step / static_cast<float>(length);
 					float r = radius2;
 					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
 					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
 
 					Vec p(x, y);
-					if (first) {
+					if (bFirst) {
 						nvgMoveTo(vg, p.x, p.y);
-						first = false;
-					}
-					else {
+						bFirst = false;
+					} else {
 						nvgLineTo(vg, p.x, p.y);
 					}
 				}
@@ -614,13 +607,13 @@ struct SphinxDisplay : TransparentWidget {
 		nvgClosePath(vg);
 		nvgStroke(vg);
 
-		// Active Step Rings
-		for (unsigned i = 0; i < len; i++) {
+		// Active step rings.
+		for (unsigned step = 0; step < length; ++step) {
 			if (module && !module->isBypassed()) {
-				if (sequence->at(i)) {
-					float r = accents->at(i) ? radius1 : radius2;
-					float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * i / len - 0.5f * M_PI);
+				if (sequence->at(step)) {
+					float r = accents->at(step) ? radius1 : radius2;
+					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
+					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
 
 					nvgBeginPath(vg);
 					nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
@@ -630,12 +623,11 @@ struct SphinxDisplay : TransparentWidget {
 					nvgFill(vg);
 					nvgStroke(vg);
 				}
-			}
-			else if (!module) {
-				if (browserSequence[i]) {
+			} else if (!module) {
+				if (sphinx::browserSequence[step]) {
 					float r = radius2;
-					float x = circleX + r * cosf(2.f * M_PI * i / len - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * i / len - 0.5f * M_PI);
+					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
+					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
 
 					nvgBeginPath(vg);
 					nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
@@ -650,31 +642,28 @@ struct SphinxDisplay : TransparentWidget {
 
 		if (module && !module->isBypassed()) {
 			float r = accents->at(*currentStep) ? radius1 : radius2;
-			float x = circleX + r * cosf(2.f * M_PI * *currentStep / len - 0.5f * M_PI);
-			float y = circleY + r * sinf(2.f * M_PI * *currentStep / len - 0.5f * M_PI);
+			float x = circleX + r * cosf(2.f * M_PI * *currentStep / length - 0.5f * M_PI);
+			float y = circleY + r * sinf(2.f * M_PI * *currentStep / length - 0.5f * M_PI);
 			nvgBeginPath(vg);
 			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
 			if (sequence->at(*currentStep)) {
 				nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-			}
-			else {
+			} else {
 				nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
 			}
 			nvgCircle(vg, x, y, 2.);
 			nvgStrokeWidth(vg, 1.5f);
 			nvgFill(vg);
 			nvgStroke(vg);
-		}
-		else if (!module) {
+		} else if (!module) {
 			float r = radius2;
-			float x = circleX + r * cosf(2.f * M_PI * 0 / len - 0.5f * M_PI);
-			float y = circleY + r * sinf(2.f * M_PI * 0 / len - 0.5f * M_PI);
+			float x = circleX + r * cosf(2.f * M_PI * 0 / length - 0.5f * M_PI);
+			float y = circleY + r * sinf(2.f * M_PI * 0 / length - 0.5f * M_PI);
 			nvgBeginPath(vg);
 			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
-			if (browserSequence[0]) {
+			if (sphinx::browserSequence[0]) {
 				nvgFillColor(vg, arrayDisplayColors[0].activeColor);
-			}
-			else {
+			} else {
 				nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
 			}
 			nvgCircle(vg, x, y, 2.);
@@ -704,19 +693,18 @@ struct SphinxDisplay : TransparentWidget {
 				nvgFillColor(args.vg, arrayDisplayColors[*patternStyle].backgroundColor);
 				nvgFill(args.vg);
 
-				// Shape
+				// Shape.
 				if (accents && currentStep && patternFill && patternLength && patternPadding && patternStyle) {
 					drawPolygon(args.vg);
 					drawRectHalo(args, box.size, arrayDisplayColors[*patternStyle].activeColor, 55, 0.f);
 				}
-			}
-			else if (!module) {
+			} else if (!module) {
 				nvgBeginPath(args.vg);
 				nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
 				nvgFillColor(args.vg, arrayDisplayColors[0].backgroundColor);
 				nvgFill(args.vg);
 
-				// Shape				
+				// Shape.
 				drawPolygon(args.vg);
 			}
 		}
@@ -732,7 +720,7 @@ struct TL1105Latch : TL1105 {
 };
 
 struct SphinxWidget : SanguineModuleWidget {
-	SphinxWidget(Sphinx* module) {
+	explicit SphinxWidget(Sphinx* module) {
 		setModule(module);
 
 		moduleName = "sphinx";
@@ -742,10 +730,7 @@ struct SphinxWidget : SanguineModuleWidget {
 
 		makePanel();
 
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addScrews(SCREW_ALL);
 
 		FramebufferWidget* sphinxFrameBuffer = new FramebufferWidget();
 		addChild(sphinxFrameBuffer);
@@ -755,16 +740,6 @@ struct SphinxWidget : SanguineModuleWidget {
 		sphinxDisplay->box.pos = millimetersToPixelsVec(17.126, 8.271);
 		sphinxDisplay->box.size = millimetersToPixelsVec(22.14, 22.14);
 		sphinxFrameBuffer->addChild(sphinxDisplay);
-
-		if (module) {
-			sphinxDisplay->sequence = &module->finalSequence;
-			sphinxDisplay->accents = &module->finalAccents;
-			sphinxDisplay->patternLength = &module->patternLength;
-			sphinxDisplay->patternPadding = &module->patternPadding;
-			sphinxDisplay->patternFill = &module->patternFill;
-			sphinxDisplay->currentStep = &module->currentStep;
-			sphinxDisplay->patternStyle = &module->patternStyle;
-		}
 
 		addChild(createLightParamCentered<VCVLightBezelLatch<RedGreenBlueLight>>(millimetersToPixelsVec(48.472, 13.947),
 			module, Sphinx::PARAM_PATTERN_STYLE, Sphinx::LIGHT_PATTERN_STYLE));
@@ -795,40 +770,21 @@ struct SphinxWidget : SanguineModuleWidget {
 		sphinxFrameBuffer->addChild(displayLength);
 		displayLength->fallbackNumber = 16;
 
-		if (module)
-			displayLength->values.numberValue = &module->patternLength;
-
 		SanguineTinyNumericDisplay* displayFill = new SanguineTinyNumericDisplay(2, module, 27.82, 50.499);
 		sphinxFrameBuffer->addChild(displayFill);
 		displayFill->fallbackNumber = 4;
 
-		if (module)
-			displayFill->values.numberValue = &module->patternFill;
-
 		SanguineTinyNumericDisplay* displayRotation = new SanguineTinyNumericDisplay(2, module, 45.414, 50.499);
 		sphinxFrameBuffer->addChild(displayRotation);
-
-		if (module)
-			displayRotation->values.numberValue = &module->patternRotation;
 
 		SanguineTinyNumericDisplay* displayPadding = new SanguineTinyNumericDisplay(2, module, 10.386, 86.77);
 		sphinxFrameBuffer->addChild(displayPadding);
 
-		if (module)
-			displayPadding->values.numberValue = &module->patternPadding;
-
 		SanguineTinyNumericDisplay* displayAccent = new SanguineTinyNumericDisplay(2, module, 27.82, 86.77);
 		sphinxFrameBuffer->addChild(displayAccent);
 
-		if (module)
-			displayAccent->values.numberValue = &module->patternAccents;
-
 		SanguineTinyNumericDisplay* displayAccentRotation = new SanguineTinyNumericDisplay(2, module, 45.414, 86.77);
 		sphinxFrameBuffer->addChild(displayAccentRotation);
-
-		if (module)
-			displayAccentRotation->values.numberValue = &module->patternAccentRotation;
-
 
 		addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(7.326, 112.894), module, Sphinx::INPUT_CLOCK));
 		addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(19.231, 112.894), module, Sphinx::INPUT_RESET));
@@ -848,6 +804,26 @@ struct SphinxWidget : SanguineModuleWidget {
 
 		SanguineStaticRGBLight* accentLight = new SanguineStaticRGBLight(module, "res/accent_lit.svg", 48.448, 105.958, true, kSanguineYellowLight);
 		addChild(accentLight);
+
+		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 27.9, 113.47);
+		addChild(bloodLight);
+
+		if (module) {
+			sphinxDisplay->sequence = &module->finalSequence;
+			sphinxDisplay->accents = &module->finalAccents;
+			sphinxDisplay->patternLength = &module->patternLength;
+			sphinxDisplay->patternPadding = &module->patternPadding;
+			sphinxDisplay->patternFill = &module->patternFill;
+			sphinxDisplay->currentStep = &module->currentStep;
+			sphinxDisplay->patternStyle = &module->patternStyle;
+
+			displayAccentRotation->values.numberValue = &module->patternAccentRotation;
+			displayLength->values.numberValue = &module->patternLength;
+			displayFill->values.numberValue = &module->patternFill;
+			displayRotation->values.numberValue = &module->patternRotation;
+			displayPadding->values.numberValue = &module->patternPadding;
+			displayAccent->values.numberValue = &module->patternAccents;
+		}
 	}
 };
 

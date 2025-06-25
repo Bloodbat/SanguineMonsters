@@ -1,8 +1,13 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
+#ifndef METAMODULE
 #include "seqcomponents.hpp"
+#endif
 #include "sanguinehelpers.hpp"
-#include "pcg_variants.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+#include "pcg_random.hpp"
+#pragma GCC diagnostic pop
 
 struct Oraculus : SanguineModule {
 
@@ -32,6 +37,9 @@ struct Oraculus : SanguineModule {
 
 	enum LightIds {
 		ENUMS(LIGHT_CHANNEL, 16 * 3),
+#ifdef METAMODULE
+		LIGHT_NO_REPEATS,
+#endif
 		LIGHTS_COUNT
 	};
 
@@ -60,7 +68,7 @@ struct Oraculus : SanguineModule {
 
 	const static int kClockUpdateFrequency = 16;
 
-	pcg32_random_t pcgRng;
+	pcg32 pcgRng;
 
 	Oraculus() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -82,35 +90,10 @@ struct Oraculus : SanguineModule {
 
 		configOutput(OUTPUT_MONOPHONIC, "Monophonic");
 
-		pcg32_srandom_r(&pcgRng, std::round(system::getUnixTime()), (intptr_t)&pcgRng);
+		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 
 		clockDivider.setDivision(kClockUpdateFrequency);
 		onReset();
-	};
-
-	void doDecreaseTrigger() {
-		selectedChannel = ((selectedChannel - 1) + channelCount) % channelCount;
-	};
-
-	void doIncreaseTrigger() {
-		selectedChannel = (selectedChannel + 1) % channelCount;
-	};
-
-	void doRandomTrigger() {
-		int randomNum;
-		if (!bNoRepeats) {
-			selectedChannel = (int)pcg32_boundedrand_r(&pcgRng, channelCount);
-		}
-		else {
-			randomNum = selectedChannel;
-			while (randomNum == selectedChannel)
-				randomNum = (int)pcg32_boundedrand_r(&pcgRng, channelCount);
-			selectedChannel = randomNum;
-		}
-	};
-
-	void doResetTrigger() {
-		selectedChannel = 0;
 	};
 
 	void process(const ProcessArgs& args) override {
@@ -125,12 +108,16 @@ struct Oraculus : SanguineModule {
 			doResetTrigger();
 		}
 
-		if (btReset.process(params[PARAM_RESET].getValue()))
-		{
+		if (btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
 		}
 
+		finalChannel = -1;
 		if (channelCount > 0) {
+			if (selectedChannel >= channelCount) {
+				selectedChannel = channelCount - 1;
+			}
+
 			if ((bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage()))
 				|| btIncrease.process(params[PARAM_INCREASE].getValue())) {
 				doIncreaseTrigger();
@@ -146,31 +133,23 @@ struct Oraculus : SanguineModule {
 				doRandomTrigger();
 			}
 
+			finalChannel = selectedChannel;
 			if (bCvConnected && channelCount > 1) {
 				float cv = inputs[INPUT_CV_OFFSET].getVoltage();
 				int channelOffset = std::floor(cv * (channelCount / 10.f));
 				finalChannel = selectedChannel + channelOffset;
-				if (finalChannel < 0)
+				if (finalChannel < 0) {
 					finalChannel = channelCount + channelOffset;
-				if (finalChannel >= channelCount)
+				}
+				if (finalChannel >= channelCount) {
 					finalChannel = channelOffset - (channelCount - selectedChannel);
-			}
-			else {
-				finalChannel = selectedChannel;
-			}
-
-
-			if (channelCount < 1)
-				finalChannel = -1;
-
-			if (finalChannel > -1) {
-				if (bOutputConnected) {
-					outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
 				}
 			}
-		}
-		else {
-			finalChannel = -1;
+
+			if (bOutputConnected) {
+				outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
+			}
+		} else {
 			if (bOutputConnected) {
 				outputs[OUTPUT_MONOPHONIC].setChannels(0);
 			}
@@ -178,6 +157,29 @@ struct Oraculus : SanguineModule {
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
 	}
+
+	void doDecreaseTrigger() {
+		selectedChannel = ((selectedChannel - 1) + channelCount) % channelCount;
+	};
+
+	void doIncreaseTrigger() {
+		selectedChannel = (selectedChannel + 1) % channelCount;
+	};
+
+	void doRandomTrigger() {
+		if (!bNoRepeats) {
+			selectedChannel = pcgRng(channelCount);
+		} else {
+			int randomNum = selectedChannel;
+			while (randomNum == selectedChannel)
+				randomNum = pcgRng(channelCount);
+			selectedChannel = randomNum;
+		}
+	};
+
+	void doResetTrigger() {
+		selectedChannel = 0;
+	};
 
 	void checkConnections() {
 		bCvConnected = inputs[INPUT_CV_OFFSET].isConnected();
@@ -192,30 +194,32 @@ struct Oraculus : SanguineModule {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 		const float sampleTime = args.sampleTime * kClockUpdateFrequency;
 
-		int currentLight;
-		for (int i = 0; i < 16; i++) {
-			currentLight = i * 3;
-			if (i == finalChannel) {
-				lights[currentLight + 0].setBrightnessSmooth(0.59f, sampleTime);
+		for (int light = 0; light < PORT_MAX_CHANNELS; ++light) {
+			int currentLight = light * 3;
+			if (light == finalChannel) {
+				lights[currentLight + 0].setBrightnessSmooth(0.5f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(1.f, sampleTime);
-			}
-			else if (i < channelCount) {
+				lights[currentLight + 2].setBrightnessSmooth(0.34f, sampleTime);
+			} else if (light < channelCount) {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0.28f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.15f, sampleTime);
-			}
-			else {
+				lights[currentLight + 1].setBrightnessSmooth(0.18f, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(0.10f, sampleTime);
+			} else {
 				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
 			}
 		}
+
+#ifdef METAMODULE
+		lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) ?
+			kSanguineButtonLightValue : 0.f);
+#endif
 	}
 };
 
 struct OraculusWidget : SanguineModuleWidget {
-	OraculusWidget(Oraculus* module) {
+	explicit OraculusWidget(Oraculus* module) {
 		setModule(module);
 
 		moduleName = "oraculus";
@@ -225,10 +229,7 @@ struct OraculusWidget : SanguineModuleWidget {
 
 		makePanel();
 
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addScrews(SCREW_ALL);
 
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.452, 23.464), module, Oraculus::INPUT_POLYPHONIC));
 
@@ -241,9 +242,7 @@ struct OraculusWidget : SanguineModuleWidget {
 
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(17.78, 113.488), module, Oraculus::OUTPUT_MONOPHONIC));
 
-		FramebufferWidget* oraculusFrameBuffer = new FramebufferWidget();
-		addChild(oraculusFrameBuffer);
-
+#ifndef METAMODULE
 		addParam(createParamCentered<SeqButtonUp>(millimetersToPixelsVec(25.451, 55.801), module, Oraculus::PARAM_INCREASE));
 
 		addParam(createParamCentered<SeqButtonDown>(millimetersToPixelsVec(25.451f, 68.984f), module, Oraculus::PARAM_DECREASE));
@@ -259,6 +258,18 @@ struct OraculusWidget : SanguineModuleWidget {
 		addChild(outMonoLight);
 
 		addParam(createParam<SeqButtonNoRepeatsSmall>(millimetersToPixelsVec(9.454, 41.189), module, Oraculus::PARAM_NO_REPEATS));
+#else
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 55.801f), module, Oraculus::PARAM_INCREASE));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 68.984f), module, Oraculus::PARAM_DECREASE));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 82.168f), module, Oraculus::PARAM_RANDOM));
+
+		addParam(createParamCentered<VCVButton>(millimetersToPixelsVec(28.188f, 95.351f), module, Oraculus::PARAM_RESET));
+
+		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<PurpleLight>>>(millimetersToPixelsVec(11.454, 44.889), module,
+			Oraculus::PARAM_NO_REPEATS, Oraculus::LIGHT_NO_REPEATS));
+#endif
 
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(23.734, 15.11), module, Oraculus::LIGHT_CHANNEL + 0 * 3));
 

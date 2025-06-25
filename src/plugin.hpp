@@ -4,6 +4,9 @@
 
 using namespace rack;
 
+/* TODO: expanders have been disabled for MetaModule: it doesn't support them.
+   If MetaModule ever supports them, re-enable them here and add them to the MetaModule json manifest. */
+
 extern Plugin* pluginInstance;
 
 extern Model* modelSuperSwitch81;
@@ -22,4 +25,14 @@ extern Model* modelMedusa;
 extern Model* modelAion;
 extern Model* modelWerewolf;
 extern Model* modelAlchemist;
+extern Model* modelChronos;
+extern Model* modelFortuna;
+
+// MetaModule disabled modules go here!
+
+#ifndef METAMODULE
 extern Model* modelAlembic;
+extern Model* modelDenki;
+extern Model* modelManus;
+extern Model* modelCrucible;
+#endif

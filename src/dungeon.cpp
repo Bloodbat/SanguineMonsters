@@ -1,35 +1,10 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "sanguinerandom.hpp"
+#include "sanguinejson.hpp"
 
-struct GradientColors {
-	NVGcolor innerColor;
-	NVGcolor outerColor;
-};
-
-static const std::vector<GradientColors> moonColors{
-	{ nvgRGB(247, 187, 187), nvgRGB(223, 33, 33) },
-	{ nvgRGB(217, 217, 217), nvgRGB(128, 128, 128) },
-	{ nvgRGB(187, 214, 247), nvgRGB(22, 117, 234) }
-};
-
-static const std::vector<std::string> dungeonModeLabels{
-	"SH ",
-	"TH",
-	"HT"
-};
-
-struct SlewFilter {
-	float value = 0.f;
-
-	float process(float in, float slew) {
-		value += math::clamp(in - value, -slew, slew);
-		return value;
-	}
-	float getValue() {
-		return value;
-	}
-};
+#include "dungeon.hpp"
 
 struct Dungeon : SanguineModule {
 
@@ -56,11 +31,14 @@ struct Dungeon : SanguineModule {
 	enum LightIds {
 		LIGHT_TRIGGER,
 		ENUMS(LIGHT_SLEW, 2),
+#ifdef METAMODULE
+		ENUMS(LIGHT_VOLTAGE, 3),
+#endif
 		LIGHTS_COUNT
 	};
 
 	struct Engine {
-		bool state = false;
+		bool isTriggered = false;
 		float voltage = 0.f;
 		SlewFilter sampleFilter;
 	} engine;
@@ -71,10 +49,12 @@ struct Dungeon : SanguineModule {
 		MODE_HOLD_AND_TRACK
 	} moduleMode = MODE_SAMPLE_AND_HOLD;
 
-	NVGcolor innerMoon = moonColors[1].innerColor;
-	NVGcolor outerMoon = moonColors[1].outerColor;
+#ifndef METAMODULE
+	NVGcolor innerMoon = dungeon::moonColors[1].innerColor;
+	NVGcolor outerMoon = dungeon::moonColors[1].outerColor;
+#endif
 
-	const int kClockDividerFrequency = 512;
+	static const int kClockDividerFrequency = 512;
 
 	float minSlew = std::log2(1e-3f);
 	float maxSlew = std::log2(10.f);
@@ -83,14 +63,17 @@ struct Dungeon : SanguineModule {
 
 	bool bStoreVoltageInPatch = true;
 
-	std::string modeLabel = dungeonModeLabels[0];
+#ifndef METAMODULE
+	HaloTypes haloType = HALO_CIRCULAR;
+#endif
+
+	std::string modeLabel = dungeon::modeLabels[0];
 
 	dsp::ClockDivider clockDivider;
 
 	Dungeon() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 		configSwitch(PARAM_MODE, 0.f, 2.f, 0.f, "Mode", { "Sample and hold", "Track and hold", "Hold and track" });
-		paramQuantities[PARAM_MODE]->snapEnabled = true;
 
 		configButton(PARAM_TRIGGER, "Trigger");
 
@@ -116,10 +99,9 @@ struct Dungeon : SanguineModule {
 	inline void getNewVoltage(bool bHaveWhiteNoise, bool bHaveInVoltage) {
 		if (bHaveInVoltage) {
 			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
-		}
-		else {
+		} else {
 			if (!bHaveWhiteNoise) {
-				whiteNoise = 2.f * random::normal();
+				whiteNoise = 2.f * sanguineRandom::normal();
 			}
 			inVoltage = whiteNoise;
 		}
@@ -132,7 +114,7 @@ struct Dungeon : SanguineModule {
 		bool bHaveInVoltage = inputs[INPUT_VOLTAGE].isConnected();
 
 		if (bHaveWhiteNoise) {
-			whiteNoise = 2.f * random::normal();
+			whiteNoise = 2.f * sanguineRandom::normal();
 			if (outputs[OUTPUT_NOISE].isConnected()) {
 				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 			}
@@ -142,18 +124,17 @@ struct Dungeon : SanguineModule {
 		{
 		case Dungeon::MODE_SAMPLE_AND_HOLD: {
 			// Gate trigger/untrigger
-			if (!engine.state) {
+			if (!engine.isTriggered) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
-					engine.state = true;
+					engine.isTriggered = true;
 					getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 					engine.voltage = inVoltage;
 				}
-			}
-			else {
+			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
-					engine.state = false;
+					engine.isTriggered = false;
 				}
 			}
 
@@ -164,21 +145,20 @@ struct Dungeon : SanguineModule {
 			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 
 			// Gate trigger/untrigger
-			if (!engine.state) {
+			if (!engine.isTriggered) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
-					engine.state = true;
+					engine.isTriggered = true;
 				}
-			}
-			else {
+			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
-					engine.state = false;
+					engine.isTriggered = false;
 					// Track and hold
 					engine.voltage = inVoltage;
 				}
 			}
-			if (engine.state) {
+			if (engine.isTriggered) {
 				inVoltage = engine.voltage;
 			}
 			break;
@@ -187,21 +167,20 @@ struct Dungeon : SanguineModule {
 			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
 
 			// Gate trigger/untrigger
-			if (!engine.state) {
+			if (!engine.isTriggered) {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
-					engine.state = true;
+					engine.isTriggered = true;
 				}
-			}
-			else {
+			} else {
 				if (inputs[INPUT_CLOCK].getVoltage() <= 0.1f && !bGateButton) {
 					// Untriggered
-					engine.state = false;
+					engine.isTriggered = false;
 					// Track and hold
 					engine.voltage = inVoltage;
 				}
 			}
-			if (!engine.state) {
+			if (!engine.isTriggered) {
 				inVoltage = engine.voltage;
 			}
 			break;
@@ -225,51 +204,79 @@ struct Dungeon : SanguineModule {
 			outputs[OUTPUT_VOLTAGE].setVoltage(engine.sampleFilter.process(inVoltage, slewDelta));
 		}
 
-		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.state, args.sampleTime);
+		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.isTriggered ? kSanguineButtonLightValue : 0.f, args.sampleTime);
 
 		if (clockDivider.process()) {
 			moduleMode = ModuleModes(params[PARAM_MODE].getValue());
-			modeLabel = dungeonModeLabels[moduleMode];
+			modeLabel = dungeon::modeLabels[moduleMode];
 
 			const float sampleTime = args.sampleTime * kClockDividerFrequency;
 
 			if (!inputs[INPUT_SLEW].isConnected()) {
 				lights[LIGHT_SLEW + 0].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), minSlew, maxSlew, 0.f, 1.f), sampleTime);
-			}
-			else {
-				lights[LIGHT_SLEW + 0].setBrightnessSmooth(math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f), sampleTime);
-				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(-inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f), sampleTime);
+			} else {
+				float rescaledLight = math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f);
+				lights[LIGHT_SLEW + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_SLEW + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
 			}
 
+#ifndef METAMODULE
 			if (inVoltage >= 1.f) {
-				outerMoon = moonColors[2].outerColor;
-				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.r, moonColors[2].innerColor.r);
-				innerMoon.g = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.g, moonColors[2].innerColor.g);
-				innerMoon.b = math::rescale(inVoltage, 1.f, 5.f, moonColors[2].outerColor.b, moonColors[2].innerColor.b);
+				outerMoon = dungeon::moonColors[2].outerColor;
+				innerMoon.r = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.r,
+					dungeon::moonColors[2].innerColor.r);
+				innerMoon.g = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.g,
+					dungeon::moonColors[2].innerColor.g);
+				innerMoon.b = math::rescale(inVoltage, 1.f, 5.f, dungeon::moonColors[2].outerColor.b,
+					dungeon::moonColors[2].innerColor.b);
+			} else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
+				outerMoon = dungeon::moonColors[1].outerColor;
+				innerMoon.r = math::rescale(inVoltage, -0.99f, 0.99f, dungeon::moonColors[1].outerColor.r,
+					dungeon::moonColors[1].innerColor.r);
+				innerMoon.g = math::rescale(inVoltage, -0.99f, 0.99f, dungeon::moonColors[1].outerColor.g,
+					dungeon::moonColors[1].innerColor.g);
+				innerMoon.b = math::rescale(inVoltage, -0.99f, 0.99f, dungeon::moonColors[1].outerColor.b,
+					dungeon::moonColors[1].innerColor.b);
+			} else {
+				outerMoon = dungeon::moonColors[0].outerColor;
+				innerMoon.r = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.r,
+					dungeon::moonColors[0].innerColor.r);
+				innerMoon.g = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.g,
+					dungeon::moonColors[0].innerColor.g);
+				innerMoon.b = math::rescale(inVoltage, -1.f, -5.f, dungeon::moonColors[0].outerColor.b,
+					dungeon::moonColors[0].innerColor.b);
 			}
-			else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
-				outerMoon = moonColors[1].outerColor;
-				innerMoon.r = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.r, moonColors[1].innerColor.r);
-				innerMoon.g = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.g, moonColors[1].innerColor.g);
-				innerMoon.b = math::rescale(inVoltage, -0.99f, 0.99f, moonColors[1].outerColor.b, moonColors[1].innerColor.b);
+#else
+			if (inVoltage >= 1.f) {
+				lights[LIGHT_VOLTAGE + 0].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE + 1].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE + 2].setBrightness(rescale(inVoltage, 1.f, 10.f, 0.f, 1.f));
+			} else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
+				float rescaledVoltage = rescale(inVoltage, -0.99f, 0.99f, 0.f, 1.f);
+				lights[LIGHT_VOLTAGE + 0].setBrightness(rescaledVoltage);
+				lights[LIGHT_VOLTAGE + 1].setBrightness(rescaledVoltage);
+				lights[LIGHT_VOLTAGE + 2].setBrightness(rescaledVoltage);
+			} else {
+				lights[LIGHT_VOLTAGE + 0].setBrightness(rescale(inVoltage, -10.f, -1.f, 0.f, 1.f));
+				lights[LIGHT_VOLTAGE + 1].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE + 2].setBrightness(0.f);
 			}
-			else {
-				outerMoon = moonColors[0].outerColor;
-				innerMoon.r = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.r, moonColors[0].innerColor.r);
-				innerMoon.g = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.g, moonColors[0].innerColor.g);
-				innerMoon.b = math::rescale(inVoltage, -1.f, -5.f, moonColors[0].outerColor.b, moonColors[0].innerColor.b);
-			}
+#endif
 		}
 	}
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
 
+		setJsonBoolean(rootJ, "storeVoltageInPatch", bStoreVoltageInPatch);
+
 		if (bStoreVoltageInPatch) {
-			json_object_set_new(rootJ, "storeVoltageInPatch", json_boolean(bStoreVoltageInPatch));
-			json_object_set_new(rootJ, "heldVoltage", json_real(engine.voltage));
+			setJsonFloat(rootJ, "heldVoltage", engine.voltage);
 		}
+#ifndef METAMODULE
+		setJsonInt(rootJ, "haloType", static_cast<int>(haloType));
+#endif
 
 		return rootJ;
 	}
@@ -277,23 +284,26 @@ struct Dungeon : SanguineModule {
 	void dataFromJson(json_t* rootJ) override {
 		SanguineModule::dataFromJson(rootJ);
 
-		json_t* storeVoltageInPatchJ = json_object_get(rootJ, "storeVoltageInPatch");
-		if (storeVoltageInPatchJ) {
-			bStoreVoltageInPatch = json_boolean_value(storeVoltageInPatchJ);
-			if (bStoreVoltageInPatch) {
-				json_t* heldVoltageJ = json_object_get(rootJ, "heldVoltage");
-				if (heldVoltageJ) {
-					engine.voltage = json_number_value(heldVoltageJ);
-					outputs[OUTPUT_VOLTAGE].setChannels(1);
-					outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
-				}
+		getJsonBoolean(rootJ, "storeVoltageInPatch", bStoreVoltageInPatch);
+		if (bStoreVoltageInPatch) {
+			if (getJsonFloat(rootJ, "heldVoltage", engine.voltage)) {
+				outputs[OUTPUT_VOLTAGE].setChannels(1);
+				outputs[OUTPUT_VOLTAGE].setVoltage(engine.voltage);
 			}
 		}
+
+		json_int_t intValue;
+
+#ifndef METAMODULE
+		if (getJsonInt(rootJ, "haloType", intValue)) {
+			haloType = static_cast<HaloTypes>(intValue);
+		}
+#endif
 	}
 };
 
 struct DungeonWidget : SanguineModuleWidget {
-	DungeonWidget(Dungeon* module) {
+	explicit DungeonWidget(Dungeon* module) {
 		setModule(module);
 
 		moduleName = "dungeon";
@@ -303,20 +313,23 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		makePanel();
 
+		addScrews(SCREW_ALL);
+
 		FramebufferWidget* dungeonFrameBuffer = new FramebufferWidget();
 		addChild(dungeonFrameBuffer);
 
+#ifndef METAMODULE
 		SanguineMultiColoredShapedLight* moonLight = new SanguineMultiColoredShapedLight();
 		moonLight->box.pos = millimetersToPixelsVec(3.361, 27.351);
 		moonLight->module = module;
 		moonLight->setSvg(Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_light.svg")));
 		moonLight->svgGradient = Svg::load(asset::plugin(pluginInstance, "res/dungeon_moon_gradient.svg"));
+		moonLight->haloRadiusFactor = 2.1f;
 		dungeonFrameBuffer->addChild(moonLight);
-
-		if (module) {
-			moonLight->innerColor = &module->innerMoon;
-			moonLight->outerColor = &module->outerMoon;
-		}
+#else
+		addChild(createLightCentered<LargeLight<RedGreenBlueLight>>(millimetersToPixelsVec(36.76, 55.256), module,
+			Dungeon::LIGHT_VOLTAGE));
+#endif
 
 		addParam(createParamCentered<CKD6>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::PARAM_TRIGGER));
 		addChild(createLightCentered<CKD6Light<RedLight>>(millimetersToPixelsVec(62.386, 12.334), module, Dungeon::LIGHT_TRIGGER));
@@ -326,12 +339,10 @@ struct DungeonWidget : SanguineModuleWidget {
 		SanguineTinyNumericDisplay* displayMode = new SanguineTinyNumericDisplay(2, module, 35.56, 16.934);
 		displayMode->displayType = DISPLAY_STRING;
 		dungeonFrameBuffer->addChild(displayMode);
-		displayMode->fallbackString = dungeonModeLabels[0];
+		displayMode->fallbackString = dungeon::modeLabels[0];
 
-		if (module)
-			displayMode->values.displayText = &module->modeLabel;
-
-		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module, Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
+		addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(36.76, 73.316), module,
+			Dungeon::PARAM_SLEW, Dungeon::LIGHT_SLEW));
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(36.76, 95.874), module, Dungeon::INPUT_SLEW));
 
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(8.762, 100.733), module, Dungeon::INPUT_CLOCK));
@@ -340,6 +351,7 @@ struct DungeonWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 100.733), module, Dungeon::OUTPUT_NOISE));
 		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(62.386, 116.011), module, Dungeon::OUTPUT_VOLTAGE));
 
+#ifndef METAMODULE
 		SanguineStaticRGBLight* clockLight = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 8.762, 93.246, true, kSanguineYellowLight);
 		addChild(clockLight);
 
@@ -357,6 +369,17 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 38.928, 116.658);
 		addChild(monstersLight);
+#endif
+
+		if (module) {
+#ifndef METAMODULE
+			moonLight->innerColor = &module->innerMoon;
+			moonLight->outerColor = &module->outerMoon;
+			moonLight->haloType = &module->haloType;
+#endif
+
+			displayMode->values.displayText = &module->modeLabel;
+		}
 	}
 
 	void appendContextMenu(Menu* menu) override {
@@ -366,9 +389,21 @@ struct DungeonWidget : SanguineModuleWidget {
 
 		menu->addChild(new MenuSeparator);
 
-		menu->addChild(createCheckMenuItem("Store held voltage in patch", "",
-			[=]() {return module->bStoreVoltageInPatch; },
-			[=]() {module->bStoreVoltageInPatch = !module->bStoreVoltageInPatch; }));
+		menu->addChild(createSubmenuItem("Options", "",
+			[=](Menu* menu) {
+				menu->addChild(createCheckMenuItem("Store held voltage in patch", "",
+					[=]() {return module->bStoreVoltageInPatch; },
+					[=]() {module->bStoreVoltageInPatch = !module->bStoreVoltageInPatch; }));
+
+#ifndef METAMODULE
+				menu->addChild(new MenuSeparator);
+
+				menu->addChild(createCheckMenuItem("Draw moon halo", "",
+					[=]() { return module->haloType == HALO_CIRCULAR ? true : false; },
+					[=]() { module->haloType == HALO_CIRCULAR ? module->haloType = HALO_NONE : module->haloType = HALO_CIRCULAR; }));
+#endif
+			}
+		));
 	}
 };
 

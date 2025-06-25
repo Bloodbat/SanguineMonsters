@@ -1,3 +1,152 @@
+# 2.4.0
+
+## New Modules
+
+### Chronos
+
+- Polyphonic collection of four low-frequency oscillators.
+
+### Crucible
+
+- Expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode.
+
+### Denki
+
+- Polyphonic expander for Kitsune: adds Gain and Offset CV control.
+
+### Fortuna
+
+- Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
+
+### Manus
+
+- Expander for Gegenees and Hydra that provides CV trigger step selection.
+
+---
+
+## Fixes
+
+- Plugin: faceplate colors.
+
+- Plugin: output gate glyph drawing.
+
+- Dungeon: module was falling off the Rack: it was missing screws.
+
+- Dungeon: actually store user preference when "Store voltage in patch" is disabled.
+
+- Gegenees: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
+
+- Gegenees: store and restore "One Shot" user preference.
+
+- Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
+
+- Hydra: store and restore "One Shot" user preference.
+
+---
+
+## Additions
+
+- Aion: faceplate knob borders and knob labels.
+
+- Alchemist: knob border.
+
+- Alchemist: ability to add expander from context menu.
+
+- Alchemist: master mute button and CV input.
+
+- Brainz: knob borders.
+
+- Bukavac: knob borders.
+
+- Chronos: knob borders.
+
+- Dolly-X: knob borders.
+
+- Dungeon: optional moon halo (on by default).
+
+- Dungeon: knob border.
+
+- Gegenees: knob border.
+
+- Gegenees: Manus expander.
+
+- Hydra: knob border.
+
+- Hydra: Manus expander.
+
+- Kitsune: smart input normalling (can be turned off using the context menu or the switch on the faceplate, should not impact patches using old 1->2, 3->4 normalling).
+
+- Raiju: knob borders.
+
+- Sphinx: knob borders.
+
+- Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
+
+- Werewolf: knob borders.
+
+- Werewolf: normal left and right inputs to each other.
+
+- Werewolf: normal left and right outputs to each other.
+
+---
+
+## Changes
+
+- Plugin: performance tweaks.
+
+- Plugin: bring indicator lights in line with the ones from the Mutants.
+
+- Plugin source: move common Sanguine Modules sources to submodule.
+
+- Plugin: faceplate color tweaks.
+
+- Plugin: simplify the vampire logo so it looks better when drawn by Rack's SVG renderer.
+
+- Aion: faceplate tweaks.
+
+- Alchemist: use light bezels instead of light buttons.
+
+- Alchemist: tweak faceplate.
+
+- Alembic: faceplate tweaks.
+
+- Brainz: faceplate tweaks.
+
+- Brainz: performance tweaks.
+
+- Brainz: better tooltips.
+
+- Bukavac: faceplate tweaks.
+
+- Bukavac: attenuators into attenuverters with more traditional response.
+
+- Chronos: faceplate tweaks.
+
+- Dolly-X: faceplate tweaks.
+
+- Dungeon: better moon light colors.
+
+- Gegenees: performance tweaks.
+
+- Hydra: performance tweaks.
+
+- Kitsune: prettify faceplate.
+
+- Kitsune: expand indicator light range to 10V.
+
+- Oraculus: faceplate tweaks.
+
+- Oraculus: light tweaks.
+
+- Raiju: make it clear every output can be polyphonic.
+
+- Sphinx: reorganize faceplate.
+
+- Werewolf: reorganize faceplate.
+
+
+---
+
 # 2.3.2
 
 ## Fixes
@@ -8,6 +157,8 @@
 
 - Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser. Monsters are grouped in the "Sanguine Monsters" brand.
 
+
+---
 
 # 2.3.1
 

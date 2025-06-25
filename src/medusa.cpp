@@ -1,17 +1,10 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+
+#include "medusa.hpp"
+
 using simd::float_4;
-
-#define MEDUSA_MAX_PORTS 32
-
-static const std::vector<RGBLightColor> paletteMedusaLights{
-	{ 1.f, 1.f, 1.f },
-	{ 1.f, 0.f, 0.f },
-	{ 1.f, 1.f, 0.f },
-	{ 0.f, 0.f, 1.f },
-	{ 0.f, 1.f, 0.f }
-};
 
 struct Medusa : SanguineModule {
 
@@ -20,30 +13,30 @@ struct Medusa : SanguineModule {
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_VOLTAGE, MEDUSA_MAX_PORTS),
+		ENUMS(INPUT_VOLTAGE, medusa::kMaxPorts),
 		INPUTS_COUNT
 	};
 
 	enum OutputIds {
-		ENUMS(OUTPUT_VOLTAGE, MEDUSA_MAX_PORTS),
+		ENUMS(OUTPUT_VOLTAGE, medusa::kMaxPorts),
 		OUTPUTS_COUNT
 	};
 
 	enum LightIds {
-		ENUMS(LIGHT_NORMALLED_PORT, MEDUSA_MAX_PORTS * 3),
+		ENUMS(LIGHT_NORMALLED_PORT, medusa::kMaxPorts * 3),
 		LIGHTS_COUNT
 	};
 
-	const int kLightFrequency = 1024;
+	static const int kLightFrequency = 1024;
 
 	dsp::ClockDivider lightDivider;
 
 	Medusa() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
-			configInput(INPUT_VOLTAGE + i, string::f("Medusa %d", i + 1));
-			configOutput(OUTPUT_VOLTAGE + i, string::f("Medusa %d", i + 1));
+		for (int port = 0; port < medusa::kMaxPorts; ++port) {
+			configInput(INPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
+			configOutput(OUTPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 		}
 
 		lightDivider.setDivision(kLightFrequency);
@@ -57,40 +50,39 @@ struct Medusa : SanguineModule {
 
 		int currentPalette = 0;
 
-		bool lightsTurn = lightDivider.process();
+		bool bIsLightsTurn = lightDivider.process();
 
-		for (int i = 0; i < MEDUSA_MAX_PORTS; i++) {
-			if (inputs[INPUT_VOLTAGE + i].isConnected()) {
-				channelCount = inputs[INPUT_VOLTAGE + i].getChannels();
-				activePort = i;
+		for (int port = 0; port < medusa::kMaxPorts; ++port) {
+			if (inputs[INPUT_VOLTAGE + port].isConnected()) {
+				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
+				activePort = port;
 				currentPalette = (currentPalette + 1);
 
 				if (currentPalette > 4) {
 					currentPalette = 0;
 				}
 
-				connectedCount++;
+				++connectedCount;
 			}
 
-			if (outputs[OUTPUT_VOLTAGE + i].isConnected()) {
-				outputs[i].setChannels(channelCount);
+			if (outputs[OUTPUT_VOLTAGE + port].isConnected()) {
+				outputs[port].setChannels(channelCount);
 
 				for (int channel = 0; channel < channelCount; channel += 4) {
 					float_4 voltages = inputs[activePort].getVoltageSimd<float_4>(channel);
-					outputs[OUTPUT_VOLTAGE + i].setVoltageSimd(voltages, channel);
+					outputs[OUTPUT_VOLTAGE + port].setVoltageSimd(voltages, channel);
 				}
 			}
 
-			if (lightsTurn) {
+			if (bIsLightsTurn) {
 				const float sampleTime = kLightFrequency * args.sampleTime;
 
-				int currentLight = LIGHT_NORMALLED_PORT + i * 3;
+				int currentLight = LIGHT_NORMALLED_PORT + port * 3;
 				if (connectedCount > 0) {
-					lights[currentLight + 0].setBrightnessSmooth(paletteMedusaLights[currentPalette].red, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(paletteMedusaLights[currentPalette].green, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(paletteMedusaLights[currentPalette].blue, sampleTime);
-				}
-				else {
+					lights[currentLight + 0].setBrightnessSmooth(medusa::paletteLights[currentPalette].red, sampleTime);
+					lights[currentLight + 1].setBrightnessSmooth(medusa::paletteLights[currentPalette].green, sampleTime);
+					lights[currentLight + 2].setBrightnessSmooth(medusa::paletteLights[currentPalette].blue, sampleTime);
+				} else {
 					lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
@@ -101,7 +93,7 @@ struct Medusa : SanguineModule {
 };
 
 struct MedusaWidget : SanguineModuleWidget {
-	MedusaWidget(Medusa* module) {
+	explicit MedusaWidget(Medusa* module) {
 		setModule(module);
 
 		moduleName = "medusa";
@@ -111,40 +103,14 @@ struct MedusaWidget : SanguineModuleWidget {
 
 		makePanel();
 
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addScrews(SCREW_ALL);
 
+#ifndef METAMODULE
 		SanguinePolyInputLight* lightInput1 = new SanguinePolyInputLight(module, 8.119, 22.162);
 		addChild(lightInput1);
 
 		SanguinePolyOutputLight* lightOutput1 = new SanguinePolyOutputLight(module, 24.625, 22.162);
 		addChild(lightOutput1);
-
-		float xInputs = 8.119;
-		float xOutputs = 24.625;
-		float xLights = 16.378;
-
-		float yPortBase = 29.326;
-		const float yDelta = 9.827;
-
-		float yLightBase = 29.326;
-
-		float currentPortY = yPortBase;
-		float currentLightY = yLightBase;
-
-		int portOffset = 0;
-
-		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
-
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
-
-			currentPortY += yDelta;
-			currentLightY += yDelta;
-		}
 
 		SanguinePolyInputLight* lightInput2 = new SanguinePolyInputLight(module, 42.912, 22.162);
 		addChild(lightInput2);
@@ -152,49 +118,11 @@ struct MedusaWidget : SanguineModuleWidget {
 		SanguinePolyOutputLight* lightOutput2 = new SanguinePolyOutputLight(module, 59.418, 22.162);
 		addChild(lightOutput2);
 
-		xInputs = 42.912;
-		xOutputs = 59.418;
-		xLights = 51.171;
-
-		currentPortY = yPortBase;
-		currentLightY = yLightBase;
-
-		portOffset = 10;
-
-		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
-
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
-
-			currentPortY += yDelta;
-			currentLightY += yDelta;
-		}
-
 		SanguinePolyInputLight* lightInput3 = new SanguinePolyInputLight(module, 77.742, 22.162);
 		addChild(lightInput3);
 
 		SanguinePolyOutputLight* lightOutput3 = new SanguinePolyOutputLight(module, 94.248, 22.162);
 		addChild(lightOutput3);
-
-		xInputs = 77.742;
-		xOutputs = 94.248;
-		xLights = 86.001;
-
-		currentPortY = yPortBase;
-		currentLightY = yLightBase;
-
-		portOffset = 16;
-
-		for (int i = 0; i < 6; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
-
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
-
-			currentPortY += yDelta;
-			currentLightY += yDelta;
-		}
 
 		SanguinePolyInputLight* lightInput4 = new SanguinePolyInputLight(module, 112.535, 22.162);
 		addChild(lightInput4);
@@ -202,30 +130,45 @@ struct MedusaWidget : SanguineModuleWidget {
 		SanguinePolyOutputLight* lightOutput4 = new SanguinePolyOutputLight(module, 129.041, 22.162);
 		addChild(lightOutput4);
 
-		xInputs = 112.535;
-		xOutputs = 129.041;
-		xLights = 120.794;
-
-		currentPortY = yPortBase;
-		currentLightY = yLightBase;
-
-		portOffset = 22;
-
-		for (int i = 0; i < 10; i++) {
-			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(xInputs, currentPortY), module, Medusa::INPUT_VOLTAGE + portOffset + i));
-			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(xOutputs, currentPortY), module, Medusa::OUTPUT_VOLTAGE + portOffset + i));
-
-			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(xLights, currentLightY), module, (Medusa::LIGHT_NORMALLED_PORT + i + portOffset) * 3));
-
-			currentPortY += yDelta;
-			currentLightY += yDelta;
-		}
-
 		SanguineBloodLogoLight* bloodLight = new SanguineBloodLogoLight(module, 58.816, 110.201);
 		addChild(bloodLight);
 
 		SanguineMonstersLogoLight* monstersLight = new SanguineMonstersLogoLight(module, 71.948, 117.156);
 		addChild(monstersLight);
+#endif
+
+		// 1st column
+		createComponentColumn(10, 8.119, 24.625, 16.378, 0);
+
+		// 2nd column
+		createComponentColumn(6, 42.912, 59.418, 51.171, 10);
+
+		// 3rd column
+		createComponentColumn(6, 77.742, 94.248, 86.001, 16);
+
+		// 4th column
+		createComponentColumn(10, 112.535, 129.041, 120.794, 22);
+	}
+
+	void createComponentColumn(const int componentCount, const float inputsX,
+		const float outputsX, const float lightsX, const int componentOffset) {
+		static const float yDelta = 9.827;
+
+		float currentPortY = 29.326;
+		float currentLightY = 29.326;
+
+		for (int component = 0; component < componentCount; ++component) {
+			addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(inputsX, currentPortY),
+				module, Medusa::INPUT_VOLTAGE + componentOffset + component));
+			addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(outputsX, currentPortY),
+				module, Medusa::OUTPUT_VOLTAGE + componentOffset + component));
+
+			addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(lightsX, currentLightY),
+				module, (Medusa::LIGHT_NORMALLED_PORT + component + componentOffset) * 3));
+
+			currentPortY += yDelta;
+			currentLightY += yDelta;
+		}
 	}
 };
 

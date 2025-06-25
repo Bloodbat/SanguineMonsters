@@ -7,7 +7,7 @@ struct MonstersBlank : SanguineModule {
 };
 
 struct MonstersBlankWidget : SanguineModuleWidget {
-	MonstersBlankWidget(MonstersBlank* module) {
+	explicit MonstersBlankWidget(MonstersBlank* module) {
 		setModule(module);
 
 		moduleName = "monsters_blank";
@@ -18,11 +18,9 @@ struct MonstersBlankWidget : SanguineModuleWidget {
 
 		makePanel();
 
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addScrews(SCREW_ALL);
 
+#ifndef METAMODULE
 		SanguineShapedLight* monstersLight = new SanguineShapedLight(module, "res/monsters_lit_blank.svg", 25.4, 51.62);
 		addChild(monstersLight);
 
@@ -31,6 +29,7 @@ struct MonstersBlankWidget : SanguineModuleWidget {
 
 		SanguineShapedLight* sanguineLogo = new SanguineShapedLight(module, "res/sanguine_lit_blank.svg", 29.204, 113.209);
 		addChild(sanguineLogo);
+#endif
 	}
 };
 
