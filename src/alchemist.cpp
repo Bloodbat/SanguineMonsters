@@ -386,8 +386,8 @@ struct Alchemist : SanguineModule {
 		}
 
 		if (outputs[OUTPUT_POLYPHONIC_MIX].isConnected()) {
-			outputs[OUTPUT_POLYPHONIC_MIX].setChannels(channelCount);
 			outputs[OUTPUT_POLYPHONIC_MIX].writeVoltages(masterOutVoltages);
+			outputs[OUTPUT_POLYPHONIC_MIX].setChannels(channelCount);
 		}
 
 		if (bIsLightsTurn) {
