@@ -49,6 +49,8 @@ struct Alchemist : SanguineModule {
 
 	const int kLightFrequency = 512;
 
+	int channelCount = 0;
+
 	int soloCount = 0;
 
 	int exclusiveMuteChannel = -1;
@@ -135,7 +137,7 @@ struct Alchemist : SanguineModule {
 		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) | (inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f);
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
-		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
+		channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
 
@@ -344,50 +346,16 @@ struct Alchemist : SanguineModule {
 		}
 
 		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
-		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-			if (channel < channelCount) {
-#ifndef METAMODULE
-				if (!bRightExpanderAvailable) {
-					outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
-				} else {
-					outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
-						alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
-				}
-#else
-				outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
-#endif
-
-				if (std::fabs(outVoltages[channel]) >= 10.f) {
-					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
-				}
-
-				if (!mutedChannels[channel] && ((soloCount == 0) | soloedChannels[channel]) && !bMasterMuted) {
-					monoMix += outVoltages[channel];
-					masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
-				} else {
-					masterOutVoltages[channel] = 0.f;
-				}
 
 #ifndef METAMODULE
-				if (bRightExpanderAvailable) {
-					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
-					if (alembicExpander->getOutputConnected(channel)) {
-						output.setVoltage(masterOutVoltages[channel]);
-					}
-				}
-#endif
-			} else {
-				outVoltages[channel] = 0.f;
-#ifndef METAMODULE
-				if (bRightExpanderAvailable) {
-					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
-					if (alembicExpander->getOutputConnected(channel)) {
-						output.setVoltage(0.f);
-					}
-				}
-#endif
-			}
+		if (!bRightExpanderAvailable) {
+			processChannels(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
+		} else {
+			processChannelsAlembic(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
 		}
+#else
+		processChannels(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
+#endif
 
 		monoMix = monoMix * mixModulation;
 
@@ -452,7 +420,61 @@ struct Alchemist : SanguineModule {
 		}
 	}
 
+	void processChannels(float* outVoltages, float* masterOutVoltages,
+		const float mixModulation, float& monoMix, const bool masterMuted) {
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+			if (channel < channelCount) {
+				applyChannelGain(outVoltages, channel);
+
+				mixChannel(outVoltages, channel, masterOutVoltages, mixModulation, monoMix, masterMuted);
+			}
+		}
+	}
+
+	void applyChannelGain(float* outVoltages, const int channel) {
+		outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
+
+		if (std::fabs(outVoltages[channel]) >= 10.f) {
+			outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
+		}
+	}
+
+	void mixChannel(float* outVoltages, const int channel, float* masterOutVoltages,
+		const float mixModulation, float& monoMix, const bool masterMuted) {
+		if (!mutedChannels[channel] && ((soloCount == 0) | soloedChannels[channel]) && !masterMuted) {
+			monoMix += outVoltages[channel];
+			masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
+		} else {
+			masterOutVoltages[channel] = 0.f;
+		}
+	}
+
 #ifndef METAMODULE
+	void processChannelsAlembic(float* outVoltages, float* masterOutVoltages,
+		const float mixModulation, float& monoMix, const bool masterMuted) {
+		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+			if (channel < channelCount) {
+				applyChannelGainAlembic(outVoltages, channel);
+
+				mixChannel(outVoltages, channel, masterOutVoltages, mixModulation, monoMix, masterMuted);
+			}
+
+			Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
+			if (alembicExpander->getOutputConnected(channel)) {
+				output.setVoltage(masterOutVoltages[channel]);
+			}
+		}
+	}
+
+	void applyChannelGainAlembic(float* outVoltages, const int channel) {
+		outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
+			alembicExpander->getInput(Alembic::INPUT_GAIN_CV + channel).getVoltage() / 5.f, 0.f, 2.f);
+
+		if (std::fabs(outVoltages[channel]) >= 10.f) {
+			outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
+		}
+	}
+
 	void onBypass(const BypassEvent& e) override {
 		if (bHaveRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
