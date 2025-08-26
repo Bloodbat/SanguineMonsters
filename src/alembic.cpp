@@ -11,14 +11,16 @@ Alembic::Alembic() {
 }
 
 void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
-	Module* alchemistMaster = getLeftExpander().module;
-	bool bHasMaster = (alchemistMaster && alchemistMaster->getModel() == modelAlchemist);
-	if (bHasMaster) {
-		lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
-	} else {
-		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
-		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-			outputs[OUTPUT_CHANNEL + channel].setVoltage(0.f);
+	if (e.side == 0) {
+		Module* alchemistMaster = getLeftExpander().module;
+		bool bHasMaster = (alchemistMaster && alchemistMaster->getModel() == modelAlchemist);
+		if (bHasMaster) {
+			lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
+		} else {
+			lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
+			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+				outputs[OUTPUT_CHANNEL + channel].setVoltage(0.f);
+			}
 		}
 	}
 }

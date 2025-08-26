@@ -14,19 +14,21 @@ Crucible::Crucible() {
 }
 
 void Crucible::onExpanderChange(const ExpanderChangeEvent& e) {
-    Module* alchemistMaster = getRightExpander().module;
-    bool bHasRightMaster = alchemistMaster && alchemistMaster->getModel() == modelAlchemist;
+    if (e.side == 1) {
+        Module* alchemistMaster = getRightExpander().module;
+        bool bHasRightMaster = alchemistMaster && alchemistMaster->getModel() == modelAlchemist;
 
-    if (bHasRightMaster) {
-        lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
-    } else {
-        lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
+        if (bHasRightMaster) {
+            lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
+        } else {
+            lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 
-        lights[LIGHT_MUTE_ALL].setBrightness(0.f);
-        lights[LIGHT_MUTE_EXCLUSIVE].setBrightness(0.f);
+            lights[LIGHT_MUTE_ALL].setBrightness(0.f);
+            lights[LIGHT_MUTE_EXCLUSIVE].setBrightness(0.f);
 
-        lights[LIGHT_SOLO_ALL].setBrightness(0.f);
-        lights[LIGHT_SOLO_EXCLUSIVE].setBrightness(0.f);
+            lights[LIGHT_SOLO_ALL].setBrightness(0.f);
+            lights[LIGHT_SOLO_EXCLUSIVE].setBrightness(0.f);
+        }
     }
 }
 
