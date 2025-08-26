@@ -69,21 +69,29 @@ struct Alchemist : SanguineModule {
 	bool bLastHaveExpanderMuteCv = false;
 	bool bLastHaveExpanderSoloCv = false;
 
-	bool bHasRightExpander = false;
-	bool bHasLeftExpander = false;
-#endif
+	bool bHaveRightExpander = false;
+	bool bHaveLeftExpander = false;
+
+	bool bHadLeftExpander = false;
+	bool bHadRightExpander = false;
 
 	bool bMuteAllEnabled = false;
 	bool bSoloAllEnabled = false;
 
 	bool bMuteExclusiveEnabled = false;
 	bool bSoloExclusiveEnabled = false;
+#endif
 
 	dsp::ClockDivider lightsDivider;
 	dsp::VuMeter2 vuMeterMix;
 	dsp::VuMeter2 vuMetersGains[PORT_MAX_CHANNELS];
 	dsp::BooleanTrigger btMuteButtons[PORT_MAX_CHANNELS];
 	dsp::BooleanTrigger btSoloButtons[PORT_MAX_CHANNELS];
+
+#ifndef METAMODULE
+	Alembic* alembicExpander = nullptr;
+	Crucible* crucibleExpander = nullptr;
+#endif
 
 	float muteVoltages[PORT_MAX_CHANNELS] = {};
 	float soloVoltages[PORT_MAX_CHANNELS] = {};
@@ -124,53 +132,56 @@ struct Alchemist : SanguineModule {
 		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) | (inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f);
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
-#ifndef METAMODULE
-		Module* alembicExpander = getRightExpander().module;
-		Module* crucibleExpander = getLeftExpander().module;
-#endif
-
 		int channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		bool bIsLightsTurn = lightsDivider.process();
 
 #ifndef METAMODULE
-		bHasRightExpander = (alembicExpander && alembicExpander->getModel() == modelAlembic && !alembicExpander->isBypassed());
-		bHasLeftExpander = (crucibleExpander && crucibleExpander->getModel() == modelCrucible && !crucibleExpander->isBypassed());
-
 		bool bHaveExpanderMuteCv = false;
 		bool bHaveExpanderSoloCv = false;
 
-		if (bHasLeftExpander) {
-			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
-			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
+		bool bLeftExpanderAvailable = bHaveLeftExpander && !(crucibleExpander->isBypassed());
+		bool bRightExpanderAvailable = bHaveRightExpander && !(alembicExpander->isBypassed());
 
-			bMuteAllEnabled = !bMuteExclusiveEnabled &&
-				(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue()) |
-					(crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f));
-			bSoloAllEnabled = !bSoloExclusiveEnabled &&
-				(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue()) |
-					(crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f));
+		if (bHaveRightExpander) {
+			bHadRightExpander = true;
+		}
 
-			if (bMuteExclusiveEnabled) {
-				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
-			}
+		if (bHaveLeftExpander) {
+			bHadLeftExpander = true;
 
-			if (bSoloExclusiveEnabled) {
-				crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
-			}
+			if (bLeftExpanderAvailable) {
+				bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
+				bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
 
-			expanderMuteCount = crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).getChannels();
-			expanderSoloCount = crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).getChannels();
+				bMuteAllEnabled = !bMuteExclusiveEnabled &&
+					(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue()) |
+						(crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f));
+				bSoloAllEnabled = !bSoloExclusiveEnabled &&
+					(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue()) |
+						(crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f));
 
-			bHaveExpanderMuteCv = expanderMuteCount > 0;
-			bHaveExpanderSoloCv = expanderSoloCount > 0;
+				if (bMuteExclusiveEnabled) {
+					crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+				}
 
-			if (expanderMuteCount > 0) {
-				crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).readVoltages(muteVoltages);
-			}
+				if (bSoloExclusiveEnabled) {
+					crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
+				}
 
-			if (expanderSoloCount > 0) {
-				crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).readVoltages(soloVoltages);
+				expanderMuteCount = crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).getChannels();
+				expanderSoloCount = crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).getChannels();
+
+				bHaveExpanderMuteCv = expanderMuteCount > 0;
+				bHaveExpanderSoloCv = expanderSoloCount > 0;
+
+				if (expanderMuteCount > 0) {
+					crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).readVoltages(muteVoltages);
+				}
+
+				if (expanderSoloCount > 0) {
+					crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).readVoltages(soloVoltages);
+				}
 			}
 		}
 #endif
@@ -187,7 +198,7 @@ struct Alchemist : SanguineModule {
 						soloedChannels[channel] = false;
 					}
 #ifndef METAMODULE
-					if (bHasLeftExpander) {
+					if (bLeftExpanderAvailable) {
 						if ((bMuteAllEnabled && bLastAllMuted) && !mutedChannels[channel]) {
 							bMuteAllEnabled = false;
 							crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
@@ -223,7 +234,7 @@ struct Alchemist : SanguineModule {
 					}
 
 #ifndef METAMODULE
-					if (bHasLeftExpander) {
+					if (bLeftExpanderAvailable) {
 						if ((bMuteAllEnabled && bLastAllMuted)) {
 							bMuteAllEnabled = false;
 							crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
@@ -255,7 +266,7 @@ struct Alchemist : SanguineModule {
 			soloCount = 0;
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 #ifndef METAMODULE
-				if (bHasLeftExpander) {
+				if (bLeftExpanderAvailable) {
 					if (!bMuteExclusiveEnabled && !bIgnoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) |
 						(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
 						mutedChannels[channel] = bMuteAllEnabled;
@@ -292,7 +303,7 @@ struct Alchemist : SanguineModule {
 			}
 
 #ifndef METAMODULE
-			if (bHasLeftExpander) {
+			if (bLeftExpanderAvailable) {
 				if (bLastAllMuted != bMuteAllEnabled) {
 					bLastAllMuted = bMuteAllEnabled;
 
@@ -333,7 +344,7 @@ struct Alchemist : SanguineModule {
 		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 			if (channel < channelCount) {
 #ifndef METAMODULE
-				if (!bHasRightExpander) {
+				if (!bRightExpanderAvailable) {
 					outVoltages[channel] = outVoltages[channel] * params[PARAM_GAIN + channel].getValue();
 				} else {
 					outVoltages[channel] = outVoltages[channel] * clamp(params[PARAM_GAIN + channel].getValue() +
@@ -355,7 +366,7 @@ struct Alchemist : SanguineModule {
 				}
 
 #ifndef METAMODULE
-				if (bHasRightExpander) {
+				if (bRightExpanderAvailable) {
 					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
 					if (output.isConnected()) {
 						output.setVoltage(masterOutVoltages[channel]);
@@ -365,7 +376,7 @@ struct Alchemist : SanguineModule {
 			} else {
 				outVoltages[channel] = 0.f;
 #ifndef METAMODULE
-				if (bHasRightExpander) {
+				if (bRightExpanderAvailable) {
 					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
 					if (output.isConnected()) {
 						output.setVoltage(0.f);
@@ -417,14 +428,14 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
 #ifndef METAMODULE
-			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander * kSanguineButtonLightValue, sampleTime);
-			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander * kSanguineButtonLightValue, sampleTime);
+			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bRightExpanderAvailable * kSanguineButtonLightValue, sampleTime);
+			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bLeftExpanderAvailable * kSanguineButtonLightValue, sampleTime);
 #endif
 
 			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted * kSanguineButtonLightValue, sampleTime);
 
 #ifndef METAMODULE
-			if (bHasLeftExpander) {
+			if (bLeftExpanderAvailable) {
 				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled *
 					kSanguineButtonLightValue, sampleTime);
 				crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled *
@@ -440,12 +451,12 @@ struct Alchemist : SanguineModule {
 
 #ifndef METAMODULE
 	void onBypass(const BypassEvent& e) override {
-		if (bHasRightExpander) {
+		if (bHaveRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
 			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
 
-		if (bHasLeftExpander) {
+		if (bHaveLeftExpander) {
 			Module* crucibleExpander = getLeftExpander().module;
 			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
@@ -453,12 +464,12 @@ struct Alchemist : SanguineModule {
 	}
 
 	void onUnBypass(const UnBypassEvent& e) override {
-		if (bHasRightExpander) {
+		if (bHaveRightExpander) {
 			Module* alembicExpander = getRightExpander().module;
 			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 
-		if (bHasLeftExpander) {
+		if (bHaveLeftExpander) {
 			Module* crucibleExpander = getLeftExpander().module;
 			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
@@ -466,25 +477,40 @@ struct Alchemist : SanguineModule {
 	}
 
 	void onExpanderChange(const ExpanderChangeEvent& e) override {
-		Module* crucibleExpander = getLeftExpander().module;
-		bool bHasLeftExpander = crucibleExpander && crucibleExpander->getModel() == modelCrucible;
+		if (e.side == 0) {
+			Module* leftModule = getLeftExpander().module;
+			bHaveLeftExpander = leftModule && leftModule->getModel() == modelCrucible &&
+				!leftModule->isBypassed();
 
-		if (!bHasLeftExpander) {
-			exclusiveMuteChannel = -1;
-			exclusiveSoloChannel = -1;
-
-			bMuteAllEnabled = false;
-			bSoloAllEnabled = false;
-			bMuteExclusiveEnabled = false;
-			bSoloExclusiveEnabled = false;
-
-			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-				muteVoltages[channel] = 0.f;
-				soloVoltages[channel] = 0.f;
+			if (bHaveLeftExpander) {
+				crucibleExpander = dynamic_cast<Crucible*>(leftModule);
 			}
 
-			expanderMuteCount = 0;
-			expanderSoloCount = 0;
+			if (!bHadLeftExpander && (bHadLeftExpander != bHaveLeftExpander)) {
+				exclusiveMuteChannel = -1;
+				exclusiveSoloChannel = -1;
+
+				bMuteAllEnabled = false;
+				bSoloAllEnabled = false;
+				bMuteExclusiveEnabled = false;
+				bSoloExclusiveEnabled = false;
+
+				for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+					muteVoltages[channel] = 0.f;
+					soloVoltages[channel] = 0.f;
+				}
+
+				expanderMuteCount = 0;
+				expanderSoloCount = 0;
+			}
+		} else {
+			Module* rightModule = getRightExpander().module;
+			bHaveRightExpander = rightModule && rightModule->getModel() == modelAlembic &&
+				!rightModule->isBypassed();
+
+			if (bHaveRightExpander) {
+				alembicExpander = dynamic_cast<Alembic*>(rightModule);
+			}
 		}
 	}
 #endif
