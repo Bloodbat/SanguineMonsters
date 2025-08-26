@@ -53,7 +53,7 @@ struct Kitsune : SanguineModule {
 	};
 
 	dsp::ClockDivider lightsDivider;
-	const int kLightDivisor = 64;
+	const int kLightsFrequency = 64;
 
 #ifndef METAMODULE
 	bool bHasExpander = false;
@@ -72,7 +72,7 @@ struct Kitsune : SanguineModule {
 
 			configBypass(INPUT_VOLTAGE1 + section, OUTPUT_VOLTAGE1 + section);
 
-			lightsDivider.setDivision(kLightDivisor);
+			lightsDivider.setDivision(kLightsFrequency);
 		}
 
 		configSwitch(PARAM_NORMALLING_MODE, 0.f, 1.f, 1.f, "Input normalling", kitsune::normallingModes);
@@ -92,7 +92,7 @@ struct Kitsune : SanguineModule {
 #endif
 
 		if (bIsLightsTurn) {
-			sampleTime = kLightDivisor * args.sampleTime;
+			sampleTime = kLightsFrequency * args.sampleTime;
 #ifndef METAMODULE
 			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
 #endif

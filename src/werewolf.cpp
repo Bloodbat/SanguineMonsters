@@ -34,7 +34,7 @@ struct Werewolf : SanguineModule {
 
 	dsp::ClockDivider lightDivider;
 
-	const int kLightFrequency = 64;
+	const int kLightsFrequency = 64;
 
 	Werewolf() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -51,7 +51,7 @@ struct Werewolf : SanguineModule {
 		configBypass(INPUT_LEFT, OUTPUT_LEFT);
 		configBypass(INPUT_RIGHT, OUTPUT_RIGHT);
 
-		lightDivider.setDivision(kLightFrequency);
+		lightDivider.setDivision(kLightsFrequency);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -159,7 +159,7 @@ struct Werewolf : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
-			const float sampleTime = args.sampleTime * kLightFrequency;
+			const float sampleTime = args.sampleTime * kLightsFrequency;
 
 			if (channelCount < 2) {
 				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);

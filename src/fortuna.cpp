@@ -43,7 +43,7 @@ struct Fortuna : SanguineModule {
         LIGHTS_COUNT
     };
 
-    static const int kLightFrequency = 16;
+    static const int kLightsFrequency = 16;
     static const int kMaxModuleSections = 2;
     int ledsChannel = 0;
     int channelCount = 0;
@@ -73,7 +73,7 @@ struct Fortuna : SanguineModule {
             for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
                 lastRollResults[section][channel] = fortuna::ROLL_HEADS;
             }
-            lightsDivider.setDivision(kLightFrequency);
+            lightsDivider.setDivision(kLightsFrequency);
         }
     }
 
@@ -153,7 +153,7 @@ struct Fortuna : SanguineModule {
                     ledsChannel = channelCount - 1;
                 }
 
-                const float sampleTime = args.sampleTime * kLightFrequency;
+                const float sampleTime = args.sampleTime * kLightsFrequency;
                 int currentLight = LIGHT_GATE_STATE_1_A + section * 2;
                 float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
                 lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);

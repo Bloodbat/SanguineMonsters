@@ -99,7 +99,7 @@ struct Chronos : SanguineModule {
         LIGHTS_COUNT
     };
 
-    static const int kLightsDivision = 64;
+    static const int kLightsFrequency = 64;
 
     int channelCounts[chronos::kMaxSections] = {};
     int ledsChannel[chronos::kMaxSections] = {};
@@ -192,7 +192,7 @@ struct Chronos : SanguineModule {
         }
 
         onReset();
-        lightsDivider.setDivision(kLightsDivision);
+        lightsDivider.setDivision(kLightsFrequency);
     };
 
     void process(const ProcessArgs& args) override {
@@ -320,7 +320,7 @@ struct Chronos : SanguineModule {
                     ledsChannel[section] = channelCounts[section] - 1;
                 }
 
-                const float sampleTime = args.sampleTime * kLightsDivision;
+                const float sampleTime = args.sampleTime * kLightsFrequency;
                 int currentLight = LIGHT_PHASE_1 + section * 3;
                 if (channelCounts[section] == 1) {
                     lights[currentLight + 0].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
