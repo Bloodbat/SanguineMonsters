@@ -5,7 +5,6 @@
 #include "sanguinehelpers.hpp"
 
 struct Alembic : SanguineModule {
-
 	enum ParamIds {
 		PARAMS_COUNT
 	};
@@ -28,4 +27,7 @@ struct Alembic : SanguineModule {
 	Alembic();
 
 	void onExpanderChange(const ExpanderChangeEvent& e) override;
+
+private:
+	bool bHadMaster = false;
 };

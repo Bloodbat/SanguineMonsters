@@ -13,10 +13,11 @@ Alembic::Alembic() {
 void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 	if (e.side == 0) {
 		Module* alchemistMaster = getLeftExpander().module;
-		bool bHasMaster = (alchemistMaster && alchemistMaster->getModel() == modelAlchemist);
-		if (bHasMaster) {
+		bool bHasLeftMaster = (alchemistMaster && alchemistMaster->getModel() == modelAlchemist);
+		if (bHasLeftMaster) {
 			lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
-		} else {
+			bHadMaster = true;
+		} else if (bHadMaster && !bHasLeftMaster) {
 			lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				outputs[OUTPUT_CHANNEL + channel].setVoltage(0.f);
