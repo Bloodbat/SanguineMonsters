@@ -402,18 +402,13 @@ struct Alchemist : SanguineModule {
 				float greenValue = vuMetersGains[channel].getBrightness(-38.f, -1.f);
 				bool bLightIsRed = redValue > 0;
 
-				if (bLightIsRed) {
-					lights[currentLight].setBrightness(0.f);
-					lights[currentLight + 1].setBrightness(redValue);
-				} else {
-					lights[currentLight].setBrightness(greenValue);
-					lights[currentLight + 1].setBrightness(yellowValue);
-				}
+				lights[currentLight].setBrightness(greenValue * (!bLightIsRed));
+				lights[currentLight + 1].setBrightness((yellowValue * (!bLightIsRed)) + redValue);
 
-				lights[LIGHT_MUTE + channel].setBrightnessSmooth(mutedChannels[channel] ?
-					kSanguineButtonLightValue : 0.f, sampleTime);
-				lights[LIGHT_SOLO + channel].setBrightnessSmooth(soloedChannels[channel] ?
-					kSanguineButtonLightValue : 0.f, sampleTime);
+				lights[LIGHT_MUTE + channel].setBrightnessSmooth(mutedChannels[channel] *
+					kSanguineButtonLightValue, sampleTime);
+				lights[LIGHT_SOLO + channel].setBrightnessSmooth(soloedChannels[channel] *
+					kSanguineButtonLightValue, sampleTime);
 			}
 			vuMeterMix.process(sampleTime, monoMix / 10);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
@@ -422,22 +417,22 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
 
 #ifndef METAMODULE
-			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
-			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER_RIGHT].setBrightnessSmooth(bHasRightExpander * kSanguineButtonLightValue, sampleTime);
+			lights[LIGHT_EXPANDER_LEFT].setBrightnessSmooth(bHasLeftExpander * kSanguineButtonLightValue, sampleTime);
 #endif
 
-			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted ? kSanguineButtonLightValue : 0.f, sampleTime);
+			lights[LIGHT_MASTER_MUTE].setBrightnessSmooth(bMasterMuted * kSanguineButtonLightValue, sampleTime);
 
 #ifndef METAMODULE
 			if (bHasLeftExpander) {
-				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled ?
-					kSanguineButtonLightValue : 0.f, sampleTime);
-				crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled ?
-					kSanguineButtonLightValue : 0.f, sampleTime);
-				crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled ?
-					kSanguineButtonLightValue : 0.f, sampleTime);
-				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled ?
-					kSanguineButtonLightValue : 0.f, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled *
+					kSanguineButtonLightValue, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled *
+					kSanguineButtonLightValue, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled *
+					kSanguineButtonLightValue, sampleTime);
+				crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled *
+					kSanguineButtonLightValue, sampleTime);
 			}
 #endif
 		}
