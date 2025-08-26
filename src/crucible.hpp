@@ -5,7 +5,6 @@
 #include "sanguinehelpers.hpp"
 
 struct Crucible : SanguineModule {
-
     enum ParamIds {
         PARAM_MUTE_ALL,
         PARAM_MUTE_EXCLUSIVE,
@@ -39,4 +38,7 @@ struct Crucible : SanguineModule {
     Crucible();
 
     void onExpanderChange(const ExpanderChangeEvent& e) override;
+
+private:
+    bool bHadMaster = false;
 };

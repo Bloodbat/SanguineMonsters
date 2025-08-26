@@ -20,7 +20,8 @@ void Crucible::onExpanderChange(const ExpanderChangeEvent& e) {
 
         if (bHasRightMaster) {
             lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
-        } else {
+            bHadMaster = true;
+        } else if (bHadMaster && !bHasRightMaster) {
             lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 
             lights[LIGHT_MUTE_ALL].setBrightness(0.f);
