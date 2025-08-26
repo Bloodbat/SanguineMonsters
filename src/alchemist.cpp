@@ -371,7 +371,7 @@ struct Alchemist : SanguineModule {
 #ifndef METAMODULE
 				if (bRightExpanderAvailable) {
 					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
-					if (output.isConnected()) {
+					if (alembicExpander->getOutputConnected(channel)) {
 						output.setVoltage(masterOutVoltages[channel]);
 					}
 				}
@@ -381,7 +381,7 @@ struct Alchemist : SanguineModule {
 #ifndef METAMODULE
 				if (bRightExpanderAvailable) {
 					Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
-					if (output.isConnected()) {
+					if (alembicExpander->getOutputConnected(channel)) {
 						output.setVoltage(0.f);
 					}
 				}
