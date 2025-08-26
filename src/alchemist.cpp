@@ -121,7 +121,7 @@ struct Alchemist : SanguineModule {
 		float monoMix = 0.f;
 		float outVoltages[PORT_MAX_CHANNELS] = {};
 		float masterOutVoltages[PORT_MAX_CHANNELS] = {};
-		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) || inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f;
+		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) | (inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f);
 		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
 
 #ifndef METAMODULE
@@ -144,10 +144,12 @@ struct Alchemist : SanguineModule {
 			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
 			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
 
-			bMuteAllEnabled = !bMuteExclusiveEnabled && (crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue() ||
-				crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f);
-			bSoloAllEnabled = bSoloExclusiveEnabled == false && (crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue() ||
-				crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f);
+			bMuteAllEnabled = !bMuteExclusiveEnabled &&
+				(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue()) |
+					(crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f));
+			bSoloAllEnabled = !bSoloExclusiveEnabled &&
+				(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue()) |
+					(crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f));
 
 			if (bMuteExclusiveEnabled) {
 				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
@@ -254,12 +256,12 @@ struct Alchemist : SanguineModule {
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 #ifndef METAMODULE
 				if (bHasLeftExpander) {
-					if (!bMuteExclusiveEnabled && !bIgnoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) ||
+					if (!bMuteExclusiveEnabled && !bIgnoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) |
 						(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
 						mutedChannels[channel] = bMuteAllEnabled;
 					}
 
-					if (!bSoloExclusiveEnabled && !bIgnoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) ||
+					if (!bSoloExclusiveEnabled && !bIgnoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) |
 						(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
 						soloedChannels[channel] = bSoloAllEnabled;
 					}
@@ -345,7 +347,7 @@ struct Alchemist : SanguineModule {
 					outVoltages[channel] = saturatorFloat.next(outVoltages[channel]);
 				}
 
-				if (!mutedChannels[channel] && (soloCount == 0 || soloedChannels[channel]) && !bMasterMuted) {
+				if (!mutedChannels[channel] && ((soloCount == 0) | soloedChannels[channel]) && !bMasterMuted) {
 					monoMix += outVoltages[channel];
 					masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
 				} else {
