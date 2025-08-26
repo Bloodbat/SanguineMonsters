@@ -410,7 +410,7 @@ struct Alchemist : SanguineModule {
 				lights[LIGHT_SOLO + channel].setBrightnessSmooth(soloedChannels[channel] *
 					kSanguineButtonLightValue, sampleTime);
 			}
-			vuMeterMix.process(sampleTime, monoMix / 10);
+			vuMeterMix.process(sampleTime, monoMix / 10.f);
 			lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
 			lights[LIGHT_VU + 1].setBrightness(vuMeterMix.getBrightness(-19.f, -3.f));
 			lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
