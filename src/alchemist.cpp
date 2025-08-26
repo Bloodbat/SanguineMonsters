@@ -139,9 +139,7 @@ struct Alchemist : SanguineModule {
 
 		bool bHaveExpanderMuteCv = false;
 		bool bHaveExpanderSoloCv = false;
-#endif
 
-#ifndef METAMODULE
 		if (bHasLeftExpander) {
 			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
 			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
