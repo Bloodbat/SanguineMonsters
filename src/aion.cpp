@@ -76,6 +76,8 @@ struct Aion : SanguineModule {
 	bool timersStarted[kModuleSections] = {};
 
 	bool lastTimerEdges[kModuleSections] = {};
+	bool inputTriggers[kModuleSections] = {};
+	bool outputTriggers[kModuleSections] = {};
 
 	int setTimerValues[kModuleSections] = {};
 	int currentTimerValues[kModuleSections] = {};
@@ -135,8 +137,7 @@ struct Aion : SanguineModule {
 
 		for (int section = 0; section < kModuleSections; ++section) {
 			if (bInternalTimerSecond) {
-				if (!inputs[INPUT_TRIGGER_1 + section].isConnected()) {
-
+				if (!inputTriggers[section]) {
 					if (lastTimerEdges[section] != bInternalTimerSecond) {
 						if (timersStarted[section]) {
 							decreaseTimer(section);
@@ -147,7 +148,7 @@ struct Aion : SanguineModule {
 					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(timersStarted[section], args.sampleTime);
 				}
 			} else {
-				if (!inputs[INPUT_TRIGGER_1 + section].isConnected()) {
+				if (!inputTriggers[section]) {
 					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(0.f, args.sampleTime);
 				}
 				lastTimerEdges[section] = bInternalTimerSecond;
@@ -191,11 +192,11 @@ struct Aion : SanguineModule {
 #endif
 			}
 
-			if (outputs[OUTPUT_TRIGGER_1 + section].isConnected()) {
+			if (outputTriggers[section]) {
 				outputs[OUTPUT_TRIGGER_1 + section].setVoltage(pgTriggerOutputs[section].process(args.sampleTime) * 10.f);
 			}
 
-			if (inputs[INPUT_TRIGGER_1 + section].isConnected()) {
+			if (inputTriggers[section]) {
 				lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(pgTimerLights[section].process(args.sampleTime), args.sampleTime);
 			}
 		}
@@ -205,7 +206,7 @@ struct Aion : SanguineModule {
 		--currentTimerValues[timerNum];
 
 		if (currentTimerValues[timerNum] <= 0) {
-			if (outputs[OUTPUT_TRIGGER_1 + timerNum].isConnected()) {
+			if (outputTriggers[timerNum]) {
 				pgTriggerOutputs[timerNum].trigger();
 			}
 			if (!params[PARAM_RESTART_1 + timerNum].getValue()) {
@@ -214,6 +215,34 @@ struct Aion : SanguineModule {
 			} else {
 				currentTimerValues[timerNum] = setTimerValues[timerNum];
 			}
+		}
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case Port::INPUT:
+			switch (e.portId) {
+			case INPUT_TRIGGER_1:
+				inputTriggers[0] = e.connecting;
+				break;
+			case INPUT_TRIGGER_2:
+				inputTriggers[1] = e.connecting;
+				break;
+			case INPUT_TRIGGER_3:
+				inputTriggers[2] = e.connecting;
+				break;
+			case INPUT_TRIGGER_4:
+				inputTriggers[3] = e.connecting;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case Port::OUTPUT:
+			outputTriggers[e.portId] = e.connecting;
+			break;
 		}
 	}
 
