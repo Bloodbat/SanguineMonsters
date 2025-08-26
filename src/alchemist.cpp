@@ -403,10 +403,10 @@ struct Alchemist : SanguineModule {
 				bool bLightIsRed = redValue > 0;
 
 				if (bLightIsRed) {
-					lights[currentLight + 0].setBrightness(0.f);
+					lights[currentLight].setBrightness(0.f);
 					lights[currentLight + 1].setBrightness(redValue);
 				} else {
-					lights[currentLight + 0].setBrightness(greenValue);
+					lights[currentLight].setBrightness(greenValue);
 					lights[currentLight + 1].setBrightness(yellowValue);
 				}
 
