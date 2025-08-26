@@ -144,7 +144,7 @@ struct Aion : SanguineModule {
 						lastTimerEdges[section] = bInternalTimerSecond;
 					}
 
-					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(timersStarted[section] ? 1.f : 0.f, args.sampleTime);
+					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(timersStarted[section], args.sampleTime);
 				}
 			} else {
 				if (!inputs[INPUT_TRIGGER_1 + section].isConnected()) {
@@ -186,8 +186,8 @@ struct Aion : SanguineModule {
 				}
 
 #ifdef METAMODULE
-				lights[LIGHT_RESTART_1 + section].setBrightness(static_cast<bool>(params[PARAM_RESTART_1 + section].getValue()) ?
-					kSanguineButtonLightValue : 0.f);
+				lights[LIGHT_RESTART_1 + section].setBrightness(params[PARAM_RESTART_1 + section].getValue() *
+					kSanguineButtonLightValue);
 #endif
 			}
 
@@ -196,7 +196,7 @@ struct Aion : SanguineModule {
 			}
 
 			if (inputs[INPUT_TRIGGER_1 + section].isConnected()) {
-				lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(pgTimerLights[section].process(args.sampleTime) ? 1.f : 0.f, args.sampleTime);
+				lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(pgTimerLights[section].process(args.sampleTime), args.sampleTime);
 			}
 		}
 	}
