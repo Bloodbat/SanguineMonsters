@@ -65,6 +65,9 @@ struct Alchemist : SanguineModule {
 	bool soloedChannels[PORT_MAX_CHANNELS] = {};
 	bool bLastAllSoloed = false;
 
+	bool bMonoOutConnected = false;
+	bool bPolyOutConnected = false;
+
 #ifndef METAMODULE
 	bool bLastHaveExpanderMuteCv = false;
 	bool bLastHaveExpanderSoloCv = false;
@@ -392,11 +395,11 @@ struct Alchemist : SanguineModule {
 			monoMix = saturatorFloat.next(monoMix);
 		}
 
-		if (outputs[OUTPUT_MONO_MIX].isConnected()) {
+		if (bMonoOutConnected) {
 			outputs[OUTPUT_MONO_MIX].setVoltage(monoMix);
 		}
 
-		if (outputs[OUTPUT_POLYPHONIC_MIX].isConnected()) {
+		if (bPolyOutConnected) {
 			outputs[OUTPUT_POLYPHONIC_MIX].writeVoltages(masterOutVoltages);
 			outputs[OUTPUT_POLYPHONIC_MIX].setChannels(channelCount);
 		}
@@ -514,6 +517,25 @@ struct Alchemist : SanguineModule {
 		}
 	}
 #endif
+
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case Port::OUTPUT:
+			switch (e.portId) {
+			case OUTPUT_MONO_MIX:
+				bMonoOutConnected = e.connecting;
+				break;
+
+			case OUTPUT_POLYPHONIC_MIX:
+				bPolyOutConnected = e.connecting;
+				break;
+			}
+			break;
+
+		case Port::INPUT:
+			break;
+		}
+	}
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
