@@ -192,7 +192,7 @@ struct Aion : SanguineModule {
 			}
 
 			if (outputs[OUTPUT_TRIGGER_1 + section].isConnected()) {
-				outputs[OUTPUT_TRIGGER_1 + section].setVoltage(pgTriggerOutputs[section].process(args.sampleTime) ? 10.f : 0.f);
+				outputs[OUTPUT_TRIGGER_1 + section].setVoltage(pgTriggerOutputs[section].process(args.sampleTime) * 10.f);
 			}
 
 			if (inputs[INPUT_TRIGGER_1 + section].isConnected()) {
