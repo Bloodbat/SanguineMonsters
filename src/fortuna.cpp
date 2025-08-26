@@ -94,11 +94,11 @@ struct Fortuna : SanguineModule {
 
             // 2nd input and 2 trigger are normalized to 1st.
             if (section == 1 && !input->isConnected()) {
-                input = &inputs[INPUT_IN_1 + 0];
+                input = &inputs[INPUT_IN_1];
             }
 
             if (section == 1 && !trigger->isConnected()) {
-                trigger = &inputs[INPUT_TRIGGER_1 + 0];
+                trigger = &inputs[INPUT_TRIGGER_1];
             }
 
             channelCount = std::max(std::max(input->getChannels(), trigger->getChannels()), 1);
@@ -141,10 +141,10 @@ struct Fortuna : SanguineModule {
                     fadingInVoltage : fadingOutVoltage, channel);
             }
 
-            if (outputsConnected[0 + section]) {
+            if (outputsConnected[section]) {
                 outputs[OUTPUT_OUT_1A + section].setChannels(channelCount);
             }
-            if (outputsConnected[2 + section]) {
+            if (outputsConnected[section + 2]) {
                 outputs[OUTPUT_OUT_1B + section].setChannels(channelCount);
             }
 
@@ -157,7 +157,7 @@ struct Fortuna : SanguineModule {
                 int currentLight = LIGHT_GATE_STATE_1_A + section * 2;
                 float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
                 lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);
-                lights[currentLight + 0].setBrightnessSmooth(lightValueA, sampleTime);
+                lights[currentLight].setBrightnessSmooth(lightValueA, sampleTime);
                 float lightValueB = outputs[OUTPUT_OUT_1B + section].getVoltage(ledsChannel);
                 lightValueB = rescale(lightValueB, 0.f, 5.f, 0.f, 1.f);
                 lights[currentLight + 1].setBrightnessSmooth(lightValueB, sampleTime);
@@ -165,10 +165,10 @@ struct Fortuna : SanguineModule {
                 currentLight = LIGHTS_PROBABILITY + section * 2;
                 float rescaledLight = rescale(cvVoltages[section][ledsChannel], 0.f, 5.f, 0.f, 1.f);
                 lights[currentLight + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
-                lights[currentLight + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+                lights[currentLight].setBrightnessSmooth(rescaledLight, sampleTime);
 
                 currentLight = LIGHTS_ROLL_MODE + section * 2;
-                lights[currentLight + 0].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
+                lights[currentLight].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
                     kSanguineButtonLightValue : 0.f, sampleTime);
                 lights[currentLight + 1].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
                     0.f : kSanguineButtonLightValue, sampleTime);
@@ -234,9 +234,9 @@ struct FortunaWidget : SanguineModuleWidget {
         addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.413, 26.411), module, Fortuna::INPUT_IN_1));
         addOutput(createOutputCentered<BananutRedPoly>(millimetersToPixelsVec(34.212, 26.411), module, Fortuna::OUTPUT_OUT_1A));
         addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(20.32, 14.368), module,
-            Fortuna::PARAM_ROLL_MODE_1, Fortuna::LIGHTS_ROLL_MODE + 0 * 2));
+            Fortuna::PARAM_ROLL_MODE_1, Fortuna::LIGHTS_ROLL_MODE));
         addParam(createLightParamCentered<VCVLightSlider<GreenRedLight>>(millimetersToPixelsVec(20.32, 35.367), module,
-            Fortuna::Fortuna::PARAM_THRESHOLD_1, Fortuna::LIGHTS_PROBABILITY + 0 * 2));
+            Fortuna::Fortuna::PARAM_THRESHOLD_1, Fortuna::LIGHTS_PROBABILITY));
         addParam(createParamCentered<Trimpot>(millimetersToPixelsVec(34.212, 35.014), module, Fortuna::PARAM_CROSSFADE_A));
         addInput(createInputCentered<BananutBlackPoly>(millimetersToPixelsVec(6.413, 44.323), module, Fortuna::INPUT_TRIGGER_1));
         addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(20.32, 53.515), module, Fortuna::INPUT_P_1));
