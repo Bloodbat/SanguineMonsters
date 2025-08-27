@@ -110,6 +110,10 @@ struct Brainz : SanguineModule {
 	bool bTriggersDone[kMaxOutTriggers];
 	bool bTriggersSent = false;
 
+	bool globalOutputsConnected[kMaxOutTriggers] = {};
+	bool bHaveRunCable = false;
+	bool bHaveResetCable = false;
+
 	brainz::StepDirections moduleDirection = brainz::DIRECTION_BIDIRECTIONAL;
 	brainz::StepDirections stepDirections[2] = { brainz::DIRECTION_BIDIRECTIONAL, brainz::DIRECTION_BIDIRECTIONAL };
 	brainz::ModuleStages lastModuleStage = brainz::MODULE_STAGE_INIT;
@@ -615,7 +619,7 @@ struct Brainz : SanguineModule {
 	void doGlobalTriggers(const float sampleTime) {
 		if (!bTriggersSent) {
 			for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
-				if (outputs[OUTPUT_OUT_1 + trigger].isConnected()) {
+				if (globalOutputsConnected[trigger]) {
 					pgOutTriggers[trigger].trigger();
 					outputs[OUTPUT_OUT_1 + trigger].setVoltage(pgOutTriggers[trigger].process(1.f / sampleTime) ? 10.f : 0.f);
 				}
@@ -624,7 +628,7 @@ struct Brainz : SanguineModule {
 		} else {
 			for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
 				bTriggersDone[trigger] = !pgOutTriggers[trigger].process(1.f / sampleTime);
-				if (outputs[OUTPUT_OUT_1 + trigger].isConnected()) {
+				if (globalOutputsConnected[trigger]) {
 					outputs[OUTPUT_OUT_1 + trigger].setVoltage(bTriggersDone[trigger] ? 0.f : 10.f);
 				}
 			}
@@ -736,7 +740,7 @@ struct Brainz : SanguineModule {
 				}
 			}
 		} else {
-			if (outputs[OUTPUT_RUN].isConnected()) {
+			if (bHaveRunCable) {
 				bRunSent = true;
 				pgRun.trigger();
 			}
@@ -750,7 +754,7 @@ struct Brainz : SanguineModule {
 		metronomeStepsDone = 0;
 		moduleState = brainz::MODULE_STATE_READY;
 		moduleStage = brainz::MODULE_STAGE_INIT;
-		if (outputs[OUTPUT_RESET].isConnected()) {
+		if (bHaveResetCable) {
 			bResetSent = true;
 			pgReset.trigger();
 		}
@@ -819,6 +823,36 @@ struct Brainz : SanguineModule {
 		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_C
 			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_C) ? 1.f : 0.f, sampleTime);
 		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.f : 0.f, sampleTime);
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		if (e.type == Port::OUTPUT) {
+			switch (e.portId) {
+			case OUTPUT_OUT_1:
+				globalOutputsConnected[0] = e.connecting;
+				break;
+			case OUTPUT_OUT_2:
+				globalOutputsConnected[1] = e.connecting;
+				break;
+			case OUTPUT_OUT_3:
+				globalOutputsConnected[2] = e.connecting;
+				break;
+			case OUTPUT_OUT_4:
+				globalOutputsConnected[2] = e.connecting;
+				break;
+
+			case OUTPUT_RUN:
+				bHaveRunCable = e.connecting;
+				break;
+
+			case OUTPUT_RESET:
+				bHaveResetCable = e.connecting;
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 };
 
