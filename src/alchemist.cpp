@@ -308,8 +308,6 @@ struct Alchemist : SanguineModule {
 		if (!mutedChannels[channel] && ((soloCount == 0) | soloedChannels[channel]) && !masterMuted) {
 			monoMix += outVoltages[channel];
 			masterOutVoltages[channel] = outVoltages[channel] * mixModulation;
-		} else {
-			masterOutVoltages[channel] = 0.f;
 		}
 	}
 
