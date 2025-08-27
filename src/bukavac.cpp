@@ -58,11 +58,18 @@ struct Bukavac : SanguineModule {
 	float oldSpeedPctVal = 0.f;
 	float noiseOutMix = 0.f;
 	float* noise;
-	static constexpr float maxTime = 511; //FLT_MAX-1000; <-- this needs some more love
+	static constexpr float kMaxTime = 511; //FLT_MAX-1000; <-- this needs some more love
+
+	/*
+	   All noise from Fundamental Noise is calibrated to 1 RMS.
+	   Then they should be scaled to match the RMS of a sine wave with 5V amplitude.
+	   gain = 5.f / std::std::sqrt(2.f)
+	*/
+	static constexpr float kGain = 5.f / 1.41421f;
 
 	// Hard-code coefficients for Butterworth lowpass with cutoff 20 Hz @ 44.1kHz.
-	static constexpr float redFilterB[] = { 0.00425611, 0.00425611 };
-	static constexpr float redFilterA[] = { -0.99148778 };
+	static constexpr float kRedFilterB[] = { 0.00425611, 0.00425611 };
+	static constexpr float kRedFilterA[] = { -0.99148778 };
 
 	bool bHaveWhiteCable = false;
 	bool bHaveRedCable = false;
@@ -115,7 +122,7 @@ struct Bukavac : SanguineModule {
 
 		configOutput(OUTPUT_PERLIN_NOISE_MIX, "Perlin noise mix");
 
-		redFilter.setCoefficients(redFilterB, redFilterA);
+		redFilter.setCoefficients(kRedFilterB, kRedFilterA);
 
 		noise = new float[kPerlinOctaves];
 
@@ -128,36 +135,30 @@ struct Bukavac : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		/*
-		   All noise from Fundamental Noise is calibrated to 1 RMS.
-		   Then they should be scaled to match the RMS of a sine wave with 5V amplitude.
-		*/
-		const float gain = 5.f / std::sqrt(2.f);
-
 		if (bHaveWhiteCable || bHaveRedCable || bHaveVioletCable || bHaveGrayCable) {
 			// White noise: equal power density
 			float white = sanguineRandom::normal();
 			if (bHaveWhiteCable) {
-				outputs[OUTPUT_WHITE].setVoltage(white * gain);
+				outputs[OUTPUT_WHITE].setVoltage(white * kGain);
 			}
 
 			// Red/Brownian noise: -6dB/oct
 			if (bHaveRedCable) {
 				float red = redFilter.process(white) / 0.0645f;
-				outputs[OUTPUT_RED].setVoltage(red * gain);
+				outputs[OUTPUT_RED].setVoltage(red * kGain);
 			}
 
 			// Violet/purple noise: 6dB/oct
 			if (bHaveVioletCable) {
 				float violet = (white - lastWhite) / 1.41f;
 				lastWhite = white;
-				outputs[OUTPUT_VIOLET].setVoltage(violet * gain);
+				outputs[OUTPUT_VIOLET].setVoltage(violet * kGain);
 			}
 
 			// Gray noise: psychoacoustic equal loudness curve, specifically inverted A-weighted
 			if (bHaveGrayCable) {
 				float gray = grayFilter.process(args.sampleTime, white) / 1.67f;
-				outputs[OUTPUT_GRAY].setVoltage(gray * gain);
+				outputs[OUTPUT_GRAY].setVoltage(gray * kGain);
 			}
 		}
 
@@ -165,14 +166,14 @@ struct Bukavac : SanguineModule {
 			// Pink noise: -3dB/oct
 			float pink = pinkNoiseGenerator.process() / 0.816f;
 			if (bHavePinkCable) {
-				outputs[OUTPUT_PINK].setVoltage(pink * gain);
+				outputs[OUTPUT_PINK].setVoltage(pink * kGain);
 			}
 
 			// Blue noise: 3dB/oct
 			if (bHaveBlueCable) {
 				float blue = (pink - lastPink) / 0.705f;
 				lastPink = pink;
-				outputs[OUTPUT_BLUE].setVoltage(blue * gain);
+				outputs[OUTPUT_BLUE].setVoltage(blue * kGain);
 			}
 		}
 
@@ -188,7 +189,7 @@ struct Bukavac : SanguineModule {
 
 		if (bHavePerlinMixCable || perlinOctaveCables[0] || perlinOctaveCables[1] ||
 			perlinOctaveCables[2] || perlinOctaveCables[3]) {
-			if (currentPerlinTime > maxTime) {
+			if (currentPerlinTime > kMaxTime) {
 				currentPerlinTime = 0;
 			}
 
