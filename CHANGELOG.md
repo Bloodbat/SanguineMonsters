@@ -4,6 +4,8 @@
 
 - Alchemist: reduce green VU meter areas from -38dB to -36dB.
 
+- Bukavac: allow for larger Perlin amplifier values so it can reach 5V.
+
 
 ---
 
