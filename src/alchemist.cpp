@@ -341,7 +341,7 @@ struct Alchemist : SanguineModule {
 	}
 
 	void setLights(const float sampleTime, float* outVoltages, const float monoMix, const bool masterMuted) {
-		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+		for (int channel = 0; channel < channelCount; ++channel) {
 			vuMetersGains[channel].process(sampleTime, outVoltages[channel] / 10.f);
 
 			int currentLight = LIGHT_GAIN + channel * 2;
@@ -358,6 +358,21 @@ struct Alchemist : SanguineModule {
 			lights[LIGHT_SOLO + channel].setBrightnessSmooth(soloedChannels[channel] *
 				kSanguineButtonLightValue, sampleTime);
 		}
+
+		for (int channel = channelCount; channel < PORT_MAX_CHANNELS; ++channel) {
+			vuMetersGains[channel].process(sampleTime, outVoltages[channel]);
+
+			int currentLight = LIGHT_GAIN + channel * 2;
+
+			lights[currentLight].setBrightness(0.f);
+			lights[currentLight + 1].setBrightness(0.f);
+
+			lights[LIGHT_MUTE + channel].setBrightnessSmooth(mutedChannels[channel] *
+				kSanguineButtonLightValue, sampleTime);
+			lights[LIGHT_SOLO + channel].setBrightnessSmooth(soloedChannels[channel] *
+				kSanguineButtonLightValue, sampleTime);
+		}
+
 		vuMeterMix.process(sampleTime, monoMix / 10.f);
 		lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-36.f, -19.f));
 		lights[LIGHT_VU + 1].setBrightness(vuMeterMix.getBrightness(-19.f, -3.f));
