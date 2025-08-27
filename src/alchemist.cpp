@@ -697,8 +697,7 @@ struct Alchemist : SanguineModule {
 #endif
 
 	void onPortChange(const PortChangeEvent& e) override {
-		switch (e.type) {
-		case Port::OUTPUT:
+		if (e.type == Port::OUTPUT) {
 			switch (e.portId) {
 			case OUTPUT_MONO_MIX:
 				bMonoOutConnected = e.connecting;
@@ -708,10 +707,6 @@ struct Alchemist : SanguineModule {
 				bPolyOutConnected = e.connecting;
 				break;
 			}
-			break;
-
-		case Port::INPUT:
-			break;
 		}
 	}
 
