@@ -164,15 +164,13 @@ struct Alchemist : SanguineModule {
 				bool bIgnoreMuteAll = false;
 				bool bIgnoreSoloAll = false;
 
+				soloCount = 0;
+
 				for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 					handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 
 					handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
-				}
 
-				soloCount = 0;
-				// TODO: merge this loop with the previous one?
-				for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 					handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 				}
 			}
@@ -188,6 +186,8 @@ struct Alchemist : SanguineModule {
 					bool bIgnoreMuteAll = false;
 					bool bIgnoreSoloAll = false;
 
+					soloCount = 0;
+
 					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 						handleMuteButtonsCrucicle(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 
@@ -196,12 +196,7 @@ struct Alchemist : SanguineModule {
 						handleSoloButtonsCrucible(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 
 						handleSoloVoltages(channel);
-					}
 
-					soloCount = 0;
-					// TODO: merge this loop with the previous one?
-					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-						// handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 						handleCrucibleLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 					}
 
@@ -217,15 +212,13 @@ struct Alchemist : SanguineModule {
 					bool bIgnoreMuteAll = false;
 					bool bIgnoreSoloAll = false;
 
+					soloCount = 0;
+
 					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 						handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 
 						handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
-					}
 
-					soloCount = 0;
-					// TODO: merge this loop with the previous one?
-					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 						handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 					}
 
@@ -266,15 +259,13 @@ struct Alchemist : SanguineModule {
 			bool bIgnoreMuteAll = false;
 			bool bIgnoreSoloAll = false;
 
+			soloCount = 0;
+
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 
 				handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
-			}
 
-			soloCount = 0;
-			// TODO: merge this loop with the previous one?
-			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 			}
 		}
