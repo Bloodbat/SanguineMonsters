@@ -1,5 +1,9 @@
 # Next release
 
+## Changes
+
+- Alchemist: reduce green VU meter areas from -38dB to -36dB.
+
 
 ---
 

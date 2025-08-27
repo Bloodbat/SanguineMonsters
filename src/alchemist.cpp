@@ -276,7 +276,7 @@ struct Alchemist : SanguineModule {
 			int currentLight = LIGHT_GAIN + channel * 2;
 			float redValue = vuMetersGains[channel].getBrightness(0.f, 0.f);
 			float yellowValue = vuMetersGains[channel].getBrightness(-3.f, -1.f);
-			float greenValue = vuMetersGains[channel].getBrightness(-38.f, -1.f);
+			float greenValue = vuMetersGains[channel].getBrightness(-36.f, -1.f);
 			bool bLightIsRed = redValue > 0;
 
 			lights[currentLight].setBrightness(greenValue * (!bLightIsRed));
@@ -288,7 +288,7 @@ struct Alchemist : SanguineModule {
 				kSanguineButtonLightValue, sampleTime);
 		}
 		vuMeterMix.process(sampleTime, monoMix / 10.f);
-		lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-38.f, -19.f));
+		lights[LIGHT_VU].setBrightness(vuMeterMix.getBrightness(-36.f, -19.f));
 		lights[LIGHT_VU + 1].setBrightness(vuMeterMix.getBrightness(-19.f, -3.f));
 		lights[LIGHT_VU + 2].setBrightness(vuMeterMix.getBrightness(-3.f, -1.f));
 		lights[LIGHT_VU + 3].setBrightness(vuMeterMix.getBrightness(0.f, 0.f));
