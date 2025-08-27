@@ -227,20 +227,30 @@ struct Alchemist : SanguineModule {
 			}
 		}
 
-		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
-
 		if (!bRightExpanderAvailable) {
+			inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
+
 			processChannels(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
+
+			modulateMonoSignal(monoMix, mixModulation);
+
+			setOutputs(monoMix, masterOutVoltages);
+
+			if (bIsLightsTurn) {
+				setLights(sampleTime, outVoltages, monoMix, bMasterMuted);
+			}
 		} else {
+			inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
+
 			processChannelsAlembic(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
-		}
 
-		modulateMonoSignal(monoMix, mixModulation);
+			modulateMonoSignal(monoMix, mixModulation);
 
-		setOutputs(monoMix, masterOutVoltages);
+			setOutputs(monoMix, masterOutVoltages);
 
-		if (bIsLightsTurn) {
-			setLights(sampleTime, outVoltages, monoMix, bMasterMuted);
+			if (bIsLightsTurn) {
+				setLights(sampleTime, outVoltages, monoMix, bMasterMuted);
+			}
 		}
 	}
 #else
