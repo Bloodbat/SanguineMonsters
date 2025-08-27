@@ -128,8 +128,10 @@ struct Bukavac : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		// All noise from Fundamental Noise is calibrated to 1 RMS.
-		// Then they should be scaled to match the RMS of a sine wave with 5V amplitude.
+		/*
+		   All noise from Fundamental Noise is calibrated to 1 RMS.
+		   Then they should be scaled to match the RMS of a sine wave with 5V amplitude.
+		*/
 		const float gain = 5.f / std::sqrt(2.f);
 
 		if (bHaveWhiteCable || bHaveRedCable || bHaveVioletCable || bHaveGrayCable) {
@@ -175,8 +177,10 @@ struct Bukavac : SanguineModule {
 		}
 
 		// Prism noise: uniform noise
-		/* Note: Black noise was the original definition, made up by VCV.
-		   Amended by me to be Prism(for light ring convenience)... also completely made up. */
+		/*
+		   Note: Black noise was the original definition, made up by VCV.
+		   Amended by me to be Prism(for light ring convenience)... also completely made up.
+		*/
 		if (bHavePrismCable) {
 			float uniformNoise = ldexpf(pcgRng(), -32);
 			outputs[OUTPUT_PRISM].setVoltage(uniformNoise * 10.f - 5.f);
