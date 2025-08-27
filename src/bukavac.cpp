@@ -162,7 +162,9 @@ struct Bukavac : SanguineModule {
 		if (bHavePinkCable || bHaveBlueCable) {
 			// Pink noise: -3dB/oct
 			float pink = pinkNoiseGenerator.process() / 0.816f;
-			outputs[OUTPUT_PINK].setVoltage(pink * gain);
+			if (bHavePinkCable) {
+				outputs[OUTPUT_PINK].setVoltage(pink * gain);
+			}
 
 			// Blue noise: 3dB/oct
 			if (bHaveBlueCable) {
