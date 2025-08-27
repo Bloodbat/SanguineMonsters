@@ -47,7 +47,7 @@ struct Alchemist : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	const int kLightsFrequency = 512;
+	const int kLightsFrequency = 256;
 
 	int channelCount = 0;
 
