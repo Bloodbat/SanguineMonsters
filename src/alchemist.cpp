@@ -136,6 +136,7 @@ struct Alchemist : SanguineModule {
 		lightsDivider.setDivision(kLightsFrequency);
 	}
 
+#ifndef METAMODULE
 	void process(const ProcessArgs& args) override {
 		float monoMix = 0.f;
 		float outVoltages[PORT_MAX_CHANNELS] = {};
@@ -147,64 +148,140 @@ struct Alchemist : SanguineModule {
 
 		bool bIsLightsTurn = lightsDivider.process();
 
-#ifndef METAMODULE
 		bLeftExpanderAvailable = bHaveLeftExpander && !(crucibleExpander->isBypassed());
 		bRightExpanderAvailable = bHaveRightExpander && !(alembicExpander->isBypassed());
 
 		if (bHaveRightExpander) {
 			bHadRightExpander = true;
 		}
-#endif
 
-#ifndef METAMODULE
-		if (bHaveLeftExpander) {
-			readCrucibleControls();
+		float sampleTime = 0.f;
+
+		if (!bHaveLeftExpander) {
+			if (bIsLightsTurn) {
+				sampleTime = kLightsFrequency * args.sampleTime;
+
+				bool bIgnoreMuteAll = false;
+				bool bIgnoreSoloAll = false;
+
+				for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+					handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+
+					handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+				}
+
+				soloCount = 0;
+				// TODO: merge this loop with the previous one?
+				for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+					handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+				}
+			}
+		} else {
+			bHadLeftExpander = true;
+
+			if (bLeftExpanderAvailable) {
+				readCrucibleControls();
+
+				if (bIsLightsTurn) {
+					sampleTime = kLightsFrequency * args.sampleTime;
+
+					bool bIgnoreMuteAll = false;
+					bool bIgnoreSoloAll = false;
+
+					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+						handleMuteButtonsCrucicle(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+
+						handleMuteVoltages(channel);
+
+						handleSoloButtonsCrucible(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+
+						handleSoloVoltages(channel);
+					}
+
+					soloCount = 0;
+					// TODO: merge this loop with the previous one?
+					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+						// handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+						handleCrucibleLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+					}
+
+					setCrucibleValues();
+					setPreviousExpanderVoltages();
+
+					setCrucibleButtonLights(sampleTime);
+				}
+			} else {
+				if (bIsLightsTurn) {
+					sampleTime = kLightsFrequency * args.sampleTime;
+
+					bool bIgnoreMuteAll = false;
+					bool bIgnoreSoloAll = false;
+
+					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+						handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+
+						handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+					}
+
+					soloCount = 0;
+					// TODO: merge this loop with the previous one?
+					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
+						handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+					}
+
+					setPreviousExpanderVoltages();
+				}
+			}
 		}
-#endif
+
+		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
+
+		if (!bRightExpanderAvailable) {
+			processChannels(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
+		} else {
+			processChannelsAlembic(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
+		}
+
+		modulateMonoSignal(monoMix, mixModulation);
+
+		setOutputs(monoMix, masterOutVoltages);
+
+		if (bIsLightsTurn) {
+			setLights(sampleTime, outVoltages, monoMix, bMasterMuted);
+		}
+	}
+#else
+	void process(const ProcessArgs& args) override {
+		float monoMix = 0.f;
+		float outVoltages[PORT_MAX_CHANNELS] = {};
+		float masterOutVoltages[PORT_MAX_CHANNELS] = {};
+		bool bMasterMuted = static_cast<bool>(params[PARAM_MASTER_MUTE].getValue()) | (inputs[INPUT_MASTER_MUTE].getVoltage() >= 1.f);
+		float mixModulation = clamp(params[PARAM_MIX].getValue() + inputs[INPUT_MIX_CV].getVoltage() / 5.f, 0.f, 2.f);
+
+		channelCount = inputs[INPUT_POLYPHONIC].getChannels();
+
+		bool bIsLightsTurn = lightsDivider.process();
 
 		if (bIsLightsTurn) {
 			bool bIgnoreMuteAll = false;
 			bool bIgnoreSoloAll = false;
 
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-				// TODO: there's a separate Crucible path!
 				handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 
-#ifndef METAMODULE
-				handleMuteVoltages(channel);
-#endif
-
-				// TODO: there's a separate Crucible path!
 				handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
-
-#ifndef METAMODULE
-				handleSoloVoltages(channel);
-#endif
 			}
 
 			soloCount = 0;
 			// TODO: merge this loop with the previous one?
-			// TODO: there's a separate Crucible path!
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 			}
-
-#ifndef METAMODULE
-			setCrucibleValues();
-#endif
 		}
 
 		inputs[INPUT_POLYPHONIC].readVoltages(outVoltages);
 
-#ifndef METAMODULE
-		if (!bRightExpanderAvailable) {
-			processChannels(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
-		} else {
-			processChannelsAlembic(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
-		}
-#else
 		processChannels(outVoltages, masterOutVoltages, mixModulation, monoMix, bMasterMuted);
-#endif
 
 		modulateMonoSignal(monoMix, mixModulation);
 
@@ -214,12 +291,9 @@ struct Alchemist : SanguineModule {
 			const float sampleTime = kLightsFrequency * args.sampleTime;
 
 			setLights(sampleTime, outVoltages, monoMix, bMasterMuted);
-
-#ifndef METAMODULE
-			setCrucibleButtonLights(sampleTime);
-#endif
 		}
 	}
+#endif
 
 	void processChannels(float* outVoltages, float* masterOutVoltages,
 		const float mixModulation, float& monoMix, const bool masterMuted) {
@@ -307,10 +381,6 @@ struct Alchemist : SanguineModule {
 			if (soloedChannels[channel]) {
 				soloedChannels[channel] = false;
 			}
-
-#ifndef METAMODULE
-			handleMuteButtonsCrucicle(channel, ignoreMuteAll, ignoreSoloAll);
-#endif
 		}
 	}
 
@@ -321,18 +391,10 @@ struct Alchemist : SanguineModule {
 			if (mutedChannels[channel]) {
 				mutedChannels[channel] = false;
 			}
-
-#ifndef METAMODULE
-			handleSoloButtonsCrucible(channel, ignoreMuteAll, ignoreSoloAll);
-#endif
 		}
 	}
 
 	void handleSoloLogic(const int channel, const bool ignoreMuteAll, const bool ignoreSoloAll) {
-#ifndef METAMODULE
-		handleCrucibleLogic(channel, ignoreMuteAll, ignoreSoloAll);
-#endif
-
 		if (soloedChannels[channel]) {
 			++soloCount;
 		}
@@ -371,60 +433,58 @@ struct Alchemist : SanguineModule {
 	}
 
 	void readCrucibleControls() {
-		bHadLeftExpander = true;
+		bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
+		bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
 
-		if (bLeftExpanderAvailable) {
-			bMuteExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_EXCLUSIVE).getValue());
-			bSoloExclusiveEnabled = static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_EXCLUSIVE).getValue());
+		bMuteAllEnabled = !bMuteExclusiveEnabled &&
+			(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue()) |
+				(crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f));
+		bSoloAllEnabled = !bSoloExclusiveEnabled &&
+			(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue()) |
+				(crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f));
 
-			bMuteAllEnabled = !bMuteExclusiveEnabled &&
-				(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).getValue()) |
-					(crucibleExpander->getInput(Crucible::INPUT_MUTE_ALL).getVoltage() >= 1.f));
-			bSoloAllEnabled = !bSoloExclusiveEnabled &&
-				(static_cast<bool>(crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).getValue()) |
-					(crucibleExpander->getInput(Crucible::INPUT_SOLO_ALL).getVoltage() >= 1.f));
+		if (bMuteExclusiveEnabled) {
+			crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+		}
 
-			if (bMuteExclusiveEnabled) {
-				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
-			}
+		if (bSoloExclusiveEnabled) {
+			crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
+		}
 
-			if (bSoloExclusiveEnabled) {
-				crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
-			}
+		expanderMuteCount = crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).getChannels();
+		expanderSoloCount = crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).getChannels();
 
-			expanderMuteCount = crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).getChannels();
-			expanderSoloCount = crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).getChannels();
+		bHaveExpanderMuteCv = expanderMuteCount > 0;
+		bHaveExpanderSoloCv = expanderSoloCount > 0;
 
-			bHaveExpanderMuteCv = expanderMuteCount > 0;
-			bHaveExpanderSoloCv = expanderSoloCount > 0;
+		if (expanderMuteCount > 0) {
+			crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).readVoltages(muteVoltages);
+		}
 
-			if (expanderMuteCount > 0) {
-				crucibleExpander->getInput(Crucible::INPUT_MUTE_POLY).readVoltages(muteVoltages);
-			}
-
-			if (expanderSoloCount > 0) {
-				crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).readVoltages(soloVoltages);
-			}
+		if (expanderSoloCount > 0) {
+			crucibleExpander->getInput(Crucible::INPUT_SOLO_POLY).readVoltages(soloVoltages);
 		}
 	}
 
 	void setCrucibleButtonLights(const float sampleTime) {
-		// TODO: this check should go...
-		if (bLeftExpanderAvailable) {
-			crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled *
-				kSanguineButtonLightValue, sampleTime);
-			crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled *
-				kSanguineButtonLightValue, sampleTime);
-			crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled *
-				kSanguineButtonLightValue, sampleTime);
-			crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled *
-				kSanguineButtonLightValue, sampleTime);
-		}
+		crucibleExpander->getLight(Crucible::LIGHT_MUTE_ALL).setBrightnessSmooth(bMuteAllEnabled *
+			kSanguineButtonLightValue, sampleTime);
+		crucibleExpander->getLight(Crucible::LIGHT_SOLO_ALL).setBrightnessSmooth(bSoloAllEnabled *
+			kSanguineButtonLightValue, sampleTime);
+		crucibleExpander->getLight(Crucible::LIGHT_MUTE_EXCLUSIVE).setBrightnessSmooth(bMuteExclusiveEnabled *
+			kSanguineButtonLightValue, sampleTime);
+		crucibleExpander->getLight(Crucible::LIGHT_SOLO_EXCLUSIVE).setBrightnessSmooth(bSoloExclusiveEnabled *
+			kSanguineButtonLightValue, sampleTime);
 	}
 
 	void handleMuteButtonsCrucicle(const int channel, bool& ignoreMuteAll, bool& ignoreSoloAll) {
-		// TODO: this check should go...
-		if (bLeftExpanderAvailable) {
+		if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
+			mutedChannels[channel] = !mutedChannels[channel];
+
+			if (soloedChannels[channel]) {
+				soloedChannels[channel] = false;
+			}
+
 			if ((bMuteAllEnabled && bLastAllMuted) && !mutedChannels[channel]) {
 				bMuteAllEnabled = false;
 				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
@@ -453,8 +513,13 @@ struct Alchemist : SanguineModule {
 	}
 
 	void handleSoloButtonsCrucible(const int channel, bool& ignoreMuteAll, bool& ignoreSoloAll) {
-		// TODO: this check should go...
-		if (bLeftExpanderAvailable) {
+		if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
+			soloedChannels[channel] = !soloedChannels[channel];
+
+			if (mutedChannels[channel]) {
+				mutedChannels[channel] = false;
+			}
+
 			if ((bMuteAllEnabled && bLastAllMuted)) {
 				bMuteAllEnabled = false;
 				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
@@ -483,72 +548,78 @@ struct Alchemist : SanguineModule {
 	}
 
 	void handleCrucibleLogic(const int channel, const bool ignoreMuteAll, const bool ignoreSoloAll) {
-		// TODO: this check should go!
-		if (bLeftExpanderAvailable) {
-			// TODO: Make me bitwise...
-			if (!bMuteExclusiveEnabled && !ignoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) |
-				(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
-				mutedChannels[channel] = bMuteAllEnabled;
-			}
+		// TODO: Make me bitwise...
+		if (!bMuteExclusiveEnabled && !ignoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) |
+			(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
+			mutedChannels[channel] = bMuteAllEnabled;
+		}
 
-			// TODO: Make me bitwise...
-			if (!bSoloExclusiveEnabled && !ignoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) |
-				(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
-				soloedChannels[channel] = bSoloAllEnabled;
-			}
+		// TODO: Make me bitwise...
+		if (!bSoloExclusiveEnabled && !ignoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) |
+			(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
+			soloedChannels[channel] = bSoloAllEnabled;
+		}
 
-			// TODO: Make me bitwise...
-			if (bMuteExclusiveEnabled) {
-				if (channel != exclusiveMuteChannel && exclusiveMuteChannel >= 0) {
-					mutedChannels[channel] = false;
-				}
+		// TODO: Make me bitwise...
+		if (bMuteExclusiveEnabled) {
+			if (channel != exclusiveMuteChannel && exclusiveMuteChannel >= 0) {
+				mutedChannels[channel] = false;
 			}
+		}
 
-			// TODO: Make me bitwise...
-			if (bSoloExclusiveEnabled) {
-				if (channel != exclusiveSoloChannel && exclusiveSoloChannel >= 0) {
-					soloedChannels[channel] = false;
-				}
+		// TODO: Make me bitwise...
+		if (bSoloExclusiveEnabled) {
+			if (channel != exclusiveSoloChannel && exclusiveSoloChannel >= 0) {
+				soloedChannels[channel] = false;
+			}
+		}
+
+		if (soloedChannels[channel]) {
+			++soloCount;
+		}
+
+		if (soloedChannels[channel]) {
+			if (mutedChannels[channel]) {
+				mutedChannels[channel] = false;
 			}
 		}
 	}
 
+	void setPreviousExpanderVoltages() {
+		bLastHaveExpanderMuteCv = bHaveExpanderMuteCv;
+		bLastHaveExpanderSoloCv = bHaveExpanderSoloCv;
+	}
+
 	void setCrucibleValues() {
-		// TODO: this check should go!
-		if (bLeftExpanderAvailable) {
-			if (bLastAllMuted != bMuteAllEnabled) {
-				bLastAllMuted = bMuteAllEnabled;
+		if (bLastAllMuted != bMuteAllEnabled) {
+			bLastAllMuted = bMuteAllEnabled;
 
-				if (bMuteAllEnabled) {
-					memset(mutedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
-					memset(soloedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
-				}
-
-				if (bSoloAllEnabled) {
-					bSoloAllEnabled = false;
-					bLastAllSoloed = false;
-					crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
-				}
+			if (bMuteAllEnabled) {
+				memset(mutedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
+				memset(soloedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
 			}
 
-			if (bLastAllSoloed != bSoloAllEnabled) {
-				bLastAllSoloed = bSoloAllEnabled;
-
-				if (bSoloAllEnabled) {
-					memset(soloedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
-					memset(mutedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
-				}
-
-				if (bMuteAllEnabled) {
-					bMuteAllEnabled = false;
-					bLastAllMuted = false;
-					crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
-				}
+			if (bSoloAllEnabled) {
+				bSoloAllEnabled = false;
+				bLastAllSoloed = false;
+				crucibleExpander->getParam(Crucible::PARAM_SOLO_ALL).setValue(0.f);
 			}
 		}
 
-		bLastHaveExpanderMuteCv = bHaveExpanderMuteCv;
-		bLastHaveExpanderSoloCv = bHaveExpanderSoloCv;
+		if (bLastAllSoloed != bSoloAllEnabled) {
+			bLastAllSoloed = bSoloAllEnabled;
+
+			if (bSoloAllEnabled) {
+				memset(soloedChannels, true, sizeof(bool) * PORT_MAX_CHANNELS);
+				memset(mutedChannels, false, sizeof(bool) * PORT_MAX_CHANNELS);
+			}
+
+			if (bMuteAllEnabled) {
+				bMuteAllEnabled = false;
+				bLastAllMuted = false;
+				crucibleExpander->getParam(Crucible::PARAM_MUTE_ALL).setValue(0.f);
+			}
+		}
 	}
 
 	void onBypass(const BypassEvent& e) override {
