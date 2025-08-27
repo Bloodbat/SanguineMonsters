@@ -548,26 +548,22 @@ struct Alchemist : SanguineModule {
 	}
 
 	void handleCrucibleLogic(const int channel, const bool ignoreMuteAll, const bool ignoreSoloAll) {
-		// TODO: Make me bitwise...
 		if (!bMuteExclusiveEnabled && !ignoreMuteAll && ((bLastAllMuted != bMuteAllEnabled) |
 			(bLastHaveExpanderMuteCv != bHaveExpanderMuteCv))) {
 			mutedChannels[channel] = bMuteAllEnabled;
 		}
 
-		// TODO: Make me bitwise...
 		if (!bSoloExclusiveEnabled && !ignoreSoloAll && ((bLastAllSoloed != bSoloAllEnabled) |
 			(bLastHaveExpanderSoloCv != bHaveExpanderSoloCv))) {
 			soloedChannels[channel] = bSoloAllEnabled;
 		}
 
-		// TODO: Make me bitwise...
 		if (bMuteExclusiveEnabled) {
 			if (channel != exclusiveMuteChannel && exclusiveMuteChannel >= 0) {
 				mutedChannels[channel] = false;
 			}
 		}
 
-		// TODO: Make me bitwise...
 		if (bSoloExclusiveEnabled) {
 			if (channel != exclusiveSoloChannel && exclusiveSoloChannel >= 0) {
 				soloedChannels[channel] = false;
