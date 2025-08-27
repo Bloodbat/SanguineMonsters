@@ -135,7 +135,9 @@ struct Bukavac : SanguineModule {
 		if (bHaveWhiteCable || bHaveRedCable || bHaveVioletCable || bHaveGrayCable) {
 			// White noise: equal power density
 			float white = sanguineRandom::normal();
-			outputs[OUTPUT_WHITE].setVoltage(white * gain);
+			if (bHaveWhiteCable) {
+				outputs[OUTPUT_WHITE].setVoltage(white * gain);
+			}
 
 			// Red/Brownian noise: -6dB/oct
 			if (bHaveRedCable) {
