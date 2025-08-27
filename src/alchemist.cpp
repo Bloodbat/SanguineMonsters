@@ -409,9 +409,7 @@ struct Alchemist : SanguineModule {
 	void handleSoloLogic(const int channel, const bool ignoreMuteAll, const bool ignoreSoloAll) {
 		if (soloedChannels[channel]) {
 			++soloCount;
-		}
 
-		if (soloedChannels[channel]) {
 			if (mutedChannels[channel]) {
 				mutedChannels[channel] = false;
 			}
@@ -589,9 +587,7 @@ struct Alchemist : SanguineModule {
 
 		if (soloedChannels[channel]) {
 			++soloCount;
-		}
 
-		if (soloedChannels[channel]) {
 			if (mutedChannels[channel]) {
 				mutedChannels[channel] = false;
 			}
