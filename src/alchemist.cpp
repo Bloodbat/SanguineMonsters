@@ -288,12 +288,10 @@ struct Alchemist : SanguineModule {
 
 	void processChannels(float* outVoltages, float* masterOutVoltages,
 		const float mixModulation, float& monoMix, const bool masterMuted) {
-		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-			if (channel < channelCount) {
-				applyChannelGain(outVoltages, channel);
+		for (int channel = 0; channel < channelCount; ++channel) {
+			applyChannelGain(outVoltages, channel);
 
-				mixChannel(outVoltages, channel, masterOutVoltages, mixModulation, monoMix, masterMuted);
-			}
+			mixChannel(outVoltages, channel, masterOutVoltages, mixModulation, monoMix, masterMuted);
 		}
 	}
 
@@ -400,13 +398,18 @@ struct Alchemist : SanguineModule {
 #ifndef METAMODULE
 	void processChannelsAlembic(float* outVoltages, float* masterOutVoltages,
 		const float mixModulation, float& monoMix, const bool masterMuted) {
-		for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-			if (channel < channelCount) {
-				applyChannelGainAlembic(outVoltages, channel);
+		for (int channel = 0; channel < channelCount; ++channel) {
+			applyChannelGainAlembic(outVoltages, channel);
 
-				mixChannel(outVoltages, channel, masterOutVoltages, mixModulation, monoMix, masterMuted);
+			mixChannel(outVoltages, channel, masterOutVoltages, mixModulation, monoMix, masterMuted);
+
+			Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
+			if (alembicExpander->getOutputConnected(channel)) {
+				output.setVoltage(masterOutVoltages[channel]);
 			}
+		}
 
+		for (int channel = channelCount; channel < PORT_MAX_CHANNELS; ++channel) {
 			Output& output = alembicExpander->getOutput(Alembic::OUTPUT_CHANNEL + channel);
 			if (alembicExpander->getOutputConnected(channel)) {
 				output.setVoltage(masterOutVoltages[channel]);
