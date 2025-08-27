@@ -58,7 +58,11 @@ struct Bukavac : SanguineModule {
 	float oldSpeedPctVal = 0.f;
 	float noiseOutMix = 0.f;
 	float* noise;
-	const float maxTime = 511; //FLT_MAX-1000; <-- this needs some more love
+	static constexpr float maxTime = 511; //FLT_MAX-1000; <-- this needs some more love
+
+	// Hard-code coefficients for Butterworth lowpass with cutoff 20 Hz @ 44.1kHz.
+	static constexpr float redFilterB[] = { 0.00425611, 0.00425611 };
+	static constexpr float redFilterA[] = { -0.99148778 };
 
 	bool bHaveWhiteCable = false;
 	bool bHaveRedCable = false;
@@ -111,10 +115,7 @@ struct Bukavac : SanguineModule {
 
 		configOutput(OUTPUT_PERLIN_NOISE_MIX, "Perlin noise mix");
 
-		// Hard-code coefficients for Butterworth lowpass with cutoff 20 Hz @ 44.1kHz.
-		const float b[] = { 0.00425611, 0.00425611 };
-		const float a[] = { -0.99148778 };
-		redFilter.setCoefficients(b, a);
+		redFilter.setCoefficients(redFilterB, redFilterA);
 
 		noise = new float[kPerlinOctaves];
 
