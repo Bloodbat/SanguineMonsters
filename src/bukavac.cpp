@@ -183,8 +183,7 @@ struct Bukavac : SanguineModule {
 				currentPerlinTime = 0;
 			}
 
-			float deltaTime = 1.0 / args.sampleRate;
-			currentPerlinTime += deltaTime;
+			currentPerlinTime += args.sampleTime;
 
 			float perlinSpeed = params[PARAM_PERLIN_SPEED].getValue();
 			if (bHavePerlinSpeedCable) {
