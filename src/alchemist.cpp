@@ -167,9 +167,9 @@ struct Alchemist : SanguineModule {
 				soloCount = 0;
 
 				for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-					handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+					handleMuteButtons(channel);
 
-					handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+					handleSoloButtons(channel);
 
 					handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 				}
@@ -215,9 +215,9 @@ struct Alchemist : SanguineModule {
 					soloCount = 0;
 
 					for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-						handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+						handleMuteButtons(channel);
 
-						handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+						handleSoloButtons(channel);
 
 						handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 					}
@@ -272,9 +272,9 @@ struct Alchemist : SanguineModule {
 			soloCount = 0;
 
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-				handleMuteButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+				handleMuteButtons(channel);
 
-				handleSoloButtons(channel, bIgnoreMuteAll, bIgnoreSoloAll);
+				handleSoloButtons(channel);
 
 				handleSoloLogic(channel, bIgnoreMuteAll, bIgnoreSoloAll);
 			}
@@ -386,7 +386,7 @@ struct Alchemist : SanguineModule {
 #endif
 	}
 
-	void handleMuteButtons(const int channel, bool& ignoreMuteAll, bool& ignoreSoloAll) {
+	void handleMuteButtons(const int channel) {
 		if (btMuteButtons[channel].process(params[PARAM_MUTE + channel].getValue())) {
 			mutedChannels[channel] = !mutedChannels[channel];
 
@@ -396,7 +396,7 @@ struct Alchemist : SanguineModule {
 		}
 	}
 
-	void handleSoloButtons(const int channel, bool& ignoreMuteAll, bool& ignoreSoloAll) {
+	void handleSoloButtons(const int channel) {
 		if (btSoloButtons[channel].process(params[PARAM_SOLO + channel].getValue())) {
 			soloedChannels[channel] = !soloedChannels[channel];
 
