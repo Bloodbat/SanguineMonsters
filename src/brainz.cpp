@@ -524,18 +524,18 @@ struct Brainz : SanguineModule {
 				for (int step = 0; step < kMaxSteps; ++step) {
 					stepsEnabled[step] = params[PARAM_A_ENABLED + step].getValue();
 
-					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() ?
-						kSanguineButtonLightValue : 0.f, sampleTime);
-					lights[LIGHT_STEP_A_TRIGGERS + step].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + step].getValue() ?
-						kSanguineButtonLightValue : 0.f, sampleTime);
-					lights[LIGHT_STEP_A_METRONOME + step].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + step].getValue() ?
-						kSanguineButtonLightValue : 0.f, sampleTime);
+					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() *
+						kSanguineButtonLightValue, sampleTime);
+					lights[LIGHT_STEP_A_TRIGGERS + step].setBrightnessSmooth(params[PARAM_A_DO_TRIGGERS + step].getValue() *
+						kSanguineButtonLightValue, sampleTime);
+					lights[LIGHT_STEP_A_METRONOME + step].setBrightnessSmooth(params[PARAM_A_IS_METRONOME + step].getValue() *
+						kSanguineButtonLightValue, sampleTime);
 
 					if (step < 2) {
 						stepDirections[step] = brainz::StepDirections(params[PARAM_A_DIRECTION + step].getValue());
 
 						int currentLight = LIGHT_STEP_A_DIRECTION + step * 3;
-						lights[currentLight + 0].setBrightness(stepDirectionsLightColors[stepDirections[step]].red);
+						lights[currentLight].setBrightness(stepDirectionsLightColors[stepDirections[step]].red);
 						lights[currentLight + 1].setBrightness(stepDirectionsLightColors[stepDirections[step]].green);
 						lights[currentLight + 2].setBrightness(stepDirectionsLightColors[stepDirections[step]].blue);
 					}
@@ -547,34 +547,36 @@ struct Brainz : SanguineModule {
 					}
 				}
 
-				lights[LIGHT_LOGIC_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
+				lights[LIGHT_LOGIC_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue(), sampleTime);
 
-				lights[LIGHT_MODULE_DIRECTION + 0].setBrightness(stepDirectionsLightColors[moduleDirection].red);
+				lights[LIGHT_MODULE_DIRECTION].setBrightness(stepDirectionsLightColors[moduleDirection].red);
 				lights[LIGHT_MODULE_DIRECTION + 1].setBrightness(stepDirectionsLightColors[moduleDirection].green);
 				lights[LIGHT_MODULE_DIRECTION + 2].setBrightness(stepDirectionsLightColors[moduleDirection].blue);
 
 				if (params[PARAM_LOGIC_ENABLED].getValue()) {
-					lights[LIGHT_MODULE_STAGE + 0].setBrightnessSmooth(moduleStagesLightColors[moduleStage].red, sampleTime);
+					lights[LIGHT_MODULE_STAGE].setBrightnessSmooth(moduleStagesLightColors[moduleStage].red, sampleTime);
 					lights[LIGHT_MODULE_STAGE + 1].setBrightnessSmooth(moduleStagesLightColors[moduleStage].green, sampleTime);
 					lights[LIGHT_MODULE_STAGE + 2].setBrightnessSmooth(moduleStagesLightColors[moduleStage].blue, sampleTime);
 				} else
 				{
-					lights[LIGHT_MODULE_STAGE + 0].setBrightnessSmooth(0.f, sampleTime);
+					lights[LIGHT_MODULE_STAGE].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_MODULE_STAGE + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_MODULE_STAGE + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
 
-				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue() ? kSanguineButtonLightValue : 0.f, sampleTime);
-				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue() ? kSanguineButtonLightValue : 0.f, sampleTime);
+				lights[LIGHT_START_TRIGGERS].setBrightnessSmooth(params[PARAM_START_TRIGGERS].getValue() *
+					kSanguineButtonLightValue, sampleTime);
+				lights[LIGHT_END_TRIGGERS].setBrightnessSmooth(params[PARAM_END_TRIGGERS].getValue() *
+					kSanguineButtonLightValue, sampleTime);
 
-				lights[LIGHT_OUT_ENABLED].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 0.f : 1.f, sampleTime);
+				lights[LIGHT_OUT_ENABLED].setBrightnessSmooth((!static_cast<bool>(params[PARAM_LOGIC_ENABLED].getValue())), sampleTime);
 				lights[LIGHT_OUT_ENABLED + 1].setBrightnessSmooth(1.f, sampleTime);
 				for (int light = 2; light < 7; ++light) {
-					lights[LIGHT_OUT_ENABLED + light].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue() ? 1.f : 0.f, sampleTime);
+					lights[LIGHT_OUT_ENABLED + light].setBrightnessSmooth(params[PARAM_LOGIC_ENABLED].getValue(), sampleTime);
 				}
 
 #ifdef METAMODULE
-				lights[LIGHT_ONE_SHOT].setBrightness(static_cast<bool>(params[PARAM_ONE_SHOT].getValue()) ? kSanguineButtonLightValue : 0.f);
+				lights[LIGHT_ONE_SHOT].setBrightness(static_cast<bool>(params[PARAM_ONE_SHOT].getValue()) * kSanguineButtonLightValue);
 #endif
 
 				handleStepLights(sampleTime);
@@ -816,13 +818,13 @@ struct Brainz : SanguineModule {
 	}
 
 	void handleStepLights(float sampleTime) {
-		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_A
-			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_A) ? 1.f : 0.f, sampleTime);
-		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_B
-			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_B) ? 1.f : 0.f, sampleTime);
-		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_C
-			|| moduleState == brainz::MODULE_STATE_ROUND_2_STEP_C) ? 1.f : 0.f, sampleTime);
-		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome ? 1.f : 0.f, sampleTime);
+		lights[LIGHT_STEP_A].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_A)
+			| (moduleState == brainz::MODULE_STATE_ROUND_2_STEP_A), sampleTime);
+		lights[LIGHT_STEP_B].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_B)
+			| (moduleState == brainz::MODULE_STATE_ROUND_2_STEP_B), sampleTime);
+		lights[LIGHT_STEP_C].setBrightnessSmooth((moduleState == brainz::MODULE_STATE_ROUND_1_STEP_C)
+			| (moduleState == brainz::MODULE_STATE_ROUND_2_STEP_C), sampleTime);
+		lights[LIGHT_METRONOME].setBrightnessSmooth(bInMetronome, sampleTime);
 	}
 
 	void onPortChange(const PortChangeEvent& e) override {
@@ -973,7 +975,7 @@ struct BrainzWidget : SanguineModuleWidget {
 		addOutput(createOutputCentered<BananutBlack>(millimetersToPixelsVec(118.821, 95.277), module, Brainz::OUTPUT_STAGE_C));
 
 		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(millimetersToPixelsVec(27.522, 59.903),
-			module, Brainz::PARAM_A_DIRECTION, Brainz::LIGHT_STEP_A_DIRECTION + 0 * 3));
+			module, Brainz::PARAM_A_DIRECTION, Brainz::LIGHT_STEP_A_DIRECTION));
 		addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<RedGreenBlueLight>>>(millimetersToPixelsVec(63.5, 85.403),
 			module, Brainz::PARAM_B_DIRECTION, Brainz::LIGHT_STEP_A_DIRECTION + 1 * 3));
 
