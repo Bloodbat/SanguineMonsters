@@ -61,7 +61,6 @@ struct DollyX : SanguineModule {
 
 	void process(const ProcessArgs& args) override {
 		if (clockDivider.process()) {
-			checkConnections();
 			updateCloneCounts();
 		}
 
@@ -110,11 +109,30 @@ struct DollyX : SanguineModule {
 		init();
 	}
 
-	void checkConnections() {
-		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
-			cvsConnected[submodule] = inputs[INPUT_CHANNELS1_CV + submodule].isConnected();
-			inputsConnected[submodule] = inputs[INPUT_MONO_IN1 + submodule].isConnected();
-			outputsConnected[submodule] = outputs[OUTPUT_POLYOUT_1 + submodule].isConnected();
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case (Port::INPUT):
+			switch (e.portId) {
+			case INPUT_CHANNELS1_CV:
+				cvsConnected[0] = e.connecting;
+				break;
+
+			case INPUT_CHANNELS2_CV:
+				cvsConnected[1] = e.connecting;
+				break;
+
+			case INPUT_MONO_IN1:
+				inputsConnected[0] = e.connecting;
+				break;
+
+			case INPUT_MONO_IN2:
+				inputsConnected[1] = e.connecting;
+				break;
+			}
+			break;
+		case (Port::OUTPUT):
+			outputsConnected[e.portId] = e.connecting;
+			break;
 		}
 	}
 };
