@@ -206,6 +206,11 @@ struct Chronos : SanguineModule {
     void process(const ProcessArgs& args) override {
         bool bIsLightsTurn = lightsDivider.process();
 
+        float sampleTime = 0.f;
+        if (bIsLightsTurn) {
+            sampleTime = args.sampleTime * kLightsFrequency;
+        }
+
         for (int section = 0; section < chronos::kMaxSections; ++section) {
             float paramFrequency = params[PARAM_FREQUENCY_1 + section].getValue();
             float paramFm = params[PARAM_FM_1 + section].getValue();
@@ -337,7 +342,6 @@ struct Chronos : SanguineModule {
                     ledsChannel[section] = channelCounts[section] - 1;
                 }
 
-                const float sampleTime = args.sampleTime * kLightsFrequency;
                 int currentLight = LIGHT_PHASE_1 + section * 3;
                 if (channelCounts[section] == 1) {
                     lights[currentLight].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
