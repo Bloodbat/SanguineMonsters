@@ -334,10 +334,10 @@ struct Chronos : SanguineModule {
                 }
 
 #ifdef METAMODULE
-                lights[LIGHT_INVERT_1 + section].setBrightness(static_cast<bool>(params[PARAM_INVERT_1 + section].getValue()) ?
-                    kSanguineButtonLightValue : 0.f);
-                lights[LIGHT_BIPOLAR_1 + section].setBrightness(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()) ?
-                    kSanguineButtonLightValue : 0.f);
+                lights[LIGHT_INVERT_1 + section].setBrightness(static_cast<bool>(params[PARAM_INVERT_1 + section].getValue()) *
+                    kSanguineButtonLightValue);
+                lights[LIGHT_BIPOLAR_1 + section].setBrightness(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()) *
+                    kSanguineButtonLightValue);
 #endif
             }
         }
