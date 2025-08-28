@@ -101,8 +101,8 @@ struct Chronos : SanguineModule {
 
     static const int kLightsFrequency = 64;
 
-    int channelCounts[chronos::kMaxSections] = {};
-    int ledsChannel[chronos::kMaxSections] = {};
+    size_t channelCounts[chronos::kMaxSections] = {};
+    size_t ledsChannel[chronos::kMaxSections] = {};
 
     float clockFrequencies[chronos::kMaxSections] = {};
 
@@ -223,8 +223,8 @@ struct Chronos : SanguineModule {
 
             channelCounts[section] = std::max(inputs[INPUT_FM_1 + section].getChannels(), 1);
 
-            for (uint8_t channel = 0; channel < channelCounts[section]; channel += 4) {
-                uint8_t currentChannel = channel >> 2;
+            for (size_t channel = 0; channel < channelCounts[section]; channel += 4) {
+                size_t currentChannel = channel >> 2;
 
                 // Pitch and frequency
                 float_4 pitch = paramFrequency;
@@ -316,28 +316,28 @@ struct Chronos : SanguineModule {
             outputs[OUTPUT_SQUARE_1 + section].setChannels(channelCounts[section]);
 
             if (bIsLightsTurn) {
-                if (ledsChannel[section] >= channelCounts[section]) {
-                    ledsChannel[section] = channelCounts[section] - 1;
-                }
+            if (ledsChannel[section] >= channelCounts[section]) {
+                ledsChannel[section] = channelCounts[section] - 1;
+            }
 
                 const float sampleTime = args.sampleTime * kLightsFrequency;
-                int currentLight = LIGHT_PHASE_1 + section * 3;
-                if (channelCounts[section] == 1) {
+            int currentLight = LIGHT_PHASE_1 + section * 3;
+            if (channelCounts[section] == 1) {
                     lights[currentLight].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-                } else {
-                    float brightness = sineVoltages[section][ledsChannel[section] >> 2][ledsChannel[section] % 4];
+            } else {
+                float brightness = sineVoltages[section][ledsChannel[section] >> 2][ledsChannel[section] % 4];
                     lights[currentLight].setBrightnessSmooth(-brightness, sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
-                }
+            }
 
 #ifdef METAMODULE
-                lights[LIGHT_INVERT_1 + section].setBrightness(static_cast<bool>(params[PARAM_INVERT_1 + section].getValue()) *
-                    kSanguineButtonLightValue);
-                lights[LIGHT_BIPOLAR_1 + section].setBrightness(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()) *
-                    kSanguineButtonLightValue);
+            lights[LIGHT_INVERT_1 + section].setBrightness(static_cast<bool>(params[PARAM_INVERT_1 + section].getValue()) *
+                kSanguineButtonLightValue);
+            lights[LIGHT_BIPOLAR_1 + section].setBrightness(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()) *
+                kSanguineButtonLightValue);
 #endif
             }
         }
@@ -617,7 +617,7 @@ struct ChronosWidget : SanguineModuleWidget {
 
         for (int section = 0; section < chronos::kMaxSections; ++section) {
             availableChannels.clear();
-            for (int channel = 0; channel < module->channelCounts[section]; ++channel) {
+            for (size_t channel = 0; channel < module->channelCounts[section]; ++channel) {
                 availableChannels.push_back(channelNumbers[channel]);
             }
             menu->addChild(createIndexSubmenuItem(string::f("Section %d LED channel", section + 1), availableChannels,
