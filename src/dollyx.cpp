@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
+#include "dollyx.hpp"
+
 using simd::float_4;
 
 struct DollyX : SanguineModule {
@@ -43,8 +45,8 @@ struct DollyX : SanguineModule {
 		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			int componentOffset = submodule + 1;
 
-			configParam(PARAM_CHANNELS1 + submodule, 1.f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS, string::f("Clone count %d", componentOffset));
-			paramQuantities[PARAM_CHANNELS1]->snapEnabled = true;
+			configSwitch(PARAM_CHANNELS1 + submodule, 1.f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS,
+				string::f("Clone count %d", componentOffset), dollyx::numberLabels16);
 
 			configOutput(OUTPUT_POLYOUT_1 + submodule, string::f("Cloned %d", componentOffset));
 
