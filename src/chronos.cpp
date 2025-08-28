@@ -246,15 +246,18 @@ struct Chronos : SanguineModule {
                 float_4 resetTriggered = stResetTriggers[section][currentChannel].process(reset, 0.1f, 2.f);
                 phases[section][currentChannel] = simd::ifelse(resetTriggered, 0.f, phases[section][currentChannel]);
 
+                float_4 phase;
+                float_4 voltage;
+
                 // Sine
                 if (outputs[OUTPUT_SINE_1 + section].isConnected() || bIsLightsTurn) {
-                    float_4 phase = phases[section][currentChannel];
+                    phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
                     sineVoltages[section][currentChannel] = simd::sin(2.f * M_PI * phase);
                     if (outputs[OUTPUT_SINE_1 + section].isConnected()) {
-                        float_4 voltage = sineVoltages[section][currentChannel];
+                        voltage = sineVoltages[section][currentChannel];
                         if (bIsInverted) {
                             voltage = -voltage;
                         }
@@ -267,11 +270,11 @@ struct Chronos : SanguineModule {
 
                 // Triangle
                 if (outputs[OUTPUT_TRIANGLE_1 + section].isConnected()) {
-                    float_4 phase = phases[section][currentChannel];
+                    phase = phases[section][currentChannel];
                     if (!bHasOffset) {
                         phase += 0.25f;
                     }
-                    float_4 voltage = 4.f * simd::fabs(phase - simd::round(phase)) - 1.f;
+                    voltage = 4.f * simd::fabs(phase - simd::round(phase)) - 1.f;
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
@@ -283,11 +286,11 @@ struct Chronos : SanguineModule {
 
                 // Sawtooth
                 if (outputs[OUTPUT_SAW_1 + section].isConnected()) {
-                    float_4 phase = phases[section][currentChannel];
+                    phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.5f;
                     }
-                    float_4 voltage = 2.f * (phase - simd::round(phase));
+                    voltage = 2.f * (phase - simd::round(phase));
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
@@ -299,7 +302,7 @@ struct Chronos : SanguineModule {
 
                 // Square
                 if (outputs[OUTPUT_SQUARE_1 + section].isConnected()) {
-                    float_4 voltage = simd::ifelse(phases[section][currentChannel] < pulseWidth, 1.f, -1.f);
+                    voltage = simd::ifelse(phases[section][currentChannel] < pulseWidth, 1.f, -1.f);
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
@@ -316,28 +319,28 @@ struct Chronos : SanguineModule {
             outputs[OUTPUT_SQUARE_1 + section].setChannels(channelCounts[section]);
 
             if (bIsLightsTurn) {
-            if (ledsChannel[section] >= channelCounts[section]) {
-                ledsChannel[section] = channelCounts[section] - 1;
-            }
+                if (ledsChannel[section] >= channelCounts[section]) {
+                    ledsChannel[section] = channelCounts[section] - 1;
+                }
 
                 const float sampleTime = args.sampleTime * kLightsFrequency;
-            int currentLight = LIGHT_PHASE_1 + section * 3;
-            if (channelCounts[section] == 1) {
+                int currentLight = LIGHT_PHASE_1 + section * 3;
+                if (channelCounts[section] == 1) {
                     lights[currentLight].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-            } else {
-                float brightness = sineVoltages[section][ledsChannel[section] >> 2][ledsChannel[section] % 4];
+                } else {
+                    float brightness = sineVoltages[section][ledsChannel[section] >> 2][ledsChannel[section] % 4];
                     lights[currentLight].setBrightnessSmooth(-brightness, sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
-            }
+                }
 
 #ifdef METAMODULE
-            lights[LIGHT_INVERT_1 + section].setBrightness(static_cast<bool>(params[PARAM_INVERT_1 + section].getValue()) *
-                kSanguineButtonLightValue);
-            lights[LIGHT_BIPOLAR_1 + section].setBrightness(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()) *
-                kSanguineButtonLightValue);
+                lights[LIGHT_INVERT_1 + section].setBrightness(static_cast<bool>(params[PARAM_INVERT_1 + section].getValue()) *
+                    kSanguineButtonLightValue);
+                lights[LIGHT_BIPOLAR_1 + section].setBrightness(static_cast<bool>(params[PARAM_BIPOLAR_1 + section].getValue()) *
+                    kSanguineButtonLightValue);
 #endif
             }
         }
