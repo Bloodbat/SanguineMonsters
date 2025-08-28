@@ -56,7 +56,7 @@ struct DollyX : SanguineModule {
 		}
 
 		clockDivider.setDivision(kClockDivision);
-		onReset();
+		init();
 	};
 
 	void process(const ProcessArgs& args) override {
@@ -100,10 +100,14 @@ struct DollyX : SanguineModule {
 		}
 	}
 
-	void onReset() override {
+	void init() {
 		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
 			cloneCounts[submodule] = PORT_MAX_CHANNELS;
 		}
+	}
+
+	void onReset() override {
+		init();
 	}
 
 	void checkConnections() {
