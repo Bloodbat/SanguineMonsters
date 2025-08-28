@@ -126,8 +126,7 @@ struct Chronos : SanguineModule {
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
             const Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
-            switch (paramId)
-            {
+            switch (paramId) {
             case PARAM_FREQUENCY_1:
                 if (moduleChronos->clockFrequencies[PARAM_FREQUENCY_1] == 2.f) {
                     unit = " Hz";
@@ -277,9 +276,9 @@ struct Chronos : SanguineModule {
                         if (bIsInverted) {
                             voltage = -voltage;
                         }
-                        if (bHasOffset) {
-                            voltage += 1.f;
-                        }
+
+                        voltage += bHasOffset;
+
                         outputs[OUTPUT_SINE_1 + section].setVoltageSimd(5.f * voltage, channel);
                     }
                 }
@@ -294,9 +293,9 @@ struct Chronos : SanguineModule {
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
-                    if (bHasOffset) {
-                        voltage += 1.f;
-                    }
+
+                    voltage += bHasOffset;
+
                     outputs[OUTPUT_TRIANGLE_1 + section].setVoltageSimd(5.f * voltage, channel);
                 }
 
@@ -310,9 +309,8 @@ struct Chronos : SanguineModule {
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
-                    if (bHasOffset) {
-                        voltage += 1.f;
-                    }
+
+                    voltage += bHasOffset;
                     outputs[OUTPUT_SAW_1 + section].setVoltageSimd(5.f * voltage, channel);
                 }
 
@@ -322,9 +320,9 @@ struct Chronos : SanguineModule {
                     if (bIsInverted) {
                         voltage = -voltage;
                     }
-                    if (bHasOffset) {
-                        voltage += 1.f;
-                    }
+
+                    voltage += bHasOffset;
+
                     outputs[OUTPUT_SQUARE_1 + section].setVoltageSimd(5.f * voltage, channel);
                 }
             }
