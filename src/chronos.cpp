@@ -121,6 +121,7 @@ struct Chronos : SanguineModule {
     bool squaresConnected[chronos::kMaxSections] = {};
     bool resetsConnected[chronos::kMaxSections] = {};
     bool fmsConnected[chronos::kMaxSections] = {};
+    bool pwmsConnected[chronos::kMaxSections] = {};
 
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
@@ -243,7 +244,9 @@ struct Chronos : SanguineModule {
 
                 // Pulse width
                 float_4 pulseWidth = paramPulsewidth;
-                pulseWidth += inputs[INPUT_PWM_1 + section].getPolyVoltageSimd<float_4>(channel) / 10.f * paramPwm;
+                if (pwmsConnected[section]) {
+                    pulseWidth += inputs[INPUT_PWM_1 + section].getPolyVoltageSimd<float_4>(channel) / 10.f * paramPwm;
+                }
                 pulseWidth = clamp(pulseWidth, 0.01f, 0.99f);
 
                 // Advance phase
@@ -425,7 +428,17 @@ struct Chronos : SanguineModule {
                 fmsConnected[3] = e.connecting;
                 break;
 
-            default:
+            case INPUT_PWM_1:
+                pwmsConnected[0] = e.connecting;
+                break;
+            case INPUT_PWM_2:
+                pwmsConnected[1] = e.connecting;
+                break;
+            case INPUT_PWM_3:
+                pwmsConnected[2] = e.connecting;
+                break;
+            case INPUT_PWM_4:
+                pwmsConnected[3] = e.connecting;
                 break;
             }
             break;
@@ -494,9 +507,6 @@ struct Chronos : SanguineModule {
 
             case OUTPUT_SQUARE_4:
                 squaresConnected[3] = e.connecting;
-                break;
-
-            default:
                 break;
             }
             break;
