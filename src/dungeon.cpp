@@ -181,7 +181,7 @@ struct Dungeon : SanguineModule {
 
 		if (bOutVoltageConnected) {
 			// Slider bottom means infinite slew
-			if (slewParam <= std::log2(1e-3f)) {
+			if (slewParam <= kMinSlew) {
 				slewParam = -INFINITY;
 			}
 
