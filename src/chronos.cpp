@@ -323,12 +323,12 @@ struct Chronos : SanguineModule {
                 const float sampleTime = args.sampleTime * kLightsFrequency;
                 int currentLight = LIGHT_PHASE_1 + section * 3;
                 if (channelCounts[section] == 1) {
-                    lights[currentLight + 0].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
+                    lights[currentLight].setBrightnessSmooth(-sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(sineVoltages[section][0][0], sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
                 } else {
                     float brightness = sineVoltages[section][ledsChannel[section] >> 2][ledsChannel[section] % 4];
-                    lights[currentLight + 0].setBrightnessSmooth(-brightness, sampleTime);
+                    lights[currentLight].setBrightnessSmooth(-brightness, sampleTime);
                     lights[currentLight + 1].setBrightnessSmooth(brightness, sampleTime);
                     lights[currentLight + 2].setBrightnessSmooth(fabsf(brightness), sampleTime);
                 }
