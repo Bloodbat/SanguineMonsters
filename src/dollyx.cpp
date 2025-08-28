@@ -80,8 +80,6 @@ struct DollyX : SanguineModule {
 				}
 				outputs[OUTPUT_POLYOUT_1 + section].setVoltageSimd(voltages[currentChannel], channel);
 			}
-		} else {
-			outputs[OUTPUT_POLYOUT_1 + section].setChannels(0);
 		}
 	}
 
