@@ -119,6 +119,7 @@ struct Chronos : SanguineModule {
     bool trianglesConnected[chronos::kMaxSections] = {};
     bool sawsConnected[chronos::kMaxSections] = {};
     bool squaresConnected[chronos::kMaxSections] = {};
+    bool resetsConnected[chronos::kMaxSections] = {};
 
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
@@ -248,8 +249,11 @@ struct Chronos : SanguineModule {
                 phases[section][currentChannel] -= simd::trunc(phases[section][currentChannel]);
 
                 // Reset
-                float_4 reset = inputs[INPUT_RESET_1 + section].getPolyVoltageSimd<float_4>(channel);
-                float_4 resetTriggered = stResetTriggers[section][currentChannel].process(reset, 0.1f, 2.f);
+                float_4 resetTriggered = {};
+                if (resetsConnected[section]) {
+                    float_4 reset = inputs[INPUT_RESET_1 + section].getPolyVoltageSimd<float_4>(channel);
+                    resetTriggered = stResetTriggers[section][currentChannel].process(reset, 0.1f, 2.f);
+                }
                 phases[section][currentChannel] = simd::ifelse(resetTriggered, 0.f, phases[section][currentChannel]);
 
                 float_4 phase;
@@ -384,6 +388,22 @@ struct Chronos : SanguineModule {
 
             case INPUT_CLOCK_4:
                 clocksConnected[3] = e.connecting;
+                break;
+
+            case INPUT_RESET_1:
+                resetsConnected[0] = e.connecting;
+                break;
+
+            case INPUT_RESET_2:
+                resetsConnected[1] = e.connecting;
+                break;
+
+            case INPUT_RESET_3:
+                resetsConnected[2] = e.connecting;
+                break;
+
+            case INPUT_RESET_4:
+                resetsConnected[3] = e.connecting;
                 break;
 
             default:
