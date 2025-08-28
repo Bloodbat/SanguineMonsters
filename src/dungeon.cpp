@@ -106,10 +106,7 @@ struct Dungeon : SanguineModule {
 
 		if (bOutNoiseConnected) {
 			whiteNoise = 2.f * sanguineRandom::normal();
-			// TODO: don't check for this twice!
-			if (bOutNoiseConnected) {
-				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
-			}
+			outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 		}
 
 		switch (moduleMode) {
