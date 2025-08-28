@@ -62,6 +62,10 @@ struct Dungeon : SanguineModule {
 	float whiteNoise = 0.f;
 
 	bool bStoreVoltageInPatch = true;
+	bool bOutNoiseConnected = false;
+	bool bOutVoltageConnected = false;
+	bool bInVoltageConnected = false;
+	bool bInSlewConnected = false;
 
 #ifndef METAMODULE
 	HaloTypes haloType = HALO_CIRCULAR;
@@ -96,26 +100,14 @@ struct Dungeon : SanguineModule {
 		clockDivider.division = kClockDividerFrequency;
 	}
 
-	inline void getNewVoltage(bool bHaveWhiteNoise, bool bHaveInVoltage) {
-		if (bHaveInVoltage) {
-			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
-		} else {
-			if (!bHaveWhiteNoise) {
-				whiteNoise = 2.f * sanguineRandom::normal();
-			}
-			inVoltage = whiteNoise;
-		}
-	}
-
 	void process(const ProcessArgs& args) override {
 		float slewParam = params[PARAM_SLEW].getValue();
 		bool bGateButton = params[PARAM_TRIGGER].getValue() > 0.f;
-		bool bHaveWhiteNoise = outputs[OUTPUT_NOISE].isConnected();
-		bool bHaveInVoltage = inputs[INPUT_VOLTAGE].isConnected();
 
-		if (bHaveWhiteNoise) {
+		if (bOutNoiseConnected) {
 			whiteNoise = 2.f * sanguineRandom::normal();
-			if (outputs[OUTPUT_NOISE].isConnected()) {
+			// TODO: don't check for this twice!
+			if (bOutNoiseConnected) {
 				outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 			}
 		}
@@ -127,7 +119,7 @@ struct Dungeon : SanguineModule {
 				if (inputs[INPUT_CLOCK].getVoltage() >= 2.f || bGateButton) {
 					// Triggered
 					engine.isTriggered = true;
-					getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
+					getNewVoltage();
 					engine.voltage = inVoltage;
 				}
 			} else {
@@ -141,7 +133,7 @@ struct Dungeon : SanguineModule {
 			break;
 		}
 		case Dungeon::MODE_TRACK_AND_HOLD: {
-			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
+			getNewVoltage();
 
 			// Gate trigger/untrigger
 			if (!engine.isTriggered) {
@@ -163,7 +155,7 @@ struct Dungeon : SanguineModule {
 			break;
 		}
 		case Dungeon::MODE_HOLD_AND_TRACK: {
-			getNewVoltage(bHaveWhiteNoise, bHaveInVoltage);
+			getNewVoltage();
 
 			// Gate trigger/untrigger
 			if (!engine.isTriggered) {
@@ -186,7 +178,7 @@ struct Dungeon : SanguineModule {
 		}
 		}
 
-		if (outputs[OUTPUT_VOLTAGE].isConnected()) {
+		if (bOutVoltageConnected) {
 			// Slider bottom means infinite slew
 			if (slewParam <= std::log2(1e-3f)) {
 				slewParam = -INFINITY;
@@ -211,7 +203,7 @@ struct Dungeon : SanguineModule {
 
 			const float sampleTime = args.sampleTime * kClockDividerFrequency;
 
-			if (!inputs[INPUT_SLEW].isConnected()) {
+			if (!bInSlewConnected) {
 				lights[LIGHT_SLEW].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), kMinSlew, kMaxSlew, 0.f, 1.f), sampleTime);
 			} else {
@@ -262,6 +254,44 @@ struct Dungeon : SanguineModule {
 				lights[LIGHT_VOLTAGE + 2].setBrightness(0.f);
 			}
 #endif
+		}
+	}
+
+	inline void getNewVoltage() {
+		if (bInVoltageConnected) {
+			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
+		} else {
+			if (!bOutNoiseConnected) {
+				whiteNoise = 2.f * sanguineRandom::normal();
+			}
+			inVoltage = whiteNoise;
+		}
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case Port::INPUT:
+			switch (e.portId) {
+			case INPUT_VOLTAGE:
+				bInVoltageConnected = e.connecting;
+				break;
+
+			case INPUT_SLEW:
+				bInSlewConnected = e.connecting;
+			default:
+				break;
+			}
+			break;
+		case Port::OUTPUT:
+			switch (e.portId) {
+			case OUTPUT_NOISE:
+				bOutNoiseConnected = e.connecting;
+				break;
+
+			case OUTPUT_VOLTAGE:
+				bOutVoltageConnected = e.connecting;
+				break;
+			}
 		}
 	}
 
