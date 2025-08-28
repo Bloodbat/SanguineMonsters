@@ -1,8 +1,8 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "sanguinerandom.hpp"
 #include "sanguinejson.hpp"
+#include "sanguinerandom.hpp"
 
 #include "dungeon.hpp"
 
@@ -75,6 +75,8 @@ struct Dungeon : SanguineModule {
 
 	dsp::ClockDivider clockDivider;
 
+	sanguineRandom::SanguineRandomNormal rngNormal;
+
 	Dungeon() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 		configSwitch(PARAM_MODE, 0.f, 2.f, 0.f, "Mode", { "Sample and hold", "Track and hold", "Hold and track" });
@@ -97,6 +99,8 @@ struct Dungeon : SanguineModule {
 		configOutput(OUTPUT_NOISE, "Noise");
 		configOutput(OUTPUT_VOLTAGE, "Voltage");
 
+		rngNormal.init(std::round(system::getUnixTime()));
+
 		clockDivider.division = kClockDividerFrequency;
 	}
 
@@ -105,7 +109,7 @@ struct Dungeon : SanguineModule {
 		bool bGateButton = params[PARAM_TRIGGER].getValue() > 0.f;
 
 		if (bOutNoiseConnected) {
-			whiteNoise = 2.f * sanguineRandom::normal();
+			whiteNoise = 2.f * rngNormal.normal();
 			outputs[OUTPUT_NOISE].setVoltage(whiteNoise);
 		}
 
@@ -259,7 +263,7 @@ struct Dungeon : SanguineModule {
 			inVoltage = inputs[INPUT_VOLTAGE].getVoltage();
 		} else {
 			if (!bOutNoiseConnected) {
-				whiteNoise = 2.f * sanguineRandom::normal();
+				whiteNoise = 2.f * rngNormal.normal();
 			}
 			inVoltage = whiteNoise;
 		}
