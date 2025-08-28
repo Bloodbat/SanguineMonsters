@@ -93,10 +93,11 @@ struct DollyX : SanguineModule {
 	}
 
 	void updateCloneCounts() {
-		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
-			cloneCounts[submodule] = getChannelCloneCount(submodule);
-			outputs[OUTPUT_POLYOUT_1 + submodule].setChannels(cloneCounts[submodule]);
-		}
+		cloneCounts[0] = getChannelCloneCount(0);
+		outputs[OUTPUT_POLYOUT_1].setChannels(cloneCounts[0]);
+
+		cloneCounts[1] = getChannelCloneCount(1);
+		outputs[OUTPUT_POLYOUT_2].setChannels(cloneCounts[1]);
 	}
 
 	void init() {
