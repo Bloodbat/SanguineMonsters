@@ -64,21 +64,24 @@ struct DollyX : SanguineModule {
 			updateCloneCounts();
 		}
 
-		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
-			float_4 voltages[4] = {};
+		cloneChannels(0);
+		cloneChannels(1);
+	}
 
-			if (outputsConnected[submodule]) {
-				for (int channel = 0; channel < cloneCounts[submodule]; channel += 4) {
-					uint8_t currentChannel = channel >> 2;
+	void cloneChannels(const int section) {
+		float_4 voltages[4] = {};
 
-					if (inputsConnected[submodule]) {
-						voltages[currentChannel] = inputs[INPUT_MONO_IN1 + submodule].getVoltage();
-					}
-					outputs[OUTPUT_POLYOUT_1 + submodule].setVoltageSimd(voltages[currentChannel], channel);
+		if (outputsConnected[section]) {
+			for (int channel = 0; channel < cloneCounts[section]; channel += 4) {
+				uint8_t currentChannel = channel >> 2;
+
+				if (inputsConnected[section]) {
+					voltages[currentChannel] = inputs[INPUT_MONO_IN1 + section].getVoltage();
 				}
-			} else {
-				outputs[OUTPUT_POLYOUT_1 + submodule].setChannels(0);
+				outputs[OUTPUT_POLYOUT_1 + section].setVoltageSimd(voltages[currentChannel], channel);
 			}
+		} else {
+			outputs[OUTPUT_POLYOUT_1 + section].setChannels(0);
 		}
 	}
 
