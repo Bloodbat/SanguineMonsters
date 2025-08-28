@@ -120,8 +120,7 @@ struct Dungeon : SanguineModule {
 			}
 		}
 
-		switch (moduleMode)
-		{
+		switch (moduleMode) {
 		case Dungeon::MODE_SAMPLE_AND_HOLD: {
 			// Gate trigger/untrigger
 			if (!engine.isTriggered) {
@@ -204,7 +203,7 @@ struct Dungeon : SanguineModule {
 			outputs[OUTPUT_VOLTAGE].setVoltage(engine.sampleFilter.process(inVoltage, slewDelta));
 		}
 
-		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.isTriggered ? kSanguineButtonLightValue : 0.f, args.sampleTime);
+		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.isTriggered * kSanguineButtonLightValue, args.sampleTime);
 
 		if (clockDivider.process()) {
 			moduleMode = ModuleModes(params[PARAM_MODE].getValue());
@@ -213,11 +212,11 @@ struct Dungeon : SanguineModule {
 			const float sampleTime = args.sampleTime * kClockDividerFrequency;
 
 			if (!inputs[INPUT_SLEW].isConnected()) {
-				lights[LIGHT_SLEW + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_SLEW].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), kMinSlew, kMaxSlew, 0.f, 1.f), sampleTime);
 			} else {
 				float rescaledLight = math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f);
-				lights[LIGHT_SLEW + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_SLEW].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_SLEW + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
 			}
 
@@ -249,16 +248,16 @@ struct Dungeon : SanguineModule {
 			}
 #else
 			if (inVoltage >= 1.f) {
-				lights[LIGHT_VOLTAGE + 0].setBrightness(0.f);
+				lights[LIGHT_VOLTAGE].setBrightness(0.f);
 				lights[LIGHT_VOLTAGE + 1].setBrightness(0.f);
 				lights[LIGHT_VOLTAGE + 2].setBrightness(rescale(inVoltage, 1.f, 10.f, 0.f, 1.f));
 			} else if (inVoltage >= -0.99f && inVoltage <= 0.99f) {
 				float rescaledVoltage = rescale(inVoltage, -0.99f, 0.99f, 0.f, 1.f);
-				lights[LIGHT_VOLTAGE + 0].setBrightness(rescaledVoltage);
+				lights[LIGHT_VOLTAGE].setBrightness(rescaledVoltage);
 				lights[LIGHT_VOLTAGE + 1].setBrightness(rescaledVoltage);
 				lights[LIGHT_VOLTAGE + 2].setBrightness(rescaledVoltage);
 			} else {
-				lights[LIGHT_VOLTAGE + 0].setBrightness(rescale(inVoltage, -10.f, -1.f, 0.f, 1.f));
+				lights[LIGHT_VOLTAGE].setBrightness(rescale(inVoltage, -10.f, -1.f, 0.f, 1.f));
 				lights[LIGHT_VOLTAGE + 1].setBrightness(0.f);
 				lights[LIGHT_VOLTAGE + 2].setBrightness(0.f);
 			}
