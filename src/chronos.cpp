@@ -114,6 +114,12 @@ struct Chronos : SanguineModule {
     dsp::TSchmittTrigger<float_4> stResetTriggers[chronos::kMaxSections][4];
     dsp::SchmittTrigger stClockTriggers[chronos::kMaxSections];
 
+    bool clocksConnected[chronos::kMaxSections] = {};
+    bool sinesConnected[chronos::kMaxSections] = {};
+    bool trianglesConnected[chronos::kMaxSections] = {};
+    bool sawsConnected[chronos::kMaxSections] = {};
+    bool squaresConnected[chronos::kMaxSections] = {};
+
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
             const Chronos* moduleChronos = dynamic_cast<Chronos*>(module);
@@ -207,7 +213,7 @@ struct Chronos : SanguineModule {
             bool bIsInverted = static_cast<bool>(params[PARAM_INVERT_1 + section].getValue());
 
             // Clocks
-            if (inputs[INPUT_CLOCK_1 + section].isConnected()) {
+            if (clocksConnected[section]) {
                 clockTimers[section].process(args.sampleTime);
 
                 if (stClockTriggers[section].process(inputs[INPUT_CLOCK_1 + section].getVoltage(), 0.1f, 2.f)) {
@@ -250,13 +256,13 @@ struct Chronos : SanguineModule {
                 float_4 voltage;
 
                 // Sine
-                if (outputs[OUTPUT_SINE_1 + section].isConnected() || bIsLightsTurn) {
+                if (sinesConnected[section] || bIsLightsTurn) {
                     phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
                     sineVoltages[section][currentChannel] = simd::sin(2.f * M_PI * phase);
-                    if (outputs[OUTPUT_SINE_1 + section].isConnected()) {
+                    if (sinesConnected[section]) {
                         voltage = sineVoltages[section][currentChannel];
                         if (bIsInverted) {
                             voltage = -voltage;
@@ -269,7 +275,7 @@ struct Chronos : SanguineModule {
                 }
 
                 // Triangle
-                if (outputs[OUTPUT_TRIANGLE_1 + section].isConnected()) {
+                if (trianglesConnected[section]) {
                     phase = phases[section][currentChannel];
                     if (!bHasOffset) {
                         phase += 0.25f;
@@ -285,7 +291,7 @@ struct Chronos : SanguineModule {
                 }
 
                 // Sawtooth
-                if (outputs[OUTPUT_SAW_1 + section].isConnected()) {
+                if (sawsConnected[section]) {
                     phase = phases[section][currentChannel];
                     if (bHasOffset) {
                         phase -= 0.5f;
@@ -301,7 +307,7 @@ struct Chronos : SanguineModule {
                 }
 
                 // Square
-                if (outputs[OUTPUT_SQUARE_1 + section].isConnected()) {
+                if (squaresConnected[section]) {
                     voltage = simd::ifelse(phases[section][currentChannel] < pulseWidth, 1.f, -1.f);
                     if (bIsInverted) {
                         voltage = -voltage;
@@ -357,6 +363,104 @@ struct Chronos : SanguineModule {
             newPhase += phaseOffset;
             clockFrequencies[section] = 1.f;
             clockTimers[section].reset();
+        }
+    }
+
+    void onPortChange(const PortChangeEvent& e) override {
+        switch (e.type) {
+        case Port::INPUT:
+            switch (e.portId) {
+            case INPUT_CLOCK_1:
+                clocksConnected[0] = e.connecting;
+                break;
+
+            case INPUT_CLOCK_2:
+                clocksConnected[1] = e.connecting;
+                break;
+
+            case INPUT_CLOCK_3:
+                clocksConnected[2] = e.connecting;
+                break;
+
+            case INPUT_CLOCK_4:
+                clocksConnected[3] = e.connecting;
+                break;
+
+            default:
+                break;
+            }
+            break;
+
+        case Port::OUTPUT:
+            switch (e.portId) {
+            case OUTPUT_SINE_1:
+                sinesConnected[0] = e.connecting;
+                break;
+
+            case OUTPUT_SINE_2:
+                sinesConnected[1] = e.connecting;
+                break;
+
+            case OUTPUT_SINE_3:
+                sinesConnected[2] = e.connecting;
+                break;
+
+            case OUTPUT_SINE_4:
+                sinesConnected[3] = e.connecting;
+                break;
+
+            case OUTPUT_TRIANGLE_1:
+                trianglesConnected[0] = e.connecting;
+                break;
+
+            case OUTPUT_TRIANGLE_2:
+                trianglesConnected[1] = e.connecting;
+                break;
+
+            case OUTPUT_TRIANGLE_3:
+                trianglesConnected[2] = e.connecting;
+                break;
+
+            case OUTPUT_TRIANGLE_4:
+                trianglesConnected[3] = e.connecting;
+                break;
+
+            case OUTPUT_SAW_1:
+                sawsConnected[0] = e.connecting;
+                break;
+
+            case OUTPUT_SAW_2:
+                sawsConnected[1] = e.connecting;
+                break;
+
+            case OUTPUT_SAW_3:
+                sawsConnected[2] = e.connecting;
+                break;
+
+            case OUTPUT_SAW_4:
+                sawsConnected[3] = e.connecting;
+                break;
+
+            case OUTPUT_SQUARE_1:
+                squaresConnected[0] = e.connecting;
+                break;
+
+            case OUTPUT_SQUARE_2:
+                squaresConnected[1] = e.connecting;
+                break;
+
+            case OUTPUT_SQUARE_3:
+                squaresConnected[2] = e.connecting;
+                break;
+
+            case OUTPUT_SQUARE_4:
+                squaresConnected[3] = e.connecting;
+                break;
+
+            default:
+                break;
+            }
+            break;
         }
     }
 
