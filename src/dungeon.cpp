@@ -56,8 +56,8 @@ struct Dungeon : SanguineModule {
 
 	static const int kClockDividerFrequency = 512;
 
-	float minSlew = std::log2(1e-3f);
-	float maxSlew = std::log2(10.f);
+	static constexpr float kMinSlew = -9.965784285; // std::log2(1e-3f)
+	static constexpr float kMaxSlew = 3.321928095; // std::log2(10.f)
 	float inVoltage = 0.f;
 	float whiteNoise = 0.f;
 
@@ -84,7 +84,7 @@ struct Dungeon : SanguineModule {
 				return ParamQuantity::getDisplayValue();
 			}
 		};
-		configParam<SlewQuantity>(PARAM_SLEW, minSlew, maxSlew, minSlew, "Slew", " ms/V", 2, 1000);
+		configParam<SlewQuantity>(PARAM_SLEW, kMinSlew, kMaxSlew, kMinSlew, "Slew", " ms/V", 2, 1000);
 		configInput(INPUT_SLEW, "Slew CV");
 
 		configInput(INPUT_CLOCK, "Clock");
@@ -214,7 +214,7 @@ struct Dungeon : SanguineModule {
 
 			if (!inputs[INPUT_SLEW].isConnected()) {
 				lights[LIGHT_SLEW + 0].setBrightnessSmooth(0.f, sampleTime);
-				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), minSlew, maxSlew, 0.f, 1.f), sampleTime);
+				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), kMinSlew, kMaxSlew, 0.f, 1.f), sampleTime);
 			} else {
 				float rescaledLight = math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f);
 				lights[LIGHT_SLEW + 0].setBrightnessSmooth(rescaledLight, sampleTime);
