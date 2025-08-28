@@ -120,6 +120,7 @@ struct Chronos : SanguineModule {
     bool sawsConnected[chronos::kMaxSections] = {};
     bool squaresConnected[chronos::kMaxSections] = {};
     bool resetsConnected[chronos::kMaxSections] = {};
+    bool fmsConnected[chronos::kMaxSections] = {};
 
     struct FrequencyQuantity : ParamQuantity {
         float getDisplayValue() override {
@@ -235,7 +236,9 @@ struct Chronos : SanguineModule {
 
                 // Pitch and frequency
                 float_4 pitch = paramFrequency;
-                pitch += inputs[INPUT_FM_1 + section].getVoltageSimd<float_4>(channel) * paramFm;
+                if (fmsConnected[section]) {
+                    pitch += inputs[INPUT_FM_1 + section].getVoltageSimd<float_4>(channel) * paramFm;
+                }
                 float_4 frequency = clockFrequencies[section] / 2.f * dsp::exp2_taylor5(pitch);
 
                 // Pulse width
@@ -404,6 +407,22 @@ struct Chronos : SanguineModule {
 
             case INPUT_RESET_4:
                 resetsConnected[3] = e.connecting;
+                break;
+
+            case INPUT_FM_1:
+                fmsConnected[0] = e.connecting;
+                break;
+
+            case INPUT_FM_2:
+                fmsConnected[1] = e.connecting;
+                break;
+
+            case INPUT_FM_3:
+                fmsConnected[2] = e.connecting;
+                break;
+
+            case INPUT_FM_4:
+                fmsConnected[3] = e.connecting;
                 break;
 
             default:
