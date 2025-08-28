@@ -105,6 +105,7 @@ struct Chronos : SanguineModule {
     size_t ledsChannel[chronos::kMaxSections] = {};
 
     float clockFrequencies[chronos::kMaxSections] = {};
+    static constexpr float doublePi = 2.f * M_PI;
 
     float_4 phases[chronos::kMaxSections][4];
     float_4 sineVoltages[chronos::kMaxSections][4];
@@ -275,7 +276,7 @@ struct Chronos : SanguineModule {
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
-                    sineVoltages[section][currentChannel] = simd::sin(2.f * M_PI * phase);
+                    sineVoltages[section][currentChannel] = simd::sin(doublePi * phase);
                     if (sinesConnected[section]) {
                         voltage = sineVoltages[section][currentChannel];
                         if (bIsInverted) {
