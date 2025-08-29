@@ -59,6 +59,8 @@ struct Kitsune : SanguineModule {
 	bool bHasExpander = false;
 #endif
 
+	bool inputsConnected[kitsune::kMaxSections] = {};
+
 	kitsune::NormalledModes normalledMode = kitsune::NORMAL_SMART;
 
 	Kitsune() {
@@ -104,17 +106,12 @@ struct Kitsune : SanguineModule {
 		int lastChannelSource = -1;
 
 		for (int section = 0; section < kitsune::kMaxSections; ++section) {
-			switch (normalledMode)
-			{
-			case kitsune::NORMAL_SMART:
-				if (inputs[INPUT_VOLTAGE1 + section].isConnected()) {
+			if (normalledMode == kitsune::NORMAL_SMART) {
+				if (inputsConnected[section]) {
 					lastChannelSource = section;
 				} else if (lastChannelSource > -1) {
 					channelSources[section] = lastChannelSource;
 				}
-				break;
-			default:
-				break;
 			}
 
 			int channelCount = inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() > 0 ?
@@ -244,6 +241,12 @@ struct Kitsune : SanguineModule {
 		Module::onUnBypass(e);
 	}
 #endif
+
+	void onPortChange(const PortChangeEvent& e) override {
+		if (e.type == Port::INPUT) {
+			inputsConnected[e.portId] = e.connecting;
+		}
+	}
 
 	json_t* dataToJson() override {
 		json_t* rootJ = SanguineModule::dataToJson();
