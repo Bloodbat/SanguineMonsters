@@ -88,16 +88,7 @@ struct Kitsune : SanguineModule {
 	void process(const ProcessArgs& args) override {
 		using simd::float_4;
 
-		float sampleTime;
-
 		bool bIsLightsTurn = lightsDivider.process();
-
-		if (bIsLightsTurn) {
-			sampleTime = kLightsFrequency * args.sampleTime;
-#ifndef METAMODULE
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
-#endif
-		}
 
 		normalledMode = kitsune::NormalledModes(params[PARAM_NORMALLING_MODE].getValue());
 
@@ -142,6 +133,11 @@ struct Kitsune : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
+			const float sampleTime = kLightsFrequency * args.sampleTime;
+#ifndef METAMODULE
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
+#endif
+
 			for (int section = 0; section < kitsune::kMaxSections; ++section) {
 				int currentLight = LIGHT_NORMALLED1 + section * 3;
 
