@@ -4,8 +4,6 @@
 #include "sanguinecomponents.hpp"
 
 namespace kitsune {
-    static const int kMaxSections = 4;
-
     enum NormalledModes {
         NORMAL_NONE,
         NORMAL_SMART

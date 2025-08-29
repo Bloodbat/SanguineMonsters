@@ -1,6 +1,7 @@
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
 
+#include "kitsunecommon.hpp"
 #include "kitsune.hpp"
 #ifndef METAMODULE
 #include "denki.hpp"

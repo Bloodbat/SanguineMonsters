@@ -3,7 +3,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
-#include "kitsune.hpp"
+#include "kitsunecommon.hpp"
 
 struct Denki : SanguineModule {
 
