@@ -8,6 +8,8 @@
 
 ## Fixes
 
+- Denki: turn off lights when not connected to a Kitsune module: the expander is not powered.
+
 - Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
 
 

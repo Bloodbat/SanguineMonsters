@@ -17,6 +17,10 @@ void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 		lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
 	} else {
 		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
+
+		for (int light = 0; light < LIGHTS_COUNT; ++light) {
+			lights[light].setBrightness(0.f);
+		}
 	}
 }
 
