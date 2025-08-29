@@ -94,7 +94,7 @@ struct Kitsune : SanguineModule {
 		if (bIsLightsTurn) {
 			sampleTime = kLightsFrequency * args.sampleTime;
 #ifndef METAMODULE
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander * kSanguineButtonLightValue, sampleTime);
 #endif
 		}
 
