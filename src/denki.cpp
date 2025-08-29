@@ -42,13 +42,13 @@ struct DenkiWidget : SanguineModuleWidget {
 		SanguineStaticRGBLight* cvOffsetLight1 = new SanguineStaticRGBLight(module, "res/arrow_left_right.svg", 23.72, 22.736, true, kSanguineBlueLight);
 		addChild(cvOffsetLight1);
 
-		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(6.76, 29.571), module, Denki::INPUT_GAIN_CV + 0));
+		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(6.76, 29.571), module, Denki::INPUT_GAIN_CV));
 
-		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(23.72, 29.571), module, Denki::INPUT_OFFSET_CV + 0));
+		addInput(createInputCentered<BananutPurplePoly>(millimetersToPixelsVec(23.72, 29.571), module, Denki::INPUT_OFFSET_CV));
 
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(6.76, 36.569), module, Denki::LIGHT_GAIN_CV + 0 * 3));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(6.76, 36.569), module, Denki::LIGHT_GAIN_CV));
 
-		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(23.72, 36.569), module, Denki::LIGHT_OFFSET_CV + 0 * 3));
+		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(23.72, 36.569), module, Denki::LIGHT_OFFSET_CV));
 
 		// Channel 2
 		SanguineStaticRGBLight* cvGainLight2 = new SanguineStaticRGBLight(module, "res/light_cv_lit.svg", 6.76, 48.368, true, kSanguineBlueLight);
