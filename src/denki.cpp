@@ -10,22 +10,6 @@ Denki::Denki() {
 	}
 }
 
-bool Denki::getGainConnected(const int port) const {
-	return gainsConnected[port];
-}
-
-bool Denki::getOffsetConnected(const int port) const {
-	return offsetsConnected[port];
-}
-
-void Denki::setGainConnected(const int port, const bool value) {
-	gainsConnected[port] = value;
-}
-
-void Denki::setOffsetConnected(const int port, const bool value) {
-	offsetsConnected[port] = value;
-}
-
 void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 	Module* kitsuneMaster = getLeftExpander().module;
 	bool bHasMaster = (kitsuneMaster && kitsuneMaster->getModel() == modelKitsune);

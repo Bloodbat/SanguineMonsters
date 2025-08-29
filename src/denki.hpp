@@ -31,11 +31,21 @@ struct Denki : SanguineModule {
 
 	Denki();
 
-	bool getGainConnected(const int channel) const;
-	bool getOffsetConnected(const int channel) const;
+	inline bool getGainConnected(const int port) const {
+		return gainsConnected[port];
+	}
 
-	void setGainConnected(const int channel, const bool value);
-	void setOffsetConnected(const int channel, const bool value);
+	inline bool getOffsetConnected(const int port) const {
+		return offsetsConnected[port];
+	}
+
+	inline void setGainConnected(const int port, const bool value) {
+		gainsConnected[port] = value;
+	}
+
+	inline void setOffsetConnected(const int port, const bool value) {
+		offsetsConnected[port] = value;
+	}
 
 	void onExpanderChange(const ExpanderChangeEvent& e) override;
 
