@@ -104,14 +104,19 @@ struct Kitsune : SanguineModule {
 				}
 			}
 
-			channelCounts[section] = inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() > 0 ?
-				inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() : 1;
+			Input* input = &inputs[INPUT_VOLTAGE1 + channelSources[section]];
+
+			int inputChannels = input->getChannels();
+
+			channelCounts[section] = inputChannels > 0 ? inputChannels : 1;
 
 			float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
 			float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
 
+			int currentOutput = OUTPUT_VOLTAGE1 + section;
+
 			for (int channel = 0; channel < channelCounts[section]; channel += 4) {
-				float_4 voltages = inputs[INPUT_VOLTAGE1 + channelSources[section]].getVoltageSimd<float_4>(channel);
+				float_4 voltages = input->getVoltageSimd<float_4>(channel);
 				float_4 gains = gainKnob;
 				float_4 offsets = offsetKnob;
 
@@ -130,9 +135,9 @@ struct Kitsune : SanguineModule {
 
 				voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
 
-				outputs[OUTPUT_VOLTAGE1 + section].setVoltageSimd(voltages, channel);
+				outputs[currentOutput].setVoltageSimd(voltages, channel);
 			}
-			outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCounts[section]);
+			outputs[currentOutput].setChannels(channelCounts[section]);
 		}
 
 		if (bIsLightsTurn) {
