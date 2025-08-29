@@ -71,11 +71,11 @@ struct Kitsune : SanguineModule {
 			configInput(INPUT_VOLTAGE1 + section, string::f("Channel %d", section + 1));
 
 			configBypass(INPUT_VOLTAGE1 + section, OUTPUT_VOLTAGE1 + section);
-
-			lightsDivider.setDivision(kLightsFrequency);
 		}
 
 		configSwitch(PARAM_NORMALLING_MODE, 0.f, 1.f, 1.f, "Input normalling", kitsune::normallingModes);
+
+		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 	void process(const ProcessArgs& args) override {
