@@ -72,9 +72,6 @@ struct Fortuna : SanguineModule {
             configInput(INPUT_P_1 + section, string::f("Channel %d probability", section + 1));
             configOutput(OUTPUT_OUT_1A + section, string::f("Channel %d A", section + 1));
             configOutput(OUTPUT_OUT_1B + section, string::f("Channel %d B", section + 1));
-            for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
-                lastRollResults[section][channel] = fortuna::ROLL_HEADS;
-            }
         }
 
         lightsDivider.setDivision(kLightsFrequency);
