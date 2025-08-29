@@ -57,7 +57,9 @@ struct Kitsune : SanguineModule {
 	const int kLightsFrequency = 64;
 
 #ifndef METAMODULE
-	bool bHasExpander = false;
+	bool bHaveExpander = false;
+
+	Denki* denkiExpander = nullptr;
 #endif
 
 	bool inputsConnected[kitsune::kMaxSections] = {};
@@ -88,16 +90,10 @@ struct Kitsune : SanguineModule {
 
 		bool bIsLightsTurn = lightsDivider.process();
 
-#ifndef METAMODULE
-		Module* denkiExpander = getRightExpander().module;
-
-		bHasExpander = (denkiExpander && denkiExpander->getModel() == modelDenki && !denkiExpander->isBypassed());
-#endif
-
 		if (bIsLightsTurn) {
 			sampleTime = kLightsFrequency * args.sampleTime;
 #ifndef METAMODULE
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander * kSanguineButtonLightValue, sampleTime);
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
 #endif
 		}
 
@@ -124,7 +120,7 @@ struct Kitsune : SanguineModule {
 				float_4 offsets = params[PARAM_OFFSET1 + section].getValue();
 
 #ifndef METAMODULE
-				if (bHasExpander) {
+				if (bHaveExpander) {
 					if (denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).isConnected()) {
 						gains *= denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
 						gains = simd::clamp(gains, -2.f, 2.f);
@@ -160,7 +156,7 @@ struct Kitsune : SanguineModule {
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
 
 #ifndef METAMODULE
-					if (bHasExpander) {
+					if (bHaveExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 						float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
 						rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
@@ -185,7 +181,7 @@ struct Kitsune : SanguineModule {
 						lightValue += outputVoltages[channel];
 
 #ifndef METAMODULE
-						if (bHasExpander) {
+						if (bHaveExpander) {
 							cvGainLightValue += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage(channel);
 							cvOffsetLightValue += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage(channel);
 						}
@@ -199,7 +195,7 @@ struct Kitsune : SanguineModule {
 					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 
 #ifndef METAMODULE
-					if (bHasExpander) {
+					if (bHaveExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 
 						cvGainLightValue /= channelCount;
@@ -227,7 +223,7 @@ struct Kitsune : SanguineModule {
 
 #ifndef METAMODULE
 	void onBypass(const BypassEvent& e) override {
-		if (bHasExpander) {
+		if (bHaveExpander) {
 			Module* denkiExpander = getRightExpander().module;
 			denkiExpander->getLight(Denki::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
@@ -235,11 +231,23 @@ struct Kitsune : SanguineModule {
 	}
 
 	void onUnBypass(const UnBypassEvent& e) override {
-		if (bHasExpander) {
+		if (bHaveExpander) {
 			Module* denkiExpander = getRightExpander().module;
 			denkiExpander->getLight(Denki::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
+	}
+
+	void onExpanderChange(const ExpanderChangeEvent& e) override {
+		if (e.side == 1) {
+			Module* rightModule = getRightExpander().module;
+			bHaveExpander = rightModule && rightModule->getModel() == modelDenki &&
+				!rightModule->isBypassed();
+
+			if (bHaveExpander) {
+				denkiExpander = dynamic_cast<Denki*>(rightModule);
+			}
+		}
 	}
 #endif
 
