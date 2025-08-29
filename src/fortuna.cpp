@@ -56,7 +56,9 @@ struct Fortuna : SanguineModule {
     fortuna::RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
     fortuna::RollModes rollModes[kMaxModuleSections] = { fortuna::ROLL_DIRECT, fortuna::ROLL_DIRECT };
+    bool inputsConnected[kMaxModuleSections] = {};
     bool outputsConnected[OUTPUTS_COUNT] = {};
+    bool triggersConnected[kMaxModuleSections] = {};
 
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -78,11 +80,6 @@ struct Fortuna : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        outputsConnected[0] = outputs[OUTPUT_OUT_1A].isConnected();
-        outputsConnected[1] = outputs[OUTPUT_OUT_2A].isConnected();
-        outputsConnected[2] = outputs[OUTPUT_OUT_1B].isConnected();
-        outputsConnected[3] = outputs[OUTPUT_OUT_2B].isConnected();
-
         float inVoltages[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
         float cvVoltages[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
         bool bLightsTurn = lightsDivider.process();
@@ -93,11 +90,11 @@ struct Fortuna : SanguineModule {
             Input* trigger = &inputs[INPUT_TRIGGER_1 + section];
 
             // 2nd input and 2 trigger are normalized to 1st.
-            if (section == 1 && !input->isConnected()) {
+            if (section == 1 && !inputsConnected[1]) {
                 input = &inputs[INPUT_IN_1];
             }
 
-            if (section == 1 && !trigger->isConnected()) {
+            if (section == 1 && !triggersConnected[1]) {
                 trigger = &inputs[INPUT_TRIGGER_1];
             }
 
@@ -182,6 +179,37 @@ struct Fortuna : SanguineModule {
             for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
                 lastRollResults[section][channel] = fortuna::ROLL_HEADS;
             }
+        }
+    }
+
+    void onPortChange(const PortChangeEvent& e) override {
+        switch (e.type) {
+        case Port::INPUT:
+            switch (e.portId) {
+            case INPUT_IN_1:
+                inputsConnected[0] = e.connecting;
+                break;
+
+            case INPUT_IN_2:
+                inputsConnected[1] = e.connecting;
+                break;
+
+            case INPUT_TRIGGER_1:
+                triggersConnected[0] = e.connecting;
+                break;
+
+            case INPUT_TRIGGER_2:
+                triggersConnected[1] = e.connecting;
+                break;
+
+            default:
+                break;
+            }
+            break;
+
+        case Port::OUTPUT:
+            outputsConnected[e.portId] = e.connecting;
+            break;
         }
     }
 
