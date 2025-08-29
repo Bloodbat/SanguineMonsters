@@ -29,11 +29,19 @@ struct Alembic : SanguineModule {
 	void onExpanderChange(const ExpanderChangeEvent& e) override;
 	void onPortChange(const PortChangeEvent& e) override;
 
-	bool getOutputConnected(const int channel) const;
-	bool getInputConnected(const int channel) const;
+	inline bool getOutputConnected(const int channel) const {
+		return outputsConnected[channel];
+	}
+	inline bool getInputConnected(const int channel) const {
+		return inputsConnected[channel];
+	}
 
-	void setOutputConnected(const int channel, const bool value);
-	void setInputConnected(const int channel, const bool value);
+	inline void setOutputConnected(const int channel, const bool value) {
+		outputsConnected[channel] = value;
+	}
+	inline void setInputConnected(const int channel, const bool value) {
+		inputsConnected[channel] = value;
+	}
 
 private:
 	bool bHadMaster = false;

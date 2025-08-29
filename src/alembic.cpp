@@ -10,20 +10,6 @@ Alembic::Alembic() {
 	}
 }
 
-bool Alembic::getOutputConnected(const int channel) const {
-	return outputsConnected[channel];
-}
-bool Alembic::getInputConnected(const int channel) const {
-	return inputsConnected[channel];
-}
-
-void Alembic::setOutputConnected(const int channel, const bool value) {
-	outputsConnected[channel] = value;
-}
-void Alembic::setInputConnected(const int channel, const bool value) {
-	inputsConnected[channel] = value;
-}
-
 void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 	if (e.side == 0) {
 		Module* alchemistMaster = getLeftExpander().module;
@@ -43,11 +29,11 @@ void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 void Alembic::onPortChange(const PortChangeEvent& e) {
 	switch (e.type) {
 	case Port::OUTPUT:
-		outputsConnected[e.portId] = e.connecting;
+		setOutputConnected(e.portId, e.connecting);
 		break;
 
 	case Port::INPUT:
-		inputsConnected[e.portId] = e.connecting;
+		setInputConnected(e.portId, e.connecting);
 		break;
 	}
 }
