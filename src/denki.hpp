@@ -31,5 +31,17 @@ struct Denki : SanguineModule {
 
 	Denki();
 
+	bool getGainConnected(const int channel) const;
+	bool getOffsetConnected(const int channel) const;
+
+	void setGainConnected(const int channel, const bool value);
+	void setOffsetConnected(const int channel, const bool value);
+
 	void onExpanderChange(const ExpanderChangeEvent& e) override;
+
+	void onPortChange(const PortChangeEvent& e) override;
+
+private:
+	bool gainsConnected[kitsune::kMaxSections];
+	bool offsetsConnected[kitsune::kMaxSections];
 };

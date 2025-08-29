@@ -10,6 +10,22 @@ Denki::Denki() {
 	}
 }
 
+bool Denki::getGainConnected(const int port) const {
+	return gainsConnected[port];
+}
+
+bool Denki::getOffsetConnected(const int port) const {
+	return offsetsConnected[port];
+}
+
+void Denki::setGainConnected(const int port, const bool value) {
+	gainsConnected[port] = value;
+}
+
+void Denki::setOffsetConnected(const int port, const bool value) {
+	offsetsConnected[port] = value;
+}
+
 void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 	Module* kitsuneMaster = getLeftExpander().module;
 	bool bHasMaster = (kitsuneMaster && kitsuneMaster->getModel() == modelKitsune);
@@ -17,6 +33,27 @@ void Denki::onExpanderChange(const ExpanderChangeEvent& e) {
 		lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
 	} else {
 		lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
+	}
+}
+
+void Denki::onPortChange(const PortChangeEvent& e) {
+	switch (e.portId) {
+	case INPUT_GAIN_CV:
+	case INPUT_GAIN_CV + 1:
+	case INPUT_GAIN_CV + 2:
+	case INPUT_GAIN_CV + 3:
+		setGainConnected(e.portId, e.connecting);
+		break;
+
+	case INPUT_OFFSET_CV:
+	case INPUT_OFFSET_CV + 1:
+	case INPUT_OFFSET_CV + 2:
+	case INPUT_OFFSET_CV + 3:
+		setOffsetConnected(e.portId - 4, e.connecting);
+		break;
+
+	default:
+		break;
 	}
 }
 
