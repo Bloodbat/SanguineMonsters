@@ -84,7 +84,7 @@ struct Bukavac : SanguineModule {
 	bool bHavePerlinAmpCable = false;
 
 	pcg32 pcgRng;
-	sanguineRandom::SanguineRandomNormal rngNormal;
+	sanguineRandom::SanguineRandomNormalCustom rngNormal;
 
 	Bukavac() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -128,7 +128,7 @@ struct Bukavac : SanguineModule {
 		noise = new float[kPerlinOctaves];
 
 		pcgRng = pcg32(std::round(system::getUnixTime()));
-		rngNormal.init(std::round(system::getUnixTime() * 2.f));
+		rngNormal.init(0.f, 1.f);
 		pinkNoiseGenerator.init();
 	}
 
@@ -139,7 +139,7 @@ struct Bukavac : SanguineModule {
 	void process(const ProcessArgs& args) override {
 		if (bHaveWhiteCable || bHaveRedCable || bHaveVioletCable || bHaveGrayCable) {
 			// White noise: equal power density
-			float white = rngNormal.normal();
+			float white = rngNormal.normal(pcgRng);
 			if (bHaveWhiteCable) {
 				outputs[OUTPUT_WHITE].setVoltage(white * kGain);
 			}
