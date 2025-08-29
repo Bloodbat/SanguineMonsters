@@ -107,10 +107,13 @@ struct Kitsune : SanguineModule {
 			channelCounts[section] = inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() > 0 ?
 				inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() : 1;
 
+			float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
+			float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
+
 			for (int channel = 0; channel < channelCounts[section]; channel += 4) {
 				float_4 voltages = inputs[INPUT_VOLTAGE1 + channelSources[section]].getVoltageSimd<float_4>(channel);
-				float_4 gains = params[PARAM_ATTENUATOR1 + section].getValue();
-				float_4 offsets = params[PARAM_OFFSET1 + section].getValue();
+				float_4 gains = gainKnob;
+				float_4 offsets = offsetKnob;
 
 #ifndef METAMODULE
 				if (bHaveExpander) {
