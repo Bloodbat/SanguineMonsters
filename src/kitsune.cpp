@@ -122,7 +122,7 @@ struct Kitsune : SanguineModule {
 #ifndef METAMODULE
 				if (bHaveExpander) {
 					if (denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).isConnected()) {
-						gains *= denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
+						gains += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
 						gains = simd::clamp(gains, -2.f, 2.f);
 					}
 					if (denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).isConnected()) {

@@ -6,6 +6,10 @@
 
 - Bukavac: allow for larger Perlin amplifier values so it can reach 5V.
 
+## Fixes
+
+- Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
+
 
 ---
 
