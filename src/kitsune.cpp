@@ -56,6 +56,8 @@ struct Kitsune : SanguineModule {
 	dsp::ClockDivider lightsDivider;
 	const int kLightsFrequency = 64;
 
+	int channelCounts[kitsune::kMaxSections] = {};
+
 #ifndef METAMODULE
 	bool bHaveExpander = false;
 
@@ -111,10 +113,10 @@ struct Kitsune : SanguineModule {
 				}
 			}
 
-			int channelCount = inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() > 0 ?
+			channelCounts[section] = inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() > 0 ?
 				inputs[INPUT_VOLTAGE1 + channelSources[section]].getChannels() : 1;
 
-			for (int channel = 0; channel < channelCount; channel += 4) {
+			for (int channel = 0; channel < channelCounts[section]; channel += 4) {
 				float_4 voltages = inputs[INPUT_VOLTAGE1 + channelSources[section]].getVoltageSimd<float_4>(channel);
 				float_4 gains = params[PARAM_ATTENUATOR1 + section].getValue();
 				float_4 offsets = params[PARAM_OFFSET1 + section].getValue();
@@ -136,9 +138,11 @@ struct Kitsune : SanguineModule {
 
 				outputs[OUTPUT_VOLTAGE1 + section].setVoltageSimd(voltages, channel);
 			}
-			outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCount);
+			outputs[OUTPUT_VOLTAGE1 + section].setChannels(channelCounts[section]);
+		}
 
-			if (bIsLightsTurn) {
+		if (bIsLightsTurn) {
+			for (int section = 0; section < kitsune::kMaxSections; ++section) {
 				int currentLight = LIGHT_NORMALLED1 + section * 3;
 
 				RGBLightColor lightColor = kitsune::lightColors[channelSources[section]];
@@ -148,7 +152,7 @@ struct Kitsune : SanguineModule {
 
 				currentLight = LIGHT_VOLTAGE1 + section * 3;
 
-				if (channelCount == 1) {
+				if (channelCounts[section] == 1) {
 					float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltage();
 					float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
 					lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
@@ -177,7 +181,7 @@ struct Kitsune : SanguineModule {
 					float lightValue = 0;
 					float cvGainLightValue = 0.f;
 					float cvOffsetLightValue = 0.f;
-					for (int channel = 0; channel < channelCount; ++channel) {
+					for (int channel = 0; channel < channelCounts[section]; ++channel) {
 						lightValue += outputVoltages[channel];
 
 #ifndef METAMODULE
@@ -187,7 +191,7 @@ struct Kitsune : SanguineModule {
 						}
 #endif
 					}
-					lightValue /= channelCount;
+					lightValue /= channelCounts[section];
 
 					float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
 					lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
@@ -198,7 +202,7 @@ struct Kitsune : SanguineModule {
 					if (bHaveExpander) {
 						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
 
-						cvGainLightValue /= channelCount;
+						cvGainLightValue /= channelCounts[section];
 
 						rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
 
@@ -207,7 +211,7 @@ struct Kitsune : SanguineModule {
 						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(cvGainLightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
 
 						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
-						cvOffsetLightValue /= channelCount;
+						cvOffsetLightValue /= channelCounts[section];
 
 						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
 
