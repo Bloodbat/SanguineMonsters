@@ -7,6 +7,8 @@
 #include "denki.hpp"
 #endif
 
+using simd::float_4;
+
 struct Kitsune : SanguineModule {
 
 	enum ParamIds {
@@ -85,9 +87,8 @@ struct Kitsune : SanguineModule {
 		lightsDivider.setDivision(kLightsFrequency);
 	}
 
+#ifndef METAMODULE
 	void process(const ProcessArgs& args) override {
-		using simd::float_4;
-
 		bool bIsLightsTurn = lightsDivider.process();
 
 		normalledMode = kitsune::NormalledModes(params[PARAM_NORMALLING_MODE].getValue());
@@ -95,141 +96,266 @@ struct Kitsune : SanguineModule {
 		int channelSources[kitsune::kMaxSections] = { 0, 1, 2, 3 };
 		int lastChannelSource = -1;
 
-		for (int section = 0; section < kitsune::kMaxSections; ++section) {
+		if (!bHaveExpander) {
 			if (normalledMode == kitsune::NORMAL_SMART) {
-				if (inputsConnected[section]) {
-					lastChannelSource = section;
-				} else if (lastChannelSource > -1) {
-					channelSources[section] = lastChannelSource;
+				for (int section = 0; section < kitsune::kMaxSections; ++section) {
+					assignNormalledInputs(section, channelSources, lastChannelSource);
+					processSection(section, channelSources);
+				}
+			} else {
+				for (int section = 0; section < kitsune::kMaxSections; ++section) {
+					processSection(section, channelSources);
+				}
+			}
+			if (bIsLightsTurn) {
+				const float sampleTime = kLightsFrequency * args.sampleTime;
+
+				lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
+
+				for (int section = 0; section < kitsune::kMaxSections; ++section) {
+					setNormalledLights(section, channelSources, sampleTime);
+
+					if (channelCounts[section] == 1) {
+						setMonoLights(section, sampleTime);
+					} else {
+						setPolyLights(section, sampleTime);
+					}
+				}
+			}
+		} else {
+			if (normalledMode == kitsune::NORMAL_SMART) {
+				for (int section = 0; section < kitsune::kMaxSections; ++section) {
+					assignNormalledInputs(section, channelSources, lastChannelSource);
+					processSectionExpander(section, channelSources);
+				}
+			} else {
+				for (int section = 0; section < kitsune::kMaxSections; ++section) {
+					processSectionExpander(section, channelSources);
 				}
 			}
 
-			Input* input = &inputs[INPUT_VOLTAGE1 + channelSources[section]];
+			if (bIsLightsTurn) {
+				const float sampleTime = kLightsFrequency * args.sampleTime;
 
-			int inputChannels = input->getChannels();
+				lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
 
-			channelCounts[section] = inputChannels > 0 ? inputChannels : 1;
+				for (int section = 0; section < kitsune::kMaxSections; ++section) {
+					setNormalledLights(section, channelSources, sampleTime);
 
-			float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
-			float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
-
-			int currentOutput = OUTPUT_VOLTAGE1 + section;
-
-			for (int channel = 0; channel < channelCounts[section]; channel += 4) {
-				float_4 voltages = input->getVoltageSimd<float_4>(channel);
-				float_4 gains = gainKnob;
-				float_4 offsets = offsetKnob;
-
-#ifndef METAMODULE
-				if (bHaveExpander) {
-					if (denkiExpander->getGainConnected(section)) {
-						gains += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
-						gains = simd::clamp(gains, -2.f, 2.f);
+					if (channelCounts[section] == 1) {
+						setMonoLightsExpander(section, sampleTime);
+					} else {
+						setPolyLightsExpander(section, sampleTime);
 					}
-					if (denkiExpander->getOffsetConnected(section)) {
-						offsets += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
-						offsets = simd::clamp(offsets, -10.f, 10.f);
-					}
-				}
-#endif
-
-				voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
-
-				outputs[currentOutput].setVoltageSimd(voltages, channel);
-			}
-			outputs[currentOutput].setChannels(channelCounts[section]);
-		}
-
-		if (bIsLightsTurn) {
-			const float sampleTime = kLightsFrequency * args.sampleTime;
-#ifndef METAMODULE
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
-#endif
-
-			for (int section = 0; section < kitsune::kMaxSections; ++section) {
-				int currentLight = LIGHT_NORMALLED1 + section * 3;
-
-				RGBLightColor lightColor = kitsune::lightColors[channelSources[section]];
-				lights[currentLight].setBrightnessSmooth(lightColor.red, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(lightColor.green, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(lightColor.blue, sampleTime);
-
-				currentLight = LIGHT_VOLTAGE1 + section * 3;
-
-				if (channelCounts[section] == 1) {
-					float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltage();
-					float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
-					lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-
-#ifndef METAMODULE
-					if (bHaveExpander) {
-						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
-						float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
-						rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
-						denkiExpander->getLight(currentExpanderGainLight).setBrightnessSmooth(-rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(0.f, sampleTime);
-
-						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
-						float cvOffsetLightValue = denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage();
-						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
-						denkiExpander->getLight(currentExpanderOffsetLight).setBrightnessSmooth(-rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);
-					}
-#endif
-				} else {
-					float* outputVoltages = outputs[OUTPUT_VOLTAGE1 + section].getVoltages();
-					float lightValue = 0;
-					float cvGainLightValue = 0.f;
-					float cvOffsetLightValue = 0.f;
-					for (int channel = 0; channel < channelCounts[section]; ++channel) {
-						lightValue += outputVoltages[channel];
-
-#ifndef METAMODULE
-						if (bHaveExpander) {
-							cvGainLightValue += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage(channel);
-							cvOffsetLightValue += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage(channel);
-						}
-#endif
-					}
-					lightValue /= channelCounts[section];
-
-					float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
-					lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
-
-#ifndef METAMODULE
-					if (bHaveExpander) {
-						int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
-
-						cvGainLightValue /= channelCounts[section];
-
-						rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
-
-						denkiExpander->getLight(currentExpanderGainLight).setBrightnessSmooth(-rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(cvGainLightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
-
-						int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
-						cvOffsetLightValue /= channelCounts[section];
-
-						rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
-
-						denkiExpander->getLight(currentExpanderOffsetLight).setBrightnessSmooth(-rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
-						denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(cvOffsetLightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
-					}
-#endif
 				}
 			}
 		}
 	}
+#else
+	void process(const ProcessArgs& args) override {
+		bool bIsLightsTurn = lightsDivider.process();
+
+		normalledMode = kitsune::NormalledModes(params[PARAM_NORMALLING_MODE].getValue());
+
+		int channelSources[kitsune::kMaxSections] = { 0, 1, 2, 3 };
+		int lastChannelSource = -1;
+
+		if (normalledMode == kitsune::NORMAL_SMART) {
+			for (int section = 0; section < kitsune::kMaxSections; ++section) {
+				assignNormalledInputs(section, channelSources, lastChannelSource);
+				processSection(section, channelSources);
+			}
+		} else {
+			for (int section = 0; section < kitsune::kMaxSections; ++section) {
+				processSection(section, channelSources);
+			}
+		}
+		if (bIsLightsTurn) {
+			const float sampleTime = kLightsFrequency * args.sampleTime;
+
+			for (int section = 0; section < kitsune::kMaxSections; ++section) {
+				setNormalledLights(section, channelSources, sampleTime);
+
+				if (channelCounts[section] == 1) {
+					setMonoLights(section, sampleTime);
+				} else {
+					setPolyLights(section, sampleTime);
+				}
+			}
+		}
+	}
+#endif
+
+	void processSection(const int section, int* channelSources) {
+		Input* input = &inputs[INPUT_VOLTAGE1 + channelSources[section]];
+
+		int inputChannels = input->getChannels();
+
+		channelCounts[section] = inputChannels > 0 ? inputChannels : 1;
+
+		float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
+		float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
+
+		int currentOutput = OUTPUT_VOLTAGE1 + section;
+
+		for (int channel = 0; channel < channelCounts[section]; channel += 4) {
+			float_4 voltages = input->getVoltageSimd<float_4>(channel);
+			float_4 gains = gainKnob;
+			float_4 offsets = offsetKnob;
+
+			/* TODO: make manual and module congruent: either we clip it and state so in the manual
+			   or we remove the clamp. */
+			voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
+
+			outputs[currentOutput].setVoltageSimd(voltages, channel);
+		}
+		outputs[currentOutput].setChannels(channelCounts[section]);
+	}
+
+	void assignNormalledInputs(const int section, int* channelSources, int& lastChannelSource) {
+		if (inputsConnected[section]) {
+			lastChannelSource = section;
+		} else if (lastChannelSource > -1) {
+			channelSources[section] = lastChannelSource;
+		}
+	}
+
+	void setNormalledLights(const int section, int* channelSources, const float& sampleTime) {
+		const int currentLight = LIGHT_NORMALLED1 + section * 3;
+
+		RGBLightColor lightColor = kitsune::lightColors[channelSources[section]];
+		lights[currentLight].setBrightnessSmooth(lightColor.red, sampleTime);
+		lights[currentLight + 1].setBrightnessSmooth(lightColor.green, sampleTime);
+		lights[currentLight + 2].setBrightnessSmooth(lightColor.blue, sampleTime);
+	}
+
+	void setMonoLights(const int section, const float& sampleTime) {
+		const int currentLight = LIGHT_VOLTAGE1 + section * 3;
+
+		float lightValue = outputs[OUTPUT_VOLTAGE1 + section].getVoltage();
+		float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
+		lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
+		lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
+		lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
+	}
+
+	void setPolyLights(const int section, const float& sampleTime) {
+		const int currentLight = LIGHT_VOLTAGE1 + section * 3;
+
+		float* outputVoltages = outputs[OUTPUT_VOLTAGE1 + section].getVoltages();
+		float lightValue = 0;
+		for (int channel = 0; channel < channelCounts[section]; ++channel) {
+			lightValue += outputVoltages[channel];
+		}
+		lightValue /= channelCounts[section];
+
+		float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
+		lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
+		lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
+		lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
+	}
 
 #ifndef METAMODULE
+	void processSectionExpander(const int section, int* channelSources) {
+		Input* input = &inputs[INPUT_VOLTAGE1 + channelSources[section]];
+
+		int inputChannels = input->getChannels();
+
+		channelCounts[section] = inputChannels > 0 ? inputChannels : 1;
+
+		float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
+		float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
+
+		int currentOutput = OUTPUT_VOLTAGE1 + section;
+
+		for (int channel = 0; channel < channelCounts[section]; channel += 4) {
+			float_4 voltages = input->getVoltageSimd<float_4>(channel);
+			float_4 gains = gainKnob;
+			float_4 offsets = offsetKnob;
+
+			applyModulations(section, channel, gains, offsets);
+
+			/* TODO: make manual and module congruent: either we clip it and state so in the manual
+			   or we remove the clamp. */
+			voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
+
+			outputs[currentOutput].setVoltageSimd(voltages, channel);
+		}
+		outputs[currentOutput].setChannels(channelCounts[section]);
+	}
+
+	void applyModulations(const int section, const int channel, float_4& gains, float_4& offsets) {
+		if (denkiExpander->getGainConnected(section)) {
+			gains += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
+			gains = simd::clamp(gains, -2.f, 2.f);
+		}
+		if (denkiExpander->getOffsetConnected(section)) {
+			offsets += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltageSimd<float_4>(channel) / 5.f;
+			offsets = simd::clamp(offsets, -10.f, 10.f);
+		}
+	}
+
+	void setMonoLightsExpander(const int section, const float& sampleTime) {
+		setMonoLights(section, sampleTime);
+
+		const int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
+		float cvGainLightValue = denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage();
+		float rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
+		denkiExpander->getLight(currentExpanderGainLight).setBrightnessSmooth(-rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(0.f, sampleTime);
+
+		const int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
+		float cvOffsetLightValue = denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage();
+		rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
+		denkiExpander->getLight(currentExpanderOffsetLight).setBrightnessSmooth(-rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(0.f, sampleTime);
+	}
+
+	void setPolyLightsExpander(const int section, const float& sampleTime) {
+		const int currentLight = LIGHT_VOLTAGE1 + section * 3;
+
+		float cvGainLightValue = 0.f;
+		float cvOffsetLightValue = 0.f;
+
+		float* outputVoltages = outputs[OUTPUT_VOLTAGE1 + section].getVoltages();
+		float lightValue = 0;
+		for (int channel = 0; channel < channelCounts[section]; ++channel) {
+			lightValue += outputVoltages[channel];
+
+			cvGainLightValue += denkiExpander->getInput(Denki::INPUT_GAIN_CV + section).getVoltage(channel);
+			cvOffsetLightValue += denkiExpander->getInput(Denki::INPUT_OFFSET_CV + section).getVoltage(channel);
+		}
+		lightValue /= channelCounts[section];
+
+		float rescaledLight = math::rescale(lightValue, 0.f, 10.f, 0.f, 1.f);
+		lights[currentLight].setBrightnessSmooth(-rescaledLight, sampleTime);
+		lights[currentLight + 1].setBrightnessSmooth(rescaledLight, sampleTime);
+		lights[currentLight + 2].setBrightnessSmooth(lightValue < 0 ? -rescaledLight : rescaledLight, sampleTime);
+
+		const int currentExpanderGainLight = Denki::LIGHT_GAIN_CV + section * 3;
+
+		cvGainLightValue /= channelCounts[section];
+
+		rescaledLight = math::rescale(cvGainLightValue, 0.f, 10.f, 0.f, 1.f);
+
+		denkiExpander->getLight(currentExpanderGainLight).setBrightnessSmooth(-rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderGainLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderGainLight + 2).setBrightnessSmooth(cvGainLightValue < 0 ?
+			-rescaledLight : rescaledLight, sampleTime);
+
+		const int currentExpanderOffsetLight = Denki::LIGHT_OFFSET_CV + section * 3;
+		cvOffsetLightValue /= channelCounts[section];
+
+		rescaledLight = math::rescale(cvOffsetLightValue, 0.f, 10.f, 0.f, 1.f);
+
+		denkiExpander->getLight(currentExpanderOffsetLight).setBrightnessSmooth(-rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderOffsetLight + 1).setBrightnessSmooth(rescaledLight, sampleTime);
+		denkiExpander->getLight(currentExpanderOffsetLight + 2).setBrightnessSmooth(cvOffsetLightValue < 0 ?
+			-rescaledLight : rescaledLight, sampleTime);
+	}
+
 	void onBypass(const BypassEvent& e) override {
 		if (bHaveExpander) {
 			Module* denkiExpander = getRightExpander().module;
