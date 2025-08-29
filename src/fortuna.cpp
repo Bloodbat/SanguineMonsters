@@ -168,10 +168,10 @@ struct Fortuna : SanguineModule {
                 lights[currentLight].setBrightnessSmooth(rescaledLight, sampleTime);
 
                 currentLight = LIGHTS_ROLL_MODE + section * 2;
-                lights[currentLight].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
-                    kSanguineButtonLightValue : 0.f, sampleTime);
-                lights[currentLight + 1].setBrightnessSmooth(rollModes[section] == fortuna::ROLL_DIRECT ?
-                    0.f : kSanguineButtonLightValue, sampleTime);
+                lights[currentLight].setBrightnessSmooth((rollModes[section] == fortuna::ROLL_DIRECT) *
+                    kSanguineButtonLightValue, sampleTime);
+                lights[currentLight + 1].setBrightnessSmooth((rollModes[section] == fortuna::ROLL_TOGGLE) *
+                    kSanguineButtonLightValue, sampleTime);
             }
         }
     }
