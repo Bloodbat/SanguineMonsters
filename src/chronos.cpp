@@ -200,7 +200,7 @@ struct Chronos : SanguineModule {
             configOutput(OUTPUT_SQUARE_1 + section, string::f("LFO %d square", lfoNumber));
         }
 
-        onReset();
+        init();
         lightsDivider.setDivision(kLightsFrequency);
     };
 
@@ -365,7 +365,7 @@ struct Chronos : SanguineModule {
         }
     }
 
-    void onReset() override {
+    void init() {
         float newPhase = 0.f;
         // Offset each phase by 90º
         const float phaseOffset = 0.25f;
@@ -377,6 +377,10 @@ struct Chronos : SanguineModule {
             clockFrequencies[section] = 1.f;
             clockTimers[section].reset();
         }
+    }
+
+    void onReset() override {
+        init();
     }
 
     void onPortChange(const PortChangeEvent& e) override {
