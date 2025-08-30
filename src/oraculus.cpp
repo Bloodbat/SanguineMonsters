@@ -169,8 +169,9 @@ struct Oraculus : SanguineModule {
 			selectedChannel = pcgRng(channelCount);
 		} else {
 			int randomNum = selectedChannel;
-			while (randomNum == selectedChannel)
+			while (randomNum == selectedChannel) {
 				randomNum = pcgRng(channelCount);
+			}
 			selectedChannel = randomNum;
 		}
 	};
