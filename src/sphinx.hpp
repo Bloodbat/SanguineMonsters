@@ -10,7 +10,8 @@ namespace sphinx {
         LINEAR_PATTERN
     };
 
-    static const std::array<bool, kMaxLength / 2> browserSequence = { true,
+    static const std::array<bool, kMaxLength * 2> browserSequence = {
+        true,
         false,
         false,
         false,
