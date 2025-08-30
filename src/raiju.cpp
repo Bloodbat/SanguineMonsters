@@ -122,7 +122,7 @@ struct Raiju : SanguineModule {
 #ifdef METAMODULE
 				int currentLight = LIGHT_SELECTED_CHANNEL_1 + voltage * 2;
 				bool bIsSelectedVoltage = selectedVoltage == voltage;
-				lights[currentLight + 0].setBrightness(!bIsSelectedVoltage ? kSanguineButtonLightValue : 0.f);
+				lights[currentLight].setBrightness(!bIsSelectedVoltage ? kSanguineButtonLightValue : 0.f);
 				lights[currentLight + 1].setBrightness(bIsSelectedVoltage ? kSanguineButtonLightValue : 0.f);
 #endif
 			}
@@ -218,7 +218,7 @@ struct RaijuWidget : SanguineModuleWidget {
 		yDistance = 19.689f;
 
 		addParam(createParam<SeqStep1Big>(millimetersToPixelsVec(4.012, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0));
+			module, Raiju::PARAM_VOLTAGE_SELECTOR));
 		currentY += yDistance;
 
 		addParam(createParam<SeqStep2Big>(millimetersToPixelsVec(4.012, currentY),
@@ -254,7 +254,7 @@ struct RaijuWidget : SanguineModuleWidget {
 		yDistance = 19.688f;
 
 		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(9.412, currentY),
-			module, Raiju::PARAM_VOLTAGE_SELECTOR + 0, Raiju::LIGHT_SELECTED_CHANNEL_1));
+			module, Raiju::PARAM_VOLTAGE_SELECTOR, Raiju::LIGHT_SELECTED_CHANNEL_1));
 		currentY += yDistance;
 
 		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<GreenRedLight>>>(millimetersToPixelsVec(9.412, currentY),
