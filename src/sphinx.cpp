@@ -497,20 +497,6 @@ struct SphinxDisplay : TransparentWidget {
 		const float radius1 = 0.45f * polyBoxSize.size.x;
 		const float radius2 = 0.35f * polyBoxSize.size.x;
 
-		// Circles.
-		nvgBeginPath(vg);
-		if (module && !module->isBypassed()) {
-			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
-			nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		} else if (!module) {
-			nvgStrokeColor(vg, arrayDisplayColors[0].inactiveColor);
-			nvgFillColor(vg, arrayDisplayColors[0].activeColor);
-		}
-		nvgStrokeWidth(vg, 1.f);
-		nvgCircle(vg, circleX, circleY, radius1);
-		nvgCircle(vg, circleX, circleY, radius2);
-		nvgStroke(vg);
-
 		unsigned length = 0;
 
 		if (module && !module->isBypassed()) {
@@ -520,160 +506,46 @@ struct SphinxDisplay : TransparentWidget {
 		}
 
 		if (module && !module->isBypassed()) {
-			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
+			drawCircles(vg, *patternStyle, circleX, circleY, radius1, radius2);
 		} else if (!module) {
-			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
-		}
-		nvgBeginPath(vg);
-		bool bFirst = true;
-
-		// Inactive step rings.
-		for (unsigned step = 0; step < length; ++step) {
-			if (module && !module->isBypassed()) {
-				if (!sequence->at(step)) {
-					float r = accents->at(step) ? radius1 : radius2;
-					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
-
-					nvgBeginPath(vg);
-					nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
-					nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].inactiveColor);
-					nvgStrokeWidth(vg, 1.f);
-					nvgCircle(vg, x, y, 2.f);
-					nvgFill(vg);
-					nvgStroke(vg);
-				}
-			} else if (!module) {
-				if (!sphinx::browserSequence[step]) {
-					float r = radius2;
-					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
-
-					nvgBeginPath(vg);
-					nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
-					nvgStrokeColor(vg, arrayDisplayColors[0].inactiveColor);
-					nvgStrokeWidth(vg, 1.f);
-					nvgCircle(vg, x, y, 2.f);
-					nvgFill(vg);
-					nvgStroke(vg);
-				}
-			}
-		}
-
-		// Path.
-		nvgBeginPath(vg);
-		if (module && !module->isBypassed()) {
-			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-		} else if (!module) {
-			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
-		}
-		nvgStrokeWidth(vg, 1.f);
-		for (unsigned int step = 0; step < length; ++step) {
-			if (module && !module->isBypassed()) {
-				if (sequence->at(step)) {
-					float a = step / static_cast<float>(length);
-					float r = accents->at(step) ? radius1 : radius2;
-					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
-
-					Vec p(x, y);
-					if (*patternFill == 1) {
-						nvgCircle(vg, x, y, 2.f);
-					}
-					if (bFirst) {
-						nvgMoveTo(vg, p.x, p.y);
-						bFirst = false;
-					} else {
-						nvgLineTo(vg, p.x, p.y);
-					}
-				}
-			} else if (!module) {
-				if (sphinx::browserSequence[step]) {
-					float a = step / static_cast<float>(length);
-					float r = radius2;
-					float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
-
-					Vec p(x, y);
-					if (bFirst) {
-						nvgMoveTo(vg, p.x, p.y);
-						bFirst = false;
-					} else {
-						nvgLineTo(vg, p.x, p.y);
-					}
-				}
-			}
-		}
-		nvgClosePath(vg);
-		nvgStroke(vg);
-
-		// Active step rings.
-		for (unsigned step = 0; step < length; ++step) {
-			if (module && !module->isBypassed()) {
-				if (sequence->at(step)) {
-					float r = accents->at(step) ? radius1 : radius2;
-					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
-
-					nvgBeginPath(vg);
-					nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
-					nvgStrokeWidth(vg, 1.f);
-					nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-					nvgCircle(vg, x, y, 2.f);
-					nvgFill(vg);
-					nvgStroke(vg);
-				}
-			} else if (!module) {
-				if (sphinx::browserSequence[step]) {
-					float r = radius2;
-					float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
-					float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
-
-					nvgBeginPath(vg);
-					nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
-					nvgStrokeWidth(vg, 1.f);
-					nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
-					nvgCircle(vg, x, y, 2.f);
-					nvgFill(vg);
-					nvgStroke(vg);
-				}
-			}
+			drawCircles(vg, 0, circleX, circleY, radius1, radius2);
 		}
 
 		if (module && !module->isBypassed()) {
-			float r = accents->at(*currentStep) ? radius1 : radius2;
-			float x = circleX + r * cosf(2.f * M_PI * *currentStep / length - 0.5f * M_PI);
-			float y = circleY + r * sinf(2.f * M_PI * *currentStep / length - 0.5f * M_PI);
-			nvgBeginPath(vg);
-			nvgStrokeColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-			if (sequence->at(*currentStep)) {
-				nvgFillColor(vg, arrayDisplayColors[*patternStyle].activeColor);
-			} else {
-				nvgFillColor(vg, arrayDisplayColors[*patternStyle].backgroundColor);
-			}
-			nvgCircle(vg, x, y, 2.);
-			nvgStrokeWidth(vg, 1.5f);
-			nvgFill(vg);
-			nvgStroke(vg);
+			drawInactiveSteps(vg, *patternStyle, circleX, circleY, radius1, radius2, length,
+				sequence->data(), accents->data());
 		} else if (!module) {
-			float r = radius2;
-			float x = circleX + r * cosf(2.f * M_PI * 0 / length - 0.5f * M_PI);
-			float y = circleY + r * sinf(2.f * M_PI * 0 / length - 0.5f * M_PI);
-			nvgBeginPath(vg);
-			nvgStrokeColor(vg, arrayDisplayColors[0].activeColor);
-			if (sphinx::browserSequence[0]) {
-				nvgFillColor(vg, arrayDisplayColors[0].activeColor);
-			} else {
-				nvgFillColor(vg, arrayDisplayColors[0].backgroundColor);
-			}
-			nvgCircle(vg, x, y, 2.);
-			nvgStrokeWidth(vg, 1.5f);
-			nvgFill(vg);
-			nvgStroke(vg);
+			drawInactiveSteps(vg, 0, circleX, circleY, radius1, radius2, length,
+				sphinx::browserSequence.data(), nullptr);
+		}
+
+		if (module && !module->isBypassed()) {
+			drawPath(vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
+				accents->data(), patternFill);
+		} else if (!module) {
+			drawPath(vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
+				nullptr, nullptr);
+		}
+
+		if (module && !module->isBypassed()) {
+			drawActiveSteps(vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
+				accents->data());
+		} else if (!module) {
+			drawActiveSteps(vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
+				nullptr);
+		}
+
+		if (module && !module->isBypassed()) {
+			drawCurrentStep(vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
+				accents->data(), *currentStep);
+		} else if (!module) {
+			drawCurrentStep(vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
+				nullptr, 0);
 		}
 	}
 
 	void draw(const DrawArgs& args) override {
+		// Display border.
 		nvgBeginPath(args.vg);
 		nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
 		nvgStrokeWidth(args.vg, 1.5f);
@@ -688,10 +560,7 @@ struct SphinxDisplay : TransparentWidget {
 	void drawLayer(const DrawArgs& args, int layer) override {
 		if (layer == 1) {
 			if (module && !module->isBypassed()) {
-				nvgBeginPath(args.vg);
-				nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
-				nvgFillColor(args.vg, arrayDisplayColors[*patternStyle].backgroundColor);
-				nvgFill(args.vg);
+				drawDisplayBackground(args.vg, *patternStyle);
 
 				// Shape.
 				if (accents && currentStep && patternFill && patternLength && patternPadding && patternStyle) {
@@ -699,16 +568,128 @@ struct SphinxDisplay : TransparentWidget {
 					drawRectHalo(args, box.size, arrayDisplayColors[*patternStyle].activeColor, 55, 0.f);
 				}
 			} else if (!module) {
-				nvgBeginPath(args.vg);
-				nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
-				nvgFillColor(args.vg, arrayDisplayColors[0].backgroundColor);
-				nvgFill(args.vg);
+				drawDisplayBackground(args.vg, 0);
 
 				// Shape.
 				drawPolygon(args.vg);
 			}
 		}
 		Widget::drawLayer(args, layer);
+	}
+
+	void drawCircles(NVGcontext* vg, const int patternStyle, const float& circleX,
+		const float& circleY, const float& radius1, const float& radius2) {
+		// Circles.
+		nvgBeginPath(vg);
+
+		nvgStrokeColor(vg, arrayDisplayColors[patternStyle].inactiveColor);
+		nvgFillColor(vg, arrayDisplayColors[patternStyle].activeColor);
+
+		nvgStrokeWidth(vg, 1.f);
+		nvgCircle(vg, circleX, circleY, radius1);
+		nvgCircle(vg, circleX, circleY, radius2);
+		nvgStroke(vg);
+
+		nvgStrokeColor(vg, arrayDisplayColors[patternStyle].activeColor);
+	}
+
+	void drawInactiveSteps(NVGcontext* vg, const int patternStyle, const float& circleX,
+		const float& circleY, const float& radius1, const float& radius2, const unsigned length,
+		const bool* sequence, const bool* accents) {
+		nvgBeginPath(vg);
+
+		for (unsigned step = 0; step < length; ++step) {
+			if (!sequence[step]) {
+				float r = (accents && accents[step]) ? radius1 : radius2;
+				float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
+				float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
+
+				nvgBeginPath(vg);
+				nvgFillColor(vg, arrayDisplayColors[patternStyle].backgroundColor);
+				nvgStrokeColor(vg, arrayDisplayColors[patternStyle].inactiveColor);
+				nvgStrokeWidth(vg, 1.f);
+				nvgCircle(vg, x, y, 2.f);
+				nvgFill(vg);
+				nvgStroke(vg);
+			}
+		}
+	}
+
+	void drawPath(NVGcontext* vg, const int patternStyle, const float& circleX,
+		const float& circleY, const float& radius1, const float& radius2, const unsigned length,
+		const bool* sequence, const bool* accents, const int* patternFill) {
+		bool bFirst = true;
+		nvgBeginPath(vg);
+		nvgStrokeColor(vg, arrayDisplayColors[patternStyle].activeColor);
+		nvgStrokeWidth(vg, 1.f);
+
+		for (unsigned int step = 0; step < length; ++step) {
+			if (sequence[step]) {
+				float a = step / static_cast<float>(length);
+				float r = (accents && accents[step]) ? radius1 : radius2;
+				float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
+				float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
+
+				Vec p(x, y);
+				if (patternFill && *patternFill == 1) {
+					nvgCircle(vg, x, y, 2.f);
+				}
+				if (bFirst) {
+					nvgMoveTo(vg, p.x, p.y);
+					bFirst = false;
+				} else {
+					nvgLineTo(vg, p.x, p.y);
+				}
+			}
+		}
+		nvgClosePath(vg);
+		nvgStroke(vg);
+	}
+
+	void drawActiveSteps(NVGcontext* vg, const int patternStyle, const float& circleX,
+		const float& circleY, const float& radius1, const float& radius2, const unsigned length,
+		const bool* sequence, const bool* accents) {
+		for (unsigned step = 0; step < length; ++step) {
+			if (sequence[step]) {
+				float r = (accents && accents[step]) ? radius1 : radius2;
+				float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
+				float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
+
+				nvgBeginPath(vg);
+				nvgFillColor(vg, arrayDisplayColors[patternStyle].backgroundColor);
+				nvgStrokeWidth(vg, 1.f);
+				nvgStrokeColor(vg, arrayDisplayColors[patternStyle].activeColor);
+				nvgCircle(vg, x, y, 2.f);
+				nvgFill(vg);
+				nvgStroke(vg);
+			}
+		}
+	}
+
+	void drawCurrentStep(NVGcontext* vg, const int patternStyle, const float& circleX,
+		const float& circleY, const float& radius1, const float& radius2, const unsigned length,
+		const bool* sequence, const bool* accents, const int currentStep) {
+		float r = (accents && accents[currentStep]) ? radius1 : radius2;
+		float x = circleX + r * cosf(2.f * M_PI * currentStep / length - 0.5f * M_PI);
+		float y = circleY + r * sinf(2.f * M_PI * currentStep / length - 0.5f * M_PI);
+		nvgBeginPath(vg);
+		nvgStrokeColor(vg, arrayDisplayColors[patternStyle].activeColor);
+		//if (sequence[currentStep]) {
+		nvgFillColor(vg, arrayDisplayColors[patternStyle].activeColor);
+		//} else {
+		//	nvgFillColor(vg, arrayDisplayColors[patternStyle].backgroundColor);
+		//}
+		nvgCircle(vg, x, y, 2.);
+		nvgStrokeWidth(vg, 1.5f);
+		nvgFill(vg);
+		nvgStroke(vg);
+	}
+
+	void drawDisplayBackground(NVGcontext* vg, const int patternStyle) {
+		nvgBeginPath(vg);
+		nvgRoundedRect(vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
+		nvgFillColor(vg, arrayDisplayColors[patternStyle].backgroundColor);
+		nvgFill(vg);
 	}
 };
 
