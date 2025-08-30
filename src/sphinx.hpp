@@ -71,4 +71,17 @@ namespace sphinx {
 
     static constexpr float kDoublePi = 2.f * M_PI;
     static constexpr float kHalfPi = 0.5f * M_PI;
+
+    static const std::vector<std::string> patternStyleLabels = {
+        "Euclidean",
+        "Random",
+        "Fibonacci",
+        "Linear"
+    };
+
+    static const std::vector<std::string> gateModeLabels = {
+        "Trigger",
+        "Gate",
+        "Turing"
+    };
 }

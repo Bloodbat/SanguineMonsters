@@ -113,9 +113,9 @@ struct Sphinx : SanguineModule {
 		configParam(PARAM_ACCENT, 0.f, 1.f, 0.f, "Accents", "%", 0.f, 100.f);
 		configParam(PARAM_SHIFT, 0.f, 1.f, 0.f, "Accents rotation", "%", 0.f, 100.f);
 
-		configSwitch(PARAM_PATTERN_STYLE, 0.f, 3.f, 0.f, "Pattern style", { "Euclidean", "Random", "Fibonacci", "Linear" });
+		configSwitch(PARAM_PATTERN_STYLE, 0.f, 3.f, 0.f, "Pattern style", sphinx::patternStyleLabels);
 
-		configSwitch(PARAM_GATE_MODE, 0.f, 2.f, 0.f, "Gate mode", { "Trigger", "Gate", "Turing" });
+		configSwitch(PARAM_GATE_MODE, 0.f, 2.f, 0.f, "Gate mode", sphinx::gateModeLabels);
 
 		configInput(INPUT_ACCENT, "Accents CV");
 		configInput(INPUT_CLOCK, "Clock");
@@ -334,8 +334,7 @@ struct Sphinx : SanguineModule {
 		bool bGatePulse = pgGate.process(args.sampleTime);
 		bool bAccentPulse = pgAccent.process(args.sampleTime);
 
-		switch (gateMode)
-		{
+		switch (gateMode) {
 		case sphinx::GM_TRIGGER:
 		case sphinx::GM_GATE: {
 			outputs[OUTPUT_GATE].setVoltage(bGateOn || bGatePulse ? 10.f : 0.f);
