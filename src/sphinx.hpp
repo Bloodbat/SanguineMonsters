@@ -34,4 +34,23 @@ namespace sphinx {
         GM_GATE,
         GM_TURING
     };
+
+    struct RGBBits {
+        bool red;
+        bool green;
+        bool blue;
+    };
+
+    static const RGBBits patternLightColorTable[4] = {
+        {true, false, false},
+        {true, false, true},
+        {false, true, false},
+        {false, false, true}
+    };
+
+    static const RGBBits gateModeLightColorTable[3] = {
+        {false, false, true},
+        {false, true, false},
+        {true, false, false}
+    };
 }

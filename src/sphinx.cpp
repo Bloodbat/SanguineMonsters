@@ -52,15 +52,6 @@ struct Sphinx : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	struct RGBBits {
-		bool red;
-		bool green;
-		bool blue;
-	};
-
-	RGBBits patternLightColorTable[4];
-	RGBBits gateModeLightColorTable[3];
-
 	Bjorklund euclid;
 	Bjorklund euclid2;
 
@@ -138,29 +129,6 @@ struct Sphinx : SanguineModule {
 		configOutput(OUTPUT_GATE, "Gate");
 		configOutput(OUTPUT_ACCENT, "Accent");
 		configOutput(OUTPUT_EOC, "End of cycle");
-
-		patternLightColorTable[0].red = true;
-		patternLightColorTable[0].green = false;
-		patternLightColorTable[0].blue = false;
-		patternLightColorTable[1].red = true;
-		patternLightColorTable[1].green = false;
-		patternLightColorTable[1].blue = true;
-		patternLightColorTable[2].red = false;
-		patternLightColorTable[2].green = true;
-		patternLightColorTable[2].blue = false;
-		patternLightColorTable[3].red = false;
-		patternLightColorTable[3].green = false;
-		patternLightColorTable[3].blue = true;
-
-		gateModeLightColorTable[0].red = false;
-		gateModeLightColorTable[0].green = false;
-		gateModeLightColorTable[0].blue = true;
-		gateModeLightColorTable[1].red = false;
-		gateModeLightColorTable[1].green = true;
-		gateModeLightColorTable[1].blue = false;
-		gateModeLightColorTable[2].red = true;
-		gateModeLightColorTable[2].green = false;
-		gateModeLightColorTable[2].blue = false;
 
 		finalSequence.fill(0);
 		finalAccents.fill(0);
@@ -428,19 +396,22 @@ struct Sphinx : SanguineModule {
 			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage();
 			lights[LIGHT_EOC].setBrightnessSmooth(lightVoltage1, sampleTime);
 
-			lights[LIGHT_PATTERN_STYLE].setBrightness(patternLightColorTable[patternStyle].red *
+			lights[LIGHT_PATTERN_STYLE].setBrightness(sphinx::patternLightColorTable[patternStyle].red *
 				kSanguineButtonLightValue);
-			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green *
+			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(sphinx::patternLightColorTable[patternStyle].green *
 				kSanguineButtonLightValue);
-			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue *
+			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(sphinx::patternLightColorTable[patternStyle].blue *
 				kSanguineButtonLightValue);
 
 			lights[LIGHT_REVERSE].setBrightnessSmooth(params[PARAM_REVERSE].getValue() *
 				kSanguineButtonLightValue, sampleTime);
 
-			lights[LIGHT_GATE_MODE].setBrightness(gateModeLightColorTable[gateMode].red * kSanguineButtonLightValue);
-			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green * kSanguineButtonLightValue);
-			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue * kSanguineButtonLightValue);
+			lights[LIGHT_GATE_MODE].setBrightness(sphinx::gateModeLightColorTable[gateMode].red
+				* kSanguineButtonLightValue);
+			lights[LIGHT_GATE_MODE + 1].setBrightness(sphinx::gateModeLightColorTable[gateMode].green
+				* kSanguineButtonLightValue);
+			lights[LIGHT_GATE_MODE + 2].setBrightness(sphinx::gateModeLightColorTable[gateMode].blue
+				* kSanguineButtonLightValue);
 
 			lightVoltage1 = outputs[OUTPUT_GATE].getVoltage() / 10.f;
 			float lightVoltage2 = outputs[OUTPUT_ACCENT].getVoltage() / 10.f;
