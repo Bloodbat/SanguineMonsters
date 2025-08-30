@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rack.hpp"
+
 namespace sphinx {
     static const int kMaxLength = 32;
 
@@ -52,5 +54,18 @@ namespace sphinx {
         {false, false, true},
         {false, true, false},
         {true, false, false}
+    };
+
+    struct DisplayColors {
+        NVGcolor backgroundColor;
+        NVGcolor inactiveColor;
+        NVGcolor activeColor;
+    };
+
+    static const DisplayColors displayColors[4] = {
+        {nvgRGB(0x30, 0x10, 0x10), nvgRGB(0x7f, 0x00, 0x00), nvgRGB(0xff, 0x00, 0x00)},
+        {nvgRGB(0x30, 0x10, 0x30), nvgRGB(0x7f, 0x00, 0x7f), nvgRGB(0xff, 0x00, 0xff)},
+        {nvgRGB(0x10, 0x30, 0x10), nvgRGB(0x00, 0x7f, 0x00), nvgRGB(0x00, 0xff, 0x00)},
+        {nvgRGB(0x10, 0x10, 0x30), nvgRGB(0x00, 0x00, 0x7f), nvgRGB(0x00, 0x00, 0xff)}
     };
 }
