@@ -115,10 +115,10 @@ struct Raiju : SanguineModule {
 					strVoltages[voltage] = stringStream.str();
 
 				if (outputsConnected[voltage]) {
-					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
 					float outputVoltages[PORT_MAX_CHANNELS];
 					std::fill(outputVoltages, outputVoltages + PORT_MAX_CHANNELS, voltages[voltage]);
 					outputs[OUTPUT_VOLTAGE + voltage].writeVoltages(outputVoltages);
+					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
 				}
 
 #ifdef METAMODULE
@@ -130,8 +130,8 @@ struct Raiju : SanguineModule {
 			}
 
 			if (bPolyOutConnected) {
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
 				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
+				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
 			}
 		}
 	}
