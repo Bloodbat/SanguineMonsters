@@ -46,33 +46,28 @@ struct Medusa : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		int connectedCount = 0;
-
 		int channelCount = 0;
 		int activePort = 0;
 
-		int currentPalette = 0;
+		int portPalettes[medusa::kMaxPorts];
+
+		int lastPalette = 5;
 
 		bool bIsLightsTurn = lightDivider.process();
-
-		float sampleTime;
-
-		if (bIsLightsTurn) {
-			sampleTime = kLightsFrequency * args.sampleTime;
-		}
 
 		for (int port = 0; port < medusa::kMaxPorts; ++port) {
 			if (inputsConnected[port]) {
 				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
 				activePort = port;
-				++currentPalette;
 
-				if (currentPalette > 4) {
-					currentPalette = 0;
+				++lastPalette;
+
+				if (lastPalette > 4) {
+					lastPalette = 0;
 				}
-
-				++connectedCount;
 			}
+
+			portPalettes[port] = lastPalette;
 
 			if (outputsConnected[port]) {
 				for (int channel = 0; channel < channelCount; channel += 4) {
@@ -82,18 +77,16 @@ struct Medusa : SanguineModule {
 
 				outputs[port].setChannels(channelCount);
 			}
+		}
 
-			if (bIsLightsTurn) {
+		if (bIsLightsTurn) {
+			const float sampleTime = kLightsFrequency * args.sampleTime;
+
+			for (int port = 0; port < medusa::kMaxPorts; ++port) {
 				int currentLight = LIGHT_NORMALLED_PORT + port * 3;
-				if (connectedCount > 0) {
-					lights[currentLight + 0].setBrightnessSmooth(medusa::paletteLights[currentPalette].red, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(medusa::paletteLights[currentPalette].green, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(medusa::paletteLights[currentPalette].blue, sampleTime);
-				} else {
-					lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-					lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
-				}
+				lights[currentLight].setBrightnessSmooth(medusa::paletteLights[portPalettes[port]].red, sampleTime);
+				lights[currentLight + 1].setBrightnessSmooth(medusa::paletteLights[portPalettes[port]].green, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(medusa::paletteLights[portPalettes[port]].blue, sampleTime);
 			}
 		}
 	}
