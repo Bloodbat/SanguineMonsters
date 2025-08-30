@@ -28,8 +28,9 @@ struct Oubliette : SanguineModule {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
 		for (int port = 0; port < kMaxSectionPorts; ++port) {
-			configInput(INPUT_NULL + port, string::f("Null %d", port + 1));
-			configOutput(OUTPUT_NULL + port, string::f("Null %d", port + 1));
+			int currentPort = port + 1;
+			configInput(INPUT_NULL + port, string::f("Null %d", currentPort));
+			configOutput(OUTPUT_NULL + port, string::f("Null %d", currentPort));
 		}
 	}
 };
