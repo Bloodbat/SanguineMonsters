@@ -241,7 +241,7 @@ struct Sphinx : SanguineModule {
 		finalSequence.fill(0);
 		finalAccents.fill(0);
 		int accent = patternFill - patternAccentRotation;
-		for (int step = 0; step != static_cast<int>(calculatedSequence.size()); ++step) {
+		for (size_t step = 0; step != calculatedSequence.size(); ++step) {
 			int index = (step + patternRotation) % patternSize;
 			finalSequence[index] = calculatedSequence[step];
 			finalAccents[index] = 0;
