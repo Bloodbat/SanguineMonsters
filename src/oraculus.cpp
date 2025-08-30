@@ -102,11 +102,8 @@ struct Oraculus : SanguineModule {
 			updateLights(args);
 		}
 
-		if (bResetConnected && stInputReset.process(inputs[INPUT_RESET].getVoltage())) {
-			doResetTrigger();
-		}
-
-		if (btReset.process(params[PARAM_RESET].getValue())) {
+		if ((bResetConnected && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
+			btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
 		}
 
