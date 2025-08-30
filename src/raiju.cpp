@@ -85,6 +85,8 @@ struct Raiju : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
+		using simd::float_4;
+
 		if (clockDivider.process()) {
 			pollSwitches();
 			currentChannelCount = channelCounts[selectedVoltage];
@@ -115,9 +117,11 @@ struct Raiju : SanguineModule {
 					strVoltages[voltage] = stringStream.str();
 
 				if (outputsConnected[voltage]) {
-					float outputVoltages[PORT_MAX_CHANNELS];
-					std::fill(outputVoltages, outputVoltages + PORT_MAX_CHANNELS, voltages[voltage]);
-					outputs[OUTPUT_VOLTAGE + voltage].writeVoltages(outputVoltages);
+					float_4 outputVoltages = voltages[voltage];
+
+					for (int channel = 0; channel < channelCounts[voltage]; channel += 4) {
+						outputs[OUTPUT_VOLTAGE + voltage].setVoltageSimd(outputVoltages, channel);
+					}
 					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
 				}
 
