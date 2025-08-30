@@ -432,19 +432,19 @@ struct Sphinx : SanguineModule {
 			lightVoltage1 = outputs[OUTPUT_EOC].getVoltage();
 			lights[LIGHT_EOC].setBrightnessSmooth(lightVoltage1, sampleTime);
 
-			lights[LIGHT_PATTERN_STYLE].setBrightness(patternLightColorTable[patternStyle].red ?
-				kSanguineButtonLightValue : 0.f);
-			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green ?
-				kSanguineButtonLightValue : 0.f);
-			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue ?
-				kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_PATTERN_STYLE].setBrightness(patternLightColorTable[patternStyle].red *
+				kSanguineButtonLightValue);
+			lights[LIGHT_PATTERN_STYLE + 1].setBrightness(patternLightColorTable[patternStyle].green *
+				kSanguineButtonLightValue);
+			lights[LIGHT_PATTERN_STYLE + 2].setBrightness(patternLightColorTable[patternStyle].blue *
+				kSanguineButtonLightValue);
 
-			lights[LIGHT_REVERSE].setBrightnessSmooth(params[PARAM_REVERSE].getValue() ?
-				kSanguineButtonLightValue : 0.f, sampleTime);
+			lights[LIGHT_REVERSE].setBrightnessSmooth(params[PARAM_REVERSE].getValue() *
+				kSanguineButtonLightValue, sampleTime);
 
-			lights[LIGHT_GATE_MODE].setBrightness(gateModeLightColorTable[gateMode].red ? kSanguineButtonLightValue : 0.f);
-			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green ? kSanguineButtonLightValue : 0.f);
-			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue ? kSanguineButtonLightValue : 0.f);
+			lights[LIGHT_GATE_MODE].setBrightness(gateModeLightColorTable[gateMode].red * kSanguineButtonLightValue);
+			lights[LIGHT_GATE_MODE + 1].setBrightness(gateModeLightColorTable[gateMode].green * kSanguineButtonLightValue);
+			lights[LIGHT_GATE_MODE + 2].setBrightness(gateModeLightColorTable[gateMode].blue * kSanguineButtonLightValue);
 
 			lightVoltage1 = outputs[OUTPUT_GATE].getVoltage() / 10.f;
 			float lightVoltage2 = outputs[OUTPUT_ACCENT].getVoltage() / 10.f;
