@@ -111,6 +111,7 @@ struct Oraculus : SanguineModule {
 		}
 
 		finalChannel = -1;
+
 		if (channelCount > 0) {
 			if (selectedChannel >= channelCount) {
 				selectedChannel = channelCount - 1;
@@ -146,6 +147,7 @@ struct Oraculus : SanguineModule {
 
 			if (bOutputConnected) {
 				outputs[OUTPUT_MONOPHONIC].setVoltage(inputs[INPUT_POLYPHONIC].getVoltage(finalChannel));
+				outputs[OUTPUT_MONOPHONIC].setChannels(1);
 			}
 		} else {
 			if (bOutputConnected) {
