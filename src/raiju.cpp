@@ -44,7 +44,7 @@ struct Raiju : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	bool bOutputConnected = false;
+	bool outputsConnected[kVoltagesCount] = {};
 	bool bPolyOutConnected = false;
 
 	int currentChannelCount = 1;
@@ -82,8 +82,6 @@ struct Raiju : SanguineModule {
 
 	void process(const ProcessArgs& args) override {
 		if (clockDivider.process()) {
-			bPolyOutConnected = outputs[OUTPUT_EIGHT_CHANNELS].isConnected();
-
 			pollSwitches();
 			currentChannelCount = channelCounts[selectedVoltage];
 			if (selectedVoltage != lastSelectedVoltage) {
@@ -112,7 +110,7 @@ struct Raiju : SanguineModule {
 				} else
 					strVoltages[voltage] = stringStream.str();
 
-				if (outputs[OUTPUT_VOLTAGE + voltage].isConnected()) {
+				if (outputsConnected[voltage]) {
 					outputs[OUTPUT_VOLTAGE + voltage].setChannels(channelCounts[voltage]);
 					float outputVoltages[PORT_MAX_CHANNELS];
 					std::fill(outputVoltages, outputVoltages + PORT_MAX_CHANNELS, voltages[voltage]);
@@ -139,6 +137,14 @@ struct Raiju : SanguineModule {
 			if (btButtons[button].process(params[PARAM_VOLTAGE_SELECTOR + button].getValue())) {
 				selectedVoltage = button;
 			}
+		}
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		if (e.portId < OUTPUT_EIGHT_CHANNELS) {
+			outputsConnected[e.portId] = e.connecting;
+		} else {
+			bPolyOutConnected = e.connecting;
 		}
 	}
 
