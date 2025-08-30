@@ -69,8 +69,12 @@ struct Raiju : SanguineModule {
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
 
 		for (int component = 0; component < kVoltagesCount; ++component) {
-			configOutput(OUTPUT_VOLTAGE + component, "Voltage " + std::to_string(component + 1));
-			configParam(PARAM_VOLTAGE + component, -10.f, 10.f, 0.f, "Voltage selector " + std::to_string(component + 1));
+			int currentComponent = component + 1;
+			configOutput(OUTPUT_VOLTAGE + component, string::f("Voltage %d", currentComponent));
+			configParam(PARAM_VOLTAGE + component, -10.f, 10.f, 0.f,
+				string::f("Voltage selector %d", currentComponent));
+			configSwitch(PARAM_VOLTAGE_SELECTOR + component, 0.f, 1.f, 0.f,
+				"Selected voltage cloner", raiju::clonerButtonLabels);
 		}
 
 		configOutput(OUTPUT_EIGHT_CHANNELS, "Voltage series polyphonic");
