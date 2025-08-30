@@ -100,7 +100,6 @@ struct Oraculus : SanguineModule {
 		channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
 		if (clockDivider.process()) {
-			checkConnections();
 			updateLights(args);
 		}
 
@@ -181,15 +180,6 @@ struct Oraculus : SanguineModule {
 		selectedChannel = 0;
 	};
 
-	void checkConnections() {
-		bCvConnected = inputs[INPUT_CV_OFFSET].isConnected();
-		bIncreaseConnected = inputs[INPUT_INCREASE].isConnected();
-		bDecreaseConnected = inputs[INPUT_DECREASE].isConnected();
-		bRandomConnected = inputs[INPUT_RANDOM].isConnected();
-		bResetConnected = inputs[INPUT_RESET].isConnected();
-		bOutputConnected = outputs[OUTPUT_MONOPHONIC].isConnected();
-	}
-
 	void updateLights(const ProcessArgs& args) {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 		const float sampleTime = args.sampleTime * kClockUpdateFrequency;
@@ -215,6 +205,41 @@ struct Oraculus : SanguineModule {
 		lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) ?
 			kSanguineButtonLightValue : 0.f);
 #endif
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case Port::INPUT:
+			switch (e.portId) {
+			case INPUT_CV_OFFSET:
+				bCvConnected = e.connecting;
+				break;
+
+			case INPUT_INCREASE:
+				bIncreaseConnected = e.connecting;
+				break;
+
+			case INPUT_DECREASE:
+				bDecreaseConnected = e.connecting;
+				break;
+
+			case INPUT_RANDOM:
+				bRandomConnected = e.connecting;
+				break;
+
+			case INPUT_RESET:
+				bResetConnected = e.connecting;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case Port::OUTPUT:
+			bOutputConnected = e.connecting;
+			break;
+		}
 	}
 };
 
