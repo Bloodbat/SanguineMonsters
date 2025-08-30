@@ -31,6 +31,9 @@ struct Medusa : SanguineModule {
 
 	dsp::ClockDivider lightDivider;
 
+	bool inputsConnected[medusa::kMaxPorts] = {};
+	bool outputsConnected[medusa::kMaxPorts] = {};
+
 	Medusa() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
@@ -53,9 +56,10 @@ struct Medusa : SanguineModule {
 		bool bIsLightsTurn = lightDivider.process();
 
 		for (int port = 0; port < medusa::kMaxPorts; ++port) {
-			if (inputs[INPUT_VOLTAGE + port].isConnected()) {
+			if (inputsConnected[port]) {
 				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
 				activePort = port;
+				// TODO: use inc.
 				currentPalette = (currentPalette + 1);
 
 				if (currentPalette > 4) {
@@ -65,7 +69,7 @@ struct Medusa : SanguineModule {
 				++connectedCount;
 			}
 
-			if (outputs[OUTPUT_VOLTAGE + port].isConnected()) {
+			if (outputsConnected[port]) {
 				outputs[port].setChannels(channelCount);
 
 				for (int channel = 0; channel < channelCount; channel += 4) {
@@ -88,6 +92,14 @@ struct Medusa : SanguineModule {
 					lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
 			}
+		}
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		if (e.type == Port::INPUT) {
+			inputsConnected[e.portId] = e.connecting;
+		} else {
+			outputsConnected[e.portId] = e.connecting;
 		}
 	}
 };
