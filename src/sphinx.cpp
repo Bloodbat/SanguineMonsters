@@ -67,6 +67,8 @@ struct Sphinx : SanguineModule {
 	bool bCalculate;
 	bool bGateOn = false;
 	bool bCycleReset = true;
+	bool bHaveReset = false;
+	bool bHaveClock = false;
 
 	int patternFill = 4;
 	int patternLength = 16;
@@ -266,7 +268,7 @@ struct Sphinx : SanguineModule {
 		bool bNextStep = false;
 
 		// Reset sequence.
-		if (inputs[INPUT_RESET].isConnected()) {
+		if (bHaveReset) {
 			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
 				if (!params[PARAM_REVERSE].getValue()) {
 					currentStep = patternLength + patternPadding;
@@ -277,7 +279,7 @@ struct Sphinx : SanguineModule {
 			}
 		}
 
-		if (inputs[INPUT_CLOCK].isConnected()) {
+		if (bHaveClock) {
 			if (stClockInput.process(inputs[INPUT_CLOCK].getVoltage())) {
 				bNextStep = true;
 			}
@@ -417,6 +419,23 @@ struct Sphinx : SanguineModule {
 			lights[LIGHT_OUTPUT].setBrightnessSmooth(-lightVoltage1, sampleTime);
 			lights[LIGHT_OUTPUT + 1].setBrightnessSmooth(lightVoltage1, sampleTime);
 			lights[LIGHT_OUTPUT + 2].setBrightnessSmooth(lightVoltage2, sampleTime);
+		}
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		if (e.type == Port::INPUT) {
+			switch (e.portId) {
+			case INPUT_RESET:
+				bHaveReset = e.connecting;
+				break;
+
+			case INPUT_CLOCK:
+				bHaveClock = e.connecting;
+				break;
+
+			default:
+				break;
+			}
 		}
 	}
 };
