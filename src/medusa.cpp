@@ -29,7 +29,7 @@ struct Medusa : SanguineModule {
 
 	static const int kLightsFrequency = 1024;
 
-	dsp::ClockDivider lightDivider;
+	dsp::ClockDivider lightsDivider;
 
 	bool inputsConnected[medusa::kMaxPorts] = {};
 	bool outputsConnected[medusa::kMaxPorts] = {};
@@ -42,7 +42,7 @@ struct Medusa : SanguineModule {
 			configOutput(OUTPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 		}
 
-		lightDivider.setDivision(kLightsFrequency);
+		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -53,7 +53,7 @@ struct Medusa : SanguineModule {
 
 		int lastPalette = 5;
 
-		bool bIsLightsTurn = lightDivider.process();
+		bool bIsLightsTurn = lightsDivider.process();
 
 		for (int port = 0; port < medusa::kMaxPorts; ++port) {
 			if (inputsConnected[port]) {

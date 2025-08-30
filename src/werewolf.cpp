@@ -32,7 +32,7 @@ struct Werewolf : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	dsp::ClockDivider lightDivider;
+	dsp::ClockDivider lightsDivider;
 
 	const int kLightsFrequency = 64;
 
@@ -51,7 +51,7 @@ struct Werewolf : SanguineModule {
 		configBypass(INPUT_LEFT, OUTPUT_LEFT);
 		configBypass(INPUT_RIGHT, OUTPUT_RIGHT);
 
-		lightDivider.setDivision(kLightsFrequency);
+		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -64,7 +64,7 @@ struct Werewolf : SanguineModule {
 		float foldSum = 0.f;
 		float gainSum = 0.f;
 
-		bool bIsLightsTurn = lightDivider.process();
+		bool bIsLightsTurn = lightsDivider.process();
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 

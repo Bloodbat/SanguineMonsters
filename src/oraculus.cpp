@@ -43,7 +43,7 @@ struct Oraculus : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider lightsDivider;
 
 	dsp::BooleanTrigger btDecrease;
 	dsp::BooleanTrigger btIncrease;
@@ -66,7 +66,7 @@ struct Oraculus : SanguineModule {
 	bool bRandomConnected = false;
 	bool bResetConnected = false;
 
-	const static int kClockUpdateFrequency = 16;
+	const static int kLightsFrequency = 16;
 
 	pcg32 pcgRng;
 
@@ -92,14 +92,14 @@ struct Oraculus : SanguineModule {
 
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 
-		clockDivider.setDivision(kClockUpdateFrequency);
+		lightsDivider.setDivision(kLightsFrequency);
 		onReset();
 	};
 
 	void process(const ProcessArgs& args) override {
 		channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
-		if (clockDivider.process()) {
+		if (lightsDivider.process()) {
 			updateLights(args);
 		}
 
@@ -182,7 +182,7 @@ struct Oraculus : SanguineModule {
 
 	void updateLights(const ProcessArgs& args) {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
-		const float sampleTime = args.sampleTime * kClockUpdateFrequency;
+		const float sampleTime = args.sampleTime * kLightsFrequency;
 
 		for (int light = 0; light < PORT_MAX_CHANNELS; ++light) {
 			int currentLight = light * 3;
