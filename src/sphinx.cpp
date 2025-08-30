@@ -471,6 +471,9 @@ struct SphinxDisplay : TransparentWidget {
 	};
 	DisplayColors arrayDisplayColors[4];
 
+	static constexpr float kDoublePi = 2.f * M_PI;
+	static constexpr float kHalfPi = 0.5f * M_PI;
+
 	SphinxDisplay() {
 		arrayDisplayColors[0].backgroundColor = nvgRGB(0x30, 0x10, 0x10);
 		arrayDisplayColors[0].inactiveColor = nvgRGB(0x7f, 0x00, 0x00);
@@ -582,8 +585,8 @@ struct SphinxDisplay : TransparentWidget {
 		for (unsigned step = 0; step < length; ++step) {
 			if (!sequence[step]) {
 				float r = (accents && accents[step]) ? radius1 : radius2;
-				float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
-				float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
+				float x = circleX + r * cosf(kDoublePi * step / length - kHalfPi);
+				float y = circleY + r * sinf(kDoublePi * step / length - kHalfPi);
 
 				nvgBeginPath(vg);
 				nvgFillColor(vg, arrayDisplayColors[patternStyle].backgroundColor);
@@ -608,8 +611,8 @@ struct SphinxDisplay : TransparentWidget {
 			if (sequence[step]) {
 				float a = step / static_cast<float>(length);
 				float r = (accents && accents[step]) ? radius1 : radius2;
-				float x = circleX + r * cosf(2.f * M_PI * a - 0.5f * M_PI);
-				float y = circleY + r * sinf(2.f * M_PI * a - 0.5f * M_PI);
+				float x = circleX + r * cosf(kDoublePi * a - kHalfPi);
+				float y = circleY + r * sinf(kDoublePi * a - kHalfPi);
 
 				Vec p(x, y);
 				if (patternFill && *patternFill == 1) {
@@ -633,8 +636,8 @@ struct SphinxDisplay : TransparentWidget {
 		for (unsigned step = 0; step < length; ++step) {
 			if (sequence[step]) {
 				float r = (accents && accents[step]) ? radius1 : radius2;
-				float x = circleX + r * cosf(2.f * M_PI * step / length - 0.5f * M_PI);
-				float y = circleY + r * sinf(2.f * M_PI * step / length - 0.5f * M_PI);
+				float x = circleX + r * cosf(kDoublePi * step / length - kHalfPi);
+				float y = circleY + r * sinf(kDoublePi * step / length - kHalfPi);
 
 				nvgBeginPath(vg);
 				nvgFillColor(vg, arrayDisplayColors[patternStyle].backgroundColor);
@@ -651,8 +654,8 @@ struct SphinxDisplay : TransparentWidget {
 		const float& circleY, const float& radius1, const float& radius2, const unsigned length,
 		const bool* sequence, const bool* accents, const int currentStep) {
 		float r = (accents && accents[currentStep]) ? radius1 : radius2;
-		float x = circleX + r * cosf(2.f * M_PI * currentStep / length - 0.5f * M_PI);
-		float y = circleY + r * sinf(2.f * M_PI * currentStep / length - 0.5f * M_PI);
+		float x = circleX + r * cosf(kDoublePi * currentStep / length - kHalfPi);
+		float y = circleY + r * sinf(kDoublePi * currentStep / length - kHalfPi);
 		nvgBeginPath(vg);
 		nvgStrokeColor(vg, arrayDisplayColors[patternStyle].activeColor);
 		//if (sequence[currentStep]) {
