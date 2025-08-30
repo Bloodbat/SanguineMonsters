@@ -59,8 +59,7 @@ struct Medusa : SanguineModule {
 			if (inputsConnected[port]) {
 				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
 				activePort = port;
-				// TODO: use inc.
-				currentPalette = (currentPalette + 1);
+				++currentPalette;
 
 				if (currentPalette > 4) {
 					currentPalette = 0;
