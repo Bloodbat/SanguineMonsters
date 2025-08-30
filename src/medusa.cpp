@@ -69,12 +69,12 @@ struct Medusa : SanguineModule {
 			}
 
 			if (outputsConnected[port]) {
-				outputs[port].setChannels(channelCount);
-
 				for (int channel = 0; channel < channelCount; channel += 4) {
 					float_4 voltages = inputs[activePort].getVoltageSimd<float_4>(channel);
 					outputs[OUTPUT_VOLTAGE + port].setVoltageSimd(voltages, channel);
 				}
+
+				outputs[port].setChannels(channelCount);
 			}
 
 			if (bIsLightsTurn) {
