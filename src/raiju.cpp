@@ -96,7 +96,7 @@ struct Raiju : SanguineModule {
 			}
 
 			for (uint8_t voltage = 0; voltage < kVoltagesCount; ++voltage) {
-				params[PARAM_VOLTAGE_SELECTOR + voltage].setValue(voltage == selectedVoltage ? 1 : 0);
+				params[PARAM_VOLTAGE_SELECTOR + voltage].setValue(voltage == selectedVoltage);
 
 				// Get channel voltages and update strings for displays
 				voltages[voltage] = params[PARAM_VOLTAGE + voltage].getValue();
