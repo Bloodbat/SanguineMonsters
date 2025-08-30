@@ -28,4 +28,10 @@ namespace sphinx {
         false,
         false
     };
+
+    enum GateMode {
+        GM_TRIGGER,
+        GM_GATE,
+        GM_TURING
+    };
 }

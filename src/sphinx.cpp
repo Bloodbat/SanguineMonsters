@@ -109,11 +109,7 @@ struct Sphinx : SanguineModule {
 
 	pcg32 pcgRng;
 
-	enum GateMode {
-		GM_TRIGGER,
-		GM_GATE,
-		GM_TURING
-	} gateMode = GM_TRIGGER;
+	sphinx::GateMode gateMode = sphinx::GM_TRIGGER;
 
 	Sphinx() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -342,7 +338,7 @@ struct Sphinx : SanguineModule {
 				bCycleReset = false;
 			}
 
-			if (gateMode == GM_TURING) {
+			if (gateMode == sphinx::GM_TURING) {
 				turing = 0;
 				for (int step = 0; step < patternLength; ++step) {
 					turing |= finalSequence[(currentStep + step) % patternLength + patternPadding];
@@ -352,7 +348,7 @@ struct Sphinx : SanguineModule {
 				bGateOn = false;
 				if (finalSequence[currentStep]) {
 					pgGate.trigger();
-					if (gateMode == GM_GATE) {
+					if (gateMode == sphinx::GM_GATE) {
 						bGateOn = true;
 					}
 				}
@@ -361,7 +357,7 @@ struct Sphinx : SanguineModule {
 			bAccentOn = false;
 			if (patternAccents && finalAccents[currentStep]) {
 				pgAccent.trigger();
-				if (gateMode == GM_GATE) {
+				if (gateMode == sphinx::GM_GATE) {
 					bAccentOn = true;
 				}
 			}
@@ -372,12 +368,12 @@ struct Sphinx : SanguineModule {
 
 		switch (gateMode)
 		{
-		case GM_TRIGGER:
-		case GM_GATE: {
+		case sphinx::GM_TRIGGER:
+		case sphinx::GM_GATE: {
 			outputs[OUTPUT_GATE].setVoltage(bGateOn || bGatePulse ? 10.f : 0.f);
 			break;
 		}
-		case GM_TURING: {
+		case sphinx::GM_TURING: {
 			outputs[OUTPUT_GATE].setVoltage(10.f * (turing / powf(2.f, patternLength) - 1.f));
 			break;
 		}
@@ -422,7 +418,7 @@ struct Sphinx : SanguineModule {
 				bCalculate = true;
 			}
 
-			gateMode = GateMode(params[PARAM_GATE_MODE].getValue());
+			gateMode = static_cast<sphinx::GateMode>(params[PARAM_GATE_MODE].getValue());
 
 			const float sampleTime = args.sampleTime * kClockDivider;
 
