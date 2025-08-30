@@ -1,5 +1,15 @@
 # Next release
 
+## Fixes
+
+- Denki: turn off lights when not connected to a Kitsune module: the expander is not powered.
+
+- Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
+
+## Additions
+
+- Raiju: tooltips for voltage cloner buttons.
+
 ## Changes
 
 - Plugin: performance tweaks.
@@ -7,13 +17,6 @@
 - Alchemist: reduce green VU meter areas from -38dB to -36dB.
 
 - Bukavac: allow for larger Perlin amplifier values so it can reach 5V.
-
-## Fixes
-
-- Denki: turn off lights when not connected to a Kitsune module: the expander is not powered.
-
-- Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
-
 
 ---
 
