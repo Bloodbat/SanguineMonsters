@@ -352,25 +352,25 @@ struct Sphinx : SanguineModule {
 
 		if (clockDivider.process()) {
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
-				math::rescale(inputs[INPUT_LENGTH].getNormalVoltage(0.f), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
+				math::rescale(inputs[INPUT_LENGTH].getVoltage(), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
 
 			patternPadding = abs((32.f - patternLength) * clamp(params[PARAM_PADDING].getValue() +
-				inputs[INPUT_PADDING].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
+				inputs[INPUT_PADDING].getVoltage() / 9.f, 0.f, 1.f));
 
 			patternRotation = abs((patternLength + patternPadding - 1.f) * clamp(params[PARAM_ROTATION].getValue() +
-				inputs[INPUT_ROTATION].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
+				inputs[INPUT_ROTATION].getVoltage() / 9.f, 0.f, 1.f));
 
 			patternFill = abs((1.f + (patternLength - 1.f) * clamp(params[PARAM_STEPS].getValue() +
-				inputs[INPUT_STEPS].getNormalVoltage(0.f) / 9.f, 0.f, 1.f)));
+				inputs[INPUT_STEPS].getVoltage() / 9.f, 0.f, 1.f)));
 
 			patternAccents = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
-				inputs[INPUT_ACCENT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
+				inputs[INPUT_ACCENT].getVoltage() / 9.f, 0.f, 1.f));
 
 			if (patternAccents == 0) {
 				patternAccentRotation = 0;
 			} else {
 				patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
-					inputs[INPUT_SHIFT].getNormalVoltage(0.f) / 9.f, 0.f, 1.f));
+					inputs[INPUT_SHIFT].getVoltage() / 9.f, 0.f, 1.f));
 			}
 
 			// New sequence in case of parameter change.
