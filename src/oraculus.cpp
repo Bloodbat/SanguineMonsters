@@ -98,10 +98,6 @@ struct Oraculus : SanguineModule {
 	void process(const ProcessArgs& args) override {
 		channelCount = inputs[INPUT_POLYPHONIC].getChannels();
 
-		if (lightsDivider.process()) {
-			updateLights(args);
-		}
-
 		if ((bResetConnected && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
 			btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
@@ -153,6 +149,10 @@ struct Oraculus : SanguineModule {
 		}
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
+
+		if (lightsDivider.process()) {
+			updateLights(args);
+		}
 	}
 
 	void doDecreaseTrigger() {
@@ -183,20 +183,20 @@ struct Oraculus : SanguineModule {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
 		const float sampleTime = args.sampleTime * kLightsFrequency;
 
+		int currentLight;
+		bool bChannelAvailable;
+
 		for (int light = 0; light < PORT_MAX_CHANNELS; ++light) {
-			int currentLight = light * 3;
+			currentLight = light * 3;
+			bChannelAvailable = light < channelCount;
 			if (light == finalChannel) {
-				lights[currentLight + 0].setBrightnessSmooth(0.5f, sampleTime);
+				lights[currentLight].setBrightnessSmooth(0.5f, sampleTime);
 				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[currentLight + 2].setBrightnessSmooth(0.34f, sampleTime);
-			} else if (light < channelCount) {
-				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0.18f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.10f, sampleTime);
 			} else {
-				lights[currentLight + 0].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 1].setBrightnessSmooth(0.f, sampleTime);
-				lights[currentLight + 2].setBrightnessSmooth(0.f, sampleTime);
+				lights[currentLight].setBrightnessSmooth(0.f * bChannelAvailable, sampleTime);
+				lights[currentLight + 1].setBrightnessSmooth(0.18f * bChannelAvailable, sampleTime);
+				lights[currentLight + 2].setBrightnessSmooth(0.10f * bChannelAvailable, sampleTime);
 			}
 		}
 
