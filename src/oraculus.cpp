@@ -201,8 +201,8 @@ struct Oraculus : SanguineModule {
 		}
 
 #ifdef METAMODULE
-		lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) ?
-			kSanguineButtonLightValue : 0.f);
+		lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) *
+			kSanguineButtonLightValue);
 #endif
 	}
 
