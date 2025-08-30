@@ -93,7 +93,6 @@ struct Oraculus : SanguineModule {
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 
 		lightsDivider.setDivision(kLightsFrequency);
-		onReset();
 	};
 
 	void process(const ProcessArgs& args) override {
