@@ -55,6 +55,12 @@ struct Medusa : SanguineModule {
 
 		bool bIsLightsTurn = lightDivider.process();
 
+		float sampleTime;
+
+		if (bIsLightsTurn) {
+			sampleTime = kLightsFrequency * args.sampleTime;
+		}
+
 		for (int port = 0; port < medusa::kMaxPorts; ++port) {
 			if (inputsConnected[port]) {
 				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
@@ -78,8 +84,6 @@ struct Medusa : SanguineModule {
 			}
 
 			if (bIsLightsTurn) {
-				const float sampleTime = kLightsFrequency * args.sampleTime;
-
 				int currentLight = LIGHT_NORMALLED_PORT + port * 3;
 				if (connectedCount > 0) {
 					lights[currentLight + 0].setBrightnessSmooth(medusa::paletteLights[currentPalette].red, sampleTime);
