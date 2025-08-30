@@ -489,61 +489,6 @@ struct SphinxDisplay : TransparentWidget {
 		arrayDisplayColors[3].activeColor = nvgRGB(0x00, 0x00, 0xff);
 	}
 
-	void drawPolygon(NVGcontext* vg) {
-		Rect polyBoxSize = Rect(Vec(2, 2), box.size.minus(Vec(2, 2)));
-
-		float circleX = 0.5f * polyBoxSize.size.x + 1;
-		float circleY = 0.5f * polyBoxSize.size.y + 1;
-		const float radius1 = 0.45f * polyBoxSize.size.x;
-		const float radius2 = 0.35f * polyBoxSize.size.x;
-
-		unsigned length = 0;
-
-		if (module && !module->isBypassed()) {
-			length = *patternLength + *patternPadding;
-		} else if (!module) {
-			length = 16;
-		}
-
-		if (module && !module->isBypassed()) {
-			drawCircles(vg, *patternStyle, circleX, circleY, radius1, radius2);
-		} else if (!module) {
-			drawCircles(vg, 0, circleX, circleY, radius1, radius2);
-		}
-
-		if (module && !module->isBypassed()) {
-			drawInactiveSteps(vg, *patternStyle, circleX, circleY, radius1, radius2, length,
-				sequence->data(), accents->data());
-		} else if (!module) {
-			drawInactiveSteps(vg, 0, circleX, circleY, radius1, radius2, length,
-				sphinx::browserSequence.data(), nullptr);
-		}
-
-		if (module && !module->isBypassed()) {
-			drawPath(vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
-				accents->data(), patternFill);
-		} else if (!module) {
-			drawPath(vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
-				nullptr, nullptr);
-		}
-
-		if (module && !module->isBypassed()) {
-			drawActiveSteps(vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
-				accents->data());
-		} else if (!module) {
-			drawActiveSteps(vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
-				nullptr);
-		}
-
-		if (module && !module->isBypassed()) {
-			drawCurrentStep(vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
-				accents->data(), *currentStep);
-		} else if (!module) {
-			drawCurrentStep(vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
-				nullptr, 0);
-		}
-	}
-
 	void draw(const DrawArgs& args) override {
 		// Display border.
 		nvgBeginPath(args.vg);
@@ -564,14 +509,50 @@ struct SphinxDisplay : TransparentWidget {
 
 				// Shape.
 				if (accents && currentStep && patternFill && patternLength && patternPadding && patternStyle) {
-					drawPolygon(args.vg);
+					Rect polyBoxSize = Rect(Vec(2, 2), box.size.minus(Vec(2, 2)));
+
+					float circleX = 0.5f * polyBoxSize.size.x + 1;
+					float circleY = 0.5f * polyBoxSize.size.y + 1;
+					const float radius1 = 0.45f * polyBoxSize.size.x;
+					const float radius2 = 0.35f * polyBoxSize.size.x;
+
+					unsigned length = *patternLength + *patternPadding;
+
+					drawCircles(args.vg, *patternStyle, circleX, circleY, radius1, radius2);
+					drawInactiveSteps(args.vg, *patternStyle, circleX, circleY, radius1, radius2, length,
+						sequence->data(), accents->data());
+					drawPath(args.vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
+						accents->data(), patternFill);
+					drawActiveSteps(args.vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
+						accents->data());
+					drawCurrentStep(args.vg, *patternStyle, circleX, circleY, radius1, radius2, length, sequence->data(),
+						accents->data(), *currentStep);
 					drawRectHalo(args, box.size, arrayDisplayColors[*patternStyle].activeColor, 55, 0.f);
 				}
 			} else if (!module) {
 				drawDisplayBackground(args.vg, 0);
 
 				// Shape.
-				drawPolygon(args.vg);
+				Rect polyBoxSize = Rect(Vec(2, 2), box.size.minus(Vec(2, 2)));
+
+				float circleX = 0.5f * polyBoxSize.size.x + 1;
+				float circleY = 0.5f * polyBoxSize.size.y + 1;
+				const float radius1 = 0.45f * polyBoxSize.size.x;
+				const float radius2 = 0.35f * polyBoxSize.size.x;
+
+				unsigned length = 0;
+
+				length = 16;
+
+				drawCircles(args.vg, 0, circleX, circleY, radius1, radius2);
+				drawInactiveSteps(args.vg, 0, circleX, circleY, radius1, radius2, length,
+					sphinx::browserSequence.data(), nullptr);
+				drawPath(args.vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
+					nullptr, nullptr);
+				drawActiveSteps(args.vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
+					nullptr);
+				drawCurrentStep(args.vg, 0, circleX, circleY, radius1, radius2, length, sphinx::browserSequence.data(),
+					nullptr, 0);
 			}
 		}
 		Widget::drawLayer(args, layer);
