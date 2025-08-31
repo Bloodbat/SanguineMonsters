@@ -134,7 +134,7 @@ struct Sphinx : SanguineModule {
 
 		finalSequence.fill(0);
 		finalAccents.fill(0);
-		onReset();
+		init();
 
 		clockDivider.setDivision(kClockDivider);
 
@@ -143,7 +143,7 @@ struct Sphinx : SanguineModule {
 
 	void process(const ProcessArgs& args) override {
 		if (bCalculate) {
-			onReset();
+			init();
 			lastPatternFill = patternFill;
 			lastPatternLength = patternLength;
 			lastPatternAccents = patternAccents;
@@ -311,7 +311,7 @@ struct Sphinx : SanguineModule {
 		return (n < 2) ? n : getFibonacci(n - 1) + getFibonacci(n - 2);
 	}
 
-	void onReset() override {
+	void init() {
 		int patternSize = patternLength + patternPadding;
 
 		if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
@@ -437,6 +437,10 @@ struct Sphinx : SanguineModule {
 				break;
 			}
 		}
+	}
+
+	void onReset() override {
+		init();
 	}
 };
 
