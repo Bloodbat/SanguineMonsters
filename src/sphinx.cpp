@@ -142,6 +142,8 @@ struct Sphinx : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
+		using simd::float_4;
+
 		if (bCalculate) {
 			init();
 			lastPatternFill = patternFill;
@@ -244,20 +246,29 @@ struct Sphinx : SanguineModule {
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) * 10.f);
 
 		if (clockDivider.process()) {
+			float_4 parameterVoltages;
+
+			parameterVoltages[0] = inputs[INPUT_PADDING].getVoltage();
+			parameterVoltages[1] = inputs[INPUT_ROTATION].getVoltage();
+			parameterVoltages[2] = inputs[INPUT_STEPS].getVoltage();
+			parameterVoltages[3] = inputs[INPUT_ACCENT].getVoltage();
+
+			parameterVoltages /= 9.f;
+
+			parameterVoltages[0] += params[PARAM_PADDING].getValue();
+			parameterVoltages[1] += params[PARAM_ROTATION].getValue();
+			parameterVoltages[2] += params[PARAM_STEPS].getValue();
+			parameterVoltages[3] += params[PARAM_ACCENT].getValue();
+
+			parameterVoltages = simd::clamp(parameterVoltages, 0.f, 1.f);
+
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
 				math::rescale(inputs[INPUT_LENGTH].getVoltage(), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
 
-			patternPadding = abs((32.f - patternLength) * clamp(params[PARAM_PADDING].getValue() +
-				inputs[INPUT_PADDING].getVoltage() / 9.f, 0.f, 1.f));
-
-			patternRotation = abs((patternLength + patternPadding - 1.f) * clamp(params[PARAM_ROTATION].getValue() +
-				inputs[INPUT_ROTATION].getVoltage() / 9.f, 0.f, 1.f));
-
-			patternFill = abs(1.f + (patternLength - 1.f) * clamp(params[PARAM_STEPS].getValue() +
-				inputs[INPUT_STEPS].getVoltage() / 9.f, 0.f, 1.f));
-
-			patternAccents = abs(patternFill * clamp(params[PARAM_ACCENT].getValue() +
-				inputs[INPUT_ACCENT].getVoltage() / 9.f, 0.f, 1.f));
+			patternPadding = abs((32.f - patternLength) * parameterVoltages[0]);
+			patternRotation = abs((patternLength + patternPadding - 1.f) * parameterVoltages[1]);
+			patternFill = abs(1.f + (patternLength - 1.f) * parameterVoltages[2]);
+			patternAccents = abs(patternFill * parameterVoltages[3]);
 
 			if (patternAccents == 0) {
 				patternAccentRotation = 0;
