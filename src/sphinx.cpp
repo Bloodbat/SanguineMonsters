@@ -141,121 +141,6 @@ struct Sphinx : SanguineModule {
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 	}
 
-	int getFibonacci(int n) {
-		return (n < 2) ? n : getFibonacci(n - 1) + getFibonacci(n - 2);
-	}
-
-	void onReset() override {
-		int patternSize = patternLength + patternPadding;
-
-		if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
-			lastPatternStyle != patternStyle || lastPatternAccents != patternAccents) {
-			if (lastPatternLength != patternLength || lastPatternStyle != patternStyle) {
-				calculatedSequence.resize(patternSize);
-				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-			}
-			if (lastPatternFill != patternFill || lastPatternStyle != patternStyle) {
-				calculatedAccents.resize(patternFill);
-				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-			}
-
-			switch (patternStyle) {
-			case sphinx::EUCLIDEAN_PATTERN: {
-				euclid.reset();
-				euclid.init(patternLength, patternFill);
-				euclid.iter();
-
-				euclid2.reset();
-				if (patternAccents > 0) {
-					euclid2.init(patternFill, patternAccents);
-					euclid2.iter();
-				}
-				calculatedSequence = euclid.sequence;
-				calculatedAccents = euclid2.sequence;
-				break;
-			}
-
-			case sphinx::RANDOM_PATTERN: {
-				if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
-					lastPatternStyle != patternStyle) {
-					int num = 0;
-					calculatedSequence.resize(patternLength);
-					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-					int fill = 0;
-					while (fill < patternFill) {
-						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternFill) / static_cast<float>(patternLength)) {
-							calculatedSequence[num % patternLength] = 1;
-							++fill;
-						}
-						++num;
-					}
-				}
-				if (patternAccents && (lastPatternAccents != patternAccents || lastPatternFill != patternFill ||
-					patternStyle != lastPatternStyle)) {
-					int num = 0;
-					calculatedAccents.resize(patternFill);
-					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-					int accentNum = 0;
-					while (accentNum < patternAccents) {
-						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternAccents) / static_cast<float>(patternFill)) {
-							calculatedAccents[num % patternFill] = 1;
-							++accentNum;
-						}
-						++num;
-					}
-				}
-				break;
-			}
-
-			case sphinx::FIBONACCI_PATTERN: {
-				calculatedSequence.resize(patternLength);
-				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-				for (int num = 0; num < patternFill; ++num) {
-					calculatedSequence[getFibonacci(num) % patternLength] = 1;
-				}
-
-				calculatedAccents.resize(patternFill);
-				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-				for (int accent = 0; accent < patternAccents; ++accent) {
-					calculatedAccents[getFibonacci(accent) % patternFill] = 1;
-				}
-				break;
-			}
-
-			case sphinx::LINEAR_PATTERN: {
-				calculatedSequence.resize(patternLength);
-				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
-				for (int num = 0; num < patternFill; ++num) {
-					calculatedSequence[patternLength * num / patternFill] = 1;
-				}
-
-				calculatedAccents.resize(patternFill);
-				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
-				for (int accent = 0; accent < patternAccents; ++accent) {
-					calculatedAccents[patternFill * accent / patternAccents] = 1;
-				}
-				break;
-			}
-			}
-		}
-
-		// Distribute accents on sequence.
-		finalSequence.fill(0);
-		finalAccents.fill(0);
-		int accent = patternFill - patternAccentRotation;
-		for (size_t step = 0; step != calculatedSequence.size(); ++step) {
-			int index = (step + patternRotation) % patternSize;
-			finalSequence[index] = calculatedSequence[step];
-			finalAccents[index] = 0;
-			if (patternAccents && calculatedSequence[step]) {
-				finalAccents[index] = calculatedAccents[accent % patternFill];
-				++accent;
-			}
-		}
-
-		bCalculate = false;
-	}
-
 	void process(const ProcessArgs& args) override {
 		if (bCalculate) {
 			onReset();
@@ -420,6 +305,121 @@ struct Sphinx : SanguineModule {
 			lights[LIGHT_OUTPUT + 1].setBrightnessSmooth(lightVoltage1, sampleTime);
 			lights[LIGHT_OUTPUT + 2].setBrightnessSmooth(lightVoltage2, sampleTime);
 		}
+	}
+
+	int getFibonacci(int n) {
+		return (n < 2) ? n : getFibonacci(n - 1) + getFibonacci(n - 2);
+	}
+
+	void onReset() override {
+		int patternSize = patternLength + patternPadding;
+
+		if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
+			lastPatternStyle != patternStyle || lastPatternAccents != patternAccents) {
+			if (lastPatternLength != patternLength || lastPatternStyle != patternStyle) {
+				calculatedSequence.resize(patternSize);
+				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
+			}
+			if (lastPatternFill != patternFill || lastPatternStyle != patternStyle) {
+				calculatedAccents.resize(patternFill);
+				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
+			}
+
+			switch (patternStyle) {
+			case sphinx::EUCLIDEAN_PATTERN: {
+				euclid.reset();
+				euclid.init(patternLength, patternFill);
+				euclid.iter();
+
+				euclid2.reset();
+				if (patternAccents > 0) {
+					euclid2.init(patternFill, patternAccents);
+					euclid2.iter();
+				}
+				calculatedSequence = euclid.sequence;
+				calculatedAccents = euclid2.sequence;
+				break;
+			}
+
+			case sphinx::RANDOM_PATTERN: {
+				if (lastPatternLength != patternLength || lastPatternFill != patternFill ||
+					lastPatternStyle != patternStyle) {
+					int num = 0;
+					calculatedSequence.resize(patternLength);
+					std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
+					int fill = 0;
+					while (fill < patternFill) {
+						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternFill) / static_cast<float>(patternLength)) {
+							calculatedSequence[num % patternLength] = 1;
+							++fill;
+						}
+						++num;
+					}
+				}
+				if (patternAccents && (lastPatternAccents != patternAccents || lastPatternFill != patternFill ||
+					patternStyle != lastPatternStyle)) {
+					int num = 0;
+					calculatedAccents.resize(patternFill);
+					std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
+					int accentNum = 0;
+					while (accentNum < patternAccents) {
+						if (ldexpf(pcgRng(), -32) < static_cast<float>(patternAccents) / static_cast<float>(patternFill)) {
+							calculatedAccents[num % patternFill] = 1;
+							++accentNum;
+						}
+						++num;
+					}
+				}
+				break;
+			}
+
+			case sphinx::FIBONACCI_PATTERN: {
+				calculatedSequence.resize(patternLength);
+				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
+				for (int num = 0; num < patternFill; ++num) {
+					calculatedSequence[getFibonacci(num) % patternLength] = 1;
+				}
+
+				calculatedAccents.resize(patternFill);
+				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
+				for (int accent = 0; accent < patternAccents; ++accent) {
+					calculatedAccents[getFibonacci(accent) % patternFill] = 1;
+				}
+				break;
+			}
+
+			case sphinx::LINEAR_PATTERN: {
+				calculatedSequence.resize(patternLength);
+				std::fill(calculatedSequence.begin(), calculatedSequence.end(), 0);
+				for (int num = 0; num < patternFill; ++num) {
+					calculatedSequence[patternLength * num / patternFill] = 1;
+				}
+
+				calculatedAccents.resize(patternFill);
+				std::fill(calculatedAccents.begin(), calculatedAccents.end(), 0);
+				for (int accent = 0; accent < patternAccents; ++accent) {
+					calculatedAccents[patternFill * accent / patternAccents] = 1;
+				}
+				break;
+			}
+			}
+		}
+
+		// Distribute accents on sequence.
+		finalSequence.fill(0);
+		finalAccents.fill(0);
+		int accent = patternFill - patternAccentRotation;
+		for (size_t step = 0; step != calculatedSequence.size(); ++step) {
+			int index = (step + patternRotation) % patternSize;
+			finalSequence[index] = calculatedSequence[step];
+			finalAccents[index] = 0;
+			if (patternAccents && calculatedSequence[step]) {
+				finalAccents[index] = calculatedAccents[accent % patternFill];
+				++accent;
+			}
+		}
+
+		bCalculate = false;
 	}
 
 	void onPortChange(const PortChangeEvent& e) override {
