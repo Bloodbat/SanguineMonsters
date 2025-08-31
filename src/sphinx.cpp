@@ -224,7 +224,7 @@ struct Sphinx : SanguineModule {
 		switch (gateMode) {
 		case sphinx::GM_TRIGGER:
 		case sphinx::GM_GATE: {
-			outputs[OUTPUT_GATE].setVoltage(bGateOn || bGatePulse ? 10.f : 0.f);
+			outputs[OUTPUT_GATE].setVoltage((bGateOn | bGatePulse) * 10.f);
 			break;
 		}
 		case sphinx::GM_TURING: {
@@ -233,9 +233,9 @@ struct Sphinx : SanguineModule {
 		}
 		}
 
-		outputs[OUTPUT_ACCENT].setVoltage(bAccentOn || bAccentPulse ? 10.f : 0.f);
+		outputs[OUTPUT_ACCENT].setVoltage((bAccentOn | bAccentPulse) * 10.f);
 
-		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) ? 10.f : 0.f);
+		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) * 10.f);
 
 		if (clockDivider.process()) {
 			patternLength = clamp(params[PARAM_LENGTH].getValue() +
