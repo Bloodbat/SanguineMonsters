@@ -54,4 +54,16 @@ struct Manus : SanguineModule {
     Manus();
 
     void onExpanderChange(const ExpanderChangeEvent& e) override;
+    void onPortChange(const PortChangeEvent& e) override;
+
+    inline bool getInputConnected(const int channel) const {
+        return inputsConnected[channel];
+    }
+
+    inline void setInputConnected(const int channel, const bool value) {
+        inputsConnected[channel] = value;
+    }
+
+private:
+    bool inputsConnected[superSwitches::kMaxSteps] = {};
 };

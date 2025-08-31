@@ -9,28 +9,41 @@ Manus::Manus() {
 }
 
 void Manus::onExpanderChange(const ExpanderChangeEvent& e) {
-    Module* gegeenesMaster = getLeftExpander().module;
-    Module* hydraMaster = getRightExpander().module;
-    bool bHasLeftMaster = gegeenesMaster && gegeenesMaster->getModel() == modelSuperSwitch18;
-    bool bHasRightMaster = hydraMaster && hydraMaster->getModel() == modelSuperSwitch81;
-    if (bHasLeftMaster) {
-        lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(kSanguineButtonLightValue);
+    if (e.side == 0) {
+        Module* gegeenesMaster = getLeftExpander().module;
+
+        bool bHasLeftMaster = gegeenesMaster && gegeenesMaster->getModel() == modelSuperSwitch18;
+
+        if (bHasLeftMaster) {
+            lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(kSanguineButtonLightValue);
+        } else {
+            lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(0.f);
+            int currentLight;
+            for (int light = 0; light < superSwitches::kMaxSteps; ++light) {
+                currentLight = LIGHT_STEP_1_LEFT + light;
+                lights[currentLight].setBrightness(0.f);
+            }
+        }
     } else {
-        lights[LIGHT_MASTER_MODULE_LEFT].setBrightness(0.f);
-        for (int light = 0; light < superSwitches::kMaxSteps; ++light) {
-            const int currentLight = LIGHT_STEP_1_LEFT + light;
-            lights[currentLight].setBrightness(0.f);
+        Module* hydraMaster = getRightExpander().module;
+
+        bool bHasRightMaster = hydraMaster && hydraMaster->getModel() == modelSuperSwitch81;
+
+        if (bHasRightMaster) {
+            lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(kSanguineButtonLightValue);
+        } else {
+            lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(0.f);
+            int currentLight;
+            for (int light = 0; light < superSwitches::kMaxSteps; ++light) {
+                currentLight = LIGHT_STEP_1_RIGHT + light;
+                lights[currentLight].setBrightness(0.f);
+            }
         }
     }
-    if (bHasRightMaster) {
-        lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(kSanguineButtonLightValue);
-    } else {
-        lights[LIGHT_MASTER_MODULE_RIGHT].setBrightness(0.f);
-        for (int light = 0; light < superSwitches::kMaxSteps; ++light) {
-            const int currentLight = LIGHT_STEP_1_RIGHT + light;
-            lights[currentLight].setBrightness(0.f);
-        }
-    }
+}
+
+void Manus::onPortChange(const PortChangeEvent& e) {
+    setInputConnected(e.portId, e.connecting);
 }
 
 struct AcrylicLeftTriangle : SanguineShapedAcrylicLed<RedLight> {
