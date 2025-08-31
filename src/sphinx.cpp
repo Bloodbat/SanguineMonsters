@@ -253,10 +253,10 @@ struct Sphinx : SanguineModule {
 			patternRotation = abs((patternLength + patternPadding - 1.f) * clamp(params[PARAM_ROTATION].getValue() +
 				inputs[INPUT_ROTATION].getVoltage() / 9.f, 0.f, 1.f));
 
-			patternFill = abs((1.f + (patternLength - 1.f) * clamp(params[PARAM_STEPS].getValue() +
-				inputs[INPUT_STEPS].getVoltage() / 9.f, 0.f, 1.f)));
+			patternFill = abs(1.f + (patternLength - 1.f) * clamp(params[PARAM_STEPS].getValue() +
+				inputs[INPUT_STEPS].getVoltage() / 9.f, 0.f, 1.f));
 
-			patternAccents = abs((patternFill)*clamp(params[PARAM_ACCENT].getValue() +
+			patternAccents = abs(patternFill * clamp(params[PARAM_ACCENT].getValue() +
 				inputs[INPUT_ACCENT].getVoltage() / 9.f, 0.f, 1.f));
 
 			if (patternAccents == 0) {
