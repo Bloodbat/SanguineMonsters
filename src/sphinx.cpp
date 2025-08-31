@@ -221,19 +221,25 @@ struct Sphinx : SanguineModule {
 		bool bGatePulse = pgGate.process(args.sampleTime);
 		bool bAccentPulse = pgAccent.process(args.sampleTime);
 
+		float gateVoltage = 0.f;
+
+		float accentVoltage = (bAccentOn | bAccentPulse);
+
 		switch (gateMode) {
 		case sphinx::GM_TRIGGER:
 		case sphinx::GM_GATE: {
-			outputs[OUTPUT_GATE].setVoltage((bGateOn | bGatePulse) * 10.f);
+			gateVoltage = bGateOn | bGatePulse;
 			break;
 		}
 		case sphinx::GM_TURING: {
-			outputs[OUTPUT_GATE].setVoltage(10.f * (turing / powf(2.f, patternLength) - 1.f));
+			gateVoltage = turing / powf(2.f, patternLength) - 1.f;
 			break;
 		}
 		}
 
-		outputs[OUTPUT_ACCENT].setVoltage((bAccentOn | bAccentPulse) * 10.f);
+		outputs[OUTPUT_GATE].setVoltage(gateVoltage * 10.f);
+
+		outputs[OUTPUT_ACCENT].setVoltage(accentVoltage * 10.f);
 
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) * 10.f);
 
@@ -299,11 +305,9 @@ struct Sphinx : SanguineModule {
 			lights[LIGHT_GATE_MODE + 2].setBrightness(sphinx::gateModeLightColorTable[gateMode].blue
 				* kSanguineButtonLightValue);
 
-			lightVoltage1 = outputs[OUTPUT_GATE].getVoltage() / 10.f;
-			float lightVoltage2 = outputs[OUTPUT_ACCENT].getVoltage() / 10.f;
-			lights[LIGHT_OUTPUT].setBrightnessSmooth(-lightVoltage1, sampleTime);
-			lights[LIGHT_OUTPUT + 1].setBrightnessSmooth(lightVoltage1, sampleTime);
-			lights[LIGHT_OUTPUT + 2].setBrightnessSmooth(lightVoltage2, sampleTime);
+			lights[LIGHT_OUTPUT].setBrightnessSmooth(-gateVoltage, sampleTime);
+			lights[LIGHT_OUTPUT + 1].setBrightnessSmooth(gateVoltage, sampleTime);
+			lights[LIGHT_OUTPUT + 2].setBrightnessSmooth(accentVoltage, sampleTime);
 		}
 	}
 
