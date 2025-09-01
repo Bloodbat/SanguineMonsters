@@ -164,11 +164,12 @@ struct Werewolf : SanguineModule {
 			const float sampleTime = args.sampleTime * kLightsFrequency;
 
 			if (channelCount < 2) {
-				lights[LIGHT_EYE_1].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
+				float leftEyeValue = math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f);
+				lights[LIGHT_EYE_1].setBrightnessSmooth(leftEyeValue, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(0.f, sampleTime);
 				if (bIsNormalled) {
-					lights[LIGHT_EYE_2].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
+					lights[LIGHT_EYE_2].setBrightnessSmooth(leftEyeValue, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
 				} else {
