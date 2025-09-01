@@ -52,6 +52,6 @@ struct Denki : SanguineModule {
 	void onPortChange(const PortChangeEvent& e) override;
 
 private:
-	bool gainsConnected[kitsune::kMaxSections];
-	bool offsetsConnected[kitsune::kMaxSections];
+	bool gainsConnected[kitsune::kMaxSections] = {};
+	bool offsetsConnected[kitsune::kMaxSections] = {};
 };
