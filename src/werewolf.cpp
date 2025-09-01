@@ -213,24 +213,25 @@ struct Werewolf : SanguineModule {
 		}
 	}
 
-	inline void doDistortion(float inVoltage, float& outVoltage, const float fold) {
+	inline void doDistortion(const float& inVoltage, float& outVoltage, const float fold) {
+		outVoltage = inVoltage;
+		const float foldFactor = fold / 5.f;
 		for (int i = 0; i < 100; ++i) {
-			if (inVoltage < -5.f) {
-				inVoltage = -5.f + (-inVoltage - 5.f) * fold / 5.f;
+			if (outVoltage < -5.f) {
+				outVoltage = -5.f + (-outVoltage - 5.f) * foldFactor;
 			}
-			if (inVoltage > 5.f) {
-				inVoltage = 5.f - (inVoltage - 5.f) * fold / 5.f;
+			if (outVoltage > 5.f) {
+				outVoltage = 5.f - (outVoltage - 5.f) * foldFactor;
 			}
 
-			if (inVoltage >= -5.f && inVoltage <= 5.f) {
+			if (outVoltage >= -5.f && outVoltage <= 5.f) {
 				break;
 			}
 
 			if (i == 99) {
-				inVoltage = 0.f;
+				outVoltage = 0.f;
 			}
 		}
-		outVoltage = inVoltage;
 	}
 
 	void onPortChange(const PortChangeEvent& e) override {
