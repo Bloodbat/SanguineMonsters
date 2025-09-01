@@ -71,9 +71,8 @@ struct Werewolf : SanguineModule {
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
-		// Logical XOR
-		bIsNormalled = !bLeftInConnected != !bRightInConnected;
-		bool bOutputsNormalled = !bLeftOutConnected != !bRightOutConnected;
+		bIsNormalled = bLeftInConnected ^ bRightInConnected;
+		bool bOutputsNormalled = bLeftOutConnected ^ bRightOutConnected;
 
 		if (channelCount > 0) {
 			float fold = params[PARAM_FOLD].getValue();
