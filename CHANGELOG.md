@@ -4,6 +4,10 @@
 
 - Denki: turn off lights when not connected to a Kitsune module: the expander is not powered.
 
+- Gegenees: don't keep the selected output if it is higher than the step count.
+
+- Gegenees: don't disable manual, direct step selection when reset to first step is disabled.
+
 - Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
 
 ## Additions
