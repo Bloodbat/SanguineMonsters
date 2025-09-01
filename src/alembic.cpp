@@ -17,7 +17,7 @@ void Alembic::onExpanderChange(const ExpanderChangeEvent& e) {
 		if (bHasLeftMaster) {
 			lights[LIGHT_MASTER_MODULE].setBrightness(kSanguineButtonLightValue);
 			bHadMaster = true;
-		} else if (bHadMaster && !bHasLeftMaster) {
+		} else if (bHadMaster) {
 			lights[LIGHT_MASTER_MODULE].setBrightness(0.f);
 			for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
 				outputs[OUTPUT_CHANNEL + channel].setVoltage(0.f);
