@@ -60,7 +60,7 @@ struct Werewolf : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		bool bIsNormalled = true;
+		bool bInputsNormalled = true;
 
 		float voltageSumLeft = 0.f;
 		float voltageSumRight = 0.f;
@@ -71,7 +71,7 @@ struct Werewolf : SanguineModule {
 
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
-		bIsNormalled = bLeftInConnected ^ bRightInConnected;
+		bInputsNormalled = bLeftInConnected ^ bRightInConnected;
 		bool bOutputsNormalled = bLeftOutConnected ^ bRightOutConnected;
 
 		if (channelCount > 0) {
@@ -92,28 +92,15 @@ struct Werewolf : SanguineModule {
 
 				if (bLeftInConnected) {
 					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
-					if (bIsNormalled) {
-						voltageInRight = voltageInLeft;
+					distort(voltageInLeft, voltageOutLeft, channelFold);
+					if (bInputsNormalled) {
+						voltageOutRight = voltageOutLeft;
 					}
 				}
 				if (bRightInConnected) {
 					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
-					if (bIsNormalled) {
-						voltageInLeft = voltageInRight;
-					}
-				}
-
-				// Distortion
-				if (bLeftInConnected) {
-					doDistortion(voltageInLeft, voltageOutLeft, channelFold);
-					if (bIsNormalled) {
-						voltageOutRight = voltageOutLeft;
-					}
-				}
-
-				if (bRightInConnected) {
-					doDistortion(voltageInRight, voltageOutRight, channelFold);
-					if (bIsNormalled) {
+					distort(voltageInRight, voltageOutRight, channelFold);
+					if (bInputsNormalled) {
 						voltageOutLeft = voltageOutRight;
 					}
 				}
@@ -121,30 +108,12 @@ struct Werewolf : SanguineModule {
 				float voltageMix = 0.f;
 
 				if (bOutputsNormalled) {
-					if (!bIsNormalled) {
+					if (!bInputsNormalled) {
 						voltageMix = voltageOutLeft + voltageOutRight;
 					} else {
 						voltageMix = voltageOutLeft;
 					}
-				}
 
-				if (!bOutputsNormalled) {
-					voltageSumLeft += voltageOutLeft;
-
-					if (bLeftOutConnected) {
-						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
-					}
-
-					if (bIsNormalled) {
-						voltageOutRight = voltageOutLeft;
-						voltageSumRight += voltageOutLeft;
-
-					}
-					if (bRightOutConnected) {
-						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
-					}
-					voltageSumRight += voltageOutRight;
-				} else {
 					if (bLeftOutConnected) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
 					}
@@ -153,6 +122,22 @@ struct Werewolf : SanguineModule {
 					}
 					voltageSumLeft += voltageMix;
 					voltageSumRight += voltageMix;
+				} else {
+					voltageSumLeft += voltageOutLeft;
+
+					if (bLeftOutConnected) {
+						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
+					}
+
+					if (bInputsNormalled) {
+						voltageOutRight = voltageOutLeft;
+						voltageSumRight += voltageOutLeft;
+
+					}
+					if (bRightOutConnected) {
+						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
+					}
+					voltageSumRight += voltageOutRight;
 				}
 			}
 		}
@@ -168,7 +153,7 @@ struct Werewolf : SanguineModule {
 				lights[LIGHT_EYE_1].setBrightnessSmooth(leftEyeValue, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(0.f, sampleTime);
-				if (bIsNormalled) {
+				if (bInputsNormalled) {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(leftEyeValue, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
@@ -191,7 +176,7 @@ struct Werewolf : SanguineModule {
 				lights[LIGHT_EYE_1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
-				if (bIsNormalled) {
+				if (bInputsNormalled) {
 					lights[LIGHT_EYE_2].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 1].setBrightnessSmooth(0.f, sampleTime);
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
@@ -214,7 +199,7 @@ struct Werewolf : SanguineModule {
 		}
 	}
 
-	inline void doDistortion(const float& inVoltage, float& outVoltage, const float fold) {
+	inline void distort(const float& inVoltage, float& outVoltage, const float fold) {
 		outVoltage = inVoltage;
 		const float foldFactor = fold / 5.f;
 		for (int i = 0; i < 100; ++i) {
