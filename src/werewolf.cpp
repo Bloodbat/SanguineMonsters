@@ -34,6 +34,11 @@ struct Werewolf : SanguineModule {
 
 	dsp::ClockDivider lightsDivider;
 
+	bool bLeftInConnected = false;
+	bool bRightInConnected = false;
+	bool bLeftOutConnected = false;
+	bool bRightOutConnected = false;
+
 	const int kLightsFrequency = 64;
 
 	Werewolf() {
@@ -55,8 +60,6 @@ struct Werewolf : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		bool bLeftInConnected = inputs[INPUT_LEFT].isConnected();
-		bool bRightInConnected = inputs[INPUT_RIGHT].isConnected();
 		bool bIsNormalled = true;
 
 		float voltageSumLeft = 0.f;
@@ -70,7 +73,7 @@ struct Werewolf : SanguineModule {
 
 		// Logical XOR
 		bIsNormalled = !bLeftInConnected != !bRightInConnected;
-		bool bOutputsNormalled = !outputs[OUTPUT_LEFT].isConnected() != !outputs[OUTPUT_RIGHT].isConnected();
+		bool bOutputsNormalled = !bLeftOutConnected != !bRightOutConnected;
 
 		if (channelCount > 0) {
 			float fold = params[PARAM_FOLD].getValue();
@@ -132,7 +135,7 @@ struct Werewolf : SanguineModule {
 				if (!bOutputsNormalled) {
 					voltageSumLeft += voltageOutLeft;
 
-					if (outputs[OUTPUT_LEFT].isConnected()) {
+					if (bLeftOutConnected) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
 					}
 
@@ -141,15 +144,15 @@ struct Werewolf : SanguineModule {
 						voltageSumRight += voltageOutLeft;
 
 					}
-					if (outputs[OUTPUT_RIGHT].isConnected()) {
+					if (bRightOutConnected) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
 					}
 					voltageSumRight += voltageOutRight;
 				} else {
-					if (outputs[OUTPUT_LEFT].isConnected()) {
+					if (bLeftOutConnected) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
 					}
-					if (outputs[OUTPUT_RIGHT].isConnected()) {
+					if (bRightOutConnected) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageMix, channel);
 					}
 					voltageSumLeft += voltageMix;
@@ -229,6 +232,37 @@ struct Werewolf : SanguineModule {
 			}
 		}
 		outVoltage = inVoltage;
+	}
+
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case Port::INPUT:
+			switch (e.portId) {
+			case INPUT_LEFT:
+				bLeftInConnected = e.connecting;
+				break;
+
+			case INPUT_RIGHT:
+				bRightInConnected = e.connecting;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case Port::OUTPUT:
+			switch (e.portId) {
+			case OUTPUT_LEFT:
+				bLeftOutConnected = e.connecting;
+				break;
+
+			case OUTPUT_RIGHT:
+				bRightOutConnected = e.connecting;
+				break;
+			}
+			break;
+		}
 	}
 };
 
