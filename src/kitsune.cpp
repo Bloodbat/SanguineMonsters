@@ -358,7 +358,6 @@ struct Kitsune : SanguineModule {
 
 	void onBypass(const BypassEvent& e) override {
 		if (bHaveExpander) {
-			Module* denkiExpander = getRightExpander().module;
 			denkiExpander->getLight(Denki::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
 		Module::onBypass(e);
@@ -366,7 +365,6 @@ struct Kitsune : SanguineModule {
 
 	void onUnBypass(const UnBypassEvent& e) override {
 		if (bHaveExpander) {
-			Module* denkiExpander = getRightExpander().module;
 			denkiExpander->getLight(Denki::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
