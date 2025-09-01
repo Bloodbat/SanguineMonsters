@@ -75,9 +75,10 @@ struct Werewolf : SanguineModule {
 			float fold = params[PARAM_FOLD].getValue();
 			float gain = params[PARAM_GAIN].getValue();
 
+			float voltageInLeft;
+			float voltageInRight;
+
 			for (int channel = 0; channel < channelCount; ++channel) {
-				float voltageInLeft = 0.f;
-				float voltageInRight = 0.f;
 				float voltageOutLeft = 0.f;
 				float voltageOutRight = 0.f;
 
