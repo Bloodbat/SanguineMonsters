@@ -1,4 +1,4 @@
-# Next release
+# 2.4.5
 
 ## Fixes
 
@@ -20,7 +20,7 @@
 
 ## Changes
 
-- Plugin: performance tweaks.
+- Plugin: performance improvements.
 
 - Alchemist: reduce green VU meter areas from -38dB to -36dB.
 
