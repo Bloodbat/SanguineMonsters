@@ -633,12 +633,10 @@ struct Alchemist : SanguineModule {
 
 	void onBypass(const BypassEvent& e) override {
 		if (bHaveRightExpander) {
-			Module* alembicExpander = getRightExpander().module;
 			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
 
 		if (bHaveLeftExpander) {
-			Module* crucibleExpander = getLeftExpander().module;
 			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(0.f);
 		}
 		Module::onBypass(e);
@@ -646,12 +644,10 @@ struct Alchemist : SanguineModule {
 
 	void onUnBypass(const UnBypassEvent& e) override {
 		if (bHaveRightExpander) {
-			Module* alembicExpander = getRightExpander().module;
 			alembicExpander->getLight(Alembic::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 
 		if (bHaveLeftExpander) {
-			Module* crucibleExpander = getLeftExpander().module;
 			crucibleExpander->getLight(Crucible::LIGHT_MASTER_MODULE).setBrightness(kSanguineButtonLightValue);
 		}
 		Module::onUnBypass(e);
