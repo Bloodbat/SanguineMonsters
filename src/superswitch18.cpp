@@ -314,7 +314,7 @@ struct SuperSwitch18 : SanguineModule {
 	}
 
 	void handleClockControls() {
-		if (!bOneShot || (bOneShot && !bOneShotDone)) {
+		if (!bOneShot || !bOneShotDone) {
 			if ((bHaveDecreaseCable && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) ||
 				btDecrease.process(params[PARAM_DECREASE].getValue())) {
 				doDecreaseTrigger();
@@ -334,7 +334,7 @@ struct SuperSwitch18 : SanguineModule {
 
 	void handleStepButtons(const int stepNum) {
 		const int currentOut = PARAM_STEP1 + stepNum;
-		if (stepNum < stepCount && !bResetMutex && (!bOneShot || (bOneShot && !bOneShotDone)) &&
+		if (stepNum < stepCount && !bResetMutex && (!bOneShot || !bOneShotDone) &&
 			btSteps[stepNum].process(params[currentOut].getValue() && !bStepsMutex)) {
 			selectedOut = stepNum;
 		}
@@ -458,7 +458,7 @@ struct SuperSwitch18 : SanguineModule {
 	void handleExpanderInput(const int stepNum) {
 		int currentIn = Manus::INPUT_STEP_1 + stepNum;
 		if (manusExpander->getInputConnected(stepNum) && stepNum < stepCount &&
-			(!bOneShot || (bOneShot && !bOneShotDone)) &&
+			(!bOneShot || !bOneShotDone) &&
 			stDirectSteps[stepNum].process(manusExpander->getInput(currentIn).getVoltage())) {
 			selectedOut = stepNum;
 		}
