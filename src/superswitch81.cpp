@@ -91,14 +91,28 @@ struct SuperSwitch81 : SanguineModule {
 	dsp::SchmittTrigger stInputIncrease;
 	dsp::SchmittTrigger stInputRandom;
 	dsp::SchmittTrigger stInputReset;
+#ifndef METAMODULE
 	dsp::SchmittTrigger stDirectSteps[superSwitches::kMaxSteps];
-	bool bClockReceived = false;
+	Manus* manusExpander = nullptr;
+#endif
+
 	bool bLastOneShotValue = false;
 	bool bLastResetToFirstStepValue = true;
 	bool bNoRepeats = false;
 	bool bOneShot = false;
 	bool bOneShotDone = false;
 	bool bResetToFirstStep = true;
+	bool bStepsMutex = false;
+	bool bResetMutex = false;
+
+	bool bHaveStepsCable = false;
+	bool bHaveResetCable = false;
+	bool bHaveDecreaseCable = false;
+	bool bHaveIncreaseCable = false;
+	bool bHaveRandomCable = false;
+	bool inputsConnected[superSwitches::kMaxSteps] = {};
+	bool bOutputConnected = false;
+
 #ifndef METAMODULE
 	bool bHasExpander = false;
 #endif
@@ -108,11 +122,11 @@ struct SuperSwitch81 : SanguineModule {
 	int stepCount = superSwitches::kMaxSteps;
 	int stepsDone = 0;
 
-	static const int kClockDivider = 16;
+	static const int kLightsFrequency = 16;
 
-	float_4 outVoltages[4] = {};
+	float_4 inVoltages[4] = {};
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider lightsDivider;
 
 	pcg32 pcgRng;
 
@@ -127,8 +141,9 @@ struct SuperSwitch81 : SanguineModule {
 		configButton(PARAM_ONE_SHOT, "One shot");
 
 		for (int component = 0; component < superSwitches::kMaxSteps; ++component) {
-			configButton(PARAM_STEP1 + component, "Step " + std::to_string(component + 1));
-			configInput(INPUT_IN1 + component, "Voltage " + std::to_string(component + 1));
+			int componentNum = component + 1;
+			configButton(PARAM_STEP1 + component, string::f("Step %d", componentNum));
+			configInput(INPUT_IN1 + component, string::f("Voltage %d", componentNum));
 		}
 		configInput(INPUT_STEPS, "Step count");
 
@@ -146,129 +161,113 @@ struct SuperSwitch81 : SanguineModule {
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 
-		clockDivider.setDivision(kClockDivider);
+		lightsDivider.setDivision(kLightsFrequency);
 	};
 
+#ifndef METAMODULE
 	void process(const ProcessArgs& args) override {
-#ifndef METAMODULE
-		Module* manusExpander = getLeftExpander().module;
+		bool bIsLightsTurn = lightsDivider.process();
 
-		bHasExpander = (manusExpander && manusExpander->getModel() == modelManus && !manusExpander->isBypassed());
-#endif
+		float sampleTime;
 
-		if (clockDivider.process()) {
-			const float sampleTime = args.sampleTime * kClockDivider;
+		if (bIsLightsTurn) {
+			sampleTime = args.sampleTime * kLightsFrequency;
 
-			if (inputs[INPUT_STEPS].isConnected()) {
-				stepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.f, 8.f));
-			} else if (params[PARAM_STEPS].getValue() != stepCount) {
-				stepCount = params[PARAM_STEPS].getValue();
-			}
+			handleParameterControls();
 
-			for (int step = 0; step < superSwitches::kMaxSteps; ++step) {
-				if (step < stepCount) {
-					params[PARAM_STEP1 + step].setValue(step == selectedIn ? 1 : 0);
-				} else {
-					params[PARAM_STEP1 + step].setValue(2);
-				}
-
-#ifdef METAMODULE
-				int currentLight = LIGHT_STEP_1 + step * 2;
-				if (step < stepCount) {
-					lights[currentLight + 0].setBrightness(step == selectedIn ? 0.f : kSanguineButtonLightValue);
-					lights[currentLight + 1].setBrightness(step == selectedIn ? kSanguineButtonLightValue : 0.f);
-				} else {
-					lights[currentLight + 0].setBrightness(0.f);
-					lights[currentLight + 1].setBrightness(0.f);
-				}
-#endif
-			}
-
-#ifndef METAMODULE
-			lights[LIGHT_EXPANDER].setBrightnessSmooth(bHasExpander ? kSanguineButtonLightValue : 0.f, sampleTime);
-
-			if (bHasExpander) {
-				for (int step = 0; step < superSwitches::kMaxSteps; ++step) {
-					int currentLight = Manus::LIGHT_STEP_1_RIGHT + step;
-					if (step < stepCount) {
-						manusExpander->getLight(currentLight).setBrightnessSmooth(kSanguineButtonLightValue, sampleTime);
-					} else {
-						manusExpander->getLight(currentLight).setBrightnessSmooth(0.f, sampleTime);
-					}
-				}
-			}
-#endif
-#ifdef METAMODULE
-			lights[LIGHT_RESET_TO_FIRST_STEP].setBrightness(static_cast<bool>(params[PARAM_RESET_TO_FIRST_STEP].getValue()) ?
-				kSanguineButtonLightValue : 0.f);
-			lights[LIGHT_ONE_SHOT].setBrightness(static_cast<bool>(params[PARAM_ONE_SHOT].getValue()) ?
-				kSanguineButtonLightValue : 0.f);
-			lights[LIGHT_NO_REPEATS].setBrightness(static_cast<bool>(params[PARAM_NO_REPEATS].getValue()) ?
-				kSanguineButtonLightValue : 0.f);
-#endif
+			lights[LIGHT_EXPANDER].setBrightnessSmooth(
+				bHasExpander * kSanguineButtonLightValue, sampleTime);
 		}
 
-		for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-			outVoltages[channel / 4] = 0.f;
+		checkReset();
+
+		handleClockControls();
+
+		if (!bHasExpander) {
+			for (int stepNum = 0; stepNum < superSwitches::kMaxSteps; ++stepNum) {
+				handleStepButtons(stepNum);
+
+				params[stepNum].setValue(stepNum == selectedIn ? 1 : stepNum < stepCount ? 0 : 2);
+			}
+
+			inChannelCount = inputs[selectedIn].getChannels();
+
+			copyVoltages();
+
+			setUnselectedInput();
+
+			bResetMutex = false;
+		} else {
+			for (int stepNum = 0; stepNum < superSwitches::kMaxSteps; ++stepNum) {
+				handleStepButtons(stepNum);
+
+				handleExpanderInput(stepNum);
+
+				params[stepNum].setValue(stepNum == selectedIn ? 1 : stepNum < stepCount ? 0 : 2);
+			}
+
+			inChannelCount = inputs[selectedIn].getChannels();
+
+			copyVoltages();
+
+			setUnselectedInput();
+
+			if (bIsLightsTurn) {
+				setExpanderLights(sampleTime);
+			}
+			bResetMutex = false;
+		}
+	}
+#else
+	void process(const ProcessArgs& args) override {
+		bool bIsLightsTurn = lightsDivider.process();
+
+		float sampleTime;
+
+		if (bIsLightsTurn) {
+			sampleTime = args.sampleTime * kLightsFrequency;
+
+			handleParameterControls();
 		}
 
-		if ((inputs[INPUT_RESET].isConnected() && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
-			btReset.process(params[PARAM_RESET].getValue())) {
-			doResetTrigger();
+		checkReset();
+
+		handleClockControls();
+
+		for (int stepNum = 0; stepNum < superSwitches::kMaxSteps; ++stepNum) {
+			handleStepButtons(stepNum);
+
+			params[stepNum].setValue(stepNum == selectedIn ? 1 : stepNum < stepCount ? 0 : 2);
 		}
 
-		if (!bOneShot || (bOneShot && !bOneShotDone)) {
-			if ((inputs[INPUT_DECREASE].isConnected() && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage()))
-				|| btDecrease.process(params[PARAM_DECREASE].getValue())) {
-				doDecreaseTrigger();
-			}
+		inChannelCount = inputs[selectedIn].getChannels();
 
-			if ((inputs[INPUT_INCREASE].isConnected() && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage()))
-				|| btIncrease.process(params[PARAM_INCREASE].getValue())) {
-				doIncreaseTrigger();
-			}
+		copyVoltages();
 
-			if ((inputs[INPUT_RANDOM].isConnected() && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage()))
-				|| btRandom.process(params[PARAM_RANDOM].getValue())) {
-				doRandomTrigger();
-			}
+		setUnselectedInput();
 
-			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-				for (int step = 0; step < stepCount; ++step) {
-#ifndef METAMODULE
-					if (bHasExpander) {
-						const int currentInput = Manus::INPUT_STEP_1 + step;
-						if (stDirectSteps[step].process(manusExpander->getInput(currentInput).getVoltage()) && step < stepCount) {
-							selectedIn = step;
-						}
-					}
+		bResetMutex = false;
+	}
 #endif
 
-					if (btSteps[step].process(params[PARAM_STEP1 + step].getValue()) && step < stepCount) {
-						selectedIn = step;
-					}
-				}
-
-				if (inputs[INPUT_IN1 + selectedIn].isConnected()) {
-					inChannelCount = inputs[INPUT_IN1 + selectedIn].getChannels();
-					for (int channel = 0; channel < inChannelCount; channel += 4) {
-						outVoltages[channel / 4] = inputs[INPUT_IN1 + selectedIn].getVoltageSimd<float_4>(channel);
-					}
-				}
+	void handleParameterControls() {
+		bStepsMutex = false;
+		int knobValue = params[PARAM_STEPS].getValue();
+		if (bHaveStepsCable) {
+			int newStepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.f, 8.f));
+			if (newStepCount != stepCount) {
+				stepCount = newStepCount;
+				bStepsMutex = true;
 			}
+		} else if (knobValue != stepCount) {
+			stepCount = knobValue;
+			bStepsMutex = true;
+		}
 
-			if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-				if (outputs[OUTPUT_OUT].isConnected()) {
-					outputs[OUTPUT_OUT].setChannels(inChannelCount);
-					for (int channel = 0; channel < inChannelCount; channel += 4) {
-						outputs[OUTPUT_OUT].setVoltageSimd(outVoltages[channel / 4], channel);
-					}
-				}
-
-				if (bOneShot && stepsDone == stepCount) {
-					bOneShotDone = true;
-				}
-			}
+		if (selectedIn >= stepCount) {
+			params[PARAM_STEP1 + selectedIn].setValue(0);
+			selectedIn = stepCount - 1;
+			params[PARAM_STEP1 + selectedIn].setValue(1);
 		}
 
 		bNoRepeats = params[PARAM_NO_REPEATS].getValue();
@@ -277,30 +276,82 @@ struct SuperSwitch81 : SanguineModule {
 			selectedIn = 0;
 		}
 		bLastResetToFirstStepValue = bResetToFirstStep;
-
 		bOneShot = params[PARAM_ONE_SHOT].getValue();
 		if (bOneShot && (bOneShot != bLastOneShotValue)) {
 			bOneShotDone = false;
+			stepsDone = 0;
 		}
 		bLastOneShotValue = bOneShot;
-	};
+	}
+
+	void checkReset() {
+		if ((bHaveResetCable && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
+			btReset.process(params[PARAM_RESET].getValue())) {
+			doResetTrigger();
+		}
+	}
+
+	void handleClockControls() {
+		if (!bOneShot || (bOneShot && !bOneShotDone)) {
+			if ((bHaveDecreaseCable && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) ||
+				btDecrease.process(params[PARAM_DECREASE].getValue())) {
+				doDecreaseTrigger();
+			}
+
+			if ((bHaveIncreaseCable && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) ||
+				btIncrease.process(params[PARAM_INCREASE].getValue())) {
+				doIncreaseTrigger();
+			}
+
+			if ((bHaveRandomCable && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) ||
+				btRandom.process(params[PARAM_RANDOM].getValue())) {
+				doRandomTrigger();
+			}
+		}
+	}
+
+	void handleStepButtons(const int stepNum) {
+		const int currentIn = PARAM_STEP1 + stepNum;
+		if (stepNum < stepCount && !bResetMutex && (!bOneShot || (bOneShot && !bOneShotDone)) &&
+			btSteps[stepNum].process(params[currentIn].getValue() && !bStepsMutex)) {
+			selectedIn = stepNum;
+		}
+	}
+
+	void copyVoltages() {
+		if (selectedIn >= 0 && inputsConnected[selectedIn] && bOutputConnected) {
+			int currentChannel;
+			for (int channel = 0; channel < inChannelCount; channel += 4) {
+				currentChannel = channel >> 2;
+				inVoltages[currentChannel] = inputs[INPUT_IN1 + selectedIn].getVoltageSimd<float_4>(channel);
+				outputs[OUTPUT_OUT].setVoltageSimd(inVoltages[currentChannel], channel);
+			}
+			outputs[OUTPUT_OUT].setChannels(inChannelCount);
+		}
+	}
+
+	void setUnselectedInput() {
+		int activeIn = INPUT_IN1 + selectedIn;
+		if (!inputsConnected[activeIn]) {
+			outputs[OUTPUT_OUT].setChannels(0);
+		}
+	}
 
 	void doDecreaseTrigger() {
-		if (bResetToFirstStep || (!bResetToFirstStep && bClockReceived)) {
-			--selectedIn;
+		--selectedIn;
 
-			if (selectedIn < 0) {
-				selectedIn = stepCount - 1;
-			}
-		} else {
+		if (selectedIn < 0) {
 			selectedIn = stepCount - 1;
-			bClockReceived = true;
 		}
+
 		++stepsDone;
+		if (bOneShot && stepsDone == stepCount) {
+			bOneShotDone = true;
+		}
 		if (stepsDone > stepCount) {
 			stepsDone = 0;
 		}
-	};
+	}
 
 	void doIncreaseTrigger() {
 		++selectedIn;
@@ -309,8 +360,10 @@ struct SuperSwitch81 : SanguineModule {
 			selectedIn = 0;
 		}
 
-		bClockReceived = true;
 		++stepsDone;
+		if (bOneShot && stepsDone == stepCount) {
+			bOneShotDone = true;
+		}
 
 		if (stepsDone > stepCount) {
 			stepsDone = 0;
@@ -326,42 +379,138 @@ struct SuperSwitch81 : SanguineModule {
 				randomNum = pcgRng(stepCount);
 			selectedIn = randomNum;
 		}
-		bClockReceived = true;
+
 		++stepsDone;
+		if (bOneShot && stepsDone == stepCount) {
+			bOneShotDone = true;
+		}
+
 		if (stepsDone > stepCount) {
 			stepsDone = 0;
 		}
-	};
+	}
 
 	void doResetTrigger() {
-		if (bResetToFirstStep) {
-			selectedIn = 0;
-		} else {
-			selectedIn = -1;
-			bClockReceived = false;
-			outputs[OUTPUT_OUT].setChannels(0);
-			for (int channel = 0; channel < PORT_MAX_CHANNELS; channel += 4) {
-				outVoltages[channel / 4] = 0.f;
-			}
-		}
+		selectedIn = bResetToFirstStep ? 0 : -1;
 		stepsDone = 0;
-		if (bOneShot)
-			bOneShotDone = false;
+		bOneShotDone = false;
+		bLastOneShotValue = bOneShot;
+		bLastResetToFirstStepValue = bResetToFirstStep;
+		bResetMutex = true;
 	};
 
 	void onReset() override {
 		if (bResetToFirstStep) {
 			selectedIn = 0;
 		} else {
+			inChannelCount = 0;
+
 			selectedIn = -1;
-			bClockReceived = false;
 		}
 		stepCount = superSwitches::kMaxSteps;
+
+		params[PARAM_STEPS].setValue(superSwitches::kMaxSteps);
+		params[PARAM_RESET_TO_FIRST_STEP].setValue(bResetToFirstStep);
+		bStepsMutex = false;
+		bResetMutex = false;
+
+		for (int in = 0; in < superSwitches::kMaxSteps; ++in) {
+			params[PARAM_STEP1 + in].setValue(0);
+		}
+
+		if (selectedIn == 0) {
+			params[PARAM_STEP1].setValue(1);
+		}
 	}
 
 	void onRandomize() override {
 		stepCount = pcgRng(superSwitches::kMaxSteps) + 1;
 		selectedIn = pcgRng(stepCount);
+		params[PARAM_STEPS].setValue(stepCount);
+	}
+
+#ifndef METAMODULE
+	void handleExpanderInput(const int stepNum) {
+		int currentIn = Manus::INPUT_STEP_1 + stepNum;
+		if (manusExpander->getInputConnected(stepNum) && stepNum < stepCount &&
+			(!bOneShot || (bOneShot && !bOneShotDone)) &&
+			stDirectSteps[stepNum].process(manusExpander->getInput(currentIn).getVoltage())) {
+			selectedIn = stepNum;
+		}
+	}
+
+	void setExpanderLights(const float sampleTime) {
+		bool bLightActive;
+		int currentLight;
+		for (int step = 0; step < superSwitches::kMaxSteps; ++step) {
+			currentLight = Manus::LIGHT_STEP_1_RIGHT + step;
+			bLightActive = step < stepCount;
+			manusExpander->getLight(currentLight).setBrightnessSmooth(
+				bLightActive * kSanguineButtonLightValue, sampleTime);
+		}
+	}
+
+	void onBypass(const BypassEvent& e) override {
+		if (bHasExpander) {
+			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_RIGHT).setBrightness(0.f);
+		}
+		Module::onBypass(e);
+	}
+
+	void onUnBypass(const UnBypassEvent& e) override {
+		if (bHasExpander) {
+			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_RIGHT).setBrightness(kSanguineButtonLightValue);
+		}
+		Module::onUnBypass(e);
+	}
+
+	void onExpanderChange(const ExpanderChangeEvent& e) override {
+		if (e.side == 0) {
+			Module* leftModule = getLeftExpander().module;
+
+			bHasExpander = (leftModule && leftModule->getModel() == modelManus && !leftModule->isBypassed());
+
+			if (bHasExpander) {
+				manusExpander = dynamic_cast<Manus*>(leftModule);
+			}
+		}
+	}
+#endif
+
+	void onPortChange(const PortChangeEvent& e) override {
+		switch (e.type) {
+		case Port::INPUT:
+			if (e.portId < INPUT_STEPS) {
+				inputsConnected[e.portId] = e.connecting;
+			} else {
+				switch (e.portId) {
+				case INPUT_STEPS:
+					bHaveStepsCable = e.connecting;
+					break;
+
+				case INPUT_RESET:
+					bHaveResetCable = e.connecting;
+					break;
+
+				case INPUT_DECREASE:
+					bHaveDecreaseCable = e.connecting;
+					break;
+
+				case INPUT_INCREASE:
+					bHaveIncreaseCable = e.connecting;
+					break;
+
+				case INPUT_RANDOM:
+					bHaveRandomCable = e.connecting;
+					break;
+				}
+			}
+			break;
+
+		case Port::OUTPUT:
+			bOutputConnected = e.connecting;
+			break;
+		}
 	}
 
 	json_t* dataToJson() override {
@@ -384,7 +533,6 @@ struct SuperSwitch81 : SanguineModule {
 		bLastResetToFirstStepValue = bResetToFirstStep;
 		if (!bResetToFirstStep) {
 			selectedIn = -1;
-			bClockReceived = false;
 		} else {
 			selectedIn = 0;
 		}
@@ -397,24 +545,6 @@ struct SuperSwitch81 : SanguineModule {
 		}
 		bLastOneShotValue = bOneShot;
 	}
-
-#ifndef METAMODULE
-	void onBypass(const BypassEvent& e) override {
-		if (bHasExpander) {
-			Module* manusExpander = getRightExpander().module;
-			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(0.f);
-		}
-		Module::onBypass(e);
-	}
-
-	void onUnBypass(const UnBypassEvent& e) override {
-		if (bHasExpander) {
-			Module* manusExpander = getRightExpander().module;
-			manusExpander->getLight(Manus::LIGHT_MASTER_MODULE_LEFT).setBrightness(kSanguineButtonLightValue);
-		}
-		Module::onUnBypass(e);
-	}
-#endif
 };
 
 struct SuperSwitch81Widget : SanguineModuleWidget {

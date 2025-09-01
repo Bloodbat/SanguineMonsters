@@ -8,6 +8,10 @@
 
 - Gegenees: don't disable manual, direct step selection when reset to first step is disabled.
 
+- Hydra: don't keep the selected input if it is higher than the step count.
+
+- Hydra: don't disable manual, direct step selection when reset to first step is disabled.
+
 - Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
 
 ## Additions
