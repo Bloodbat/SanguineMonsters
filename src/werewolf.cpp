@@ -60,18 +60,15 @@ struct Werewolf : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		bool bInputsNormalled = true;
-
 		float voltageSumLeft = 0.f;
 		float voltageSumRight = 0.f;
 		float foldSum = 0.f;
 		float gainSum = 0.f;
 
-		bool bIsLightsTurn = lightsDivider.process();
-
 		int channelCount = std::max(inputs[INPUT_LEFT].getChannels(), inputs[INPUT_RIGHT].getChannels());
 
-		bInputsNormalled = bLeftInConnected ^ bRightInConnected;
+		bool bIsLightsTurn = lightsDivider.process();
+		bool bInputsNormalled = bLeftInConnected ^ bRightInConnected;
 		bool bOutputsNormalled = bLeftOutConnected ^ bRightOutConnected;
 
 		if (channelCount > 0) {
