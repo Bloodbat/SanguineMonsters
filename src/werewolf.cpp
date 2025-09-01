@@ -90,9 +90,6 @@ struct Werewolf : SanguineModule {
 				gainSum += channelGain;
 				foldSum += channelFold;
 
-				outputs[OUTPUT_LEFT].setChannels(channelCount);
-				outputs[OUTPUT_RIGHT].setChannels(channelCount);
-
 				if (bLeftInConnected) {
 					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
 					if (bIsNormalled) {
@@ -159,6 +156,9 @@ struct Werewolf : SanguineModule {
 				}
 			}
 		}
+
+		outputs[OUTPUT_LEFT].setChannels(channelCount);
+		outputs[OUTPUT_RIGHT].setChannels(channelCount);
 
 		if (bIsLightsTurn) {
 			const float sampleTime = args.sampleTime * kLightsFrequency;
