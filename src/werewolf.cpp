@@ -162,7 +162,7 @@ struct Werewolf : SanguineModule {
 			const float sampleTime = args.sampleTime * kLightsFrequency;
 
 			if (channelCount < 2) {
-				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
+				lights[LIGHT_EYE_1].setBrightnessSmooth(math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f), sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(0.f, sampleTime);
 				if (bIsNormalled) {
@@ -175,17 +175,17 @@ struct Werewolf : SanguineModule {
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(0.f, sampleTime);
 				}
 
-				lights[LIGHT_GAIN + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_GAIN].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_GAIN + 1].setBrightnessSmooth(math::rescale(gainSum, 0.f, 20.f, 0.f, 1.f), sampleTime);
 				lights[LIGHT_GAIN + 2].setBrightnessSmooth(0.f, sampleTime);
 
 				float rescaledLight = math::rescale(foldSum, 0.f, 10.f, 0.f, 1.f);
-				lights[LIGHT_FOLD + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_FOLD].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 2].setBrightnessSmooth(0.f, sampleTime);
 			} else {
 				float rescaledLight = math::rescale(voltageSumLeft / channelCount, 0.f, 5.f, 0.f, 1.f);
-				lights[LIGHT_EYE_1 + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_EYE_1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_EYE_1 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 				if (bIsNormalled) {
@@ -199,12 +199,12 @@ struct Werewolf : SanguineModule {
 					lights[LIGHT_EYE_2 + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 				}
 				rescaledLight = math::rescale(gainSum / channelCount, 0.f, 20.f, 0.f, 1.f);
-				lights[LIGHT_GAIN + 0].setBrightnessSmooth(0.f, sampleTime);
+				lights[LIGHT_GAIN].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_GAIN + 1].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_GAIN + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 
 				rescaledLight = math::rescale(foldSum / channelCount, 0.f, 10.f, 0.f, 1.f);
-				lights[LIGHT_FOLD + 0].setBrightnessSmooth(rescaledLight, sampleTime);
+				lights[LIGHT_FOLD].setBrightnessSmooth(rescaledLight, sampleTime);
 				lights[LIGHT_FOLD + 1].setBrightnessSmooth(0.f, sampleTime);
 				lights[LIGHT_FOLD + 2].setBrightnessSmooth(rescaledLight, sampleTime);
 			}
