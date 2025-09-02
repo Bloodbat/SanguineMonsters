@@ -88,22 +88,28 @@ struct Werewolf : SanguineModule {
 				gainSum += channelGain;
 				foldSum += channelFold;
 
-				if (bLeftInConnected) {
-					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
-					distort(voltageInLeft, voltageOutLeft, channelFold);
-					if (bInputsNormalled) {
-						voltageOutRight = voltageOutLeft;
-					}
-				}
-				if (bRightInConnected) {
-					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
-					distort(voltageInRight, voltageOutRight, channelFold);
-					if (bInputsNormalled) {
-						voltageOutLeft = voltageOutRight;
-					}
-				}
-
 				float voltageMix = 0.f;
+
+				if (bInputsNormalled) {
+					if (bLeftInConnected) {
+						voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
+						distort(voltageInLeft, voltageOutLeft, channelFold);
+						if (bInputsNormalled) {
+							voltageOutRight = voltageOutLeft;
+						}
+					}
+					if (bRightInConnected) {
+						voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
+						distort(voltageInRight, voltageOutRight, channelFold);
+						if (bInputsNormalled) {
+							voltageOutLeft = voltageOutRight;
+						}
+					}
+				} else {
+					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
+					voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
+					distortStereo(voltageInLeft, voltageOutLeft, voltageInRight, voltageOutRight, channelFold);
+				}
 
 				if (bOutputsNormalled) {
 					if (!bInputsNormalled) {
@@ -214,6 +220,58 @@ struct Werewolf : SanguineModule {
 
 			if (i == 99) {
 				outVoltage = 0.f;
+			}
+		}
+	}
+
+	inline void distortStereo(const float& inVoltageLeft, float& outVoltageLeft,
+		const float& inVoltageRight, float& outVoltageRight, const float fold) {
+		outVoltageLeft = inVoltageLeft;
+		outVoltageRight = inVoltageRight;
+
+		bool bFoldLeft = true;
+		bool bFoldRight = true;
+
+		int countLeft = 0;
+		int countRight = 0;
+
+		const float foldFactor = fold / 5.f;
+		for (int i = 0; i < 100; ++i) {
+			if (bFoldLeft && outVoltageLeft < -5.f) {
+				outVoltageLeft = -5.f + (-outVoltageLeft - 5.f) * foldFactor;
+			}
+			if (bFoldRight && outVoltageRight < -5.f) {
+				outVoltageRight = -5.f + (-outVoltageRight - 5.f) * foldFactor;
+			}
+
+			if (bFoldLeft && outVoltageLeft > 5.f) {
+				outVoltageLeft = 5.f - (outVoltageLeft - 5.f) * foldFactor;
+			}
+			if (bFoldRight && outVoltageRight > 5.f) {
+				outVoltageRight = 5.f - (outVoltageRight - 5.f) * foldFactor;
+			}
+
+			if (outVoltageLeft >= -5.f && outVoltageLeft <= 5.f) {
+				bFoldLeft = false;
+			} else {
+				++countLeft;
+			}
+			if (outVoltageRight >= -5.f && outVoltageRight <= 5.f) {
+				bFoldRight = false;
+			} else {
+				++countRight;
+			}
+
+			if (!bFoldLeft & !bFoldRight) {
+				break;
+			}
+
+			if (countLeft == 99) {
+				outVoltageLeft = 0.f;
+			}
+
+			if (countRight == 99) {
+				outVoltageRight = 0.f;
 			}
 		}
 	}
