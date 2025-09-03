@@ -94,16 +94,12 @@ struct Werewolf : SanguineModule {
 					if (bLeftInConnected) {
 						voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
 						distort(voltageInLeft, voltageOutLeft, channelFold);
-						if (bInputsNormalled) {
-							voltageOutRight = voltageOutLeft;
-						}
+						voltageOutRight = voltageOutLeft;
 					}
 					if (bRightInConnected) {
 						voltageInRight = inputs[INPUT_RIGHT].getVoltage(channel) * channelGain;
 						distort(voltageInRight, voltageOutRight, channelFold);
-						if (bInputsNormalled) {
-							voltageOutLeft = voltageOutRight;
-						}
+						voltageOutLeft = voltageOutRight;
 					}
 				} else {
 					voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
