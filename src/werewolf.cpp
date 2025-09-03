@@ -262,7 +262,7 @@ struct Werewolf : SanguineModule {
 				++countRight;
 			}
 
-			if (!bFoldLeft & !bFoldRight) {
+			if ((!bFoldLeft) & (!bFoldRight)) {
 				break;
 			}
 
