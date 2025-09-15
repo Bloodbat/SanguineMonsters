@@ -27,7 +27,7 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
     An expander for Alchemist that provides individual post-mix channel outputs and gain CV control.
 
   - ### Crucible
-  
+
     An expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode
 
 - ### Brainz
@@ -105,3 +105,26 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
 - ### Werewolf
 
   A polyphonic, stereo, dirty distortion.
+
+  ## MetaModule port modules
+
+A port for MetaModule, courtesy of Eric Gao, is available!
+
+The modules available in the MetaModule port are the following:
+
+|                                                |                                                  |                                                  |
+| :--------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: |
+|     ![Aion](meta_pics/aion_metamodule.png)     | ![Alchemist](meta_pics/alchemist_metamodule.png) |     ![Blank](meta_pics/blank_metamodule.png)     |
+|                      Aion                      |                    Alchemist                     |                      Blank                       |
+|   ![Brainz](meta_pics/brainz_metamodule.png)   |   ![Bukavac](meta_pics/bukavac_metamodule.png)   |   ![Chronos](meta_pics/chronos_metamodule.png)   |
+|                     Brainz                     |                     Bukavac                      |                     Chronos                      |
+|  ![Dolly-X](meta_pics/dolly-x_metamodule.png)  |   ![Dungeon](meta_pics/dungeon_metamodule.png)   |   ![Fortuna](meta_pics/fortuna_metamodule.png)   |
+|                    Dolly-X                     |                     Dungeon                      |                     Fortuna                      |
+| ![Gegenees](meta_pics/gegenees_metamodule.png) |     ![Hydra](meta_pics/hydra_metamodule.png)     |   ![Kitsune](meta_pics/kitsune_metamodule.png)   |
+|                    Gegenees                    |                      Hydra                       |                     Kitsune                      |
+|   ![Medusa](meta_pics/medusa_metamodule.png)   |  ![Oraculus](meta_pics/oraculus_metamodule.png)  | ![Oubliette](meta_pics/oubliette_metamodule.png) |
+|                     Medusa                     |                     Oraculus                     |                    Oubliette                     |
+|    ![Raiju](meta_pics/raiju_metamodule.png)    |    ![Sphinx](meta_pics/sphinx_metamodule.png)    |  ![Werewolf](meta_pics/werewolf_metamodule.png)  |
+|                     Raiju                      |                      Sphinx                      |                     Werewolf                     |
+
+Keep in mind we're not in charge of building or releasing the MetaModule plugin; so available modules and their faceplates may be out of sync with those presented here.
