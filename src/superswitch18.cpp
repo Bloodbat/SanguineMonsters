@@ -249,7 +249,7 @@ struct SuperSwitch18 : SanguineModule {
 		if (bIsLightsTurn) {
 			int currentLight
 				for (int step = 0; step < superSwitches::kMaxSteps; ++step) {
-					currentLight = LIGHT_STEP_1 + step * 2;
+					currentLight = LIGHT_STEP_1 + (step << 1);
 					if (step < stepCount) {
 						lights[currentLight].setBrightness((step != selectedOut) *
 							kSanguineButtonLightValue);
