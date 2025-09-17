@@ -151,7 +151,7 @@ struct Fortuna : SanguineModule {
                 }
 
                 const float sampleTime = args.sampleTime * kLightsFrequency;
-                int currentLight = LIGHT_GATE_STATE_1_A + section * 2;
+                int currentLight = LIGHT_GATE_STATE_1_A + (section << 1);
                 float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
                 lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);
                 lights[currentLight].setBrightnessSmooth(lightValueA, sampleTime);
@@ -159,12 +159,12 @@ struct Fortuna : SanguineModule {
                 lightValueB = rescale(lightValueB, 0.f, 5.f, 0.f, 1.f);
                 lights[currentLight + 1].setBrightnessSmooth(lightValueB, sampleTime);
 
-                currentLight = LIGHTS_PROBABILITY + section * 2;
+                currentLight = LIGHTS_PROBABILITY + (section << 1);
                 float rescaledLight = rescale(cvVoltages[section][ledsChannel], 0.f, 5.f, 0.f, 1.f);
                 lights[currentLight + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
                 lights[currentLight].setBrightnessSmooth(rescaledLight, sampleTime);
 
-                currentLight = LIGHTS_ROLL_MODE + section * 2;
+                currentLight = LIGHTS_ROLL_MODE + (section << 1);
                 lights[currentLight].setBrightnessSmooth((rollModes[section] == fortuna::ROLL_DIRECT) *
                     kSanguineButtonLightValue, sampleTime);
                 lights[currentLight + 1].setBrightnessSmooth((rollModes[section] == fortuna::ROLL_TOGGLE) *
