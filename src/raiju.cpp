@@ -126,7 +126,7 @@ struct Raiju : SanguineModule {
 				}
 
 #ifdef METAMODULE
-				int currentLight = LIGHT_SELECTED_CHANNEL_1 + voltage * 2;
+				int currentLight = LIGHT_SELECTED_CHANNEL_1 + (voltage << 1);
 				bool bIsSelectedVoltage = selectedVoltage == voltage;
 				lights[currentLight].setBrightness(!bIsSelectedVoltage * kSanguineButtonLightValue);
 				lights[currentLight + 1].setBrightness(bIsSelectedVoltage * kSanguineButtonLightValue);
