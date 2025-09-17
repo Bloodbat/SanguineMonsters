@@ -343,7 +343,7 @@ struct Alchemist : SanguineModule {
 		for (int channel = 0; channel < channelCount; ++channel) {
 			vuMetersGains[channel].process(sampleTime, outVoltages[channel] / 10.f);
 
-			int currentLight = LIGHT_GAIN + channel * 2;
+			int currentLight = LIGHT_GAIN + (channel << 1);
 			float redValue = vuMetersGains[channel].getBrightness(0.f, 0.f);
 			float yellowValue = vuMetersGains[channel].getBrightness(-3.f, -1.f);
 			float greenValue = vuMetersGains[channel].getBrightness(-36.f, -1.f);
@@ -361,7 +361,7 @@ struct Alchemist : SanguineModule {
 		for (int channel = channelCount; channel < PORT_MAX_CHANNELS; ++channel) {
 			vuMetersGains[channel].process(sampleTime, outVoltages[channel]);
 
-			int currentLight = LIGHT_GAIN + channel * 2;
+			int currentLight = LIGHT_GAIN + (channel << 1);
 
 			lights[currentLight].setBrightness(0.f);
 			lights[currentLight + 1].setBrightness(0.f);
