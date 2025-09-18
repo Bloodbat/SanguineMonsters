@@ -67,6 +67,7 @@ struct Oraculus : SanguineModule {
 	bool bResetConnected = false;
 
 	const static int kLightsFrequency = 16;
+	int jitteredLightsFrequency;
 
 	pcg32 pcgRng;
 
@@ -91,8 +92,6 @@ struct Oraculus : SanguineModule {
 		configOutput(OUTPUT_MONOPHONIC, "Monophonic");
 
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
-
-		lightsDivider.setDivision(kLightsFrequency);
 	};
 
 	void process(const ProcessArgs& args) override {
@@ -181,7 +180,7 @@ struct Oraculus : SanguineModule {
 
 	void updateLights(const ProcessArgs& args) {
 		// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
-		const float sampleTime = args.sampleTime * kLightsFrequency;
+		const float sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 		int currentLight;
 		bool bChannelAvailable;
@@ -239,6 +238,11 @@ struct Oraculus : SanguineModule {
 			bOutputConnected = e.connecting;
 			break;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 };
 
