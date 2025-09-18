@@ -72,6 +72,7 @@ struct Aion : SanguineModule {
 
 	static const int kKnobsFrequency = 64;
 	static const int kModuleSections = 4;
+	int jitteredKnobsFrequency;
 
 	bool timersStarted[kModuleSections] = {};
 
@@ -117,8 +118,6 @@ struct Aion : SanguineModule {
 
 			setTimerValues[section] = 1;
 			currentTimerValues[section] = 1;
-
-			knobsDivider.setDivision(kKnobsFrequency);
 		}
 	}
 
@@ -244,6 +243,11 @@ struct Aion : SanguineModule {
 			outputTriggers[e.portId] = e.connecting;
 			break;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredKnobsFrequency = kKnobsFrequency + (getId() % kKnobsFrequency);
+		knobsDivider.setDivision(jitteredKnobsFrequency);
 	}
 
 	json_t* dataToJson() override {

@@ -54,7 +54,8 @@ struct Dungeon : SanguineModule {
 	NVGcolor outerMoon = dungeon::moonColors[1].outerColor;
 #endif
 
-	static const int kClockDividerFrequency = 512;
+	static const int kLightsFrequency = 512;
+	int jitteredLightsFrequency;
 
 	static constexpr float kMinSlew = -9.965784285; // std::log2(1e-3f)
 	static constexpr float kMaxSlew = 3.321928095; // std::log2(10.f)
@@ -73,7 +74,7 @@ struct Dungeon : SanguineModule {
 
 	std::string modeLabel = dungeon::modeLabels[0];
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider lightsDivider;
 
 	sanguineRandom::SanguineRandomNormal rngNormal;
 
@@ -100,8 +101,6 @@ struct Dungeon : SanguineModule {
 		configOutput(OUTPUT_VOLTAGE, "Voltage");
 
 		rngNormal.init(std::round(system::getUnixTime()));
-
-		clockDivider.division = kClockDividerFrequency;
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -198,11 +197,11 @@ struct Dungeon : SanguineModule {
 
 		lights[LIGHT_TRIGGER].setBrightnessSmooth(engine.isTriggered * kSanguineButtonLightValue, args.sampleTime);
 
-		if (clockDivider.process()) {
+		if (lightsDivider.process()) {
 			moduleMode = ModuleModes(params[PARAM_MODE].getValue());
 			modeLabel = dungeon::modeLabels[moduleMode];
 
-			const float sampleTime = args.sampleTime * kClockDividerFrequency;
+			const float sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			if (!bInSlewConnected) {
 				lights[LIGHT_SLEW].setBrightnessSmooth(0.f, sampleTime);
@@ -294,6 +293,11 @@ struct Dungeon : SanguineModule {
 				break;
 			}
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 
 	json_t* dataToJson() override {
