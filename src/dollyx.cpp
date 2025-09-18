@@ -31,7 +31,8 @@ struct DollyX : SanguineModule {
 	};
 
 	static const int kSubmodules = 2;
-	static const int kClockDivision = 64;
+	static const int kLogicFrequency = 64;
+	int jitteredLogicFrequency;
 
 	int cloneCounts[kSubmodules];
 
@@ -39,7 +40,7 @@ struct DollyX : SanguineModule {
 	bool inputsConnected[kSubmodules] = {};
 	bool outputsConnected[kSubmodules] = {};
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider logicDivider;
 
 	DollyX() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
@@ -57,12 +58,11 @@ struct DollyX : SanguineModule {
 			configInput(INPUT_CHANNELS1_CV + submodule, string::f("Channels CV %d", componentOffset));
 		}
 
-		clockDivider.setDivision(kClockDivision);
 		init();
 	};
 
 	void process(const ProcessArgs& args) override {
-		if (clockDivider.process()) {
+		if (logicDivider.process()) {
 			updateCloneCounts();
 		}
 
@@ -138,6 +138,11 @@ struct DollyX : SanguineModule {
 			outputsConnected[e.portId] = e.connecting;
 			break;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLogicFrequency = kLogicFrequency + (getId() % kLogicFrequency);
+		logicDivider.setDivision(jitteredLogicFrequency);
 	}
 };
 

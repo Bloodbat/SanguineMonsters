@@ -91,7 +91,8 @@ struct Sphinx : SanguineModule {
 	sphinx::PatternStyle lastPatternStyle = sphinx::RANDOM_PATTERN;
 	sphinx::PatternStyle patternStyle = sphinx::EUCLIDEAN_PATTERN;
 
-	static const int kClockDivider = 16;
+	static const int kLightsFrequency = 16;
+	int jitteredLightsFrequency;
 
 	dsp::SchmittTrigger stClockInput;
 	dsp::SchmittTrigger stResetInput;
@@ -100,7 +101,7 @@ struct Sphinx : SanguineModule {
 	dsp::PulseGenerator pgAccent;
 	dsp::PulseGenerator pgEoc;
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider lightsDivider;
 
 	pcg32 pcgRng;
 
@@ -137,8 +138,6 @@ struct Sphinx : SanguineModule {
 		finalSequence.fill(0);
 		finalAccents.fill(0);
 		init();
-
-		clockDivider.setDivision(kClockDivider);
 
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
 	}
@@ -247,7 +246,7 @@ struct Sphinx : SanguineModule {
 
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) * 10.f);
 
-		if (clockDivider.process()) {
+		if (lightsDivider.process()) {
 			float_4 parameterVoltages;
 
 			parameterVoltages[0] = inputs[INPUT_PADDING].getVoltage();
@@ -293,7 +292,7 @@ struct Sphinx : SanguineModule {
 
 			gateMode = static_cast<sphinx::GateMode>(params[PARAM_GATE_MODE].getValue());
 
-			const float sampleTime = args.sampleTime * kClockDivider;
+			const float sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			// Update lights.
 			float lightVoltage1;
@@ -458,6 +457,11 @@ struct Sphinx : SanguineModule {
 
 	void onReset() override {
 		init();
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 };
 

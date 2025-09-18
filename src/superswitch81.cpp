@@ -123,6 +123,7 @@ struct SuperSwitch81 : SanguineModule {
 	int stepsDone = 0;
 
 	static const int kLightsFrequency = 16;
+	int jitteredLightsFrequency;
 
 	float_4 inVoltages[4] = {};
 
@@ -160,8 +161,6 @@ struct SuperSwitch81 : SanguineModule {
 		params[PARAM_STEP1].setValue(1);
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
-
-		lightsDivider.setDivision(kLightsFrequency);
 	};
 
 #ifndef METAMODULE
@@ -171,7 +170,7 @@ struct SuperSwitch81 : SanguineModule {
 		float sampleTime;
 
 		if (bIsLightsTurn) {
-			sampleTime = args.sampleTime * kLightsFrequency;
+			sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			handleParameterControls();
 
@@ -225,7 +224,7 @@ struct SuperSwitch81 : SanguineModule {
 		float sampleTime;
 
 		if (bIsLightsTurn) {
-			sampleTime = args.sampleTime * kLightsFrequency;
+			sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			handleParameterControls();
 		}
@@ -427,6 +426,11 @@ struct SuperSwitch81 : SanguineModule {
 		stepCount = pcgRng(superSwitches::kMaxSteps) + 1;
 		selectedIn = pcgRng(stepCount);
 		params[PARAM_STEPS].setValue(stepCount);
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 
 #ifndef METAMODULE

@@ -47,6 +47,7 @@ struct Fortuna : SanguineModule {
 
     static const int kLightsFrequency = 16;
     static const int kMaxModuleSections = 2;
+    int jitteredLightsFrequency;
     int ledsChannel = 0;
     int channelCount = 0;
 
@@ -75,8 +76,6 @@ struct Fortuna : SanguineModule {
             configOutput(OUTPUT_OUT_1A + section, string::f("Channel %d A", section + 1));
             configOutput(OUTPUT_OUT_1B + section, string::f("Channel %d B", section + 1));
         }
-
-        lightsDivider.setDivision(kLightsFrequency);
     }
 
     void process(const ProcessArgs& args) override {
@@ -150,7 +149,7 @@ struct Fortuna : SanguineModule {
                     ledsChannel = channelCount - 1;
                 }
 
-                const float sampleTime = args.sampleTime * kLightsFrequency;
+                const float sampleTime = args.sampleTime * jitteredLightsFrequency;
                 int currentLight = LIGHT_GATE_STATE_1_A + (section << 1);
                 float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
                 lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);
@@ -211,6 +210,11 @@ struct Fortuna : SanguineModule {
             outputsConnected[e.portId] = e.connecting;
             break;
         }
+    }
+
+    void onAdd(const AddEvent& e) override {
+        jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+        lightsDivider.setDivision(jitteredLightsFrequency);
     }
 
     json_t* dataToJson() override {

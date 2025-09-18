@@ -52,7 +52,8 @@ struct Raiju : SanguineModule {
 	int lastSelectedVoltage = -1;
 	int selectedVoltage = 0;
 
-	static const int kClockDivision = 1024;
+	static const int kLogicFrequency = 1024;
+	int jitteredLogicFrequency;
 
 	float voltages[kVoltagesCount];
 
@@ -60,7 +61,7 @@ struct Raiju : SanguineModule {
 
 	dsp::BooleanTrigger btButtons[kVoltagesCount];
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider logicDivider;
 
 	Raiju() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -80,14 +81,12 @@ struct Raiju : SanguineModule {
 		configOutput(OUTPUT_EIGHT_CHANNELS, "Voltage series polyphonic");
 
 		memset(voltages, 0, sizeof(float) * kVoltagesCount);
-
-		clockDivider.setDivision(kClockDivision);
 	}
 
 	void process(const ProcessArgs& args) override {
 		using simd::float_4;
 
-		if (clockDivider.process()) {
+		if (logicDivider.process()) {
 			pollSwitches();
 			currentChannelCount = channelCounts[selectedVoltage];
 			if (selectedVoltage != lastSelectedVoltage) {
@@ -154,6 +153,11 @@ struct Raiju : SanguineModule {
 		} else {
 			bPolyOutConnected = e.connecting;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLogicFrequency = kLogicFrequency + (getId() % kLogicFrequency);
+		logicDivider.setDivision(jitteredLogicFrequency);
 	}
 
 	json_t* dataToJson() override {

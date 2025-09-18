@@ -99,9 +99,10 @@ struct Brainz : SanguineModule {
 		{0.f, 0.f, kSanguineButtonLightValue},
 	};
 
-	static const int kClockDivider = 64;
+	static const int kLogicFrequency = 64;
 	static const int kMaxSteps = 3;
 	static const int kMaxOutTriggers = 4;
+	int jitteredLogicDivider;
 
 	bool bEnteredMetronome = false;
 	bool bInMetronome = false;
@@ -149,7 +150,7 @@ struct Brainz : SanguineModule {
 	dsp::PulseGenerator pgTrigger;
 	dsp::PulseGenerator pgOutTriggers[kMaxOutTriggers];
 
-	dsp::ClockDivider clockDivider;
+	dsp::ClockDivider logicDivider;
 
 	Brainz() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -208,8 +209,6 @@ struct Brainz : SanguineModule {
 		configButton(PARAM_RESET_BUTTON, "Reset");
 
 		onReset();
-
-		clockDivider.setDivision(kClockDivider);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -236,9 +235,9 @@ struct Brainz : SanguineModule {
 				handleRunTriggers();
 			}
 
-			if (clockDivider.process()) {
+			if (logicDivider.process()) {
 				// Updated only every N samples, so make sure setBrightnessSmooth accounts for this.
-				const float sampleTime = args.sampleTime * kClockDivider;
+				const float sampleTime = args.sampleTime * jitteredLogicDivider;
 
 				if (params[PARAM_LOGIC_ENABLED].getValue()) {
 					switch (moduleState) {
@@ -858,6 +857,11 @@ struct Brainz : SanguineModule {
 				break;
 			}
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLogicDivider = kLogicFrequency + (getId() % kLogicFrequency);
+		logicDivider.setDivision(jitteredLogicDivider);
 	}
 };
 
