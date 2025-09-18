@@ -47,6 +47,7 @@ struct Alchemist : SanguineModule {
 	};
 
 	const int kLightsFrequency = 256;
+	int jitteredLightsFrequency;
 
 	int channelCount = 0;
 
@@ -131,8 +132,6 @@ struct Alchemist : SanguineModule {
 		configOutput(OUTPUT_MONO_MIX, "Monophonic mix");
 
 		configBypass(INPUT_POLYPHONIC, OUTPUT_POLYPHONIC_MIX);
-
-		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 #ifndef METAMODULE
@@ -158,7 +157,7 @@ struct Alchemist : SanguineModule {
 
 		if (!bHaveLeftExpander) {
 			if (bIsLightsTurn) {
-				sampleTime = kLightsFrequency * args.sampleTime;
+				sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 				bool bIgnoreMuteAll = false;
 				bool bIgnoreSoloAll = false;
@@ -180,7 +179,7 @@ struct Alchemist : SanguineModule {
 				readCrucibleControls();
 
 				if (bIsLightsTurn) {
-					sampleTime = kLightsFrequency * args.sampleTime;
+					sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 					bool bIgnoreMuteAll = false;
 					bool bIgnoreSoloAll = false;
@@ -206,7 +205,7 @@ struct Alchemist : SanguineModule {
 				}
 			} else {
 				if (bIsLightsTurn) {
-					sampleTime = kLightsFrequency * args.sampleTime;
+					sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 					bool bIgnoreMuteAll = false;
 					bool bIgnoreSoloAll = false;
@@ -288,7 +287,7 @@ struct Alchemist : SanguineModule {
 		setOutputs(monoMix, masterOutVoltages);
 
 		if (bIsLightsTurn) {
-			const float sampleTime = kLightsFrequency * args.sampleTime;
+			const float sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 			setLights(sampleTime, outVoltages, monoMix, bMasterMuted);
 		}
@@ -703,6 +702,11 @@ struct Alchemist : SanguineModule {
 				break;
 			}
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 
 	json_t* dataToJson() override {

@@ -124,6 +124,7 @@ struct SuperSwitch18 : SanguineModule {
 	int stepsDone = 0;
 
 	static const int kLightsFrequency = 16;
+	int jitteredLightsFrequency;
 
 	float_4 outVoltages[4] = {};
 
@@ -163,7 +164,6 @@ struct SuperSwitch18 : SanguineModule {
 		params[PARAM_STEP1].setValue(1);
 		params[PARAM_RESET_TO_FIRST_STEP].setValue(1);
 		pcgRng = pcg32(static_cast<int>(std::round(system::getUnixTime())));
-		lightsDivider.setDivision(kLightsFrequency);
 	};
 
 #ifndef METAMODULE
@@ -175,7 +175,7 @@ struct SuperSwitch18 : SanguineModule {
 		float sampleTime;
 
 		if (bIsLightsTurn) {
-			sampleTime = args.sampleTime * kLightsFrequency;
+			sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			handleParameterControls();
 
@@ -227,7 +227,7 @@ struct SuperSwitch18 : SanguineModule {
 		float sampleTime;
 
 		if (bIsLightsTurn) {
-			sampleTime = args.sampleTime * kLightsFrequency;
+			sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			handleParameterControls();
 		}
@@ -536,6 +536,11 @@ struct SuperSwitch18 : SanguineModule {
 			outputsConnected[e.portId] = e.connecting;
 			break;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 
 	json_t* dataToJson() override {

@@ -57,6 +57,7 @@ struct Kitsune : SanguineModule {
 
 	dsp::ClockDivider lightsDivider;
 	const int kLightsFrequency = 64;
+	int jitteredLightsFrequency;
 
 	int channelCounts[kitsune::kMaxSections] = {};
 
@@ -83,8 +84,6 @@ struct Kitsune : SanguineModule {
 		}
 
 		configSwitch(PARAM_NORMALLING_MODE, 0.f, 1.f, 1.f, "Input normalling", kitsune::normallingModes);
-
-		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 #ifndef METAMODULE
@@ -108,7 +107,7 @@ struct Kitsune : SanguineModule {
 				}
 			}
 			if (bIsLightsTurn) {
-				const float sampleTime = kLightsFrequency * args.sampleTime;
+				const float sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 				lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
 
@@ -135,7 +134,7 @@ struct Kitsune : SanguineModule {
 			}
 
 			if (bIsLightsTurn) {
-				const float sampleTime = kLightsFrequency * args.sampleTime;
+				const float sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 				lights[LIGHT_EXPANDER].setBrightnessSmooth(bHaveExpander * kSanguineButtonLightValue, sampleTime);
 
@@ -171,7 +170,7 @@ struct Kitsune : SanguineModule {
 			}
 		}
 		if (bIsLightsTurn) {
-			const float sampleTime = kLightsFrequency * args.sampleTime;
+			const float sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 			for (int section = 0; section < kitsune::kMaxSections; ++section) {
 				setNormalledLights(section, channelSources, sampleTime);
@@ -387,6 +386,11 @@ struct Kitsune : SanguineModule {
 		if (e.type == Port::INPUT) {
 			inputsConnected[e.portId] = e.connecting;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 
 	json_t* dataToJson() override {

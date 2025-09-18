@@ -42,6 +42,7 @@ struct Werewolf : SanguineModule {
 	bool bRightOutConnected = false;
 
 	const int kLightsFrequency = 64;
+	int jitteredLightsFrequency;
 
 	Werewolf() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -57,8 +58,6 @@ struct Werewolf : SanguineModule {
 
 		configBypass(INPUT_LEFT, OUTPUT_LEFT);
 		configBypass(INPUT_RIGHT, OUTPUT_RIGHT);
-
-		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -148,7 +147,7 @@ struct Werewolf : SanguineModule {
 		outputs[OUTPUT_RIGHT].setChannels(channelCount);
 
 		if (bIsLightsTurn) {
-			const float sampleTime = args.sampleTime * kLightsFrequency;
+			const float sampleTime = args.sampleTime * jitteredLightsFrequency;
 
 			if (channelCount < 2) {
 				float leftEyeValue = math::rescale(voltageSumLeft, 0.f, 5.f, 0.f, 1.f);
@@ -303,6 +302,11 @@ struct Werewolf : SanguineModule {
 			}
 			break;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 };
 

@@ -100,6 +100,7 @@ struct Chronos : SanguineModule {
     };
 
     static const int kLightsFrequency = 64;
+    int jitteredLightsFrequency;
 
     size_t channelCounts[chronos::kMaxSections] = {};
     size_t ledsChannel[chronos::kMaxSections] = {};
@@ -201,7 +202,6 @@ struct Chronos : SanguineModule {
         }
 
         init();
-        lightsDivider.setDivision(kLightsFrequency);
     };
 
     void process(const ProcessArgs& args) override {
@@ -209,7 +209,7 @@ struct Chronos : SanguineModule {
 
         float sampleTime = 0.f;
         if (bIsLightsTurn) {
-            sampleTime = args.sampleTime * kLightsFrequency;
+            sampleTime = args.sampleTime * jitteredLightsFrequency;
         }
 
         for (int section = 0; section < chronos::kMaxSections; ++section) {
@@ -518,6 +518,11 @@ struct Chronos : SanguineModule {
             }
             break;
         }
+    }
+
+    void onAdd(const AddEvent& e) override {
+        jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+        lightsDivider.setDivision(jitteredLightsFrequency);
     }
 
     json_t* dataToJson() override {

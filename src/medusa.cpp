@@ -28,6 +28,7 @@ struct Medusa : SanguineModule {
 	};
 
 	static const int kLightsFrequency = 1024;
+	int jitteredLightsFrequency;
 
 	dsp::ClockDivider lightsDivider;
 
@@ -41,8 +42,6 @@ struct Medusa : SanguineModule {
 			configInput(INPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 			configOutput(OUTPUT_VOLTAGE + port, string::f("Medusa %d", port + 1));
 		}
-
-		lightsDivider.setDivision(kLightsFrequency);
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -80,7 +79,7 @@ struct Medusa : SanguineModule {
 		}
 
 		if (bIsLightsTurn) {
-			const float sampleTime = kLightsFrequency * args.sampleTime;
+			const float sampleTime = jitteredLightsFrequency * args.sampleTime;
 
 			for (int port = 0; port < medusa::kMaxPorts; ++port) {
 				int currentLight = LIGHT_NORMALLED_PORT + port * 3;
@@ -97,6 +96,11 @@ struct Medusa : SanguineModule {
 		} else {
 			outputsConnected[e.portId] = e.connecting;
 		}
+	}
+
+	void onAdd(const AddEvent& e) override {
+		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 };
 
