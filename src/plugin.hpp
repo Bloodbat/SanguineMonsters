@@ -32,6 +32,7 @@ extern Model* modelWerewolf;
 extern Model* modelAlchemist;
 extern Model* modelChronos;
 extern Model* modelFortuna;
+extern Model* modelAionKairos;
 
 // MetaModule disabled modules go here!
 #ifndef METAMODULE

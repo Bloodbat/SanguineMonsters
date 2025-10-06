@@ -1,7 +1,7 @@
 {
   "slug" : "SanguineMonsters",
   "name" : "Sanguine Monsters",
-  "version" : "2.4.5",
+  "version" : "2.5.0",
   "license" : "GPL-3.0-or-later",
   "author" : "Bloodbat",
   "pluginUrl" : "https://github.com/Bloodbat/SanguineMonsters",
@@ -215,6 +215,16 @@
       "tags" : [
         "Expander",
         "Polyphonic"
+      ]
+    },
+    {
+      "slug" : "Sanguine-Aion-Kairos",
+      "name" : "Aion Kairos",
+      "description" : "Two counters, presented in a slim package, that can be advanced by triggers or their internal clock",
+      "tags" : [
+        "Clock modulator",
+        "Dual",
+        "Utility"
       ]
     }
   ]

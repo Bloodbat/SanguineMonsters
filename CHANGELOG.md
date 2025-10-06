@@ -1,4 +1,11 @@
-# Next version
+# 2.5.0
+
+## New Modules
+
+### Aion Kairos
+
+- A slim, dual timer/counter that can be triggered externally or by its internal seconds clock.
+
 
 ---
 
