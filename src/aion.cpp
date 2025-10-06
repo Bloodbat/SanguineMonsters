@@ -107,13 +107,13 @@ struct Aion : SanguineModule {
 			paramQuantities[PARAM_TIMER_1 + section]->snapEnabled = true;
 
 			configButton(PARAM_RESTART_1 + section, string::f("Auto restart timer %d on timer end", currentNumber));
-			configButton(PARAM_START_1 + section, string::f("Start/stop timer %d", currentNumber));
+			configButton(PARAM_START_1 + section, string::f("Start / stop timer %d", currentNumber));
 			configButton(PARAM_TRIGGER_1 + section, string::f("Advance timer %d", currentNumber));
 			configButton(PARAM_RESET_1 + section, string::f("Reset timer %d", currentNumber));
 
 			configInput(INPUT_TRIGGER_1 + section, string::f("Advance timer %d", currentNumber));
 			configInput(INPUT_RESET_1 + section, string::f("Reset timer %d", currentNumber));
-			configInput(INPUT_RUN_1 + section, string::f("Start/stop timer %d", currentNumber));
+			configInput(INPUT_RUN_1 + section, string::f("Start / stop timer %d", currentNumber));
 
 			configOutput(OUTPUT_TRIGGER_1 + section, string::f("Timer end %d", currentNumber));
 
