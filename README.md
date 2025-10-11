@@ -112,19 +112,67 @@ A port for MetaModule, courtesy of Eric Gao, is available!
 
 The modules available in the MetaModule port are the following:
 
-|                                                |                                                  |                                                  |
-| :--------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: |
-|     ![Aion](meta_pics/aion_metamodule.png)     | ![Alchemist](meta_pics/alchemist_metamodule.png) |     ![Blank](meta_pics/blank_metamodule.png)     |
-|                      Aion                      |                    Alchemist                     |                      Blank                       |
-|   ![Brainz](meta_pics/brainz_metamodule.png)   |   ![Bukavac](meta_pics/bukavac_metamodule.png)   |   ![Chronos](meta_pics/chronos_metamodule.png)   |
-|                     Brainz                     |                     Bukavac                      |                     Chronos                      |
-|  ![Dolly-X](meta_pics/dolly-x_metamodule.png)  |   ![Dungeon](meta_pics/dungeon_metamodule.png)   |   ![Fortuna](meta_pics/fortuna_metamodule.png)   |
-|                    Dolly-X                     |                     Dungeon                      |                     Fortuna                      |
-| ![Gegenees](meta_pics/gegenees_metamodule.png) |     ![Hydra](meta_pics/hydra_metamodule.png)     |   ![Kitsune](meta_pics/kitsune_metamodule.png)   |
-|                    Gegenees                    |                      Hydra                       |                     Kitsune                      |
-|   ![Medusa](meta_pics/medusa_metamodule.png)   |  ![Oraculus](meta_pics/oraculus_metamodule.png)  | ![Oubliette](meta_pics/oubliette_metamodule.png) |
-|                     Medusa                     |                     Oraculus                     |                    Oubliette                     |
-|    ![Raiju](meta_pics/raiju_metamodule.png)    |    ![Sphinx](meta_pics/sphinx_metamodule.png)    |  ![Werewolf](meta_pics/werewolf_metamodule.png)  |
-|                     Raiju                      |                      Sphinx                      |                     Werewolf                     |
+<table>
+<tr>
+<td align="center"><img src="meta_pics/aion_metamodule.png"></td>
+<td align="center"><img src="meta_pics/alchemist_metamodule.png"></td>
+<td align="center"><img src="meta_pics/blank_metamodule.png"></td>
+</tr>
+<tr>
+<td align="center">Aion</td>
+<td align="center">Alchemist</td>
+<td align="center">Sanguine Monsters Blank</td>
+</tr>
+<tr>
+<td align="center"><img src="meta_pics/brainz_metamodule.png"></td>
+<td align="center"><img src="meta_pics/bukavac_metamodule.png"></td>
+<td align="center"><img src="meta_pics/chronos_metamodule.png"></td>
+</tr>
+<tr>
+<td align="center">Brainz</td>
+<td align="center">Bukavac</td>
+<td align="center">Chronos</td>
+</tr>
+<tr>
+<td align="center"><img src="meta_pics/dolly-x_metamodule.png"></td>
+<td align="center"><img src="meta_pics/dungeon_metamodule.png"></td>
+<td align="center"><img src="meta_pics/fortuna_metamodule.png"></td>
+</tr>
+<tr>
+<td align="center">Dolly-X</td>
+<td align="center">Dungeon</td>
+<td align="center">Fortuna</td>
+</tr>
+<tr>
+<td align="center"><img src="meta_pics/gegenees_metamodule.png"></td>
+<td align="center"><img src="meta_pics/hydra_metamodule.png"></td>
+<td align="center"><img src="meta_pics/kitsune_metamodule.png"></td>
+</tr>
+<tr>
+<td align="center">Gegenees</td>
+<td align="center">Hydra</td>
+<td align="center">Kitsune</td>
+</tr>
+<tr>
+<td align="center"><img src="meta_pics/medusa_metamodule.png"></td>
+<td align="center"><img src="meta_pics/oraculus_metamodule.png"></td>
+<td align="center"><img src="meta_pics/oubliette_metamodule.png"></td>
+</tr>
+<tr>
+<td align="center">Medusa</td>
+<td align="center">Oraculus</td>
+<td align="center">Oubliette</td>
+</tr>
+<tr>
+<td align="center"><img src="meta_pics/raiju_metamodule.png"></td>
+<td align="center"><img src="meta_pics/sphinx_metamodule.png"></td>
+<td align="center"><img src="meta_pics/werewolf_metamodule.png"></td>
+</tr>
+<tr>
+<td align="center">Raiju</td>
+<td align="center">Sphinx</td>
+<td align="center">Werewolf</td>
+</tr>
+</table>
 
 Keep in mind we're not in charge of building or releasing the MetaModule plugin; so available modules and their faceplates may be out of sync with those presented here.
