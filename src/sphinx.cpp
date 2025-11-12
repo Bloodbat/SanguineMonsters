@@ -52,8 +52,8 @@ struct Sphinx : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	Bjorklund euclid;
-	Bjorklund euclid2;
+	sanguinebjorklund::Bjorklund euclid;
+	sanguinebjorklund::Bjorklund euclid2;
 
 	// Calculated sequence/accents.
 	std::vector<bool> calculatedSequence;
