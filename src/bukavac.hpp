@@ -5,75 +5,77 @@
 #include "pcg_random.hpp"
 #pragma GCC diagnostic pop
 
-/** Based on "The Voss algorithm"
-http://www.firstpr.com.au/dsp/pink-noise/
-*/
-template <int QUALITY = 8>
-struct PinkNoiseGenerator {
-private:
-    pcg32 pinkRng;
-public:
-    void init() {
-        pinkRng = pcg32(std::round(system::getUnixTime()));
-    }
-
-    int frame = -1;
-    float values[QUALITY] = {};
-
-    float process() {
-        int lastFrame = frame;
-        ++frame;
-        if (frame >= (1 << QUALITY))
-            frame = 0;
-        int diff = lastFrame ^ frame;
-
-        float sum = 0.f;
-        for (int value = 0; value < QUALITY; ++value) {
-            if (diff & (1 << value)) {
-                values[value] = (ldexpf(pinkRng(), -32)) - 0.5f;
-            }
-            sum += values[value];
-        }
-        return sum;
-    }
-};
-
-struct InverseAWeightingFFTFilter {
-    static constexpr int BUFFER_LEN = 1024;
-
-    alignas(16) float inputBuffer[BUFFER_LEN] = {};
-    alignas(16) float outputBuffer[BUFFER_LEN] = {};
-    int frame = 0;
-    dsp::RealFFT fft;
-
-    InverseAWeightingFFTFilter() : fft(BUFFER_LEN) {}
-
-    float process(float deltaTime, float x) {
-        inputBuffer[frame] = x;
-        if (++frame >= BUFFER_LEN) {
-            frame = 0;
-            alignas(16) float freqBuffer[BUFFER_LEN * 2];
-            fft.rfft(inputBuffer, freqBuffer);
-
-            for (int frequency = 0; frequency < BUFFER_LEN; ++frequency) {
-                float f = 1 / deltaTime / 2 / BUFFER_LEN * frequency;
-                float amp = 0.f;
-                if (80.f <= f && f <= 20000.f) {
-                    float f2 = f * f;
-                    // Inverse A-weighted curve
-                    amp = ((424.36f + f2) * std::sqrt((11599.3f + f2) * (544496.f + f2)) * (148693636.f + f2)) / (148693636.f * f2 * f2);
-                }
-                freqBuffer[2 * frequency + 0] *= amp / BUFFER_LEN;
-                freqBuffer[2 * frequency + 1] *= amp / BUFFER_LEN;
-            }
-
-            fft.irfft(freqBuffer, outputBuffer);
-        }
-        return outputBuffer[frame];
-    }
-};
-
 namespace bukavac {
+    // TODO: move the noise generator and filter somewhere else if we want to use them again.
+
+    /** Based on "The Voss algorithm"
+    http://www.firstpr.com.au/dsp/pink-noise/
+    */
+    template <int QUALITY = 8>
+    struct PinkNoiseGenerator {
+    private:
+        pcg32 pinkRng;
+    public:
+        void init() {
+            pinkRng = pcg32(std::round(system::getUnixTime()));
+        }
+
+        int frame = -1;
+        float values[QUALITY] = {};
+
+        float process() {
+            int lastFrame = frame;
+            ++frame;
+            if (frame >= (1 << QUALITY))
+                frame = 0;
+            int diff = lastFrame ^ frame;
+
+            float sum = 0.f;
+            for (int value = 0; value < QUALITY; ++value) {
+                if (diff & (1 << value)) {
+                    values[value] = (ldexpf(pinkRng(), -32)) - 0.5f;
+                }
+                sum += values[value];
+            }
+            return sum;
+        }
+    };
+
+    struct InverseAWeightingFFTFilter {
+        static constexpr int BUFFER_LEN = 1024;
+
+        alignas(16) float inputBuffer[BUFFER_LEN] = {};
+        alignas(16) float outputBuffer[BUFFER_LEN] = {};
+        int frame = 0;
+        dsp::RealFFT fft;
+
+        InverseAWeightingFFTFilter() : fft(BUFFER_LEN) {}
+
+        float process(float deltaTime, float x) {
+            inputBuffer[frame] = x;
+            if (++frame >= BUFFER_LEN) {
+                frame = 0;
+                alignas(16) float freqBuffer[BUFFER_LEN * 2];
+                fft.rfft(inputBuffer, freqBuffer);
+
+                for (int frequency = 0; frequency < BUFFER_LEN; ++frequency) {
+                    float f = 1 / deltaTime / 2 / BUFFER_LEN * frequency;
+                    float amp = 0.f;
+                    if (80.f <= f && f <= 20000.f) {
+                        float f2 = f * f;
+                        // Inverse A-weighted curve
+                        amp = ((424.36f + f2) * std::sqrt((11599.3f + f2) * (544496.f + f2)) * (148693636.f + f2)) / (148693636.f * f2 * f2);
+                    }
+                    freqBuffer[2 * frequency + 0] *= amp / BUFFER_LEN;
+                    freqBuffer[2 * frequency + 1] *= amp / BUFFER_LEN;
+                }
+
+                fft.irfft(freqBuffer, outputBuffer);
+            }
+            return outputBuffer[frame];
+        }
+    };
+
     static const unsigned char permutations[512] = { 151,160,137,91,90,15,
       131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
       190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,

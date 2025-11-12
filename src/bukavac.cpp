@@ -44,11 +44,11 @@ struct Bukavac : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	PinkNoiseGenerator<8> pinkNoiseGenerator;
+	bukavac::PinkNoiseGenerator<8> pinkNoiseGenerator;
 	dsp::IIRFilter<2, 2> redFilter;
 	float lastWhite = 0.f;
 	float lastPink = 0.f;
-	InverseAWeightingFFTFilter grayFilter;
+	bukavac::InverseAWeightingFFTFilter grayFilter;
 
 	static const int kPerlinOctaves = 4;
 	float currentPerlinTime = 0.0;
