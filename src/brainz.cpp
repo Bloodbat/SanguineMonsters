@@ -6,6 +6,7 @@
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
 
+#include <chrono>
 #include "brainz.hpp"
 
 struct Brainz : SanguineModule {
