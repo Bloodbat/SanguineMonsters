@@ -77,16 +77,16 @@ struct Sphinx : SanguineModule {
 	int patternAccentRotation = 0;
 	int patternAccents = 0;
 
-	int patternChecksum;
+	int patternChecksum = 0;
 
-	int lastPatternFill;
-	int lastPatternLength;
-	int lastPatternAccents;
+	int lastPatternFill = 0;
+	int lastPatternLength = 0;
+	int lastPatternAccents = -1;
 
 	int currentStep = 0;
 	int turing = 0;
 
-	sphinx::PatternStyle lastPatternStyle = sphinx::EUCLIDEAN_PATTERN;
+	sphinx::PatternStyle lastPatternStyle = sphinx::RANDOM_PATTERN;
 	sphinx::PatternStyle patternStyle = sphinx::EUCLIDEAN_PATTERN;
 
 	static const int kClockDivider = 16;
