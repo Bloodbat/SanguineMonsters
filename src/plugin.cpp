@@ -36,5 +36,5 @@ void init(rack::Plugin* p) {
 	p->addModel(modelCrucible);
 #endif
 
-	getDefaultTheme();
+	getDefaultSanguineTheme();
 }
