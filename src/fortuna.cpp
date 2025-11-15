@@ -235,8 +235,8 @@ struct FortunaWidget : SanguineModuleWidget {
         setModule(module);
 
         moduleName = "fortuna";
-        panelSize = SIZE_8;
-        backplateColor = PLATE_PURPLE;
+        panelSize = sanguineThemes::SIZE_8;
+        backplateColor = sanguineThemes::PLATE_PURPLE;
         bFaceplateSuffix = false;
 
         makePanel();

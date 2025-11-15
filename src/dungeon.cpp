@@ -337,8 +337,8 @@ struct DungeonWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "dungeon";
-		panelSize = SIZE_14;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_14;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

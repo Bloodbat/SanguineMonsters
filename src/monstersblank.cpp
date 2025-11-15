@@ -11,8 +11,8 @@ struct MonstersBlankWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "monsters_blank";
-		panelSize = SIZE_10;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_10;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 		bHasCommon = false;
 

@@ -756,8 +756,8 @@ struct AlchemistWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "alchemist";
-		panelSize = SIZE_23;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_23;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

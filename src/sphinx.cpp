@@ -662,8 +662,8 @@ struct SphinxWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "sphinx";
-		panelSize = SIZE_11;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_11;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

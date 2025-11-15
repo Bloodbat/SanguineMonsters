@@ -309,8 +309,8 @@ struct WerewolfWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "werewolf";
-		panelSize = SIZE_12;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_12;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

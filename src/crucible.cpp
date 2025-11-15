@@ -38,8 +38,8 @@ struct CrucibleWidget : SanguineModuleWidget {
         setModule(module);
 
         moduleName = "crucible";
-        panelSize = SIZE_5;
-        backplateColor = PLATE_PURPLE;
+        panelSize = sanguineThemes::SIZE_5;
+        backplateColor = sanguineThemes::PLATE_PURPLE;
         bFaceplateSuffix = false;
 
         makePanel();

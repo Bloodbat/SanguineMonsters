@@ -144,8 +144,8 @@ struct DollyXWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "dolly-x";
-		panelSize = SIZE_8;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_8;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

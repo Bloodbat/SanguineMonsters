@@ -247,8 +247,8 @@ struct OraculusWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "oraculus";
-		panelSize = SIZE_7;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_7;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

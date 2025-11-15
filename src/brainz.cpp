@@ -902,8 +902,8 @@ struct BrainzWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "brainz";
-		panelSize = SIZE_25;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_25;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

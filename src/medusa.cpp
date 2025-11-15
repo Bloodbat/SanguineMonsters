@@ -105,8 +105,8 @@ struct MedusaWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "medusa";
-		panelSize = SIZE_27;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_27;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

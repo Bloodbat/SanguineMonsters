@@ -552,8 +552,8 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "switch8-1";
-		panelSize = SIZE_13;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_13;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

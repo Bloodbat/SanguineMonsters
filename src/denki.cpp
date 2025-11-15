@@ -52,8 +52,8 @@ struct DenkiWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "denki";
-		panelSize = SIZE_6;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_6;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

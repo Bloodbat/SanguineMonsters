@@ -43,8 +43,8 @@ struct AlembicWidget : SanguineModuleWidget {
 		setModule(module);
 
 		moduleName = "alembic";
-		panelSize = SIZE_10;
-		backplateColor = PLATE_PURPLE;
+		panelSize = sanguineThemes::SIZE_10;
+		backplateColor = sanguineThemes::PLATE_PURPLE;
 		bFaceplateSuffix = false;
 
 		makePanel();

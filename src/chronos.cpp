@@ -571,8 +571,8 @@ struct ChronosWidget : SanguineModuleWidget {
         setModule(module);
 
         moduleName = "chronos";
-        panelSize = SIZE_22;
-        backplateColor = PLATE_PURPLE;
+        panelSize = sanguineThemes::SIZE_22;
+        backplateColor = sanguineThemes::PLATE_PURPLE;
         bFaceplateSuffix = false;
 
         makePanel();
