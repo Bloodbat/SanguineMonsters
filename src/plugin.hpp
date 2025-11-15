@@ -3,7 +3,8 @@
 #ifndef USING_CARDINAL_NOT_RACK
 #include "themes.hpp"
 #else
-#include "../../SanguineModulesCommon/src/themes.hpp"
+#define CARDINALMONSTERS
+#include "../SanguineModulesCommon/src/themes.hpp"
 #endif
 
 using namespace rack;
@@ -33,10 +34,13 @@ extern Model* modelChronos;
 extern Model* modelFortuna;
 
 // MetaModule disabled modules go here!
-
 #ifndef METAMODULE
 extern Model* modelAlembic;
 extern Model* modelDenki;
 extern Model* modelManus;
 extern Model* modelCrucible;
 #endif
+
+inline void getMonstersDefaultTheme() {
+   sanguineThemes::getDefaultSanguineTheme();
+}
