@@ -270,8 +270,8 @@ struct AionKairosWidget : SanguineModuleWidget {
         setModule(module);
 
         moduleName = "aionkairos";
-        panelSize = SIZE_6;
-        backplateColor = PLATE_PURPLE;
+        panelSize = sanguineThemes::SIZE_6;
+        backplateColor = sanguineThemes::PLATE_PURPLE;
         bFaceplateSuffix = false;
 
         makePanel();
