@@ -3,8 +3,9 @@
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
 
-struct AionKairos : SanguineModule {
+using namespace sanguineCommonCode;
 
+struct AionKairos : SanguineModule {
     enum ParamIds {
         PARAM_TIMER_1,
         PARAM_TIMER_2,
