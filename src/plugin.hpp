@@ -41,6 +41,8 @@ extern Model* modelManus;
 extern Model* modelCrucible;
 #endif
 
+#ifdef USING_CARDINAL_NOT_RACK
 inline void getMonstersDefaultTheme() {
    sanguineThemes::getDefaultSanguineTheme();
 }
+#endif
