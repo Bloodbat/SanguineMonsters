@@ -7,6 +7,8 @@
 
 #include "fortuna.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Fortuna : SanguineModule {
     enum ParamIds {
         PARAM_THRESHOLD_1,

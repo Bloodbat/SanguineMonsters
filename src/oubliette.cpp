@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Oubliette : SanguineModule {
 
 	static const int kMaxSectionPorts = 16;

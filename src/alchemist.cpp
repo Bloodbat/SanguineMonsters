@@ -11,7 +11,6 @@
 #endif
 
 struct Alchemist : SanguineModule {
-
 	enum ParamIds {
 		ENUMS(PARAM_GAIN, PORT_MAX_CHANNELS),
 		PARAM_MIX,

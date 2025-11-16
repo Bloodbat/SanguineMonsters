@@ -9,6 +9,8 @@
 #include <chrono>
 #include "brainz.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Brainz : SanguineModule {
 	enum ParamIds {
 		PARAM_MODULE_DIRECTION,

@@ -4,6 +4,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Crucible : SanguineModule {
     enum ParamIds {
         PARAM_MUTE_ALL,

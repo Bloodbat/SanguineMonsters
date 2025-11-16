@@ -4,6 +4,8 @@
 
 #include "dollyx.hpp"
 
+using namespace sanguineCommonCode;
+
 using simd::float_4;
 
 struct DollyX : SanguineModule {

@@ -4,6 +4,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Alembic : SanguineModule {
 	enum ParamIds {
 		PARAMS_COUNT

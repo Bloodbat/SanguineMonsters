@@ -6,8 +6,9 @@
 #include "seqcomponents.hpp"
 #endif
 
-struct Aion : SanguineModule {
+using namespace sanguineCommonCode;
 
+struct Aion : SanguineModule {
 	enum ParamIds {
 		PARAM_TIMER_1,
 		PARAM_TIMER_2,

@@ -5,6 +5,8 @@
 
 #include "bukavac.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Bukavac : SanguineModule {
 	enum ParamIds {
 		PARAM_PERLIN_SPEED,

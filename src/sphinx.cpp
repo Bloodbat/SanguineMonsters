@@ -12,6 +12,8 @@
 
 #include "sphinx.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Sphinx : SanguineModule {
 	enum ParamIds {
 		PARAM_LENGTH,

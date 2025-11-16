@@ -6,6 +6,8 @@
 
 #include "dungeon.hpp"
 
+using namespace sanguineCommonCode;
+
 struct Dungeon : SanguineModule {
 
 	enum ParamIds {

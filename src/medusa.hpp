@@ -1,5 +1,7 @@
 #pragma once
 
+using namespace sanguineCommonCode;
+
 namespace medusa {
     static const int kMaxPorts = 32;
 

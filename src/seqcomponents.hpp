@@ -2,6 +2,8 @@
 
 #include "sanguinecomponents.hpp"
 
+using namespace sanguineCommonCode;
+
 struct SeqSwitchSquare : SanguineLightUpRGBSwitch {
 	SeqSwitchSquare() {
 		setBackground("res/seqs/square_button_bg.svg");
