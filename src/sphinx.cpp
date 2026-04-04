@@ -120,6 +120,8 @@ struct Sphinx : SanguineModule {
 
 		configSwitch(PARAM_PATTERN_STYLE, 0.f, 3.f, 0.f, "Pattern style", sphinx::patternStyleLabels);
 
+		configSwitch(PARAM_REVERSE, 0.f, 1.f, 0.f, "Reverse", sphinx::reverseButtonLabels);
+
 		configSwitch(PARAM_GATE_MODE, 0.f, 2.f, 0.f, "Gate mode", sphinx::gateModeLabels);
 
 		configInput(INPUT_ACCENT, "Accents CV");

@@ -84,4 +84,9 @@ namespace sphinx {
         "Gate",
         "Turing"
     };
+
+    static const std::vector<std::string> reverseButtonLabels = {
+        "Off",
+        "On"
+    };
 }
