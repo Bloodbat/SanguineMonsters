@@ -41,6 +41,7 @@
 
 - Bukavac: allow for larger Perlin amplifier values so it can reach 5V.
 
+
 ---
 
 # 2.4.0
@@ -67,8 +68,6 @@
 
 - Expander for Gegenees and Hydra that provides CV trigger step selection.
 
----
-
 ## Fixes
 
 - Plugin: faceplate colors.
@@ -86,8 +85,6 @@
 - Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
 
 - Hydra: store and restore "One Shot" user preference.
-
----
 
 ## Additions
 
@@ -132,8 +129,6 @@
 - Werewolf: normal left and right inputs to each other.
 
 - Werewolf: normal left and right outputs to each other.
-
----
 
 ## Changes
 
