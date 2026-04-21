@@ -1,3 +1,14 @@
+<h1 style="text-align:center;">Changelog</h3>
+
+You can quickly and easily look at the changes for the current version
+using a Linux terminal (or equivalent if sed is available)!
+
+Just type:
+
+`tail -n +11 CHANGELOG.md | sed '/.*---.*/{s///;q;}'`
+
+without the backticks.
+
 # 2.5.0
 
 ## New Modules
