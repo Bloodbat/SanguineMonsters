@@ -4,7 +4,8 @@
 
 ### Aion Kairos
 
-- A slim, dual timer/counter that can be triggered externally or by its internal seconds clock.
+- A slim, dual timer/counter that can be triggered externally or by its
+  internal seconds clock.
 
 ## Fixes
 
@@ -17,17 +18,22 @@
 
 ## Fixes
 
-- Denki: turn off lights when not connected to a Kitsune module: the expander is not powered.
+- Denki: turn off lights when not connected to a Kitsune module: the
+  expander is not powered.
 
-- Gegenees: don't keep the selected output if it is higher than the step count.
+- Gegenees: don't keep the selected output if it is higher than the step
+  count.
 
-- Gegenees: don't disable manual, direct step selection when reset to first step is disabled.
+- Gegenees: don't disable manual, direct step selection when reset to
+  first step is disabled.
 
 - Hydra: don't keep the selected input if it is higher than the step count.
 
-- Hydra: don't disable manual, direct step selection when reset to first step is disabled.
+- Hydra: don't disable manual, direct step selection when reset to first
+  step is disabled.
 
-- Kitsune: make Denki gain CV port actually act as an offset, as stated in the manual, instead of as an override to the knob.
+- Kitsune: make Denki gain CV port actually act as an offset, as stated in
+  the manual, instead of as an override to the knob.
 
 ## Additions
 
@@ -54,7 +60,9 @@
 
 ### Crucible
 
-- Expander for Alchemist: adds global and per channel CV and manual  Mute control; Mute exclusive mode; global and per channel CV and manual Solo control, and Solo exclusive mode.
+- Expander for Alchemist: adds global and per channel CV and manual  Mute
+  control; Mute exclusive mode; global and per channel CV and manual Solo
+  control, and Solo exclusive mode.
 
 ### Denki
 
@@ -62,7 +70,8 @@
 
 ### Fortuna
 
-- Dual polyphonic signal destination randomizer: like Bernoulli gates; but for signals.
+- Dual polyphonic signal destination randomizer: like Bernoulli gates; but
+  for signals.
 
 ### Manus
 
@@ -76,13 +85,16 @@
 
 - Dungeon: module was falling off the Rack: it was missing screws.
 
-- Dungeon: actually store user preference when "Store voltage in patch" is disabled.
+- Dungeon: actually store user preference when "Store voltage in patch" is
+  disabled.
 
-- Gegenees: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
+- Gegenees: button lights turning on when steps are clicked; single shot
+  has ended, and no reset has been received.
 
 - Gegenees: store and restore "One Shot" user preference.
 
-- Hydra: button lights turning on when steps are clicked; single shot has ended, and no reset has been received.
+- Hydra: button lights turning on when steps are clicked; single shot has
+  ended, and no reset has been received.
 
 - Hydra: store and restore "One Shot" user preference.
 
@@ -116,13 +128,16 @@
 
 - Hydra: Manus expander.
 
-- Kitsune: smart input normalling (can be turned off using the context menu or the switch on the faceplate, should not impact patches using old 1->2, 3->4 normalling).
+- Kitsune: smart input normalling (can be turned off using the context
+  menu or the switch on the faceplate, should not impact patches using old
+  1->2, 3->4 normalling).
 
 - Raiju: knob borders.
 
 - Sphinx: knob borders.
 
-- Werewolf: mix left and right output audio if both inputs are connected and only one output is connected.
+- Werewolf: mix left and right output audio if both inputs are connected
+  and only one output is connected.
 
 - Werewolf: knob borders.
 
@@ -140,7 +155,8 @@
 
 - Plugin: faceplate color tweaks.
 
-- Plugin: simplify the vampire logo so it looks better when drawn by Rack's SVG renderer.
+- Plugin: simplify the vampire logo so it looks better when drawn by
+  Rack's SVG renderer.
 
 - Aion: faceplate tweaks.
 
@@ -195,7 +211,8 @@
 
 ## Changes
 
-- Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser. Monsters are grouped in the "Sanguine Monsters" brand.
+- Plugin: separate Sanguine Monsters and Sanguine Mutants in the browser.
+  Monsters are grouped in the "Sanguine Monsters" brand.
 
 
 ---
@@ -204,13 +221,15 @@
 
 ## Additions
 
-- Theme support for existing modules with two available options: "Vitriol" the usual, colorful faceplate or "Plumbago" a black as night variation.
+- Theme support for existing modules with two available options: "Vitriol"
+  the usual, colorful faceplate or "Plumbago" a black as night variation.
 
 - Polyphonic ports are now shown with golden jacks.
 
 ## Fixes
 
-- Plugin no longer crashes Rack Pro when it is used as a guest of hosts such as Reaper and Ableton and patches are loaded.
+- Plugin no longer crashes Rack Pro when it is used as a guest of hosts
+  such as Reaper and Ableton and patches are loaded.
 
 - Plugin no longer crashes Rack when used headless.
 
@@ -235,7 +254,8 @@ A quad attenuverter, offsetter and inverter.
 
 ### Oubliette
 
-A null sink and cable parking for your wires. Also works as a null voltage source.
+A null sink and cable parking for your wires. Also works as a null voltage
+source.
 
 ### Medusa
 
@@ -243,7 +263,8 @@ A normalled polyphonic mega multiple with 32 inputs and outputs.
 
 ### Aion
 
-A quad timer/counter that can be triggered externally or has an internal seconds clock.
+A quad timer/counter that can be triggered externally or has an internal
+seconds clock.
 
 ### Werewolf
 
@@ -251,7 +272,8 @@ A polyphonic, stereo, dirty distortion.
 
 ### Alchemist
 
-A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic and polyphonic outputs are provided.
+A mixer for up to 16 channels gathered from a polyphonic cable. Mixed
+monophonic and polyphonic outputs are provided.
 
 ## Additions
 
@@ -279,7 +301,8 @@ A mixer for up to 16 channels gathered from a polyphonic cable. Mixed monophonic
 
 - Switches output 0V when their input is disconnected.
 
-- Sphinx won't output an EOC trigger on the first round after starting or reset.
+- Sphinx won't output an EOC trigger on the first round after starting or
+  reset.
 
 - Brainz CV trigger detection.
 
@@ -300,7 +323,8 @@ A monster with a plethora of noise colors... and Perlin.
 
 ## Fixes
 
-- Sphinx display not showing up in module browser or when module is bypassed.
+- Sphinx display not showing up in module browser or when module is
+  bypassed.
 
 - Light behavior.
 
@@ -322,7 +346,8 @@ A monster with a plethora of noise colors... and Perlin.
 
 ### Brainz
 
-A utility to control multiple recorders and ease synchronizing their outputs in post.
+A utility to control multiple recorders and ease synchronizing their
+outputs in post.
 
 ### Sphinx
 
@@ -348,11 +373,13 @@ A monophonic to polyphonic channel cloner.
 
 - Move manual to manuals repository.
 
-- Mutants and Monsters can now be found under Sanguine Modules in the browser.
+- Mutants and Monsters can now be found under Sanguine Modules in the
+  browser.
 
 ## Fixes
 
-- Animation should not play when clicking step buttons in Hydra and Gegenees.
+- Animation should not play when clicking step buttons in Hydra and
+  Gegenees.
 
 
 ---
