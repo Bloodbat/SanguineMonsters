@@ -22,6 +22,8 @@ without the backticks.
 
 - Sphinx: missing Reverse button tooltip.
 
+- Sphinx: wrong text colors on part of the logo.
+
 
 ---
 
