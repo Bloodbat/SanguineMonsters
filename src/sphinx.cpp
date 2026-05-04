@@ -482,11 +482,11 @@ struct SphinxDisplay : TransparentWidget {
 		// Display border.
 		nvgBeginPath(args.vg);
 		nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
+		nvgFillColor(args.vg, nvgRGB(10, 10, 10));
+		nvgFill(args.vg);
 		nvgStrokeWidth(args.vg, 1.5f);
 		nvgStrokeColor(args.vg, nvgRGB(100, 100, 100));
 		nvgStroke(args.vg);
-		nvgFillColor(args.vg, nvgRGB(10, 10, 10));
-		nvgFill(args.vg);
 
 		Widget::draw(args);
 	}

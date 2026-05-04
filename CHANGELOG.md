@@ -24,6 +24,8 @@ without the backticks.
 
 - Sphinx: wrong text colors on part of the logo.
 
+- Sphinx: display borders when module is bypassed.
+
 
 ---
 
