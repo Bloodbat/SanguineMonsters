@@ -182,22 +182,25 @@ struct Beleth : SanguineModule {
         }
 
         int noteYPlusOne;
+        int modNoteYPlusOne;
         int modNoteX1;
         int modNoteX2;
         int modNoteX3;
+        int augNoteY;
         switch (chordType) {
         case beleth::CHORD_MAJOR:
             // Major (0 4 7 e 2 6 9).
             noteYPlusOne = noteY + 1;
             modNoteX1 = (noteX + 1) % 12;
             modNoteX2 = (noteX + 2) % 12;
-            chords[0] = &notes[noteYPlusOne % beleth::kTonnetzRows][noteX];
+            modNoteYPlusOne = noteYPlusOne % beleth::kTonnetzRows;
+            chords[0] = &notes[modNoteYPlusOne][noteX];
             chords[1] = &notes[noteY][noteX];
-            chords[2] = &notes[noteYPlusOne % beleth::kTonnetzRows][modNoteX1];
+            chords[2] = &notes[modNoteYPlusOne][modNoteX1];
             chords[3] = &notes[noteY][modNoteX1];
-            chords[4] = &notes[noteYPlusOne % beleth::kTonnetzRows][modNoteX2];
+            chords[4] = &notes[modNoteYPlusOne][modNoteX2];
             chords[5] = &notes[noteY][modNoteX2];
-            chords[6] = &notes[noteYPlusOne % beleth::kTonnetzRows][(noteX + 3) % 12];
+            chords[6] = &notes[modNoteYPlusOne][(noteX + 3) % 12];
             break;
 
         case beleth::CHORD_MINOR:
@@ -206,19 +209,21 @@ struct Beleth : SanguineModule {
             modNoteX1 = (noteX + 1) % 12;
             modNoteX2 = (noteX + 2) % 12;
             modNoteX3 = (noteX + 3) % 12;
+            modNoteYPlusOne = noteYPlusOne % beleth::kTonnetzRows;
             chords[0] = &notes[noteY][noteX];
-            chords[1] = &notes[noteYPlusOne % beleth::kTonnetzRows][modNoteX1];
+            chords[1] = &notes[modNoteYPlusOne][modNoteX1];
             chords[2] = &notes[noteY][modNoteX1];
-            chords[3] = &notes[noteYPlusOne % beleth::kTonnetzRows][modNoteX2];
+            chords[3] = &notes[modNoteYPlusOne][modNoteX2];
             chords[4] = &notes[noteY][modNoteX2];
-            chords[5] = &notes[noteYPlusOne % beleth::kTonnetzRows][modNoteX3];
+            chords[5] = &notes[modNoteYPlusOne][modNoteX3];
             chords[6] = &notes[noteY][modNoteX3];
             break;
 
         case beleth::CHORD_AUGMENTED:
             // Augmented (wrap??).
+            augNoteY = 12 + noteY;
             for (int part = 0; part < beleth::kMaxParts; ++part) {
-                chords[part] = &notes[(12 + noteY - part) % 3][noteX];
+                chords[part] = &notes[(augNoteY - part) % 3][noteX];
             }
             break;
 
