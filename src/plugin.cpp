@@ -27,9 +27,9 @@ void init(rack::Plugin* p) {
 	p->addModel(modelChronos);
 	p->addModel(modelFortuna);
 	p->addModel(modelAionKairos);
+	p->addModel(modelBeleth);
 
 	// MetaModule disabled modules go here!
-
 #ifndef METAMODULE
 	p->addModel(modelAlembic);
 	p->addModel(modelDenki);

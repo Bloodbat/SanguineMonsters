@@ -226,6 +226,14 @@
         "Dual",
         "Utility"
       ]
+    },
+    {
+      "slug" : "Sanguine-Monsters-Beleth",
+      "name" : "Beleth",
+      "description" : "Chord generator based on Neo-Riemannian Tonnetz analysis",
+      "tags" : [
+        "Sequencer"
+      ]
     }
   ]
 }

@@ -18,6 +18,10 @@ without the backticks.
 - A slim, dual timer/counter that can be triggered externally or by its
   internal seconds clock.
 
+### Beleth
+
+- A chord generator based on Neo-Riemannian Tonnetz analysis.
+
 ## Fixes
 
 - Sphinx: missing Reverse button tooltip.
