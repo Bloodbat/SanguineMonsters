@@ -372,12 +372,8 @@ struct BelethDisplay : TransparentWidget {
         "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
 
-    float centerX;
-    float centerY;
-
-    BelethDisplay() {
-        font = APP->window->loadFont(asset::plugin(pluginInstance, "res/components/DejaVuSansMono.ttf"));
-    }
+    float centerX = 0.f;
+    float centerY = 0.f;
 
     void draw(const DrawArgs& args) override {
         // Display background.
@@ -394,6 +390,13 @@ struct BelethDisplay : TransparentWidget {
 
     void drawLayer(const DrawArgs& args, int layer) override {
         if (layer == 1) {
+            font = APP->window->loadFont(asset::plugin(pluginInstance, "res/components/DejaVuSansMono.ttf"));
+
+            if (!font) {
+                return;
+            }
+
+
             float reducedBoxX = box.size.x - 0.5f;
             float reducedBoxY = box.size.y - 0.5f;
 
