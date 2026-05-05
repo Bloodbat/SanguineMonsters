@@ -120,13 +120,13 @@ struct Beleth : SanguineModule {
         }
 
         if (!bHaveChordGroup) {
-            bWantMajorMinor = params[PARAM_CHORD_GROUP].getValue() >= 0.5f;
+            bWantMajorMinor = static_cast<bool>(params[PARAM_CHORD_GROUP].getValue());
         } else {
             bWantMajorMinor = inputs[INPUT_CHORD_GROUP].getVoltage() >= 1.f;
         }
 
         if (!bHaveSuspended) {
-            bWantSuspended = params[PARAM_SUSPENDED].getValue() >= 0.5f;
+            bWantSuspended = static_cast<bool>(params[PARAM_SUSPENDED].getValue());
         } else {
             bWantSuspended = inputs[INPUT_SUSPENDED].getVoltage() >= 1.f;
         }
