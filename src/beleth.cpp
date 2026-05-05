@@ -105,10 +105,6 @@ struct Beleth : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        using simd::float_4;
-
-        float_4 simdValues;
-
         if (!bHaveParts) {
             parts = params[PARAM_PARTS].getValue();
         } else {
@@ -131,14 +127,12 @@ struct Beleth : SanguineModule {
             bWantSuspended = inputs[INPUT_SUSPENDED].getVoltage() >= 1.f;
         }
 
-        simdValues[0] = inputs[INPUT_VOICING].getVoltage();
-        simdValues[1] = inputs[INPUT_TRANSPOSE].getVoltage();
+        voicing = inputs[INPUT_VOICING].getVoltage() / 10.f;
+        transpose = inputs[INPUT_TRANSPOSE].getVoltage() / 10.f;
 
-        simdValues /= 10.f;
-
-        voicing = clamp(simdValues[0] +
+        voicing = clamp(voicing +
             params[PARAM_VOICING].getValue(), -1.f, 1.f) * 4.f * parts;
-        transpose = clamp(simdValues[1] +
+        transpose = clamp(transpose +
             params[PARAM_TRANSPOSE].getValue(), 0.f, 1.f) * 11.f;
 
         x0 = inputs[INPUT_PERFECT_FIFTH].getVoltage() + 6;
@@ -397,7 +391,6 @@ struct BelethDisplay : TransparentWidget {
             if (!font) {
                 return;
             }
-
 
             float reducedBoxX = box.size.x - 0.5f;
             float reducedBoxY = box.size.y - 0.5f;
