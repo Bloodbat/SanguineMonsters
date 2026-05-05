@@ -128,50 +128,18 @@ struct Beleth : SanguineModule {
         transpose = clamp(simdValues[1] +
             params[PARAM_TRANSPOSE].getValue(), 0.f, 1.f) * 11.f;
 
-        // TODO: remove these if things work as expected.
-        /*
         while (x0 < 0.f) {
             x0 += 12.f;
         }
         while (x0 >= 12.f) {
             x0 -= 12.f;
         }
-        */
 
-        simdValues[0] = x0;
-        simdValues[1] = y0;
-
-        simdValues = simd::fabs(simdValues);
-        /*
-        Hacky way to clamp x0 between 0.f and 12.f without loosing decimals.
-        Respect the original result.
-        */
-        if (x0 < 0.f) {
-            x0 = x0 - static_cast<int>(x0) + (12.f - simdValues[0]);
-        }
-        if (x0 >= 12.f) {
-            x0 = x0 - static_cast<int>(x0) - (12.f - simdValues[0]);
-        }
-
-        // TODO: remove these if things work as expected.
-        /*
         while (y0 < 0.f) {
             y0 += 3.f;
         }
         while (y0 >= 3.f) {
             y0 -= 3.f;
-        }
-        */
-
-        /*
-        Hacky way to clamp x0 between 0.f and 12.f without loosing decimals.
-        Respect the original result.
-        */
-        if (y0 < 0.f) {
-            y0 = y0 - static_cast<int>(y0) + (3.f - simdValues[1]);
-        }
-        if (y0 >= 3.f) {
-            x0 = y0 - static_cast<int>(y0) - (3.f - simdValues[1]);
         }
 
         // Determine active triad (diagonal division of logical square cell).
