@@ -55,6 +55,10 @@ struct Beleth : SanguineModule {
     int noteY;
 
     bool bHaveParts = false;
+    bool bHaveChordGroup = false;
+    bool bWantMajorMinor;
+    bool bHaveSuspended = false;
+    bool bWantSuspended;
 
     // Geometrical position of the playhead.
     float x0;
@@ -105,9 +109,6 @@ struct Beleth : SanguineModule {
 
         float_4 simdValues;
 
-        x0 = inputs[INPUT_PERFECT_FIFTH].getVoltage() + 6;
-        y0 = inputs[INPUT_MAJOR_TRIAD].getVoltage() + 1;
-
         if (!bHaveParts) {
             parts = params[PARAM_PARTS].getValue();
         } else {
@@ -116,6 +117,18 @@ struct Beleth : SanguineModule {
             partsVoltage = clamp(partsVoltage, 0.f, 5.f);
             partsVoltage = rescale(partsVoltage, 0.f, 5.f, 3.f, 7.f);
             parts = static_cast<int>(partsVoltage);
+        }
+
+        if (!bHaveChordGroup) {
+            bWantMajorMinor = params[PARAM_CHORD_GROUP].getValue() >= 0.5f;
+        } else {
+            bWantMajorMinor = inputs[INPUT_CHORD_GROUP].getVoltage() >= 1.f;
+        }
+
+        if (!bHaveSuspended) {
+            bWantSuspended = params[PARAM_SUSPENDED].getValue() >= 0.5f;
+        } else {
+            bWantSuspended = inputs[INPUT_SUSPENDED].getVoltage() >= 1.f;
         }
 
         simdValues[0] = inputs[INPUT_VOICING].getVoltage();
@@ -127,6 +140,9 @@ struct Beleth : SanguineModule {
             params[PARAM_VOICING].getValue(), -1.f, 1.f) * 4.f * parts;
         transpose = clamp(simdValues[1] +
             params[PARAM_TRANSPOSE].getValue(), 0.f, 1.f) * 11.f;
+
+        x0 = inputs[INPUT_PERFECT_FIFTH].getVoltage() + 6;
+        y0 = inputs[INPUT_MAJOR_TRIAD].getVoltage() + 1;
 
         while (x0 < 0.f) {
             x0 += 12.f;
@@ -146,9 +162,6 @@ struct Beleth : SanguineModule {
         noteX = floor(x0);
         noteY = floor(y0);
 
-        bool bWantMajorMinor = static_cast<bool>(params[PARAM_CHORD_GROUP].getValue()) ||
-            inputs[INPUT_CHORD_GROUP].getVoltage() >= 1.f;
-
         if (bWantMajorMinor) {
             if (y0 - noteY > x0 - noteX) {
                 chordType = beleth::CHORD_MAJOR;
@@ -163,8 +176,6 @@ struct Beleth : SanguineModule {
             }
         }
 
-        bool bWantSuspended = static_cast<bool>(params[PARAM_SUSPENDED].getValue()) ||
-            inputs[INPUT_SUSPENDED].getVoltage() >= 1.f;
         // (m/M) (M/A) (A/M) (M/m) (m/d) (d/m).
         if (bWantSuspended && fabs(y0 - noteY) < 0.3f) {
             chordType = beleth::CHORD_SUSPENDED;
@@ -321,6 +332,12 @@ struct Beleth : SanguineModule {
             switch (e.portId) {
             case INPUT_PARTS:
                 bHaveParts = e.connecting;
+                break;
+            case INPUT_CHORD_GROUP:
+                bHaveChordGroup = e.connecting;
+                break;
+            case INPUT_SUSPENDED:
+                bHaveSuspended = e.connecting;
                 break;
 
             default:
