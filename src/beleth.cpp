@@ -483,6 +483,13 @@ struct BelethDisplay : TransparentWidget {
 
                 drawTonnetzGrid(args.vg);
                 drawTonnetzNotes(args.vg);
+
+                x0 = nullptr;
+                y0 = nullptr;
+                parts = nullptr;
+                transpose = nullptr;
+                chordType = nullptr;
+                chords = nullptr;
             }
         }
     }
