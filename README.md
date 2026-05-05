@@ -21,7 +21,11 @@ Base modules are listed in alphabetical order, with their alternative firmwares 
 
 - ### Aion
 
-  A quad timer/counter that can be triggered externally or has an internal seconds clock.
+  A quad timer / counter that can be triggered externally or has an internal seconds clock.
+
+- ### Aion Kairos
+
+  A dual timer / counter, presented in a slim package, that can be advanced by external triggers or its internal clocks.
 
 - ### Alchemist
 
