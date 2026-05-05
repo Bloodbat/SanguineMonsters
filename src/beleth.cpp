@@ -76,7 +76,7 @@ struct Beleth : SanguineModule {
     Beleth() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-        onReset();
+        init();
 
         configSwitch(PARAM_CHORD_GROUP, 0.f, 1.f, 0.f, "Chord groups", beleth::chordGroupLabels);
         configSwitch(PARAM_SUSPENDED, 0.f, 1.f, 0.f, "Suspended chords (sus4)",
@@ -294,7 +294,7 @@ struct Beleth : SanguineModule {
         }
     }
 
-    void onReset() override {
+    void init() {
         voicing = 0;
         params[PARAM_VOICING].setValue(0.f);
         parts = 7;
@@ -306,10 +306,8 @@ struct Beleth : SanguineModule {
             for (int note = 0; note < beleth::kMaxNotes; ++note) {
                 notes[row][note].pitchClass = beleth::CircleOfFifths[(note + 10 + row * 8) % 12];
 
-                float x0 = note;
-                float y0 = row;
-                float phi = -(x0 - y0 / 2.f) * beleth::kPhiFactor;
-                float radius = beleth::kRadius + beleth::kScaleFactor * y0;
+                float phi = -(static_cast<float>(note) - static_cast<float>(row) / 2.f) * beleth::kPhiFactor;
+                float radius = beleth::kRadius + beleth::kScaleFactor * row;
 
                 float x = radius * sin(phi);
                 float y = radius * cos(phi);
@@ -325,6 +323,10 @@ struct Beleth : SanguineModule {
             chords[part] = &notes[0][part];
             octaves[part] = 1;
         }
+    }
+
+    void onReset() override {
+        init();
     }
 
     void onAdd(const AddEvent& e) override {
@@ -458,10 +460,8 @@ struct BelethDisplay : TransparentWidget {
                     for (int note = 0; note < beleth::kMaxNotes; ++note) {
                         fakeNotes[row][note].pitchClass = beleth::CircleOfFifths[(note + 10 + row * 8) % 12];
 
-                        float x0 = note;
-                        float y0 = row;
-                        float phi = -(x0 - y0 / 2.f) * beleth::kPhiFactor;
-                        float radius = beleth::kRadius + beleth::kScaleFactor * y0;
+                        float phi = -(static_cast<float>(note) - static_cast<float>(row) / 2.f) * beleth::kPhiFactor;
+                        float radius = beleth::kRadius + beleth::kScaleFactor * row;
 
                         float x = radius * sin(phi);
                         float y = radius * cos(phi);
@@ -524,9 +524,9 @@ struct BelethDisplay : TransparentWidget {
             nvgStroke(vg);
         } else if (*chordType == beleth::CHORD_SUSPENDED) {
             nvgBeginPath(vg);
-            float x0 = (*chords)[0]->x + centerX;
-            float y0 = (*chords)[0]->y + centerY;
-            nvgMoveTo(vg, x0, y0);
+            float posX = (*chords)[0]->x + centerX;
+            float posY = (*chords)[0]->y + centerY;
+            nvgMoveTo(vg, posX, posY);
             int noteX = (*chords)[0]->noteX;
             int noteY = (*chords)[0]->noteY;
             for (int part = 0; part < *parts; part++) {
@@ -538,9 +538,9 @@ struct BelethDisplay : TransparentWidget {
         } else {
             for (int i = 0; i < *parts; ++i) {
                 nvgBeginPath(vg);
-                float x0 = (*chords)[i]->x + centerX;
-                float y0 = (*chords)[i]->y + centerY;
-                nvgMoveTo(vg, x0, y0);
+                float posX = (*chords)[i]->x + centerX;
+                float posY = (*chords)[i]->y + centerY;
+                nvgMoveTo(vg, posX, posY);
                 int noteX = (*chords)[i]->noteX;
                 int noteY = (*chords)[i]->noteY;
                 if (*chordType == beleth::CHORD_AUGMENTED) {
