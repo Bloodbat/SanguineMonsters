@@ -26,6 +26,10 @@ namespace beleth {
         "7"
     };
 
+    static const char* noteNames[12] = {
+         "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+    };
+
     static const std::string kNoteOutputLabel = "Chord part %d";
 
     static const int CircleOfFifths[12] = { 0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5 };
@@ -37,6 +41,13 @@ namespace beleth {
         CHORD_DIMINISHED,
         CHORD_SUSPENDED
     };
+
+    // Red background.
+    static const NVGcolor displayColorBackground = nvgRGB(48, 16, 16);
+    static const NVGcolor displayColorActive = nvgRGB(255, 0, 0);
+    static const NVGcolor displayColorTriangle = nvgRGB(127, 16, 16);
+    static const NVGcolor displayColorChordPath = nvgRGB(255, 16, 16);
+    static const NVGcolor displayColorGrid = nvgRGB(255, 32, 32);
 
     struct Note {
         // Projected position.

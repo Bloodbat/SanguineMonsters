@@ -351,30 +351,28 @@ struct Beleth : SanguineModule {
 struct BelethDisplay : TransparentWidget {
     Beleth* module = nullptr;
 
-    beleth::ChordTypes* chordType = nullptr;
-    std::array<beleth::Note*, beleth::kMaxParts>* chords = nullptr;
-    beleth::NotesArray<beleth::Note, beleth::kTonnetzRows, beleth::kMaxNotes>* notes = nullptr;
-
-    int* parts = nullptr;
-    int* transpose = nullptr;
-
-    float* x0 = nullptr;
-    float* y0 = nullptr;
-
     std::shared_ptr<Font> font;
 
-    // Note names.
-    const char* noteNames[12] = {
-        "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-    };
+    float centerX;
+    float centerY;
 
-    float centerX = 0.f;
-    float centerY = 0.f;
+    float reducedBoxX;
+    float reducedBoxY;
+
+    explicit BelethDisplay(const math::Vec size) {
+        box.size = size;
+        reducedBoxX = box.size.x - 0.5f;
+        reducedBoxY = box.size.y - 0.5f;
+
+        centerX = reducedBoxX * 0.5f;
+        centerY = reducedBoxY * 0.5f;
+    }
 
     void draw(const DrawArgs& args) override {
         // Display background.
         nvgBeginPath(args.vg);
         nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
+        // TODO: display common?
         nvgFillColor(args.vg, nvgRGB(10, 10, 10));
         nvgFill(args.vg);
         nvgStrokeWidth(args.vg, 1.5f);
@@ -392,33 +390,26 @@ struct BelethDisplay : TransparentWidget {
                 return;
             }
 
-            float reducedBoxX = box.size.x - 0.5f;
-            float reducedBoxY = box.size.y - 0.5f;
-
-            centerX = reducedBoxX * 0.5f;
-            centerY = reducedBoxY * 0.5f;
-
             if (module && !module->isBypassed()) {
-                // Red background.
-                static const NVGcolor backgroundColor = nvgRGB(48, 16, 16);
                 nvgBeginPath(args.vg);
                 nvgRoundedRect(args.vg, 0.5f, 0.5f, reducedBoxX, reducedBoxY, 5.f);
-                nvgFillColor(args.vg, backgroundColor);
+                nvgFillColor(args.vg, beleth::displayColorBackground);
                 nvgFill(args.vg);
 
-                if (*chordType == beleth::CHORD_MAJOR ||
-                    *chordType == beleth::CHORD_MINOR) {
-                    drawChordTriads(args.vg);
+                if (module->chordType == beleth::CHORD_MAJOR ||
+                    module->chordType == beleth::CHORD_MINOR) {
+                    drawChordTriads(args.vg, module->chords, module->parts);
                 }
 
-                drawTonnetzGrid(args.vg);
-                drawChordPath(args.vg);
-                drawActiveNotes(args.vg);
-                drawTonnetzNotes(args.vg);
+                drawTonnetzGrid(args.vg, module->notes);
+                drawActiveChordPath(args.vg, module->chordType, module->chords, module->notes,
+                    module->parts);
+                drawActiveNotes(args.vg, module->chords);
+                drawTonnetzNotes(args.vg, module->notes, module->transpose);
 
                 // Draw playhead.
-                float phi = -(*x0 - *y0 / 2.f) * beleth::kPhiFactor;
-                float radius = beleth::kRadius + beleth::kScaleFactor * *y0;
+                float phi = -(module->x0 - module->y0 / 2.f) * beleth::kPhiFactor;
+                float radius = beleth::kRadius + beleth::kScaleFactor * module->y0;
                 float x = radius * sin(phi) + reducedBoxX * 0.5f;
                 float y = radius * cos(phi) + reducedBoxY * 0.5f;
                 nvgBeginPath(args.vg);
@@ -427,27 +418,11 @@ struct BelethDisplay : TransparentWidget {
                 nvgStrokeWidth(args.vg, 1.02f);
                 nvgStroke(args.vg);
 
-                drawRectHalo(args, box.size, nvgRGB(255, 0, 0), 55, 0.f);
+                drawRectHalo(args, box.size, beleth::displayColorActive, 55, 0.f);
             } else if (!module) {
-                float fakeX0 = 6.f;
-                float fakeY0 = 1.f;
-
-                int fakeParts = 7;
                 int fakeTranspose = 0;
 
                 beleth::NotesArray<beleth::Note, beleth::kTonnetzRows, beleth::kMaxNotes> fakeNotes;
-                std::array<beleth::Note*, beleth::kMaxParts> fakeChords;
-
-                beleth::ChordTypes fakeChordType = beleth::CHORD_AUGMENTED;
-
-                x0 = &fakeX0;
-                y0 = &fakeY0;
-
-                parts = &fakeParts;
-                transpose = &fakeTranspose;
-                chordType = &fakeChordType;
-                chords = &fakeChords;
-                notes = &fakeNotes;
 
                 for (int row = 0; row < beleth::kTonnetzRows; ++row) {
                     for (int note = 0; note < beleth::kMaxNotes; ++note) {
@@ -466,84 +441,74 @@ struct BelethDisplay : TransparentWidget {
                     }
                 }
 
-                for (int part = 0; part < beleth::kMaxParts; ++part) {
-                    fakeChords[part] = &fakeNotes[0][part];
-                }
-
-                // Red background.
-                static const NVGcolor backgroundColor = nvgRGB(48, 16, 16);
                 nvgBeginPath(args.vg);
                 nvgRoundedRect(args.vg, 0.5f, 0.5f, reducedBoxX, reducedBoxY, 5.f);
-                nvgFillColor(args.vg, backgroundColor);
+                nvgFillColor(args.vg, beleth::displayColorBackground);
                 nvgFill(args.vg);
 
-                drawTonnetzGrid(args.vg);
-                drawTonnetzNotes(args.vg);
-
-                x0 = nullptr;
-                y0 = nullptr;
-                parts = nullptr;
-                transpose = nullptr;
-                chordType = nullptr;
-                chords = nullptr;
+                drawTonnetzGrid(args.vg, fakeNotes);
+                drawTonnetzNotes(args.vg, fakeNotes, fakeTranspose);
             }
         }
     }
 
-    void drawChordTriads(NVGcontext* vg) {
+    void drawChordTriads(NVGcontext* vg, const std::array<beleth::Note*, beleth::kMaxParts>& chords,
+        const int& parts) {
         // Draw active chord - triangles.
-        for (int part = 0; part < *parts - 2; ++part) {
+        for (int part = 0; part < parts - 2; ++part) {
             nvgBeginPath(vg);
-            nvgFillColor(vg, nvgRGB(127, 16, 16));
-            nvgMoveTo(vg, (*chords)[part]->x + centerX, (*chords)[part]->y + centerY);
-            nvgLineTo(vg, (*chords)[part + 1]->x + centerX, (*chords)[part + 1]->y + centerY);
-            nvgLineTo(vg, (*chords)[part + 2]->x + centerX, (*chords)[part + 2]->y + centerY);
+            nvgFillColor(vg, beleth::displayColorTriangle);
+            nvgMoveTo(vg, chords[part]->x + centerX, chords[part]->y + centerY);
+            nvgLineTo(vg, chords[part + 1]->x + centerX, chords[part + 1]->y + centerY);
+            nvgLineTo(vg, chords[part + 2]->x + centerX, chords[part + 2]->y + centerY);
             nvgClosePath(vg);
             nvgFill(vg);
         }
     }
 
-    void drawChordPath(NVGcontext* vg) {
+    void drawActiveChordPath(NVGcontext* vg, const beleth::ChordTypes& chordType,
+        const std::array<beleth::Note*, beleth::kMaxParts>& chords,
+        const beleth::NotesArray<beleth::Note, beleth::kTonnetzRows, beleth::kMaxNotes>& notes,
+        const int& parts) {
         nvgStrokeWidth(vg, 1.36f);
-        nvgStrokeColor(vg, nvgRGB(255, 16, 16));
+        nvgStrokeColor(vg, beleth::displayColorChordPath);
 
-        // Draw active chord path.
-        if (*chordType == beleth::CHORD_MAJOR || *chordType == beleth::CHORD_MINOR) {
+        if (chordType == beleth::CHORD_MAJOR || chordType == beleth::CHORD_MINOR) {
             nvgBeginPath(vg);
-            for (int part = 0; part < *parts - 1; ++part) {
-                nvgMoveTo(vg, (*chords)[part]->x + centerX, (*chords)[part]->y + centerY);
-                nvgLineTo(vg, (*chords)[part + 1]->x + centerX, (*chords)[part + 1]->y + centerY);
+            for (int part = 0; part < parts - 1; ++part) {
+                nvgMoveTo(vg, chords[part]->x + centerX, chords[part]->y + centerY);
+                nvgLineTo(vg, chords[part + 1]->x + centerX, chords[part + 1]->y + centerY);
             }
             nvgStroke(vg);
-        } else if (*chordType == beleth::CHORD_SUSPENDED) {
+        } else if (chordType == beleth::CHORD_SUSPENDED) {
             nvgBeginPath(vg);
-            float posX = (*chords)[0]->x + centerX;
-            float posY = (*chords)[0]->y + centerY;
+            float posX = chords[0]->x + centerX;
+            float posY = chords[0]->y + centerY;
             nvgMoveTo(vg, posX, posY);
-            int noteX = (*chords)[0]->noteX;
-            int noteY = (*chords)[0]->noteY;
-            for (int part = 0; part < *parts; part++) {
-                float x1 = (*notes)[noteY][(noteX + part) % 12].x + centerX;
-                float y1 = (*notes)[noteY][(noteX + part) % 12].y + centerY;
+            int noteX = chords[0]->noteX;
+            int noteY = chords[0]->noteY;
+            for (int part = 0; part < parts; part++) {
+                float x1 = notes[noteY][(noteX + part) % 12].x + centerX;
+                float y1 = notes[noteY][(noteX + part) % 12].y + centerY;
                 nvgLineTo(vg, x1, y1);
             }
             nvgStroke(vg);
         } else {
-            for (int i = 0; i < *parts; ++i) {
+            for (int part = 0; part < parts; ++part) {
                 nvgBeginPath(vg);
-                float posX = (*chords)[i]->x + centerX;
-                float posY = (*chords)[i]->y + centerY;
+                float posX = chords[part]->x + centerX;
+                float posY = chords[part]->y + centerY;
                 nvgMoveTo(vg, posX, posY);
-                int noteX = (*chords)[i]->noteX;
-                int noteY = (*chords)[i]->noteY;
-                if (*chordType == beleth::CHORD_AUGMENTED) {
-                    float x1 = (*notes)[noteY + 1][noteX].x + centerX;
-                    float y1 = (*notes)[noteY + 1][noteX].y + centerY;
+                int noteX = chords[part]->noteX;
+                int noteY = chords[part]->noteY;
+                if (chordType == beleth::CHORD_AUGMENTED) {
+                    float x1 = notes[noteY + 1][noteX].x + centerX;
+                    float y1 = notes[noteY + 1][noteX].y + centerY;
                     nvgLineTo(vg, x1, y1);
                 }
-                if (*chordType == beleth::CHORD_DIMINISHED) {
-                    float x1 = (*notes)[noteY + 1][(noteX + 1) % 12].x + centerX;
-                    float y1 = (*notes)[noteY + 1][(noteX + 1) % 12].y + centerY;
+                if (chordType == beleth::CHORD_DIMINISHED) {
+                    float x1 = notes[noteY + 1][(noteX + 1) % 12].x + centerX;
+                    float y1 = notes[noteY + 1][(noteX + 1) % 12].y + centerY;
                     nvgLineTo(vg, x1, y1);
                 }
                 nvgStroke(vg);
@@ -551,29 +516,29 @@ struct BelethDisplay : TransparentWidget {
         }
     }
 
-    void drawTonnetzGrid(NVGcontext* vg) {
+    void drawTonnetzGrid(NVGcontext* vg, const beleth::NotesArray<beleth::Note,
+        beleth::kTonnetzRows, beleth::kMaxNotes>& notes) {
         nvgStrokeWidth(vg, 0.51f);
-        nvgStrokeColor(vg, nvgRGB(255, 32, 32));
+        nvgStrokeColor(vg, beleth::displayColorGrid);
 
-        // Grid.
         for (int noteY = 0; noteY < 4; ++noteY) {
             for (int noteX = 0; noteX < 12; noteX++) {
-                float x = (*notes)[noteY][noteX].x + centerX;
-                float y = (*notes)[noteY][noteX].y + centerY;
+                float x = notes[noteY][noteX].x + centerX;
+                float y = notes[noteY][noteX].y + centerY;
 
                 nvgBeginPath(vg);
                 nvgMoveTo(vg, x, y);
-                float x1 = (*notes)[noteY][(noteX + 1) % 12].x + centerX;
-                float y1 = (*notes)[noteY][(noteX + 1) % 12].y + centerY;
+                float x1 = notes[noteY][(noteX + 1) % 12].x + centerX;
+                float y1 = notes[noteY][(noteX + 1) % 12].y + centerY;
                 nvgLineTo(vg, x1, y1);
                 if (noteY < 3) {
                     nvgMoveTo(vg, x, y);
-                    x1 = (*notes)[noteY + 1][(noteX) % 12].x + centerX;
-                    y1 = (*notes)[noteY + 1][(noteX) % 12].y + centerY;
+                    x1 = notes[noteY + 1][(noteX) % 12].x + centerX;
+                    y1 = notes[noteY + 1][(noteX) % 12].y + centerY;
                     nvgLineTo(vg, x1, y1);
                     nvgMoveTo(vg, x, y);
-                    x1 = (*notes)[noteY + 1][(noteX + 1) % 12].x + centerX;
-                    y1 = (*notes)[noteY + 1][(noteX + 1) % 12].y + centerY;
+                    x1 = notes[noteY + 1][(noteX + 1) % 12].x + centerX;
+                    y1 = notes[noteY + 1][(noteX + 1) % 12].y + centerY;
                     nvgLineTo(vg, x1, y1);
                 }
                 nvgStroke(vg);
@@ -581,39 +546,39 @@ struct BelethDisplay : TransparentWidget {
         }
     }
 
-    void drawActiveNotes(NVGcontext* vg) {
+    void drawActiveNotes(NVGcontext* vg, const std::array<beleth::Note*, beleth::kMaxParts>& chords) {
         // Circles for played notes.
         nvgBeginPath(vg);
         nvgStrokeWidth(vg, 1.36f);
-        nvgStrokeColor(vg, nvgRGB(255, 0, 0));
-        nvgFillColor(vg, nvgRGB(48, 16, 16));
-        nvgCircle(vg, (*chords)[0]->x + centerX, (*chords)[0]->y + centerY, 5.44f);
+        nvgStrokeColor(vg, beleth::displayColorActive);
+        nvgFillColor(vg, beleth::displayColorBackground);
+        nvgCircle(vg, chords[0]->x + centerX, chords[0]->y + centerY, 5.44f);
         nvgFill(vg);
         nvgStroke(vg);
     }
 
-    void drawTonnetzNotes(NVGcontext* vg) {
+    void drawTonnetzNotes(NVGcontext* vg, const beleth::NotesArray<beleth::Note,
+        beleth::kTonnetzRows, beleth::kMaxNotes>& notes, const int& transpose) {
         // Names.
         for (int noteY = 0; noteY < 4; ++noteY) {
             for (int noteX = 0; noteX < 12; ++noteX) {
-                float x = (*notes)[noteY][noteX].x + centerX;
-                float y = (*notes)[noteY][noteX].y + centerY;
+                float x = notes[noteY][noteX].x + centerX;
+                float y = notes[noteY][noteX].y + centerY;
 
                 // Circle with note name.
                 nvgBeginPath(vg);
-                nvgFillColor(vg, nvgRGB(48, 16, 16));
+                nvgFillColor(vg, beleth::displayColorBackground);
                 nvgCircle(vg, x, y, 4.08f);
                 nvgFill(vg);
 
                 nvgFontSize(vg, 7.5);
                 nvgFontFaceId(vg, font->handle);
                 Vec textPos = Vec(x - 2.08, y + 2);
-                NVGcolor textColor = nvgRGB(255, 0, 0);
-                nvgFillColor(vg, textColor);
+                nvgFillColor(vg, beleth::displayColorActive);
 
-                int pitchClass = ((*notes)[noteY][noteX].pitchClass + *transpose) % 12;
+                int pitchClass = (notes[noteY][noteX].pitchClass + transpose) % 12;
 
-                nvgText(vg, textPos.x, textPos.y, noteNames[pitchClass], NULL);
+                nvgText(vg, textPos.x, textPos.y, beleth::noteNames[pitchClass], NULL);
             }
         }
     }
@@ -635,10 +600,9 @@ struct BelethWidget : SanguineModuleWidget {
         FramebufferWidget* belethFrameBuffer = new FramebufferWidget();
         addChild(belethFrameBuffer);
 
-        BelethDisplay* belethDisplay = new BelethDisplay();
+        BelethDisplay* belethDisplay = new BelethDisplay(millimetersToPixelsVec(60.48f, 60.48f));
         belethDisplay->module = module;
         belethDisplay->box.pos = millimetersToPixelsVec(12.96f, 18.084f);
-        belethDisplay->box.size = millimetersToPixelsVec(60.48f, 60.48f);
         belethFrameBuffer->addChild(belethDisplay);
 
         addParam(createLightParamCentered<VCVLightBezelLatch<GreenRedLight>>(
@@ -690,16 +654,6 @@ struct BelethWidget : SanguineModuleWidget {
             addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(xPos, 117.176f),
                 module, Beleth::OUTPUT_PART + port));
             xPos += xSpacing;
-        }
-
-        if (module) {
-            belethDisplay->chordType = &module->chordType;
-            belethDisplay->chords = &module->chords;
-            belethDisplay->notes = &module->notes;
-            belethDisplay->parts = &module->parts;
-            belethDisplay->transpose = &module->transpose;
-            belethDisplay->x0 = &module->x0;
-            belethDisplay->y0 = &module->y0;
         }
     }
 };
