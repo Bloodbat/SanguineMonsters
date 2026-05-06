@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "sanguinecustomdisplays.hpp"
 
 #include <array>
 
@@ -372,11 +373,10 @@ struct BelethDisplay : TransparentWidget {
         // Display background.
         nvgBeginPath(args.vg);
         nvgRoundedRect(args.vg, 0.f, 0.f, box.size.x, box.size.y, 5.f);
-        // TODO: display common?
-        nvgFillColor(args.vg, nvgRGB(10, 10, 10));
+        nvgFillColor(args.vg, sanguineCommonCode::displayColorGlass);
         nvgFill(args.vg);
         nvgStrokeWidth(args.vg, 1.5f);
-        nvgStrokeColor(args.vg, nvgRGB(100, 100, 100));
+        nvgStrokeColor(args.vg, sanguineCommonCode::displayColorBorder);
         nvgStroke(args.vg);
 
         Widget::draw(args);
