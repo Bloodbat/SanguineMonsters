@@ -326,7 +326,7 @@ struct Sphinx : SanguineModule {
 		}
 	}
 
-	int getFibonacci(int n) {
+	static int getFibonacci(int n) {
 		return (n < 2) ? n : getFibonacci(n - 1) + getFibonacci(n - 2);
 	}
 
