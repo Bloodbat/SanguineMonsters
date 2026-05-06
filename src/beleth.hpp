@@ -5,7 +5,7 @@
 namespace beleth {
     static const float kRadius = 35.f;
 
-    static const float kScaleFactor = 15.f;
+    static const float kScaleFactor = 17.f;
 
     static const float kPhiFactor = 2.f * M_PI / 12.f;
 

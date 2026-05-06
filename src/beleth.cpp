@@ -422,9 +422,9 @@ struct BelethDisplay : TransparentWidget {
                 float x = radius * sin(phi) + reducedBoxX * 0.5f;
                 float y = radius * cos(phi) + reducedBoxY * 0.5f;
                 nvgBeginPath(args.vg);
-                nvgCircle(args.vg, x, y, 3.f);
+                nvgCircle(args.vg, x, y, 2.04f);
                 nvgFill(args.vg);
-                nvgStrokeWidth(args.vg, 1.5f);
+                nvgStrokeWidth(args.vg, 1.02f);
                 nvgStroke(args.vg);
 
                 drawRectHalo(args, box.size, nvgRGB(255, 0, 0), 55, 0.f);
@@ -504,7 +504,7 @@ struct BelethDisplay : TransparentWidget {
     }
 
     void drawChordPath(NVGcontext* vg) {
-        nvgStrokeWidth(vg, 1.5f);
+        nvgStrokeWidth(vg, 1.36f);
         nvgStrokeColor(vg, nvgRGB(255, 16, 16));
 
         // Draw active chord path.
@@ -552,7 +552,7 @@ struct BelethDisplay : TransparentWidget {
     }
 
     void drawTonnetzGrid(NVGcontext* vg) {
-        nvgStrokeWidth(vg, .70f);
+        nvgStrokeWidth(vg, 0.51f);
         nvgStrokeColor(vg, nvgRGB(255, 32, 32));
 
         // Grid.
@@ -584,10 +584,10 @@ struct BelethDisplay : TransparentWidget {
     void drawActiveNotes(NVGcontext* vg) {
         // Circles for played notes.
         nvgBeginPath(vg);
-        nvgStrokeWidth(vg, 1.5f);
+        nvgStrokeWidth(vg, 1.36f);
         nvgStrokeColor(vg, nvgRGB(255, 0, 0));
         nvgFillColor(vg, nvgRGB(48, 16, 16));
-        nvgCircle(vg, (*chords)[0]->x + centerX, (*chords)[0]->y + centerY, 8.f);
+        nvgCircle(vg, (*chords)[0]->x + centerX, (*chords)[0]->y + centerY, 5.44f);
         nvgFill(vg);
         nvgStroke(vg);
     }
@@ -602,12 +602,12 @@ struct BelethDisplay : TransparentWidget {
                 // Circle with note name.
                 nvgBeginPath(vg);
                 nvgFillColor(vg, nvgRGB(48, 16, 16));
-                nvgCircle(vg, x, y, 4.5f);
+                nvgCircle(vg, x, y, 4.08f);
                 nvgFill(vg);
 
-                nvgFontSize(vg, 10);
+                nvgFontSize(vg, 7.5);
                 nvgFontFaceId(vg, font->handle);
-                Vec textPos = Vec(x - 4, y + 4);
+                Vec textPos = Vec(x - 2.08, y + 2);
                 NVGcolor textColor = nvgRGB(255, 0, 0);
                 nvgFillColor(vg, textColor);
 
