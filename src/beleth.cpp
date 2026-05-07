@@ -293,22 +293,7 @@ struct Beleth : SanguineModule {
         params[PARAM_TRANSPOSE].setValue(0.f);
         transpose = 0;
 
-        for (int row = 0; row < beleth::kTonnetzRows; ++row) {
-            for (int note = 0; note < beleth::kMaxNotes; ++note) {
-                notes[row][note].pitchClass = beleth::CircleOfFifths[(note + 10 + row * 8) % 12];
-
-                float phi = -(static_cast<float>(note) - static_cast<float>(row) / 2.f) * beleth::kPhiFactor;
-                float radius = beleth::kRadius + beleth::kScaleFactor * row;
-
-                float x = radius * sin(phi);
-                float y = radius * cos(phi);
-
-                notes[row][note].x = x;
-                notes[row][note].y = y;
-                notes[row][note].noteX = note;
-                notes[row][note].noteY = row;
-            }
-        }
+        beleth::makeInitialNotes(notes);
 
         for (int part = 0; part < beleth::kMaxParts; ++part) {
             chords[part] = &notes[0][part];
@@ -420,22 +405,7 @@ struct BelethDisplay : TransparentWidget {
 
                 beleth::NotesArray<beleth::Note, beleth::kTonnetzRows, beleth::kMaxNotes> fakeNotes;
 
-                for (int row = 0; row < beleth::kTonnetzRows; ++row) {
-                    for (int note = 0; note < beleth::kMaxNotes; ++note) {
-                        fakeNotes[row][note].pitchClass = beleth::CircleOfFifths[(note + 10 + row * 8) % 12];
-
-                        float phi = -(static_cast<float>(note) - static_cast<float>(row) / 2.f) * beleth::kPhiFactor;
-                        float radius = beleth::kRadius + beleth::kScaleFactor * row;
-
-                        float x = radius * sin(phi);
-                        float y = radius * cos(phi);
-
-                        fakeNotes[row][note].x = x;
-                        fakeNotes[row][note].y = y;
-                        fakeNotes[row][note].noteX = note;
-                        fakeNotes[row][note].noteY = row;
-                    }
-                }
+                beleth::makeInitialNotes(fakeNotes);
 
                 nvgBeginPath(args.vg);
                 nvgRoundedRect(args.vg, 0.5f, 0.5f, reducedBoxX, reducedBoxY, 5.f);

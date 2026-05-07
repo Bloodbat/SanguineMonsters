@@ -64,4 +64,24 @@ namespace beleth {
 
     template <class T, size_t ROW, size_t COL>
     using NotesArray = T[ROW][COL];
+
+    static void makeInitialNotes(beleth::NotesArray<beleth::Note, beleth::kTonnetzRows, beleth::kMaxNotes>& newNotes) {
+        for (int row = 0; row < beleth::kTonnetzRows; ++row) {
+            for (int note = 0; note < beleth::kMaxNotes; ++note) {
+                newNotes[row][note].pitchClass = beleth::CircleOfFifths[(note + 10 + row * 8) % 12];
+
+                float phi = -(static_cast<float>(note) - static_cast<float>(row) / 2.f) * beleth::kPhiFactor;
+                float radius = beleth::kRadius + beleth::kScaleFactor * row;
+
+                float x = radius * sin(phi);
+                float y = radius * cos(phi);
+
+                newNotes[row][note].x = x;
+                newNotes[row][note].y = y;
+                newNotes[row][note].noteX = note;
+                newNotes[row][note].noteY = row;
+            }
+        }
+    };
+
 }
