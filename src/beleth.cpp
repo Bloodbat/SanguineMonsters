@@ -96,13 +96,9 @@ struct Beleth : SanguineModule {
 
         configOutput(OUTPUT_TONIC, "Tonic");
 
-        configOutput(OUTPUT_PART, string::f(beleth::kNoteOutputLabel, 1));
-        configOutput(OUTPUT_PART + 1, string::f(beleth::kNoteOutputLabel, 3));
-        configOutput(OUTPUT_PART + 2, string::f(beleth::kNoteOutputLabel, 5));
-        configOutput(OUTPUT_PART + 3, string::f(beleth::kNoteOutputLabel, 7));
-        configOutput(OUTPUT_PART + 4, string::f(beleth::kNoteOutputLabel, 9));
-        configOutput(OUTPUT_PART + 5, string::f(beleth::kNoteOutputLabel, 11));
-        configOutput(OUTPUT_PART + 6, string::f(beleth::kNoteOutputLabel, 13));
+        for (int output = 0; output < beleth::kMaxParts; ++output) {
+            configOutput(OUTPUT_PART + output, string::f(beleth::kNoteOutputLabel, (output * 2) + 1));
+        }
     }
 
     void process(const ProcessArgs& args) override {
