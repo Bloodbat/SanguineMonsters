@@ -391,8 +391,8 @@ struct BelethDisplay : TransparentWidget {
                 // Draw playhead.
                 float phi = -(module->x0 - module->y0 / 2.f) * beleth::kPhiFactor;
                 float radius = beleth::kRadius + beleth::kScaleFactor * module->y0;
-                float x = radius * sin(phi) + reducedBoxX * 0.5f;
-                float y = radius * cos(phi) + reducedBoxY * 0.5f;
+                float x = radius * sin(phi) + centerX;
+                float y = radius * cos(phi) + centerY;
                 nvgBeginPath(args.vg);
                 nvgCircle(args.vg, x, y, 2.04f);
                 nvgFill(args.vg);
