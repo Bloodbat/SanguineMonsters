@@ -537,9 +537,9 @@ struct BelethDisplay : TransparentWidget {
                 nvgCircle(vg, x, y, 4.08f);
                 nvgFill(vg);
 
-                nvgFontSize(vg, 7.5);
+                nvgFontSize(vg, 7.5f);
                 nvgFontFaceId(vg, font->handle);
-                Vec textPos = Vec(x - 2.08, y + 2);
+                Vec textPos = Vec(x - 2.08f, y + 2.f);
                 nvgFillColor(vg, beleth::displayColorActive);
 
                 int pitchClass = (notes[noteY][noteX].pitchClass + transpose) % 12;
