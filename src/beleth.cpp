@@ -439,46 +439,64 @@ struct BelethDisplay : TransparentWidget {
         nvgStrokeWidth(vg, 1.36f);
         nvgStrokeColor(vg, beleth::displayColorChordPath);
 
-        if (chordType == beleth::CHORD_MAJOR || chordType == beleth::CHORD_MINOR) {
+        float posX;
+        float posY;
+        float x1;
+        float y1;
+        int noteX;
+        int noteY;
+        int part;
+
+        switch (chordType) {
+        case beleth::CHORD_MAJOR:
+        case beleth::CHORD_MINOR:
             nvgBeginPath(vg);
-            for (int part = 0; part < parts - 1; ++part) {
+            for (part = 0; part < parts - 1; ++part) {
                 nvgMoveTo(vg, chords[part]->x + centerX, chords[part]->y + centerY);
                 nvgLineTo(vg, chords[part + 1]->x + centerX, chords[part + 1]->y + centerY);
             }
             nvgStroke(vg);
-        } else if (chordType == beleth::CHORD_SUSPENDED) {
+            break;
+        case beleth::CHORD_SUSPENDED:
             nvgBeginPath(vg);
-            float posX = chords[0]->x + centerX;
-            float posY = chords[0]->y + centerY;
+            posX = chords[0]->x + centerX;
+            posY = chords[0]->y + centerY;
             nvgMoveTo(vg, posX, posY);
-            int noteX = chords[0]->noteX;
-            int noteY = chords[0]->noteY;
-            for (int part = 0; part < parts; part++) {
-                float x1 = notes[noteY][(noteX + part) % 12].x + centerX;
-                float y1 = notes[noteY][(noteX + part) % 12].y + centerY;
+            noteX = chords[0]->noteX;
+            noteY = chords[0]->noteY;
+            for (part = 0; part < parts; part++) {
+                x1 = notes[noteY][(noteX + part) % 12].x + centerX;
+                y1 = notes[noteY][(noteX + part) % 12].y + centerY;
                 nvgLineTo(vg, x1, y1);
             }
             nvgStroke(vg);
-        } else {
-            for (int part = 0; part < parts; ++part) {
+            break;
+        default:
+            for (part = 0; part < parts; ++part) {
                 nvgBeginPath(vg);
-                float posX = chords[part]->x + centerX;
-                float posY = chords[part]->y + centerY;
+                posX = chords[part]->x + centerX;
+                posY = chords[part]->y + centerY;
                 nvgMoveTo(vg, posX, posY);
-                int noteX = chords[part]->noteX;
-                int noteY = chords[part]->noteY;
-                if (chordType == beleth::CHORD_AUGMENTED) {
-                    float x1 = notes[noteY + 1][noteX].x + centerX;
-                    float y1 = notes[noteY + 1][noteX].y + centerY;
+                noteX = chords[part]->noteX;
+                noteY = chords[part]->noteY;
+
+                switch (chordType) {
+                case beleth::CHORD_AUGMENTED:
+                    x1 = notes[noteY + 1][noteX].x + centerX;
+                    y1 = notes[noteY + 1][noteX].y + centerY;
                     nvgLineTo(vg, x1, y1);
-                }
-                if (chordType == beleth::CHORD_DIMINISHED) {
-                    float x1 = notes[noteY + 1][(noteX + 1) % 12].x + centerX;
-                    float y1 = notes[noteY + 1][(noteX + 1) % 12].y + centerY;
+                    break;
+                case beleth::CHORD_DIMINISHED:
+                    x1 = notes[noteY + 1][(noteX + 1) % 12].x + centerX;
+                    y1 = notes[noteY + 1][(noteX + 1) % 12].y + centerY;
                     nvgLineTo(vg, x1, y1);
+                    break;
+                default:
+                    break;
                 }
                 nvgStroke(vg);
             }
+            break;
         }
     }
 
