@@ -82,9 +82,9 @@ struct Beleth : SanguineModule {
         configSwitch(PARAM_CHORD_GROUP, 0.f, 1.f, 0.f, "Chord groups", beleth::chordGroupLabels);
         configSwitch(PARAM_SUSPENDED, 0.f, 1.f, 0.f, "Suspended chords (sus4)",
             monsterscommon::onOffButtonLabels);
-        configParam(PARAM_TRANSPOSE, 0.f, 1.f, 0.f, "Transpose");
+        configParam(PARAM_TRANSPOSE, 0.f, 1.f, 0.f, "Transpose", "", 0.f, 10.f);
         configSwitch(PARAM_PARTS, 3.f, 7.f, 7.f, "Parts", beleth::partsLabels);
-        configParam(PARAM_VOICING, -1.f, 1.f, 0.f, "Voicing");
+        configParam(PARAM_VOICING, -1.f, 1.f, 0.f, "Voicing", "", 0.f, 10.f);
 
         configInput(INPUT_PERFECT_FIFTH, "Perfect fifth per volt");
         configInput(INPUT_MAJOR_TRIAD, "Major triad per volt");
