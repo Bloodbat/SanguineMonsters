@@ -115,8 +115,8 @@ struct Brainz : SanguineModule {
 	bool bTriggersSent = false;
 
 	bool globalOutputsConnected[kMaxOutTriggers] = {};
-	bool bHaveRunCable = false;
-	bool bHaveResetCable = false;
+	bool bRunConnected = false;
+	bool bResetConnected = false;
 
 	brainz::StepDirections moduleDirection = brainz::DIRECTION_BIDIRECTIONAL;
 	brainz::StepDirections stepDirections[2] = { brainz::DIRECTION_BIDIRECTIONAL, brainz::DIRECTION_BIDIRECTIONAL };
@@ -744,7 +744,7 @@ struct Brainz : SanguineModule {
 				}
 			}
 		} else {
-			if (bHaveRunCable) {
+			if (bRunConnected) {
 				bRunSent = true;
 				pgRun.trigger();
 			}
@@ -758,7 +758,7 @@ struct Brainz : SanguineModule {
 		metronomeStepsDone = 0;
 		moduleState = brainz::MODULE_STATE_READY;
 		moduleStage = brainz::MODULE_STAGE_INIT;
-		if (bHaveResetCable) {
+		if (bResetConnected) {
 			bResetSent = true;
 			pgReset.trigger();
 		}
@@ -846,11 +846,11 @@ struct Brainz : SanguineModule {
 				break;
 
 			case OUTPUT_RUN:
-				bHaveRunCable = e.connecting;
+				bRunConnected = e.connecting;
 				break;
 
 			case OUTPUT_RESET:
-				bHaveResetCable = e.connecting;
+				bResetConnected = e.connecting;
 				break;
 
 			default:
