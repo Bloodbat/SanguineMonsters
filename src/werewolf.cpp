@@ -121,23 +121,18 @@ struct Werewolf : SanguineModule {
 					if (bRightOutConnected) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageMix, channel);
 					}
+
 					voltageSumLeft += voltageMix;
 					voltageSumRight += voltageMix;
 				} else {
-					voltageSumLeft += voltageOutLeft;
-
 					if (bLeftOutConnected) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
-					}
-
-					if (bInputsNormalled) {
-						voltageOutRight = voltageOutLeft;
-						voltageSumRight += voltageOutLeft;
-
 					}
 					if (bRightOutConnected) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
 					}
+
+					voltageSumLeft += voltageOutLeft;
 					voltageSumRight += voltageOutRight;
 				}
 			}
