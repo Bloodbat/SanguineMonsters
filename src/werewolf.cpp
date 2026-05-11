@@ -195,7 +195,7 @@ struct Werewolf : SanguineModule {
 		}
 	}
 
-	inline void distort(const float& inVoltage, float& outVoltage, const float fold) {
+	static inline void distort(const float& inVoltage, float& outVoltage, const float fold) {
 		outVoltage = inVoltage;
 		const float foldFactor = fold / 5.f;
 		for (int i = 0; i < 100; ++i) {
