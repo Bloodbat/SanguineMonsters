@@ -364,6 +364,9 @@ struct BelethDisplay : TransparentWidget {
 
         centerX = reducedBoxX * 0.5f;
         centerY = reducedBoxY * 0.5f;
+
+        font = APP->window->loadFont(asset::plugin(pluginInstance,
+            "res/components/DejaVuSansMono.ttf"));
     }
 
     void draw(const DrawArgs& args) override {
@@ -381,8 +384,6 @@ struct BelethDisplay : TransparentWidget {
 
     void drawLayer(const DrawArgs& args, int layer) override {
         if (layer == 1) {
-            font = APP->window->loadFont(asset::plugin(pluginInstance, "res/components/DejaVuSansMono.ttf"));
-
             if (!font) {
                 return;
             }
