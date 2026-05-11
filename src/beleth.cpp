@@ -55,10 +55,10 @@ struct Beleth : SanguineModule {
     int noteX;
     int noteY;
 
-    bool bHaveParts = false;
-    bool bHaveChordGroup = false;
+    bool bPartsConnected = false;
+    bool bChordGroupConnected = false;
     bool bWantMajorMinor;
-    bool bHaveSuspended = false;
+    bool bSuspendedConnected = false;
     bool bWantSuspended;
 
     // Geometrical position of the playhead.
@@ -102,7 +102,7 @@ struct Beleth : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        if (!bHaveParts) {
+        if (!bPartsConnected) {
             parts = params[PARAM_PARTS].getValue();
         } else {
             float partsVoltage = inputs[INPUT_PARTS].getVoltage();
@@ -112,13 +112,13 @@ struct Beleth : SanguineModule {
             parts = static_cast<int>(partsVoltage);
         }
 
-        if (!bHaveChordGroup) {
+        if (!bChordGroupConnected) {
             bWantMajorMinor = static_cast<bool>(params[PARAM_CHORD_GROUP].getValue());
         } else {
             bWantMajorMinor = inputs[INPUT_CHORD_GROUP].getVoltage() >= 1.f;
         }
 
-        if (!bHaveSuspended) {
+        if (!bSuspendedConnected) {
             bWantSuspended = static_cast<bool>(params[PARAM_SUSPENDED].getValue());
         } else {
             bWantSuspended = inputs[INPUT_SUSPENDED].getVoltage() >= 1.f;
@@ -314,13 +314,13 @@ struct Beleth : SanguineModule {
         if (e.type == Port::INPUT) {
             switch (e.portId) {
             case INPUT_PARTS:
-                bHaveParts = e.connecting;
+                bPartsConnected = e.connecting;
                 break;
             case INPUT_CHORD_GROUP:
-                bHaveChordGroup = e.connecting;
+                bChordGroupConnected = e.connecting;
                 break;
             case INPUT_SUSPENDED:
-                bHaveSuspended = e.connecting;
+                bSuspendedConnected = e.connecting;
                 break;
 
             default:
