@@ -105,11 +105,11 @@ struct SuperSwitch81 : SanguineModule {
 	bool bStepsMutex = false;
 	bool bResetMutex = false;
 
-	bool bHaveStepsCable = false;
-	bool bHaveResetCable = false;
-	bool bHaveDecreaseCable = false;
-	bool bHaveIncreaseCable = false;
-	bool bHaveRandomCable = false;
+	bool bStepsConnected = false;
+	bool bResetConnected = false;
+	bool bDecreaseConnected = false;
+	bool bIncreaseConnected = false;
+	bool bRandomConnected = false;
 	bool inputsConnected[superSwitches::kMaxSteps] = {};
 	bool bOutputConnected = false;
 
@@ -252,7 +252,7 @@ struct SuperSwitch81 : SanguineModule {
 	void handleParameterControls() {
 		bStepsMutex = false;
 		int knobValue = params[PARAM_STEPS].getValue();
-		if (bHaveStepsCable) {
+		if (bStepsConnected) {
 			int newStepCount = round(clamp(inputs[INPUT_STEPS].getVoltage(), 1.f, 8.f));
 			if (newStepCount != stepCount) {
 				stepCount = newStepCount;
@@ -284,7 +284,7 @@ struct SuperSwitch81 : SanguineModule {
 	}
 
 	void checkReset() {
-		if ((bHaveResetCable && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
+		if ((bResetConnected && stInputReset.process(inputs[INPUT_RESET].getVoltage())) ||
 			btReset.process(params[PARAM_RESET].getValue())) {
 			doResetTrigger();
 		}
@@ -292,17 +292,17 @@ struct SuperSwitch81 : SanguineModule {
 
 	void handleClockControls() {
 		if (!bOneShot || !bOneShotDone) {
-			if ((bHaveDecreaseCable && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) ||
+			if ((bDecreaseConnected && stInputDecrease.process(inputs[INPUT_DECREASE].getVoltage())) ||
 				btDecrease.process(params[PARAM_DECREASE].getValue())) {
 				doDecreaseTrigger();
 			}
 
-			if ((bHaveIncreaseCable && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) ||
+			if ((bIncreaseConnected && stInputIncrease.process(inputs[INPUT_INCREASE].getVoltage())) ||
 				btIncrease.process(params[PARAM_INCREASE].getValue())) {
 				doIncreaseTrigger();
 			}
 
-			if ((bHaveRandomCable && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) ||
+			if ((bRandomConnected && stInputRandom.process(inputs[INPUT_RANDOM].getVoltage())) ||
 				btRandom.process(params[PARAM_RANDOM].getValue())) {
 				doRandomTrigger();
 			}
@@ -489,23 +489,23 @@ struct SuperSwitch81 : SanguineModule {
 			} else {
 				switch (e.portId) {
 				case INPUT_STEPS:
-					bHaveStepsCable = e.connecting;
+					bStepsConnected = e.connecting;
 					break;
 
 				case INPUT_RESET:
-					bHaveResetCable = e.connecting;
+					bResetConnected = e.connecting;
 					break;
 
 				case INPUT_DECREASE:
-					bHaveDecreaseCable = e.connecting;
+					bDecreaseConnected = e.connecting;
 					break;
 
 				case INPUT_INCREASE:
-					bHaveIncreaseCable = e.connecting;
+					bIncreaseConnected = e.connecting;
 					break;
 
 				case INPUT_RANDOM:
-					bHaveRandomCable = e.connecting;
+					bRandomConnected = e.connecting;
 					break;
 				}
 			}
