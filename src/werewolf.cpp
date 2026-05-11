@@ -38,8 +38,7 @@ struct Werewolf : SanguineModule {
 
 	bool bLeftInConnected = false;
 	bool bRightInConnected = false;
-	bool bLeftOutConnected = false;
-	bool bRightOutConnected = false;
+	bool outputsConnected[OUTPUTS_COUNT] = {};
 
 	const int kLightsFrequency = 64;
 	int jitteredLightsFrequency;
@@ -70,7 +69,7 @@ struct Werewolf : SanguineModule {
 
 		bool bIsLightsTurn = lightsDivider.process();
 		bool bInputsNormalled = bLeftInConnected ^ bRightInConnected;
-		bool bOutputsNormalled = bLeftOutConnected ^ bRightOutConnected;
+		bool bOutputsNormalled = outputsConnected[OUTPUT_LEFT] ^ outputsConnected[OUTPUT_RIGHT];
 
 		if (channelCount > 0) {
 			float fold = params[PARAM_FOLD].getValue();
@@ -115,20 +114,20 @@ struct Werewolf : SanguineModule {
 						voltageMix = voltageOutLeft;
 					}
 
-					if (bLeftOutConnected) {
+					if (outputsConnected[OUTPUT_LEFT]) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageMix, channel);
 					}
-					if (bRightOutConnected) {
+					if (outputsConnected[OUTPUT_RIGHT]) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageMix, channel);
 					}
 
 					voltageSumLeft += voltageMix;
 					voltageSumRight += voltageMix;
 				} else {
-					if (bLeftOutConnected) {
+					if (outputsConnected[OUTPUT_LEFT]) {
 						outputs[OUTPUT_LEFT].setVoltage(voltageOutLeft, channel);
 					}
-					if (bRightOutConnected) {
+					if (outputsConnected[OUTPUT_RIGHT]) {
 						outputs[OUTPUT_RIGHT].setVoltage(voltageOutRight, channel);
 					}
 
@@ -286,15 +285,7 @@ struct Werewolf : SanguineModule {
 			break;
 
 		case Port::OUTPUT:
-			switch (e.portId) {
-			case OUTPUT_LEFT:
-				bLeftOutConnected = e.connecting;
-				break;
-
-			case OUTPUT_RIGHT:
-				bRightOutConnected = e.connecting;
-				break;
-			}
+			outputsConnected[e.portId] = e.connecting;
 			break;
 		}
 	}
