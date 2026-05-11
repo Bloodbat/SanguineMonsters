@@ -73,17 +73,17 @@ struct Bukavac : SanguineModule {
 	static constexpr float kRedFilterB[] = { 0.00425611, 0.00425611 };
 	static constexpr float kRedFilterA[] = { -0.99148778 };
 
-	bool bHaveWhiteCable = false;
-	bool bHaveRedCable = false;
-	bool bHaveVioletCable = false;
-	bool bHaveGrayCable = false;
-	bool bHavePinkCable = false;
-	bool bHaveBlueCable = false;
-	bool bHavePrismCable = false;
-	bool bHavePerlinMixCable = false;
-	bool perlinOctaveCables[kPerlinOctaves] = {};
-	bool bHavePerlinSpeedCable = false;
-	bool bHavePerlinAmpCable = false;
+	bool bWhiteConnected = false;
+	bool bRedConnected = false;
+	bool bVioletConnected = false;
+	bool bGrayConnected = false;
+	bool bPinkConnected = false;
+	bool bBlueConnected = false;
+	bool bPrismConnected = false;
+	bool bPerlinMixConnected = false;
+	bool perlinOctavesConnected[kPerlinOctaves] = {};
+	bool bPerlinSpeedConnected = false;
+	bool bPerlinAmpConnected = false;
 
 	pcg32 pcgRng;
 	sanguineRandom::SanguineRandomNormalCustom rngNormal;
@@ -139,42 +139,42 @@ struct Bukavac : SanguineModule {
 	}
 
 	void process(const ProcessArgs& args) override {
-		if (bHaveWhiteCable || bHaveRedCable || bHaveVioletCable || bHaveGrayCable) {
+		if (bWhiteConnected || bRedConnected || bVioletConnected || bGrayConnected) {
 			// White noise: equal power density
 			float white = rngNormal.normal(pcgRng);
-			if (bHaveWhiteCable) {
+			if (bWhiteConnected) {
 				outputs[OUTPUT_WHITE].setVoltage(white * kGain);
 			}
 
 			// Red/Brownian noise: -6dB/oct
-			if (bHaveRedCable) {
+			if (bRedConnected) {
 				float red = redFilter.process(white) / 0.0645f;
 				outputs[OUTPUT_RED].setVoltage(red * kGain);
 			}
 
 			// Violet/purple noise: 6dB/oct
-			if (bHaveVioletCable) {
+			if (bVioletConnected) {
 				float violet = (white - lastWhite) / 1.41f;
 				lastWhite = white;
 				outputs[OUTPUT_VIOLET].setVoltage(violet * kGain);
 			}
 
 			// Gray noise: psychoacoustic equal loudness curve, specifically inverted A-weighted
-			if (bHaveGrayCable) {
+			if (bGrayConnected) {
 				float gray = grayFilter.process(args.sampleTime, white) / 1.67f;
 				outputs[OUTPUT_GRAY].setVoltage(gray * kGain);
 			}
 		}
 
-		if (bHavePinkCable || bHaveBlueCable) {
+		if (bPinkConnected || bBlueConnected) {
 			// Pink noise: -3dB/oct
 			float pink = pinkNoiseGenerator.process() / 0.816f;
-			if (bHavePinkCable) {
+			if (bPinkConnected) {
 				outputs[OUTPUT_PINK].setVoltage(pink * kGain);
 			}
 
 			// Blue noise: 3dB/oct
-			if (bHaveBlueCable) {
+			if (bBlueConnected) {
 				float blue = (pink - lastPink) / 0.705f;
 				lastPink = pink;
 				outputs[OUTPUT_BLUE].setVoltage(blue * kGain);
@@ -186,13 +186,13 @@ struct Bukavac : SanguineModule {
 		   Note: Black noise was the original definition, made up by VCV.
 		   Amended by me to be Prism(for light ring convenience)... also completely made up.
 		*/
-		if (bHavePrismCable) {
+		if (bPrismConnected) {
 			float uniformNoise = ldexpf(pcgRng(), -32);
 			outputs[OUTPUT_PRISM].setVoltage(uniformNoise * 10.f - 5.f);
 		}
 
-		if (bHavePerlinMixCable || perlinOctaveCables[0] || perlinOctaveCables[1] ||
-			perlinOctaveCables[2] || perlinOctaveCables[3]) {
+		if (bPerlinMixConnected || perlinOctavesConnected[0] || perlinOctavesConnected[1] ||
+			perlinOctavesConnected[2] || perlinOctavesConnected[3]) {
 			if (currentPerlinTime > kMaxTime) {
 				currentPerlinTime = 0;
 			}
@@ -200,14 +200,14 @@ struct Bukavac : SanguineModule {
 			currentPerlinTime += args.sampleTime;
 
 			float perlinSpeed = params[PARAM_PERLIN_SPEED].getValue();
-			if (bHavePerlinSpeedCable) {
+			if (bPerlinSpeedConnected) {
 				float perlinSpeedVoltage = inputs[INPUT_PERLIN_SPEED].getVoltage() / 5.f;
 				float perlinSpeedVoltagePercent = params[PARAM_PERLIN_SPEED_CV].getValue();
 				perlinSpeed = getPerlinEffectiveValue(perlinSpeedVoltage, perlinSpeed, perlinSpeedVoltagePercent, 1.f, 500.f);
 			}
 
 			float perlinAmplifier = params[PARAM_PERLIN_AMP].getValue();
-			if (bHavePerlinAmpCable) {
+			if (bPerlinAmpConnected) {
 				float perlinAmplifierVoltage = inputs[INPUT_PERLIN_AMP].getVoltage() / 5.f;
 				float perlinAmplifierVoltagePercent = params[PARAM_PERLIN_AMP_CV].getValue();
 				perlinAmplifier = getPerlinEffectiveValue(perlinAmplifierVoltage, perlinAmplifier, perlinAmplifierVoltagePercent, 1.f, 13.f);
@@ -216,13 +216,13 @@ struct Bukavac : SanguineModule {
 			float octaveMult = 1.0;
 			for (int octave = 0; octave < kPerlinOctaves; ++octave) {
 				noise[octave] = perlinAmplifier * getPerlinNoise(currentPerlinTime * perlinSpeed * octaveMult);
-				if (perlinOctaveCables[octave]) {
+				if (perlinOctavesConnected[octave]) {
 					outputs[OUTPUT_PERLIN_NOISE0 + octave].setVoltage(noise[octave]);
 				}
 				octaveMult *= 2;
 			}
 
-			if (bHavePerlinMixCable) {
+			if (bPerlinMixConnected) {
 				mixPerlinOctaves(noise);
 			}
 		}
@@ -278,51 +278,51 @@ struct Bukavac : SanguineModule {
 		case Port::OUTPUT:
 			switch (e.portId) {
 			case OUTPUT_WHITE:
-				bHaveWhiteCable = e.connecting;
+				bWhiteConnected = e.connecting;
 				break;
 
 			case OUTPUT_RED:
-				bHaveRedCable = e.connecting;
+				bRedConnected = e.connecting;
 				break;
 
 			case OUTPUT_VIOLET:
-				bHaveVioletCable = e.connecting;
+				bVioletConnected = e.connecting;
 				break;
 
 			case OUTPUT_GRAY:
-				bHaveGrayCable = e.connecting;
+				bGrayConnected = e.connecting;
 				break;
 
 			case OUTPUT_PINK:
-				bHavePinkCable = e.connecting;
+				bPinkConnected = e.connecting;
 				break;
 
 			case OUTPUT_BLUE:
-				bHaveBlueCable = e.connecting;
+				bBlueConnected = e.connecting;
 				break;
 
 			case OUTPUT_PRISM:
-				bHavePrismCable = e.connecting;
+				bPrismConnected = e.connecting;
 				break;
 
 			case OUTPUT_PERLIN_NOISE_MIX:
-				bHavePerlinMixCable = e.connecting;
+				bPerlinMixConnected = e.connecting;
 				break;
 
 			case OUTPUT_PERLIN_NOISE0:
-				perlinOctaveCables[0] = e.connecting;
+				perlinOctavesConnected[0] = e.connecting;
 				break;
 
 			case OUTPUT_PERLIN_NOISE1:
-				perlinOctaveCables[1] = e.connecting;
+				perlinOctavesConnected[1] = e.connecting;
 				break;
 
 			case OUTPUT_PERLIN_NOISE2:
-				perlinOctaveCables[2] = e.connecting;
+				perlinOctavesConnected[2] = e.connecting;
 				break;
 
 			case OUTPUT_PERLIN_NOISE3:
-				perlinOctaveCables[3] = e.connecting;
+				perlinOctavesConnected[3] = e.connecting;
 				break;
 			}
 			break;
@@ -330,11 +330,11 @@ struct Bukavac : SanguineModule {
 		case Port::INPUT:
 			switch (e.portId) {
 			case INPUT_PERLIN_SPEED:
-				bHavePerlinSpeedCable = e.connecting;
+				bPerlinSpeedConnected = e.connecting;
 				break;
 
 			case INPUT_PERLIN_AMP:
-				bHavePerlinAmpCable = e.connecting;
+				bPerlinAmpConnected = e.connecting;
 				break;
 			}
 			break;
