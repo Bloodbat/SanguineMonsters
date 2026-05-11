@@ -82,8 +82,7 @@ struct Bukavac : SanguineModule {
 	bool bPrismConnected = false;
 	bool bPerlinMixConnected = false;
 	bool perlinOctavesConnected[kPerlinOctaves] = {};
-	bool bPerlinSpeedConnected = false;
-	bool bPerlinAmpConnected = false;
+	bool perlinControlsConnected[INPUTS_COUNT];
 
 	pcg32 pcgRng;
 	sanguineRandom::SanguineRandomNormalCustom rngNormal;
@@ -200,14 +199,14 @@ struct Bukavac : SanguineModule {
 			currentPerlinTime += args.sampleTime;
 
 			float perlinSpeed = params[PARAM_PERLIN_SPEED].getValue();
-			if (bPerlinSpeedConnected) {
+			if (perlinControlsConnected[INPUT_PERLIN_SPEED]) {
 				float perlinSpeedVoltage = inputs[INPUT_PERLIN_SPEED].getVoltage() / 5.f;
 				float perlinSpeedVoltagePercent = params[PARAM_PERLIN_SPEED_CV].getValue();
 				perlinSpeed = getPerlinEffectiveValue(perlinSpeedVoltage, perlinSpeed, perlinSpeedVoltagePercent, 1.f, 500.f);
 			}
 
 			float perlinAmplifier = params[PARAM_PERLIN_AMP].getValue();
-			if (bPerlinAmpConnected) {
+			if (perlinControlsConnected[INPUT_PERLIN_AMP]) {
 				float perlinAmplifierVoltage = inputs[INPUT_PERLIN_AMP].getVoltage() / 5.f;
 				float perlinAmplifierVoltagePercent = params[PARAM_PERLIN_AMP_CV].getValue();
 				perlinAmplifier = getPerlinEffectiveValue(perlinAmplifierVoltage, perlinAmplifier, perlinAmplifierVoltagePercent, 1.f, 13.f);
@@ -328,15 +327,7 @@ struct Bukavac : SanguineModule {
 			break;
 
 		case Port::INPUT:
-			switch (e.portId) {
-			case INPUT_PERLIN_SPEED:
-				bPerlinSpeedConnected = e.connecting;
-				break;
-
-			case INPUT_PERLIN_AMP:
-				bPerlinAmpConnected = e.connecting;
-				break;
-			}
+			perlinControlsConnected[e.portId] = e.connecting;
 			break;
 		}
 	}
