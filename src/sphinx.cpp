@@ -70,8 +70,8 @@ struct Sphinx : SanguineModule {
 	bool bCalculate;
 	bool bGateOn = false;
 	bool bCycleReset = true;
-	bool bHaveReset = false;
-	bool bHaveClock = false;
+	bool bResetConnected = false;
+	bool bClockConnected = false;
 
 	int patternFill = 4;
 	int patternLength = 16;
@@ -159,7 +159,7 @@ struct Sphinx : SanguineModule {
 		bool bNextStep = false;
 
 		// Reset sequence.
-		if (bHaveReset) {
+		if (bResetConnected) {
 			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
 				if (!params[PARAM_REVERSE].getValue()) {
 					currentStep = patternLength + patternPadding;
@@ -170,7 +170,7 @@ struct Sphinx : SanguineModule {
 			}
 		}
 
-		if (bHaveClock) {
+		if (bClockConnected) {
 			if (stClockInput.process(inputs[INPUT_CLOCK].getVoltage())) {
 				bNextStep = true;
 			}
@@ -445,11 +445,11 @@ struct Sphinx : SanguineModule {
 		if (e.type == Port::INPUT) {
 			switch (e.portId) {
 			case INPUT_RESET:
-				bHaveReset = e.connecting;
+				bResetConnected = e.connecting;
 				break;
 
 			case INPUT_CLOCK:
-				bHaveClock = e.connecting;
+				bClockConnected = e.connecting;
 				break;
 
 			default:
