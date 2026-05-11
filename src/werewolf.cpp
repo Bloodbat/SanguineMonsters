@@ -89,8 +89,6 @@ struct Werewolf : SanguineModule {
 				gainSum += channelGain;
 				foldSum += channelFold;
 
-				float voltageMix = 0.f;
-
 				if (bInputsNormalled) {
 					if (bLeftInConnected) {
 						voltageInLeft = inputs[INPUT_LEFT].getVoltage(channel) * channelGain;
@@ -109,6 +107,8 @@ struct Werewolf : SanguineModule {
 				}
 
 				if (bOutputsNormalled) {
+					float voltageMix = 0.f;
+
 					if (!bInputsNormalled) {
 						voltageMix = voltageOutLeft + voltageOutRight;
 					} else {
