@@ -60,6 +60,7 @@ struct Beleth : SanguineModule {
     bool bWantMajorMinor;
     bool bSuspendedConnected = false;
     bool bWantSuspended;
+    bool outputsConnected[OUTPUTS_COUNT] = {};
 
     // Geometrical position of the playhead.
     float x0;
@@ -259,16 +260,26 @@ struct Beleth : SanguineModule {
         }
 
         // Tonic.
-        outputs[OUTPUT_TONIC].setVoltage(octaves[0] + transpose / 12.f);
+        if (outputsConnected[OUTPUT_TONIC]) {
+            outputs[OUTPUT_TONIC].setVoltage(octaves[0] + transpose / 12.f);
+        }
+
         // Chord.
+        int currentPort;
         for (int part = 0; part < parts; ++part) {
-            outputs[OUTPUT_PART + part].setVoltage(static_cast<float>(octaves[part] +
-                (transpose + chords[part]->pitchClass) % 12) / 12.f);
+            currentPort = OUTPUT_PART + part;
+            if (outputsConnected[currentPort]) {
+                outputs[currentPort].setVoltage(static_cast<float>(octaves[part] +
+                    (transpose + chords[part]->pitchClass) % 12) / 12.f);
+            }
         }
 
         float rootNote = static_cast<float>(octaves[0] + (transpose + chords[0]->pitchClass) % 12) / 12.f;
         for (int part = parts; part < beleth::kMaxParts; ++part) {
-            outputs[OUTPUT_PART + part].setVoltage(rootNote);
+            currentPort = OUTPUT_PART + part;
+            if (outputsConnected[currentPort]) {
+                outputs[OUTPUT_PART + part].setVoltage(rootNote);
+            }
         }
 
         if (lightsDivider.process()) {
@@ -311,7 +322,8 @@ struct Beleth : SanguineModule {
     }
 
     void onPortChange(const PortChangeEvent& e) override {
-        if (e.type == Port::INPUT) {
+        switch (e.type) {
+        case Port::INPUT:
             switch (e.portId) {
             case INPUT_PARTS:
                 bPartsConnected = e.connecting;
@@ -326,6 +338,10 @@ struct Beleth : SanguineModule {
             default:
                 break;
             }
+            break;
+        case Port::OUTPUT:
+            outputsConnected[e.portId] = e.connecting;
+            break;
         }
     }
 };
