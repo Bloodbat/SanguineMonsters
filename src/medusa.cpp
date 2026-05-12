@@ -4,8 +4,6 @@
 
 #include "medusa.hpp"
 
-using simd::float_4;
-
 struct Medusa : SanguineModule {
 
 	enum ParamIds {
@@ -69,10 +67,9 @@ struct Medusa : SanguineModule {
 			portPalettes[port] = lastPalette;
 
 			if (outputsConnected[port]) {
-				for (int channel = 0; channel < channelCount; channel += 4) {
-					float_4 voltages = inputs[activePort].getVoltageSimd<float_4>(channel);
-					outputs[OUTPUT_VOLTAGE + port].setVoltageSimd(voltages, channel);
-				}
+				float* inVoltages = inputs[activePort].getVoltages(0);
+
+				outputs[OUTPUT_VOLTAGE + port].writeVoltages(inVoltages);
 
 				outputs[port].setChannels(channelCount);
 			}
