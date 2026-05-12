@@ -192,19 +192,17 @@ struct Kitsune : SanguineModule {
 
 		channelCounts[section] = inputChannels > 0 ? inputChannels : 1;
 
-		float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
-		float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
+		float_4 gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
+		float_4 offsetKnob = params[PARAM_OFFSET1 + section].getValue();
 
 		int currentOutput = OUTPUT_VOLTAGE1 + section;
 
 		for (int channel = 0; channel < channelCounts[section]; channel += 4) {
 			float_4 voltages = input->getVoltageSimd<float_4>(channel);
-			float_4 gains = gainKnob;
-			float_4 offsets = offsetKnob;
 
 			/* TODO: make manual and module congruent: either we clip it and state so in the manual
 			   or we remove the clamp. */
-			voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
+			voltages = simd::clamp(voltages * gainKnob + offsetKnob, -10.f, 10.f);
 
 			outputs[currentOutput].setVoltageSimd(voltages, channel);
 		}
@@ -262,21 +260,19 @@ struct Kitsune : SanguineModule {
 
 		channelCounts[section] = inputChannels > 0 ? inputChannels : 1;
 
-		float gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
-		float offsetKnob = params[PARAM_OFFSET1 + section].getValue();
+		float_4 gainKnob = params[PARAM_ATTENUATOR1 + section].getValue();
+		float_4 offsetKnob = params[PARAM_OFFSET1 + section].getValue();
 
 		int currentOutput = OUTPUT_VOLTAGE1 + section;
 
 		for (int channel = 0; channel < channelCounts[section]; channel += 4) {
 			float_4 voltages = input->getVoltageSimd<float_4>(channel);
-			float_4 gains = gainKnob;
-			float_4 offsets = offsetKnob;
 
-			applyModulations(section, channel, gains, offsets);
+			applyModulations(section, channel, gainKnob, offsetKnob);
 
 			/* TODO: make manual and module congruent: either we clip it and state so in the manual
 			   or we remove the clamp. */
-			voltages = simd::clamp(voltages * gains + offsets, -10.f, 10.f);
+			voltages = simd::clamp(voltages * gainKnob + offsetKnob, -10.f, 10.f);
 
 			outputs[currentOutput].setVoltageSimd(voltages, channel);
 		}
