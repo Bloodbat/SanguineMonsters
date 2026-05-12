@@ -319,12 +319,8 @@ struct SuperSwitch81 : SanguineModule {
 
 	void copyVoltages() {
 		if (selectedIn >= 0 && inputsConnected[selectedIn] && bOutputConnected) {
-			int currentChannel;
-			for (int channel = 0; channel < inChannelCount; channel += 4) {
-				currentChannel = channel >> 2;
-				inVoltages[currentChannel] = inputs[INPUT_IN1 + selectedIn].getVoltageSimd<float_4>(channel);
-				outputs[OUTPUT_OUT].setVoltageSimd(inVoltages[currentChannel], channel);
-			}
+			float* inVoltages = inputs[INPUT_IN1 + selectedIn].getVoltages(0);
+			outputs[OUTPUT_OUT].writeVoltages(inVoltages);
 			outputs[OUTPUT_OUT].setChannels(inChannelCount);
 		}
 	}
