@@ -638,21 +638,21 @@ struct BelethWidget : SanguineModuleWidget {
         addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.877f, 117.014f),
             module, Beleth::INPUT_MAJOR_TRIAD));
 
-        addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.113f, 104.468f),
+        addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.113f, 104.468f),
             module, Beleth::OUTPUT_TONIC));
 
         static const float xSpacing = 11.067f;
 
         float xPos = 47.18f;
         for (int port = 0; port < 3; ++port) {
-            addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(xPos, 104.468f),
+            addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xPos, 104.468f),
                 module, Beleth::OUTPUT_PART + port));
             xPos += xSpacing;
         }
 
         xPos = 36.113f;
         for (int port = 3; port < beleth::kMaxParts; ++port) {
-            addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(xPos, 117.176f),
+            addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(xPos, 117.176f),
                 module, Beleth::OUTPUT_PART + port));
             xPos += xSpacing;
         }
