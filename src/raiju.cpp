@@ -198,15 +198,15 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
-		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(127.365, 12.197), module, Raiju::PARAM_CHANNEL_COUNT));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(127.365, 12.197), module, Raiju::PARAM_CHANNEL_COUNT));
 
 		float yDistance = 19.688;
 		float currentY = 32.982;
 
 		for (int component = 0; component < 4; ++component) {
-			addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(19.21, currentY),
+			addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(19.21, currentY),
 				module, Raiju::PARAM_VOLTAGE + component));
-			addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(117.942, currentY),
+			addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(117.942, currentY),
 				module, Raiju::PARAM_VOLTAGE + component + 4));
 			currentY += yDistance;
 		}
