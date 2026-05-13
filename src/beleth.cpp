@@ -620,15 +620,15 @@ struct BelethWidget : SanguineModuleWidget {
 
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.877f, 89.709f),
             module, Beleth::INPUT_TRANSPOSE));
-        addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.018f, 89.709f),
+        addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.018f, 89.709f),
             module, Beleth::PARAM_TRANSPOSE));
 
-        addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(47.18f, 89.709f),
+        addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(47.18f, 89.709f),
             module, Beleth::PARAM_VOICING));
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(69.315f, 89.709f),
             module, Beleth::INPUT_VOICING));
 
-        addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(21.492f, 104.468f),
+        addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(21.492f, 104.468f),
             module, Beleth::PARAM_PARTS));
         addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(21.492f, 117.176f),
             module, Beleth::INPUT_PARTS));
