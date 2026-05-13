@@ -692,7 +692,7 @@ struct SphinxWidget : SanguineModuleWidget {
 			module, Sphinx::PARAM_PATTERN_STYLE, Sphinx::LIGHT_PATTERN_STYLE));
 
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(41.862, 26.411), module, Sphinx::LIGHT_EOC));
-		addChild(createOutputCentered<BananutBlack>(millimetersToPixelsVec(48.472, 26.411), module, Sphinx::OUTPUT_EOC));
+		addOutput(createOutputCentered<BananutBlack>(millimetersToPixelsVec(48.472, 26.411), module, Sphinx::OUTPUT_EOC));
 
 		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(10.386, 40.197), module, Sphinx::PARAM_LENGTH));
 		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(27.82, 40.197), module, Sphinx::PARAM_STEPS));
@@ -737,8 +737,8 @@ struct SphinxWidget : SanguineModuleWidget {
 		addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(19.231, 112.894), module, Sphinx::INPUT_RESET));
 
 		addChild(createLightCentered<MediumLight<RedGreenBlueLight>>(millimetersToPixelsVec(42.496, 105.958), module, Sphinx::LIGHT_OUTPUT));
-		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.543, 112.894), module, Sphinx::OUTPUT_GATE));
-		addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(48.448, 112.894), module, Sphinx::OUTPUT_ACCENT));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.543, 112.894), module, Sphinx::OUTPUT_GATE));
+		addOutput(createOutputCentered<BananutRed>(millimetersToPixelsVec(48.448, 112.894), module, Sphinx::OUTPUT_ACCENT));
 
 		SanguineStaticRGBLight* clockLight = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 7.326, 105.958, true, kSanguineYellowLight);
 		addChild(clockLight);
