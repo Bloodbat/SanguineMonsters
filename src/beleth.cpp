@@ -609,33 +609,33 @@ struct BelethWidget : SanguineModuleWidget {
         addParam(createLightParamCentered<VCVLightBezelLatch<GreenRedLight>>(
             millimetersToPixelsVec(7.584f, 27.316f), module, Beleth::PARAM_CHORD_GROUP,
             Beleth::LIGHT_CHORD_GROUP));
-        addChild(createInputCentered<BananutBlack>(millimetersToPixelsVec(7.584f, 37.741f),
+        addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(7.584f, 37.741f),
             module, Beleth::INPUT_CHORD_GROUP));
 
         addParam(createLightParamCentered<VCVLightBezelLatch<PurpleLight>>(
             millimetersToPixelsVec(7.584f, 57.026f), module, Beleth::PARAM_SUSPENDED,
             Beleth::LIGHT_SUSPENDED));
-        addChild(createInputCentered<BananutBlack>(millimetersToPixelsVec(7.584f, 67.556f),
+        addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(7.584f, 67.556f),
             module, Beleth::INPUT_SUSPENDED));
 
-        addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.877f, 89.709f),
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(6.877f, 89.709f),
             module, Beleth::INPUT_TRANSPOSE));
         addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(29.018f, 89.709f),
             module, Beleth::PARAM_TRANSPOSE));
 
         addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(47.18f, 89.709f),
             module, Beleth::PARAM_VOICING));
-        addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(69.315f, 89.709f),
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(69.315f, 89.709f),
             module, Beleth::INPUT_VOICING));
 
         addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(21.492f, 104.468f),
             module, Beleth::PARAM_PARTS));
-        addChild(createInputCentered<BananutPurple>(millimetersToPixelsVec(21.492f, 117.176f),
+        addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(21.492f, 117.176f),
             module, Beleth::INPUT_PARTS));
 
-        addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.877f, 104.468f),
+        addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.877f, 104.468f),
             module, Beleth::INPUT_PERFECT_FIFTH));
-        addChild(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.877f, 117.014f),
+        addInput(createInputCentered<BananutGreen>(millimetersToPixelsVec(6.877f, 117.014f),
             module, Beleth::INPUT_MAJOR_TRIAD));
 
         addChild(createOutputCentered<BananutRed>(millimetersToPixelsVec(36.113f, 104.468f),
