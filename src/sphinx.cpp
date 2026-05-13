@@ -694,12 +694,12 @@ struct SphinxWidget : SanguineModuleWidget {
 		addChild(createLightCentered<SmallLight<RedLight>>(millimetersToPixelsVec(41.862, 26.411), module, Sphinx::LIGHT_EOC));
 		addOutput(createOutputCentered<BananutBlack>(millimetersToPixelsVec(48.472, 26.411), module, Sphinx::OUTPUT_EOC));
 
-		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(10.386, 40.197), module, Sphinx::PARAM_LENGTH));
-		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(27.82, 40.197), module, Sphinx::PARAM_STEPS));
-		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(45.414, 40.197), module, Sphinx::PARAM_ROTATION));
-		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(10.386, 97.059), module, Sphinx::PARAM_PADDING));
-		addChild(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(27.82, 97.059), module, Sphinx::PARAM_ACCENT));
-		addChild(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(45.414, 97.059), module, Sphinx::PARAM_SHIFT));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(10.386, 40.197), module, Sphinx::PARAM_LENGTH));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(27.82, 40.197), module, Sphinx::PARAM_STEPS));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(45.414, 40.197), module, Sphinx::PARAM_ROTATION));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(10.386, 97.059), module, Sphinx::PARAM_PADDING));
+		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(27.82, 97.059), module, Sphinx::PARAM_ACCENT));
+		addParam(createParamCentered<BefacoTinyKnobBlack>(millimetersToPixelsVec(45.414, 97.059), module, Sphinx::PARAM_SHIFT));
 
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(10.386, 63.519), module, Sphinx::INPUT_LENGTH));
 		addInput(createInputCentered<BananutPurple>(millimetersToPixelsVec(27.82, 63.519), module, Sphinx::INPUT_STEPS));
