@@ -333,8 +333,8 @@ struct Alchemist : SanguineModule {
 		}
 
 		if (bPolyOutConnected) {
-			outputs[OUTPUT_POLYPHONIC_MIX].writeVoltages(masterOutVoltages);
 			outputs[OUTPUT_POLYPHONIC_MIX].setChannels(channelCount);
+			outputs[OUTPUT_POLYPHONIC_MIX].writeVoltages(masterOutVoltages);
 		}
 	}
 
