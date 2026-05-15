@@ -405,16 +405,7 @@ struct BelethDisplay : TransparentWidget {
                 drawActiveNotes(args.vg, module->chords);
                 drawTonnetzNotes(args.vg, module->notes, module->transpose);
 
-                // Draw playhead.
-                float phi = -(module->x0 - module->y0 / 2.f) * beleth::kPhiFactor;
-                float radius = beleth::kRadius + beleth::kScaleFactor * module->y0;
-                float x = radius * sin(phi) + centerX;
-                float y = radius * cos(phi) + centerY;
-                nvgBeginPath(args.vg);
-                nvgCircle(args.vg, x, y, 2.04f);
-                nvgFill(args.vg);
-                nvgStrokeWidth(args.vg, 1.02f);
-                nvgStroke(args.vg);
+                drawPlayhead(args);
 
                 drawRectHalo(args, box.size, beleth::displayColorActive, 55, 0.f);
             } else if (!module) {
@@ -433,6 +424,18 @@ struct BelethDisplay : TransparentWidget {
                 drawTonnetzNotes(args.vg, fakeNotes, fakeTranspose);
             }
         }
+    }
+
+    void drawPlayhead(const rack::widget::Widget::DrawArgs& args) {
+        float phi = -(module->x0 - module->y0 / 2.f) * beleth::kPhiFactor;
+        float radius = beleth::kRadius + beleth::kScaleFactor * module->y0;
+        float x = radius * sin(phi) + centerX;
+        float y = radius * cos(phi) + centerY;
+        nvgBeginPath(args.vg);
+        nvgCircle(args.vg, x, y, 2.04f);
+        nvgFill(args.vg);
+        nvgStrokeWidth(args.vg, 1.02f);
+        nvgStroke(args.vg);
     }
 
     void drawChordTriads(NVGcontext* vg, const std::array<beleth::Note*, beleth::kMaxParts>& chords,
