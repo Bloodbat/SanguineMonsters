@@ -221,22 +221,8 @@ struct Aion : SanguineModule {
 	void onPortChange(const PortChangeEvent& e) override {
 		switch (e.type) {
 		case Port::INPUT:
-			switch (e.portId) {
-			case INPUT_TRIGGER_1:
-				triggersConnected[0] = e.connecting;
-				break;
-			case INPUT_TRIGGER_2:
-				triggersConnected[1] = e.connecting;
-				break;
-			case INPUT_TRIGGER_3:
-				triggersConnected[2] = e.connecting;
-				break;
-			case INPUT_TRIGGER_4:
-				triggersConnected[3] = e.connecting;
-				break;
-
-			default:
-				break;
+			if (e.portId < INPUT_RESET_1) {
+				triggersConnected[e.portId] = e.connecting;
 			}
 			break;
 
