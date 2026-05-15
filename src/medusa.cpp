@@ -33,6 +33,8 @@ struct Medusa : SanguineModule {
 	bool inputsConnected[medusa::kMaxPorts] = {};
 	bool outputsConnected[medusa::kMaxPorts] = {};
 
+	float* inVoltages = nullptr;
+
 	Medusa() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
@@ -44,7 +46,6 @@ struct Medusa : SanguineModule {
 
 	void process(const ProcessArgs& args) override {
 		int channelCount = 0;
-		int activePort = 0;
 
 		int portPalettes[medusa::kMaxPorts];
 
@@ -55,7 +56,8 @@ struct Medusa : SanguineModule {
 		for (int port = 0; port < medusa::kMaxPorts; ++port) {
 			if (inputsConnected[port]) {
 				channelCount = inputs[INPUT_VOLTAGE + port].getChannels();
-				activePort = port;
+
+				inVoltages = inputs[INPUT_VOLTAGE + port].getVoltages(0);
 
 				++lastPalette;
 
@@ -67,8 +69,6 @@ struct Medusa : SanguineModule {
 			portPalettes[port] = lastPalette;
 
 			if (outputsConnected[port]) {
-				float* inVoltages = inputs[activePort].getVoltages(0);
-
 				outputs[port].setChannels(channelCount);
 
 				outputs[OUTPUT_VOLTAGE + port].writeVoltages(inVoltages);
