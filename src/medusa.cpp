@@ -69,9 +69,9 @@ struct Medusa : SanguineModule {
 			if (outputsConnected[port]) {
 				float* inVoltages = inputs[activePort].getVoltages(0);
 
-				outputs[OUTPUT_VOLTAGE + port].writeVoltages(inVoltages);
-
 				outputs[port].setChannels(channelCount);
+
+				outputs[OUTPUT_VOLTAGE + port].writeVoltages(inVoltages);
 			}
 		}
 
