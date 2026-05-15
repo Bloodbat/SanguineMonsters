@@ -338,8 +338,8 @@ struct SuperSwitch18 : SanguineModule {
 	void copyVoltages() {
 		if (selectedOut >= 0 && inputsConnected[INPUT_IN] && outputsConnected[selectedOut]) {
 			float* inVoltages = inputs[INPUT_IN].getVoltages(0);
-			outputs[selectedOut].writeVoltages(inVoltages);
 			outputs[selectedOut].setChannels(channelCount);
+			outputs[selectedOut].writeVoltages(inVoltages);
 		}
 	}
 
