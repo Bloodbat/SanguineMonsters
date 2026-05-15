@@ -133,8 +133,8 @@ struct Raiju : SanguineModule {
 			}
 
 			if (bPolyOutConnected) {
-				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
 				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
+				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
 			}
 		}
 	}
