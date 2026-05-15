@@ -24,6 +24,8 @@ without the backticks.
 
 ## Fixes
 
+- Dolly-X: don't keep sending the last known voltage to an output when an input is disconnected.
+
 - Sphinx: missing Reverse button tooltip.
 
 - Sphinx: wrong text colors on part of the logo.

@@ -74,11 +74,9 @@ struct DollyX : SanguineModule {
 		if (outputsConnected[section]) {
 			float_4 inVoltages;
 
-			if (inputsConnected[section]) {
-				inVoltages = inputs[INPUT_MONO_IN1 + section].getVoltage();
-				for (int channel = 0; channel < cloneCounts[section]; channel += 4) {
-					outputs[OUTPUT_POLYOUT_1 + section].setVoltageSimd(inVoltages, channel);
-				}
+			inVoltages = inputs[INPUT_MONO_IN1 + section].getVoltage();
+			for (int channel = 0; channel < cloneCounts[section]; channel += 4) {
+				outputs[OUTPUT_POLYOUT_1 + section].setVoltageSimd(inVoltages, channel);
 			}
 		}
 	}
