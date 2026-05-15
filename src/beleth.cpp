@@ -347,6 +347,12 @@ struct Beleth : SanguineModule {
 };
 
 struct BelethDisplay : TransparentWidget {
+private:
+    int tmpValue1;
+    int tmpValue2;
+    int tmpValue3;
+
+public:
     Beleth* module = nullptr;
 
     std::shared_ptr<Font> font;
@@ -485,8 +491,9 @@ struct BelethDisplay : TransparentWidget {
             noteX = chords[0]->noteX;
             noteY = chords[0]->noteY;
             for (part = 0; part < parts; part++) {
-                x1 = notes[noteY][(noteX + part) % 12].x + centerX;
-                y1 = notes[noteY][(noteX + part) % 12].y + centerY;
+                tmpValue1 = (noteX + part) % 12;
+                x1 = notes[noteY][tmpValue1].x + centerX;
+                y1 = notes[noteY][tmpValue1].y + centerY;
                 nvgLineTo(vg, x1, y1);
             }
             nvgStroke(vg);
@@ -502,13 +509,16 @@ struct BelethDisplay : TransparentWidget {
 
                 switch (chordType) {
                 case beleth::CHORD_AUGMENTED:
-                    x1 = notes[noteY + 1][noteX].x + centerX;
-                    y1 = notes[noteY + 1][noteX].y + centerY;
+                    tmpValue1 = noteY + 1;
+                    x1 = notes[tmpValue1][noteX].x + centerX;
+                    y1 = notes[tmpValue1][noteX].y + centerY;
                     nvgLineTo(vg, x1, y1);
                     break;
                 case beleth::CHORD_DIMINISHED:
-                    x1 = notes[noteY + 1][(noteX + 1) % 12].x + centerX;
-                    y1 = notes[noteY + 1][(noteX + 1) % 12].y + centerY;
+                    tmpValue1 = noteY + 1;
+                    tmpValue2 = (noteX + 1) % 12;
+                    x1 = notes[tmpValue1][tmpValue2].x + centerX;
+                    y1 = notes[tmpValue1][tmpValue2].y + centerY;
                     nvgLineTo(vg, x1, y1);
                     break;
                 default:
@@ -532,17 +542,20 @@ struct BelethDisplay : TransparentWidget {
 
                 nvgBeginPath(vg);
                 nvgMoveTo(vg, x, y);
-                float x1 = notes[noteY][(noteX + 1) % 12].x + centerX;
-                float y1 = notes[noteY][(noteX + 1) % 12].y + centerY;
+                tmpValue1 = (noteX + 1) % 12;
+                float x1 = notes[noteY][tmpValue1].x + centerX;
+                float y1 = notes[noteY][tmpValue1].y + centerY;
                 nvgLineTo(vg, x1, y1);
                 if (noteY < 3) {
+                    tmpValue2 = noteY + 1;
+                    tmpValue3 = noteX % 12;
                     nvgMoveTo(vg, x, y);
-                    x1 = notes[noteY + 1][(noteX) % 12].x + centerX;
-                    y1 = notes[noteY + 1][(noteX) % 12].y + centerY;
+                    x1 = notes[tmpValue2][tmpValue3].x + centerX;
+                    y1 = notes[tmpValue2][tmpValue3].y + centerY;
                     nvgLineTo(vg, x1, y1);
                     nvgMoveTo(vg, x, y);
-                    x1 = notes[noteY + 1][(noteX + 1) % 12].x + centerX;
-                    y1 = notes[noteY + 1][(noteX + 1) % 12].y + centerY;
+                    x1 = notes[tmpValue2][tmpValue1].x + centerX;
+                    y1 = notes[tmpValue2][tmpValue1].y + centerY;
                     nvgLineTo(vg, x1, y1);
                 }
                 nvgStroke(vg);
