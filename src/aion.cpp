@@ -78,7 +78,7 @@ struct Aion : SanguineModule {
 	bool timersStarted[kModuleSections] = {};
 
 	bool lastTimerEdges[kModuleSections] = {};
-	bool triggerCables[kModuleSections] = {};
+	bool triggersConnected[kModuleSections] = {};
 	bool outputCables[kModuleSections] = {};
 
 	int setTimerValues[kModuleSections] = {};
@@ -137,7 +137,7 @@ struct Aion : SanguineModule {
 
 		for (int section = 0; section < kModuleSections; ++section) {
 			if (bInternalTimerSecond) {
-				if (!triggerCables[section]) {
+				if (!triggersConnected[section]) {
 					if (lastTimerEdges[section] != bInternalTimerSecond) {
 						if (timersStarted[section]) {
 							decreaseTimer(section);
@@ -148,7 +148,7 @@ struct Aion : SanguineModule {
 					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(timersStarted[section], args.sampleTime);
 				}
 			} else {
-				if (!triggerCables[section]) {
+				if (!triggersConnected[section]) {
 					lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(0.f, args.sampleTime);
 				}
 				lastTimerEdges[section] = bInternalTimerSecond;
@@ -196,7 +196,7 @@ struct Aion : SanguineModule {
 				outputs[OUTPUT_TRIGGER_1 + section].setVoltage(pgTriggerOutputs[section].process(args.sampleTime) * 10.f);
 			}
 
-			if (triggerCables[section]) {
+			if (triggersConnected[section]) {
 				lights[LIGHT_TIMER_1 + section].setBrightnessSmooth(pgTimerLights[section].process(args.sampleTime), args.sampleTime);
 			}
 		}
@@ -223,16 +223,16 @@ struct Aion : SanguineModule {
 		case Port::INPUT:
 			switch (e.portId) {
 			case INPUT_TRIGGER_1:
-				triggerCables[0] = e.connecting;
+				triggersConnected[0] = e.connecting;
 				break;
 			case INPUT_TRIGGER_2:
-				triggerCables[1] = e.connecting;
+				triggersConnected[1] = e.connecting;
 				break;
 			case INPUT_TRIGGER_3:
-				triggerCables[2] = e.connecting;
+				triggersConnected[2] = e.connecting;
 				break;
 			case INPUT_TRIGGER_4:
-				triggerCables[3] = e.connecting;
+				triggersConnected[3] = e.connecting;
 				break;
 
 			default:
