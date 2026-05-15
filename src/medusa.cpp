@@ -27,6 +27,7 @@ struct Medusa : SanguineModule {
 
 	static const int kLightsFrequency = 1024;
 	int jitteredLightsFrequency;
+	int portPalettes[medusa::kMaxPorts];
 
 	dsp::ClockDivider lightsDivider;
 
@@ -46,8 +47,6 @@ struct Medusa : SanguineModule {
 
 	void process(const ProcessArgs& args) override {
 		int channelCount = 0;
-
-		int portPalettes[medusa::kMaxPorts];
 
 		int lastPalette = 5;
 
