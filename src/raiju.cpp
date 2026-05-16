@@ -55,7 +55,7 @@ struct Raiju : SanguineModule {
 	static const int kLogicFrequency = 1024;
 	int jitteredLogicFrequency;
 
-	float voltages[kVoltagesCount];
+	float voltages[kVoltagesCount] = {};
 
 	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
@@ -79,8 +79,6 @@ struct Raiju : SanguineModule {
 		}
 
 		configOutput(OUTPUT_EIGHT_CHANNELS, "Voltage series polyphonic");
-
-		memset(voltages, 0, sizeof(float) * kVoltagesCount);
 	}
 
 	void process(const ProcessArgs& args) override {
