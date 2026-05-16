@@ -358,8 +358,6 @@ struct Alchemist : SanguineModule {
 		}
 
 		for (int channel = channelCount; channel < PORT_MAX_CHANNELS; ++channel) {
-			vuMetersGains[channel].process(sampleTime, outVoltages[channel]);
-
 			int currentLight = LIGHT_GAIN + (channel << 1);
 
 			lights[currentLight].setBrightness(0.f);
