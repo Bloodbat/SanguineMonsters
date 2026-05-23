@@ -125,8 +125,8 @@ struct Beleth : SanguineModule {
             bWantSuspended = inputs[INPUT_SUSPENDED].getVoltage() >= 1.f;
         }
 
-        float voicingVoltage = inputs[INPUT_VOICING].getVoltage() / 10.f;
-        float transposeVoltage = inputs[INPUT_TRANSPOSE].getVoltage() / 10.f;
+        float voicingVoltage = inputs[INPUT_VOICING].getVoltage() / 5.f;
+        float transposeVoltage = inputs[INPUT_TRANSPOSE].getVoltage() / 5.f;
 
         voicing = clamp(voicingVoltage +
             params[PARAM_VOICING].getValue(), -1.f, 1.f) * 4.f * parts;
