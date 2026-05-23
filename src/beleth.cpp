@@ -83,9 +83,9 @@ struct Beleth : SanguineModule {
         configSwitch(PARAM_CHORD_GROUP, 0.f, 1.f, 0.f, "Chord groups", beleth::chordGroupLabels);
         configSwitch(PARAM_SUSPENDED, 0.f, 1.f, 0.f, "Suspended chords (sus4)",
             monsterscommon::onOffButtonLabels);
-        configParam(PARAM_TRANSPOSE, 0.f, 1.f, 0.f, "Transpose", "", 0.f, 10.f);
+        configSwitch(PARAM_TRANSPOSE, 0.f, 11.f, 0.f, "Transpose", beleth::transposeLabels);
         configSwitch(PARAM_PARTS, 3.f, 7.f, 7.f, "Parts", beleth::partsLabels);
-        configParam(PARAM_VOICING, -1.f, 1.f, 0.f, "Voicing", "", 0.f, 10.f);
+        configSwitch(PARAM_VOICING, -4.f, 4.f, 0.f, "Voicing", beleth::voicingLabels);
 
         configInput(INPUT_PERFECT_FIFTH, "Perfect fifth per volt");
         configInput(INPUT_MAJOR_TRIAD, "Major triad per volt");
@@ -128,10 +128,11 @@ struct Beleth : SanguineModule {
         float voicingVoltage = inputs[INPUT_VOICING].getVoltage() / 5.f;
         float transposeVoltage = inputs[INPUT_TRANSPOSE].getVoltage() / 5.f;
 
-        voicing = clamp(voicingVoltage +
-            params[PARAM_VOICING].getValue(), -1.f, 1.f) * 4.f * parts;
-        transpose = clamp(transposeVoltage +
-            params[PARAM_TRANSPOSE].getValue(), 0.f, 1.f) * 11.f;
+        voicingVoltage *= 4.f;
+        transposeVoltage *= 11.f;
+
+        voicing = clamp(voicingVoltage + params[PARAM_VOICING].getValue(), -4.f, 4.f) * parts;
+        transpose = clamp(transposeVoltage + params[PARAM_TRANSPOSE].getValue(), 0.f, 11.f);
 
         x0 = inputs[INPUT_PERFECT_FIFTH].getVoltage() + 6;
         y0 = inputs[INPUT_MAJOR_TRIAD].getVoltage() + 1;

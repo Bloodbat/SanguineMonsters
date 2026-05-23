@@ -26,6 +26,33 @@ namespace beleth {
         "7"
     };
 
+    static const std::vector<std::string> transposeLabels = {
+        "0 semitones",
+        "1 semitones",
+        "2 semitones",
+        "3 semitones",
+        "4 semitones",
+        "5 semitones",
+        "6 semitones",
+        "7 semitones",
+        "8 semitones",
+        "9 semitones",
+        "10 semitones",
+        "11 semitones"
+    };
+
+    static const std::vector<std::string> voicingLabels = {
+        "-4",
+        "-3",
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+    };
+
     static const char* noteNames[12] = {
          "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
