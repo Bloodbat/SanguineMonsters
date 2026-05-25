@@ -86,8 +86,6 @@ struct Fortuna : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        bool bLightsTurn = lightsDivider.process();
-
         // Set input & trigger ports.
         signalInputs[0] = &inputs[INPUT_IN_1];
         triggers[0] = &inputs[INPUT_TRIGGER_1];
@@ -174,13 +172,16 @@ struct Fortuna : SanguineModule {
 
                 outputs[OUTPUT_OUT_1B + section].setVoltageSimd(outVoltagesB, channel);
             }
+        }
 
-            if (bLightsTurn) {
-                if (ledsChannel >= channelCount) {
-                    ledsChannel = channelCount - 1;
-                }
+        if (lightsDivider.process()) {
+            const float sampleTime = args.sampleTime * jitteredLightsFrequency;
 
-                const float sampleTime = args.sampleTime * jitteredLightsFrequency;
+            if (ledsChannel >= channelCount) {
+                ledsChannel = channelCount - 1;
+            }
+
+            for (int section = 0; section < fortuna::kMaxModuleSections; ++section) {
                 int currentLight = LIGHT_GATE_STATE_1_A + (section << 1);
                 float lightValueA = outputs[OUTPUT_OUT_1A + section].getVoltage(ledsChannel);
                 lightValueA = rescale(lightValueA, 0.f, 5.f, 0.f, 1.f);
