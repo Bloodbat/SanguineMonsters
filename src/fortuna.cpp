@@ -61,6 +61,9 @@ struct Fortuna : SanguineModule {
     bool outputsConnected[OUTPUTS_COUNT] = {};
     bool triggersConnected[fortuna::kMaxModuleSections] = {};
 
+    Input* signalInputs[fortuna::kMaxModuleSections];
+    Input* triggers[fortuna::kMaxModuleSections];
+
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
         for (int section = 0; section < fortuna::kMaxModuleSections; ++section) {
@@ -81,21 +84,26 @@ struct Fortuna : SanguineModule {
         float cvVoltages[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
         bool bLightsTurn = lightsDivider.process();
 
+        // Set input & trigger ports.
+        signalInputs[0] = &inputs[INPUT_IN_1];
+        triggers[0] = &inputs[INPUT_TRIGGER_1];
+
+        // 2nd input and 2nd trigger are normalized to 1st.
+        if (!inputsConnected[1]) {
+            signalInputs[1] = &inputs[INPUT_IN_1];
+        } else {
+            signalInputs[1] = &inputs[INPUT_IN_2];
+        }
+
+        if (!triggersConnected[1]) {
+            triggers[1] = &inputs[INPUT_TRIGGER_1];
+        } else {
+            triggers[1] = &inputs[INPUT_TRIGGER_2];
+        }
+
         for (int section = 0; section < fortuna::kMaxModuleSections; ++section) {
-            // Set input & trigger ports.
-            Input* input = &inputs[INPUT_IN_1 + section];
-            Input* trigger = &inputs[INPUT_TRIGGER_1 + section];
-
-            // 2nd input and 2 trigger are normalized to 1st.
-            if (section == 1 && !inputsConnected[1]) {
-                input = &inputs[INPUT_IN_1];
-            }
-
-            if (section == 1 && !triggersConnected[1]) {
-                trigger = &inputs[INPUT_TRIGGER_1];
-            }
-
-            channelCount = std::max(std::max(input->getChannels(), trigger->getChannels()), 1);
+            channelCount = std::max(std::max(signalInputs[section]->getChannels(),
+                triggers[section]->getChannels()), 1);
 
             rollModes[section] = static_cast<fortuna::RollModes>(params[PARAM_ROLL_MODE_1 + section].getValue());
 
@@ -105,7 +113,7 @@ struct Fortuna : SanguineModule {
             for (int channel = 0; channel < channelCount; ++channel) {
                 cvVoltages[section][channel] = inputs[INPUT_P_1 + section].getVoltage(channel);
 
-                bool bGatePresent = trigger->getVoltage(channel) >= 2.f;
+                bool bGatePresent = triggers[section]->getVoltage(channel) >= 2.f;
                 if (btGateTriggers[section][channel].process(bGatePresent)) {
                     // Trigger.
                     float threshold = clamp(params[PARAM_THRESHOLD_1 + section].getValue() + cvVoltages[section][channel] / 5.f, 0.f, 1.f);
@@ -123,7 +131,7 @@ struct Fortuna : SanguineModule {
                 rampGenerators[section][channel].process(args.sampleTime);
 
                 // Set output signals
-                inVoltages[section][channel] = input->getVoltage(channel);
+                inVoltages[section][channel] = signalInputs[section]->getVoltage(channel);
 
                 float fadingOutVoltage = crossfade(inVoltages[section][channel], 0.f, rampGenerators[section][channel].rampVoltage);
                 float fadingInVoltage = crossfade(0.f, inVoltages[section][channel], rampGenerators[section][channel].rampVoltage);
