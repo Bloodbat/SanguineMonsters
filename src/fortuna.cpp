@@ -45,27 +45,25 @@ struct Fortuna : SanguineModule {
         LIGHTS_COUNT
     };
 
-    static const int kLightsFrequency = 16;
-    static const int kMaxModuleSections = 2;
     int jitteredLightsFrequency;
     int ledsChannel = 0;
     int channelCount = 0;
 
-    dsp::BooleanTrigger btGateTriggers[kMaxModuleSections][PORT_MAX_CHANNELS];
+    dsp::BooleanTrigger btGateTriggers[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS];
     dsp::ClockDivider lightsDivider;
-    RampGenerator rampGenerators[kMaxModuleSections][PORT_MAX_CHANNELS];
+    RampGenerator rampGenerators[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS];
 
-    fortuna::RollResults rollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
-    fortuna::RollResults lastRollResults[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    fortuna::RollResults rollResults[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    fortuna::RollResults lastRollResults[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
-    fortuna::RollModes rollModes[kMaxModuleSections] = { fortuna::ROLL_DIRECT, fortuna::ROLL_DIRECT };
-    bool inputsConnected[kMaxModuleSections] = {};
+    fortuna::RollModes rollModes[fortuna::kMaxModuleSections] = { fortuna::ROLL_DIRECT, fortuna::ROLL_DIRECT };
+    bool inputsConnected[fortuna::kMaxModuleSections] = {};
     bool outputsConnected[OUTPUTS_COUNT] = {};
-    bool triggersConnected[kMaxModuleSections] = {};
+    bool triggersConnected[fortuna::kMaxModuleSections] = {};
 
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
-        for (int section = 0; section < kMaxModuleSections; ++section) {
+        for (int section = 0; section < fortuna::kMaxModuleSections; ++section) {
             configParam(PARAM_THRESHOLD_1 + section, 1.f, 0.f, 0.5f, string::f("Channel %d probability", section + 1),
                 "%", 0, 100);
             configParam(PARAM_CROSSFADE_A + section, 0.f, 10.f, 0.f, string::f("Crossfade %d time", section + 1), " s");
@@ -79,11 +77,11 @@ struct Fortuna : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        float inVoltages[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
-        float cvVoltages[kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+        float inVoltages[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+        float cvVoltages[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
         bool bLightsTurn = lightsDivider.process();
 
-        for (int section = 0; section < kMaxModuleSections; ++section) {
+        for (int section = 0; section < fortuna::kMaxModuleSections; ++section) {
             // Set input & trigger ports.
             Input* input = &inputs[INPUT_IN_1 + section];
             Input* trigger = &inputs[INPUT_TRIGGER_1 + section];
@@ -173,7 +171,7 @@ struct Fortuna : SanguineModule {
     }
 
     void onReset() override {
-        for (int section = 0; section < kMaxModuleSections; ++section) {
+        for (int section = 0; section < fortuna::kMaxModuleSections; ++section) {
             params[PARAM_ROLL_MODE_1 + section].setValue(0);
             for (int channel = 0; channel < PORT_MAX_CHANNELS; ++channel) {
                 lastRollResults[section][channel] = fortuna::ROLL_HEADS;
@@ -213,7 +211,7 @@ struct Fortuna : SanguineModule {
     }
 
     void onAdd(const AddEvent& e) override {
-        jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+        jitteredLightsFrequency = fortuna::kLightsFrequency + (getId() % fortuna::kLightsFrequency);
         lightsDivider.setDivision(jitteredLightsFrequency);
     }
 

@@ -10,4 +10,7 @@ namespace fortuna {
         ROLL_HEADS,
         ROLL_TAILS
     };
+
+    static const int kLightsFrequency = 16;
+    static const int kMaxModuleSections = 2;
 }
