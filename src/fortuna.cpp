@@ -113,7 +113,7 @@ struct Fortuna : SanguineModule {
             for (int channel = 0; channel < channelCount; ++channel) {
                 cvVoltages[section][channel] = inputs[INPUT_P_1 + section].getVoltage(channel);
 
-                bool bGatePresent = triggers[section]->getVoltage(channel) >= 2.f;
+                bool bGatePresent = triggers[section]->getVoltage(channel) >= 1.f;
                 if (btGateTriggers[section][channel].process(bGatePresent)) {
                     // Trigger.
                     float threshold = clamp(params[PARAM_THRESHOLD_1 + section].getValue() + cvVoltages[section][channel] / 5.f, 0.f, 1.f);
