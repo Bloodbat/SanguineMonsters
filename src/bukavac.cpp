@@ -52,7 +52,6 @@ struct Bukavac : SanguineModule {
 	float lastPink = 0.f;
 	bukavac::InverseAWeightingFFTFilter grayFilter;
 
-	static const int kPerlinOctaves = 4;
 	float currentPerlinTime = 0.0;
 	float minSpd = 1;
 	float maxSpd = 500;
@@ -60,18 +59,6 @@ struct Bukavac : SanguineModule {
 	float oldSpeedPctVal = 0.f;
 	float noiseOutMix = 0.f;
 	float* noise;
-	static constexpr float kMaxTime = 511; //FLT_MAX-1000; <-- this needs some more love
-
-	/*
-	   All noise from Fundamental Noise is calibrated to 1 RMS.
-	   Then they should be scaled to match the RMS of a sine wave with 5V amplitude.
-	   gain = 5.f / std::std::sqrt(2.f)
-	*/
-	static constexpr float kGain = 5.f / 1.41421f;
-
-	// Hard-code coefficients for Butterworth lowpass with cutoff 20 Hz @ 44.1kHz.
-	static constexpr float kRedFilterB[] = { 0.00425611, 0.00425611 };
-	static constexpr float kRedFilterA[] = { -0.99148778 };
 
 	bool bWhiteConnected = false;
 	bool bRedConnected = false;
@@ -81,7 +68,7 @@ struct Bukavac : SanguineModule {
 	bool bBlueConnected = false;
 	bool bPrismConnected = false;
 	bool bPerlinMixConnected = false;
-	bool perlinOctavesConnected[kPerlinOctaves] = {};
+	bool perlinOctavesConnected[bukavac::kPerlinOctaves] = {};
 	bool perlinControlsConnected[INPUTS_COUNT];
 
 	pcg32 pcgRng;
@@ -124,9 +111,9 @@ struct Bukavac : SanguineModule {
 
 		configOutput(OUTPUT_PERLIN_NOISE_MIX, "Perlin noise mix");
 
-		redFilter.setCoefficients(kRedFilterB, kRedFilterA);
+		redFilter.setCoefficients(bukavac::kRedFilterB, bukavac::kRedFilterA);
 
-		noise = new float[kPerlinOctaves];
+		noise = new float[bukavac::kPerlinOctaves];
 
 		pcgRng = pcg32(std::round(system::getUnixTime()));
 		rngNormal.init(0.f, 1.f);
@@ -142,26 +129,26 @@ struct Bukavac : SanguineModule {
 			// White noise: equal power density
 			float white = rngNormal.normal(pcgRng);
 			if (bWhiteConnected) {
-				outputs[OUTPUT_WHITE].setVoltage(white * kGain);
+				outputs[OUTPUT_WHITE].setVoltage(white * bukavac::kGain);
 			}
 
 			// Red/Brownian noise: -6dB/oct
 			if (bRedConnected) {
 				float red = redFilter.process(white) / 0.0645f;
-				outputs[OUTPUT_RED].setVoltage(red * kGain);
+				outputs[OUTPUT_RED].setVoltage(red * bukavac::kGain);
 			}
 
 			// Violet/purple noise: 6dB/oct
 			if (bVioletConnected) {
 				float violet = (white - lastWhite) / 1.41f;
 				lastWhite = white;
-				outputs[OUTPUT_VIOLET].setVoltage(violet * kGain);
+				outputs[OUTPUT_VIOLET].setVoltage(violet * bukavac::kGain);
 			}
 
 			// Gray noise: psychoacoustic equal loudness curve, specifically inverted A-weighted
 			if (bGrayConnected) {
 				float gray = grayFilter.process(args.sampleTime, white) / 1.67f;
-				outputs[OUTPUT_GRAY].setVoltage(gray * kGain);
+				outputs[OUTPUT_GRAY].setVoltage(gray * bukavac::kGain);
 			}
 		}
 
@@ -169,14 +156,14 @@ struct Bukavac : SanguineModule {
 			// Pink noise: -3dB/oct
 			float pink = pinkNoiseGenerator.process() / 0.816f;
 			if (bPinkConnected) {
-				outputs[OUTPUT_PINK].setVoltage(pink * kGain);
+				outputs[OUTPUT_PINK].setVoltage(pink * bukavac::kGain);
 			}
 
 			// Blue noise: 3dB/oct
 			if (bBlueConnected) {
 				float blue = (pink - lastPink) / 0.705f;
 				lastPink = pink;
-				outputs[OUTPUT_BLUE].setVoltage(blue * kGain);
+				outputs[OUTPUT_BLUE].setVoltage(blue * bukavac::kGain);
 			}
 		}
 
@@ -192,7 +179,7 @@ struct Bukavac : SanguineModule {
 
 		if (bPerlinMixConnected || perlinOctavesConnected[0] || perlinOctavesConnected[1] ||
 			perlinOctavesConnected[2] || perlinOctavesConnected[3]) {
-			if (currentPerlinTime > kMaxTime) {
+			if (currentPerlinTime > bukavac::kMaxTime) {
 				currentPerlinTime = 0;
 			}
 
@@ -213,7 +200,7 @@ struct Bukavac : SanguineModule {
 			}
 
 			float octaveMult = 1.0;
-			for (int octave = 0; octave < kPerlinOctaves; ++octave) {
+			for (int octave = 0; octave < bukavac::kPerlinOctaves; ++octave) {
 				noise[octave] = perlinAmplifier * getPerlinNoise(currentPerlinTime * perlinSpeed * octaveMult);
 				if (perlinOctavesConnected[octave]) {
 					outputs[OUTPUT_PERLIN_NOISE0 + octave].setVoltage(noise[octave]);
@@ -255,7 +242,7 @@ struct Bukavac : SanguineModule {
 	void mixPerlinOctaves(float* noise) {
 		float totalWeight = 0;
 		noiseOutMix = 0.f;
-		for (int octave = 0; octave < kPerlinOctaves; ++octave) {
+		for (int octave = 0; octave < bukavac::kPerlinOctaves; ++octave) {
 			float currentWeight = params[PARAM_PERLIN_WEIGHT0 + octave].getValue();
 			noiseOutMix += noise[octave] * currentWeight;
 			totalWeight += currentWeight;

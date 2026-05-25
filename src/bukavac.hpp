@@ -103,6 +103,21 @@ namespace bukavac {
       49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
       138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
     };
+
+    static const int kPerlinOctaves = 4;
+
+    static const float kMaxTime = 511; //FLT_MAX-1000; <-- this needs some more love
+
+    /*
+       All noise from Fundamental Noise is calibrated to 1 RMS.
+       Then they should be scaled to match the RMS of a sine wave with 5V amplitude.
+       gain = 5.f / std::std::sqrt(2.f)
+    */
+    static constexpr float kGain = 5.f / 1.41421f;
+
+    // Hard-code coefficients for Butterworth lowpass with cutoff 20 Hz @ 44.1kHz.
+    static constexpr float kRedFilterB[] = { 0.00425611, 0.00425611 };
+    static constexpr float kRedFilterA[] = { -0.99148778 };
 }
 
 #define FASTFLOOR(x) ( ((x)>0) ? ((int)x) : (((int)x)-1) )
