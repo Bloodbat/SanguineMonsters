@@ -99,14 +99,12 @@ struct Chronos : SanguineModule {
         LIGHTS_COUNT
     };
 
-    static const int kLightsFrequency = 64;
     int jitteredLightsFrequency;
 
     size_t channelCounts[chronos::kMaxSections] = {};
     size_t ledsChannel[chronos::kMaxSections] = {};
 
     float clockFrequencies[chronos::kMaxSections] = {};
-    static constexpr float doublePi = 2.f * M_PI;
 
     float_4 phases[chronos::kMaxSections][4];
     float_4 sineVoltages[chronos::kMaxSections][4];
@@ -271,7 +269,7 @@ struct Chronos : SanguineModule {
                     if (bHasOffset) {
                         phase -= 0.25f;
                     }
-                    sineVoltages[section][currentChannel] = simd::sin(doublePi * phase);
+                    sineVoltages[section][currentChannel] = simd::sin(chronos::doublePi * phase);
                     if (sinesConnected[section]) {
                         voltage = sineVoltages[section][currentChannel];
                         if (bIsInverted) {
@@ -518,7 +516,7 @@ struct Chronos : SanguineModule {
     }
 
     void onAdd(const AddEvent& e) override {
-        jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+        jitteredLightsFrequency = chronos::kLightsFrequency + (getId() % chronos::kLightsFrequency);
         lightsDivider.setDivision(jitteredLightsFrequency);
     }
 
