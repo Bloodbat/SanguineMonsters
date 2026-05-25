@@ -8,6 +8,7 @@
 #include "fortuna.hpp"
 
 using namespace sanguineCommonCode;
+using simd::float_4;
 
 struct Fortuna : SanguineModule {
     enum ParamIds {
@@ -53,7 +54,6 @@ struct Fortuna : SanguineModule {
     dsp::ClockDivider lightsDivider;
     RampGenerator rampGenerators[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS];
 
-    fortuna::RollResults rollResults[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
     fortuna::RollResults lastRollResults[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
     fortuna::RollModes rollModes[fortuna::kMaxModuleSections] = { fortuna::ROLL_DIRECT, fortuna::ROLL_DIRECT };
@@ -63,6 +63,12 @@ struct Fortuna : SanguineModule {
 
     Input* signalInputs[fortuna::kMaxModuleSections];
     Input* triggers[fortuna::kMaxModuleSections];
+
+    float rollResults[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    float voltagesThreshold[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    float voltagesTrigger[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    float voltagesFadingOut[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
+    float voltagesFadingIn[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
     Fortuna() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
@@ -80,8 +86,6 @@ struct Fortuna : SanguineModule {
     }
 
     void process(const ProcessArgs& args) override {
-        float inVoltages[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
-        float cvVoltages[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
         bool bLightsTurn = lightsDivider.process();
 
         // Set input & trigger ports.
@@ -111,45 +115,64 @@ struct Fortuna : SanguineModule {
 
             float knobThreshold = params[PARAM_THRESHOLD_1 + section].getValue();
 
+            float_4 inVoltages;
+            for (int channel = 0; channel < channelCount; channel += 4) {
+                inVoltages = inputs[INPUT_P_1 + section].getVoltageSimd<float_4>(channel);
+                inVoltages /= 5.f;
+                inVoltages += knobThreshold;
+                inVoltages = simd::clamp(inVoltages, 0.f, 1.f);
+                inVoltages.store(&voltagesThreshold[section][channel]);
+
+                inVoltages = triggers[section]->getVoltageSimd<float_4>(channel);
+                inVoltages.store(&voltagesTrigger[section][channel]);
+            }
+
             // Process triggers.
             for (int channel = 0; channel < channelCount; ++channel) {
-                cvVoltages[section][channel] = inputs[INPUT_P_1 + section].getVoltage(channel);
-
-                bool bGatePresent = triggers[section]->getVoltage(channel) >= 1.f;
+                bool bGatePresent = voltagesTrigger[section][channel] >= 1.f;
                 if (btGateTriggers[section][channel].process(bGatePresent)) {
                     // Trigger.
-                    float threshold = clamp(knobThreshold + cvVoltages[section][channel] / 5.f, 0.f, 1.f);
-                    rollResults[section][channel] = (random::uniform() >= threshold) ? fortuna::ROLL_HEADS : fortuna::ROLL_TAILS;
+                    rollResults[section][channel] = static_cast<float>((random::uniform() >=
+                        voltagesThreshold[section][channel]) ? fortuna::ROLL_HEADS : fortuna::ROLL_TAILS);
                     if (rollModes[section] == fortuna::ROLL_TOGGLE) {
-                        rollResults[section][channel] =
-                            static_cast<fortuna::RollResults>(lastRollResults[section][channel] ^ rollResults[section][channel]);
+                        rollResults[section][channel] = static_cast<float>(lastRollResults[section][channel] ^
+                            static_cast<fortuna::RollResults>(rollResults[section][channel]));
                     }
-                    if (lastRollResults[section][channel] != rollResults[section][channel]) {
+                    if (lastRollResults[section][channel] !=
+                        static_cast<fortuna::RollResults>(rollResults[section][channel])) {
                         rampGenerators[section][channel].trigger(rampDuration);
                     }
-                    lastRollResults[section][channel] = rollResults[section][channel];
+                    lastRollResults[section][channel] = static_cast<fortuna::RollResults>(rollResults[section][channel]);
                 }
 
                 rampGenerators[section][channel].process(args.sampleTime);
-
-                // Set output signals
-                inVoltages[section][channel] = signalInputs[section]->getVoltage(channel);
-
-                float fadingOutVoltage = crossfade(inVoltages[section][channel], 0.f, rampGenerators[section][channel].rampVoltage);
-                float fadingInVoltage = crossfade(0.f, inVoltages[section][channel], rampGenerators[section][channel].rampVoltage);
-
-                outputs[OUTPUT_OUT_1A + section].setVoltage(rollResults[section][channel] != fortuna::ROLL_TAILS ?
-                    fadingInVoltage : fadingOutVoltage, channel);
-
-                outputs[OUTPUT_OUT_1B + section].setVoltage(rollResults[section][channel] == fortuna::ROLL_TAILS ?
-                    fadingInVoltage : fadingOutVoltage, channel);
             }
 
-            if (outputsConnected[section]) {
-                outputs[OUTPUT_OUT_1A + section].setChannels(channelCount);
-            }
-            if (outputsConnected[section + 2]) {
-                outputs[OUTPUT_OUT_1B + section].setChannels(channelCount);
+            outputs[OUTPUT_OUT_1A + section].setChannels(channelCount);
+            outputs[OUTPUT_OUT_1B + section].setChannels(channelCount);
+
+            float_4 fadingOutVoltages;
+            float_4 fadingInVoltages;
+            float_4 outVoltagesA;
+            float_4 outVoltagesB;
+            float_4 rollVoltages;
+            // Set output signals
+            for (int channel = 0; channel < channelCount; channel += 4) {
+                inVoltages = signalInputs[section]->getVoltageSimd<float_4>(channel);
+
+                fadingOutVoltages = crossfadef4(inVoltages, 0.f, rampGenerators[section][channel].rampVoltage);
+                fadingInVoltages = crossfadef4(0.f, inVoltages, rampGenerators[section][channel].rampVoltage);
+
+                rollVoltages = simd::float_4::load(&rollResults[section][channel]);
+
+                outVoltagesA = simd::ifelse(rollVoltages != static_cast<float>(fortuna::ROLL_TAILS),
+                    fadingInVoltages, fadingOutVoltages);
+                outVoltagesB = simd::ifelse(rollVoltages == static_cast<float>(fortuna::ROLL_TAILS),
+                    fadingInVoltages, fadingOutVoltages);
+
+                outputs[OUTPUT_OUT_1A + section].setVoltageSimd(outVoltagesA, channel);
+
+                outputs[OUTPUT_OUT_1B + section].setVoltageSimd(outVoltagesB, channel);
             }
 
             if (bLightsTurn) {
@@ -167,7 +190,7 @@ struct Fortuna : SanguineModule {
                 lights[currentLight + 1].setBrightnessSmooth(lightValueB, sampleTime);
 
                 currentLight = LIGHTS_PROBABILITY + (section << 1);
-                float rescaledLight = rescale(cvVoltages[section][ledsChannel], 0.f, 5.f, 0.f, 1.f);
+                float rescaledLight = rescale(voltagesThreshold[section][ledsChannel], 0.f, 5.f, 0.f, 1.f);
                 lights[currentLight + 1].setBrightnessSmooth(-rescaledLight, sampleTime);
                 lights[currentLight].setBrightnessSmooth(rescaledLight, sampleTime);
 
@@ -241,6 +264,14 @@ struct Fortuna : SanguineModule {
         if (getJsonInt(rootJ, "ledsChannel", intValue)) {
             ledsChannel = intValue;
         }
+    }
+
+    /*
+    Linearly interpolates between "a" and "b", from "p = 0" to "p = 1" using
+    SIMD.
+    */
+    float_4 crossfadef4(float_4 a, float_4 b, float_4 p) {
+        return a + (b - a) * p;
     }
 };
 
