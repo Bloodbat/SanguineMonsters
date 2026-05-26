@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
+#include "aioncommon.hpp"
+#include "aion.hpp"
 #ifndef METAMODULE
 #include "seqcomponents.hpp"
 #endif
@@ -71,36 +73,34 @@ struct Aion : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	static const int kKnobsFrequency = 64;
-	static const int kModuleSections = 4;
 	int jitteredKnobsFrequency;
 
-	bool timersStarted[kModuleSections] = {};
+	bool timersStarted[aion::kModuleSections] = {};
 
-	bool lastTimerEdges[kModuleSections] = {};
-	bool triggersConnected[kModuleSections] = {};
-	bool outputCables[kModuleSections] = {};
+	bool lastTimerEdges[aion::kModuleSections] = {};
+	bool triggersConnected[aion::kModuleSections] = {};
+	bool outputCables[aion::kModuleSections] = {};
 
-	int setTimerValues[kModuleSections] = {};
-	int currentTimerValues[kModuleSections] = {};
+	int setTimerValues[aion::kModuleSections] = {};
+	int currentTimerValues[aion::kModuleSections] = {};
 
 	float currentTime = 0.f;
 
 	dsp::ClockDivider knobsDivider;
 
-	dsp::BooleanTrigger btResetButtons[kModuleSections];
-	dsp::BooleanTrigger btRunButtons[kModuleSections];
-	dsp::BooleanTrigger btTriggerButtons[kModuleSections];
-	dsp::SchmittTrigger stResetInputs[kModuleSections];
-	dsp::SchmittTrigger stRunInputs[kModuleSections];
-	dsp::SchmittTrigger stTriggerInputs[kModuleSections];
-	dsp::PulseGenerator pgTimerLights[kModuleSections];
-	dsp::PulseGenerator pgTriggerOutputs[kModuleSections];
+	dsp::BooleanTrigger btResetButtons[aion::kModuleSections];
+	dsp::BooleanTrigger btRunButtons[aion::kModuleSections];
+	dsp::BooleanTrigger btTriggerButtons[aion::kModuleSections];
+	dsp::SchmittTrigger stResetInputs[aion::kModuleSections];
+	dsp::SchmittTrigger stRunInputs[aion::kModuleSections];
+	dsp::SchmittTrigger stTriggerInputs[aion::kModuleSections];
+	dsp::PulseGenerator pgTimerLights[aion::kModuleSections];
+	dsp::PulseGenerator pgTriggerOutputs[aion::kModuleSections];
 
 	Aion() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int section = 0; section < kModuleSections; ++section) {
+		for (int section = 0; section < aion::kModuleSections; ++section) {
 			int currentNumber = section + 1;
 
 			configParam(PARAM_TIMER_1 + section, 1.f, 99.f, 1.f, string::f("Timer %d", currentNumber));
@@ -135,7 +135,7 @@ struct Aion : SanguineModule {
 			bInternalTimerSecond = true;
 		}
 
-		for (int section = 0; section < kModuleSections; ++section) {
+		for (int section = 0; section < aion::kModuleSections; ++section) {
 			if (bInternalTimerSecond) {
 				if (!triggersConnected[section]) {
 					if (lastTimerEdges[section] != bInternalTimerSecond) {
@@ -233,7 +233,7 @@ struct Aion : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredKnobsFrequency = kKnobsFrequency + (getId() % kKnobsFrequency);
+		jitteredKnobsFrequency = aioncommon::kKnobsFrequency + (getId() % aioncommon::kKnobsFrequency);
 		knobsDivider.setDivision(jitteredKnobsFrequency);
 	}
 
@@ -241,7 +241,7 @@ struct Aion : SanguineModule {
 		json_t* rootJ = SanguineModule::dataToJson();
 
 		json_t* timersStartedJ = json_array();
-		for (int section = 0; section < kModuleSections; ++section) {
+		for (int section = 0; section < aion::kModuleSections; ++section) {
 			json_t* timerJ = json_boolean(timersStarted[section]);
 			json_array_append_new(timersStartedJ, timerJ);
 		}

@@ -2,6 +2,8 @@
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
 #include "sanguinejson.hpp"
+#include "aioncommon.hpp"
+#include "aionkairos.hpp"
 
 using namespace sanguineCommonCode;
 
@@ -50,39 +52,37 @@ struct AionKairos : SanguineModule {
         LIGHTS_COUNT
     };
 
-    static const int kKnobsFrequency = 64;
-    static const int kModuleSections = 2;
     int jitteredKnobsFrequency;
 
-    bool timersStarted[kModuleSections] = {};
+    bool timersStarted[aionkairos::kModuleSections] = {};
 
-    bool lastTimerEdges[kModuleSections] = {};
-    bool triggersConnected[kModuleSections] = {};
-    bool outputCables[kModuleSections] = {};
+    bool lastTimerEdges[aionkairos::kModuleSections] = {};
+    bool triggersConnected[aionkairos::kModuleSections] = {};
+    bool outputCables[aionkairos::kModuleSections] = {};
 
-    int setTimerValues[kModuleSections] = {};
-    int currentTimerValues[kModuleSections] = {};
+    int setTimerValues[aionkairos::kModuleSections] = {};
+    int currentTimerValues[aionkairos::kModuleSections] = {};
 
     float currentTime = 0.f;
 
     dsp::ClockDivider knobsDivider;
 
-    dsp::BooleanTrigger btResetButtons[kModuleSections];
-    dsp::BooleanTrigger btRunButtons[kModuleSections];
-    dsp::BooleanTrigger btTriggerButtons[kModuleSections];
-    dsp::SchmittTrigger stResetInputs[kModuleSections];
-    dsp::SchmittTrigger stRunInputs[kModuleSections];
-    dsp::SchmittTrigger stTriggerInputs[kModuleSections];
-    dsp::PulseGenerator pgTimerLights[kModuleSections];
-    dsp::PulseGenerator pgTriggerLights[kModuleSections];
-    dsp::PulseGenerator pgResetLights[kModuleSections];
-    dsp::PulseGenerator pgRunLights[kModuleSections];
-    dsp::PulseGenerator pgTriggerOutputs[kModuleSections];
+    dsp::BooleanTrigger btResetButtons[aionkairos::kModuleSections];
+    dsp::BooleanTrigger btRunButtons[aionkairos::kModuleSections];
+    dsp::BooleanTrigger btTriggerButtons[aionkairos::kModuleSections];
+    dsp::SchmittTrigger stResetInputs[aionkairos::kModuleSections];
+    dsp::SchmittTrigger stRunInputs[aionkairos::kModuleSections];
+    dsp::SchmittTrigger stTriggerInputs[aionkairos::kModuleSections];
+    dsp::PulseGenerator pgTimerLights[aionkairos::kModuleSections];
+    dsp::PulseGenerator pgTriggerLights[aionkairos::kModuleSections];
+    dsp::PulseGenerator pgResetLights[aionkairos::kModuleSections];
+    dsp::PulseGenerator pgRunLights[aionkairos::kModuleSections];
+    dsp::PulseGenerator pgTriggerOutputs[aionkairos::kModuleSections];
 
     AionKairos() {
         config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-        for (int section = 0; section < kModuleSections; ++section) {
+        for (int section = 0; section < aionkairos::kModuleSections; ++section) {
             int currentNumber = section + 1;
 
             configParam(PARAM_TIMER_1 + section, 1.f, 99.f, 1.f, string::f("Timer %d", currentNumber));
@@ -117,7 +117,7 @@ struct AionKairos : SanguineModule {
             bInternalTimerSecond = true;
         }
 
-        for (int section = 0; section < kModuleSections; ++section) {
+        for (int section = 0; section < aionkairos::kModuleSections; ++section) {
             if (bInternalTimerSecond) {
                 if (!triggersConnected[section]) {
                     if (lastTimerEdges[section] != bInternalTimerSecond) {
@@ -230,7 +230,7 @@ struct AionKairos : SanguineModule {
     }
 
     void onAdd(const AddEvent& e) override {
-        jitteredKnobsFrequency = kKnobsFrequency + (getId() % kKnobsFrequency);
+        jitteredKnobsFrequency = aioncommon::kKnobsFrequency + (getId() % aioncommon::kKnobsFrequency);
         knobsDivider.setDivision(jitteredKnobsFrequency);
     }
 
@@ -238,7 +238,7 @@ struct AionKairos : SanguineModule {
         json_t* rootJ = SanguineModule::dataToJson();
 
         json_t* timersStartedJ = json_array();
-        for (int section = 0; section < kModuleSections; ++section) {
+        for (int section = 0; section < aionkairos::kModuleSections; ++section) {
             json_t* timerJ = json_boolean(timersStarted[section]);
             json_array_append_new(timersStartedJ, timerJ);
         }
