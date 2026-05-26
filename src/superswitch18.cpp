@@ -16,8 +16,6 @@
 #include "manus.hpp"
 #endif
 
-using simd::float_4;
-
 struct SuperSwitch18 : SanguineModule {
 
 	enum ParamIds {
@@ -120,8 +118,6 @@ struct SuperSwitch18 : SanguineModule {
 
 	static const int kLightsFrequency = 16;
 	int jitteredLightsFrequency;
-
-	float_4 outVoltages[4] = {};
 
 	dsp::ClockDivider lightsDivider;
 
