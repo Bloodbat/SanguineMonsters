@@ -19,4 +19,7 @@ namespace dollyx {
         "15",
         "16"
     };
+
+    static const int kSubmodules = 2;
+    static const int kLogicFrequency = 64;
 }

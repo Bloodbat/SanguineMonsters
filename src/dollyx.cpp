@@ -30,22 +30,20 @@ struct DollyX : SanguineModule {
 		OUTPUTS_COUNT
 	};
 
-	static const int kSubmodules = 2;
-	static const int kLogicFrequency = 64;
 	int jitteredLogicFrequency;
 
-	int cloneCounts[kSubmodules];
+	int cloneCounts[dollyx::kSubmodules];
 
-	bool cvsConnected[kSubmodules] = {};
-	bool inputsConnected[kSubmodules] = {};
-	bool outputsConnected[kSubmodules] = {};
+	bool cvsConnected[dollyx::kSubmodules] = {};
+	bool inputsConnected[dollyx::kSubmodules] = {};
+	bool outputsConnected[dollyx::kSubmodules] = {};
 
 	dsp::ClockDivider logicDivider;
 
 	DollyX() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, 0);
 
-		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
+		for (int submodule = 0; submodule < dollyx::kSubmodules; ++submodule) {
 			int componentOffset = submodule + 1;
 
 			configSwitch(PARAM_CHANNELS1 + submodule, 1.f, PORT_MAX_CHANNELS, PORT_MAX_CHANNELS,
@@ -100,7 +98,7 @@ struct DollyX : SanguineModule {
 	}
 
 	void init() {
-		for (int submodule = 0; submodule < kSubmodules; ++submodule) {
+		for (int submodule = 0; submodule < dollyx::kSubmodules; ++submodule) {
 			cloneCounts[submodule] = PORT_MAX_CHANNELS;
 		}
 	}
@@ -137,7 +135,7 @@ struct DollyX : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredLogicFrequency = kLogicFrequency + (getId() % kLogicFrequency);
+		jitteredLogicFrequency = dollyx::kLogicFrequency + (getId() % dollyx::kLogicFrequency);
 		logicDivider.setDivision(jitteredLogicFrequency);
 	}
 };
