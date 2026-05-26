@@ -11,12 +11,10 @@
 #include "raiju.hpp"
 
 struct Raiju : SanguineModule {
-	static const int kVoltagesCount = 8;
-
 	enum ParamIds {
-		ENUMS(PARAM_VOLTAGE_SELECTOR, kVoltagesCount),
+		ENUMS(PARAM_VOLTAGE_SELECTOR, raiju::kVoltagesCount),
 		PARAM_CHANNEL_COUNT,
-		ENUMS(PARAM_VOLTAGE, kVoltagesCount),
+		ENUMS(PARAM_VOLTAGE, raiju::kVoltagesCount),
 		PARAMS_COUNT
 	};
 
@@ -25,7 +23,7 @@ struct Raiju : SanguineModule {
 	};
 
 	enum OutputIds {
-		ENUMS(OUTPUT_VOLTAGE, kVoltagesCount),
+		ENUMS(OUTPUT_VOLTAGE, raiju::kVoltagesCount),
 		OUTPUT_EIGHT_CHANNELS,
 		OUTPUTS_COUNT
 	};
@@ -44,22 +42,21 @@ struct Raiju : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	bool outputsConnected[kVoltagesCount] = {};
+	bool outputsConnected[raiju::kVoltagesCount] = {};
 	bool bPolyOutConnected = false;
 
 	int currentChannelCount = 1;
-	int channelCounts[kVoltagesCount] = { 1,1,1,1,1,1,1,1 };
+	int channelCounts[raiju::kVoltagesCount] = { 1,1,1,1,1,1,1,1 };
 	int lastSelectedVoltage = -1;
 	int selectedVoltage = 0;
 
-	static const int kLogicFrequency = 1024;
 	int jitteredLogicFrequency;
 
-	float voltages[kVoltagesCount] = {};
+	float voltages[raiju::kVoltagesCount] = {};
 
-	std::string strVoltages[kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
+	std::string strVoltages[raiju::kVoltagesCount] = { "0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" ,"0.000" };
 
-	dsp::BooleanTrigger btButtons[kVoltagesCount];
+	dsp::BooleanTrigger btButtons[raiju::kVoltagesCount];
 
 	dsp::ClockDivider logicDivider;
 
@@ -69,7 +66,7 @@ struct Raiju : SanguineModule {
 		configParam(PARAM_CHANNEL_COUNT, 1.f, 16.f, 1.f, "Polyphonic output channels", "", 0.f, 1.f, 0.f);
 		paramQuantities[PARAM_CHANNEL_COUNT]->snapEnabled = true;
 
-		for (int component = 0; component < kVoltagesCount; ++component) {
+		for (int component = 0; component < raiju::kVoltagesCount; ++component) {
 			int currentComponent = component + 1;
 			configOutput(OUTPUT_VOLTAGE + component, string::f("Voltage %d", currentComponent));
 			configParam(PARAM_VOLTAGE + component, -10.f, 10.f, 0.f,
@@ -98,7 +95,7 @@ struct Raiju : SanguineModule {
 				currentChannelCount = selectedChannelCount;
 			}
 
-			for (uint8_t voltage = 0; voltage < kVoltagesCount; ++voltage) {
+			for (uint8_t voltage = 0; voltage < raiju::kVoltagesCount; ++voltage) {
 				params[PARAM_VOLTAGE_SELECTOR + voltage].setValue(voltage == selectedVoltage);
 
 				// Get channel voltages and update strings for displays
@@ -131,14 +128,14 @@ struct Raiju : SanguineModule {
 			}
 
 			if (bPolyOutConnected) {
-				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(kVoltagesCount);
+				outputs[OUTPUT_EIGHT_CHANNELS].setChannels(raiju::kVoltagesCount);
 				outputs[OUTPUT_EIGHT_CHANNELS].writeVoltages(voltages);
 			}
 		}
 	}
 
 	void pollSwitches() {
-		for (uint8_t button = 0; button < kVoltagesCount; ++button) {
+		for (uint8_t button = 0; button < raiju::kVoltagesCount; ++button) {
 			if (btButtons[button].process(params[PARAM_VOLTAGE_SELECTOR + button].getValue())) {
 				selectedVoltage = button;
 			}
@@ -154,7 +151,7 @@ struct Raiju : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredLogicFrequency = kLogicFrequency + (getId() % kLogicFrequency);
+		jitteredLogicFrequency = raiju::kLogicFrequency + (getId() % raiju::kLogicFrequency);
 		logicDivider.setDivision(jitteredLogicFrequency);
 	}
 
