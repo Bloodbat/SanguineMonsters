@@ -46,7 +46,6 @@ struct Beleth : SanguineModule {
     int voicing;
     int transpose;
 
-    static const int kLightsFrequency = 16;
     int jitteredLightsFrequency;
 
     beleth::ChordTypes chordType;
@@ -318,7 +317,7 @@ struct Beleth : SanguineModule {
     }
 
     void onAdd(const AddEvent& e) override {
-        jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+        jitteredLightsFrequency = beleth::kLightsFrequency + (getId() % beleth::kLightsFrequency);
         lightsDivider.setDivision(jitteredLightsFrequency);
     }
 

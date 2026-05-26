@@ -13,6 +13,8 @@ namespace beleth {
     static const int kTonnetzRows = 12;
     static const int kMaxNotes = 12;
 
+    static const int kLightsFrequency = 16;
+
     static const std::vector<std::string> chordGroupLabels = {
         "Augmented / diminished",
         "Major / minor"
