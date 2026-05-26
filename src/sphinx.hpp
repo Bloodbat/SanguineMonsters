@@ -5,6 +5,8 @@
 namespace sphinx {
     static const int kMaxLength = 32;
 
+    static const int kLightsFrequency = 16;
+
     enum PatternStyle {
         EUCLIDEAN_PATTERN,
         RANDOM_PATTERN,

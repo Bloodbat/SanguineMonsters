@@ -92,7 +92,6 @@ struct Sphinx : SanguineModule {
 	sphinx::PatternStyle lastPatternStyle = sphinx::RANDOM_PATTERN;
 	sphinx::PatternStyle patternStyle = sphinx::EUCLIDEAN_PATTERN;
 
-	static const int kLightsFrequency = 16;
 	int jitteredLightsFrequency;
 
 	dsp::SchmittTrigger stClockInput;
@@ -463,7 +462,7 @@ struct Sphinx : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		jitteredLightsFrequency = sphinx::kLightsFrequency + (getId() % sphinx::kLightsFrequency);
 		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 };
