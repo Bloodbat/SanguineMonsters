@@ -285,9 +285,10 @@ struct Sphinx : SanguineModule {
 			}
 
 			// New sequence in case of parameter change.
-			if (patternLength + patternRotation + patternAccents + patternFill + patternPadding +
-				patternAccentRotation != patternChecksum) {
-				patternChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding + patternAccentRotation;
+			int newChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding +
+				patternAccentRotation;
+			if (newChecksum != patternChecksum) {
+				patternChecksum = newChecksum;
 				bCalculate = true;
 			}
 
