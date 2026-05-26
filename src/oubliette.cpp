@@ -1,24 +1,22 @@
 #include "plugin.hpp"
 #include "sanguinecomponents.hpp"
 #include "sanguinehelpers.hpp"
+#include "oubliette.hpp"
 
 using namespace sanguineCommonCode;
 
 struct Oubliette : SanguineModule {
-
-	static const int kMaxSectionPorts = 16;
-
 	enum ParamIds {
 		PARAMS_COUNT
 	};
 
 	enum InputIds {
-		ENUMS(INPUT_NULL, kMaxSectionPorts),
+		ENUMS(INPUT_NULL, oubliette::kMaxSectionPorts),
 		INPUTS_COUNT
 	};
 
 	enum OutputIds {
-		ENUMS(OUTPUT_NULL, kMaxSectionPorts),
+		ENUMS(OUTPUT_NULL, oubliette::kMaxSectionPorts),
 		OUTPUTS_COUNT
 	};
 
@@ -29,7 +27,7 @@ struct Oubliette : SanguineModule {
 	Oubliette() {
 		config(PARAMS_COUNT, INPUTS_COUNT, OUTPUTS_COUNT, LIGHTS_COUNT);
 
-		for (int port = 0; port < kMaxSectionPorts; ++port) {
+		for (int port = 0; port < oubliette::kMaxSectionPorts; ++port) {
 			int currentPort = port + 1;
 			configInput(INPUT_NULL + port, string::f("Sink %d", currentPort));
 			configOutput(OUTPUT_NULL + port, string::f("0V %d", currentPort));
