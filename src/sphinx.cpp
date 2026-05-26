@@ -157,10 +157,12 @@ struct Sphinx : SanguineModule {
 
 		bool bNextStep = false;
 
+		bool bIsReversed = static_cast<bool>(params[PARAM_REVERSE].getValue());
+
 		// Reset sequence.
 		if (bResetConnected) {
 			if (stResetInput.process(inputs[INPUT_RESET].getVoltage())) {
-				if (!params[PARAM_REVERSE].getValue()) {
+				if (!bIsReversed) {
 					currentStep = patternLength + patternPadding;
 				} else {
 					currentStep = 0;
@@ -176,7 +178,7 @@ struct Sphinx : SanguineModule {
 		}
 
 		if (bNextStep) {
-			if (!params[PARAM_REVERSE].getValue()) {
+			if (!bIsReversed) {
 				++currentStep;
 				if (currentStep >= patternLength + patternPadding) {
 					currentStep = 0;
@@ -249,12 +251,12 @@ struct Sphinx : SanguineModule {
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) * 10.f);
 
 		if (lightsDivider.process()) {
-			float_4 inputVoltages = {
-				inputs[INPUT_PADDING].getVoltage(),
-				inputs[INPUT_ROTATION].getVoltage(),
-				inputs[INPUT_STEPS].getVoltage(),
-				inputs[INPUT_ACCENT].getVoltage()
-			};
+		float_4 inputVoltages = {
+			inputs[INPUT_PADDING].getVoltage(),
+			inputs[INPUT_ROTATION].getVoltage(),
+			inputs[INPUT_STEPS].getVoltage(),
+			inputs[INPUT_ACCENT].getVoltage()
+		};
 
 			float_4 knobValues = {
 				params[PARAM_PADDING].getValue(),
@@ -263,34 +265,34 @@ struct Sphinx : SanguineModule {
 				params[PARAM_ACCENT].getValue()
 			};
 
-			inputVoltages /= 9.f;
+		inputVoltages /= 9.f;
 
-			inputVoltages += knobValues;
+		inputVoltages += knobValues;
 
-			inputVoltages = simd::clamp(inputVoltages, 0.f, 1.f);
+		inputVoltages = simd::clamp(inputVoltages, 0.f, 1.f);
 
-			patternLength = clamp(params[PARAM_LENGTH].getValue() +
-				math::rescale(inputs[INPUT_LENGTH].getVoltage(), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
+		patternLength = clamp(params[PARAM_LENGTH].getValue() +
+			math::rescale(inputs[INPUT_LENGTH].getVoltage(), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
 
 			patternPadding = abs((32.f - patternLength) * inputVoltages[0]);
 			patternRotation = abs((patternLength + patternPadding - 1.f) * inputVoltages[1]);
 			patternFill = abs(1.f + (patternLength - 1.f) * inputVoltages[2]);
 			patternAccents = abs(patternFill * inputVoltages[3]);
 
-			if (patternAccents == 0) {
-				patternAccentRotation = 0;
-			} else {
-				patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
-					inputs[INPUT_SHIFT].getVoltage() / 9.f, 0.f, 1.f));
-			}
+		if (patternAccents == 0) {
+			patternAccentRotation = 0;
+		} else {
+			patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
+				inputs[INPUT_SHIFT].getVoltage() / 9.f, 0.f, 1.f));
+		}
 
-			// New sequence in case of parameter change.
-			int newChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding +
-				patternAccentRotation;
-			if (newChecksum != patternChecksum) {
-				patternChecksum = newChecksum;
-				bCalculate = true;
-			}
+		// New sequence in case of parameter change.
+		int newChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding +
+			patternAccentRotation;
+		if (newChecksum != patternChecksum) {
+			patternChecksum = newChecksum;
+			bCalculate = true;
+		}
 
 			patternStyle = sphinx::PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
 			if (patternStyle != lastPatternStyle) {
