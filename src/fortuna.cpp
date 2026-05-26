@@ -158,8 +158,10 @@ struct Fortuna : SanguineModule {
             for (int channel = 0; channel < channelCount; channel += 4) {
                 inVoltages = signalInputs[section]->getVoltageSimd<float_4>(channel);
 
-                fadingOutVoltages = crossfadef4(inVoltages, 0.f, rampGenerators[section][channel].rampVoltage);
-                fadingInVoltages = crossfadef4(0.f, inVoltages, rampGenerators[section][channel].rampVoltage);
+                fadingOutVoltages = sanguineCommonCode::crossfade(
+                    inVoltages, 0.f, rampGenerators[section][channel].rampVoltage);
+                fadingInVoltages = sanguineCommonCode::crossfade(
+                    0.f, inVoltages, rampGenerators[section][channel].rampVoltage);
 
                 rollVoltages = simd::float_4::load(&rollResults[section][channel]);
 
@@ -265,14 +267,6 @@ struct Fortuna : SanguineModule {
         if (getJsonInt(rootJ, "ledsChannel", intValue)) {
             ledsChannel = intValue;
         }
-    }
-
-    /*
-    Linearly interpolates between "a" and "b", from "p = 0" to "p = 1" using
-    SIMD.
-    */
-    float_4 crossfadef4(float_4 a, float_4 b, float_4 p) {
-        return a + (b - a) * p;
     }
 };
 
