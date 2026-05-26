@@ -89,6 +89,12 @@ struct Sphinx : SanguineModule {
 	int currentStep = 0;
 	int turing = 0;
 
+	float parameterValues[4] = {};
+	float voltagesParameters[4] = {};
+
+	float knobLength = 0.f;
+	float knobShift = 0.f;
+
 	sphinx::PatternStyle lastPatternStyle = sphinx::RANDOM_PATTERN;
 	sphinx::PatternStyle patternStyle = sphinx::EUCLIDEAN_PATTERN;
 
@@ -249,14 +255,51 @@ struct Sphinx : SanguineModule {
 
 		outputs[OUTPUT_EOC].setVoltage(pgEoc.process(args.sampleTime) * 10.f);
 
-		if (lightsDivider.process()) {
-			float_4 inputVoltages = {
-				inputs[INPUT_PADDING].getVoltage(),
-				inputs[INPUT_ROTATION].getVoltage(),
-				inputs[INPUT_STEPS].getVoltage(),
-				inputs[INPUT_ACCENT].getVoltage()
-			};
+		float shiftVoltage = inputs[INPUT_SHIFT].getVoltage();
 
+		float_4 inputVoltages = {
+			inputs[INPUT_PADDING].getVoltage(),
+			inputs[INPUT_ROTATION].getVoltage(),
+			inputs[INPUT_STEPS].getVoltage(),
+			inputs[INPUT_ACCENT].getVoltage()
+		};
+
+		inputVoltages /= 9.f;
+
+		shiftVoltage /= 9.f;
+
+		float_4 knobValues = float_4::load(parameterValues);
+
+		inputVoltages += knobValues;
+
+		inputVoltages = simd::clamp(inputVoltages, 0.f, 1.f);
+
+		inputVoltages.store(voltagesParameters);
+
+		patternLength = clamp(knobLength + math::rescale(inputs[INPUT_LENGTH].getVoltage(),
+			-10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
+
+		patternPadding = abs((32.f - patternLength) * voltagesParameters[0]);
+		patternRotation = abs((patternLength + patternPadding - 1.f) * voltagesParameters[1]);
+		patternFill = abs(1.f + (patternLength - 1.f) * voltagesParameters[2]);
+		patternAccents = abs(patternFill * voltagesParameters[3]);
+
+		if (patternAccents == 0) {
+			patternAccentRotation = 0;
+		} else {
+			patternAccentRotation = abs((patternFill - 1.f) * clamp(
+				knobShift + shiftVoltage, 0.f, 1.f));
+		}
+
+		// New sequence in case of parameter change.
+		int newChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding +
+			patternAccentRotation;
+		if (newChecksum != patternChecksum) {
+			patternChecksum = newChecksum;
+			bCalculate = true;
+		}
+
+		if (lightsDivider.process()) {
 			float_4 knobValues = {
 				params[PARAM_PADDING].getValue(),
 				params[PARAM_ROTATION].getValue(),
@@ -264,34 +307,11 @@ struct Sphinx : SanguineModule {
 				params[PARAM_ACCENT].getValue()
 			};
 
-			inputVoltages /= 9.f;
+			knobValues.store(parameterValues);
 
-			inputVoltages += knobValues;
+			knobLength = params[PARAM_LENGTH].getValue();
 
-			inputVoltages = simd::clamp(inputVoltages, 0.f, 1.f);
-
-			patternLength = clamp(params[PARAM_LENGTH].getValue() +
-				math::rescale(inputs[INPUT_LENGTH].getVoltage(), -10.f, 0.f, -31.f, 0.f), 1.f, 32.f);
-
-			patternPadding = abs((32.f - patternLength) * inputVoltages[0]);
-			patternRotation = abs((patternLength + patternPadding - 1.f) * inputVoltages[1]);
-			patternFill = abs(1.f + (patternLength - 1.f) * inputVoltages[2]);
-			patternAccents = abs(patternFill * inputVoltages[3]);
-
-			if (patternAccents == 0) {
-				patternAccentRotation = 0;
-			} else {
-				patternAccentRotation = abs((patternFill - 1.f) * clamp(params[PARAM_SHIFT].getValue() +
-					inputs[INPUT_SHIFT].getVoltage() / 9.f, 0.f, 1.f));
-			}
-
-			// New sequence in case of parameter change.
-			int newChecksum = patternLength + patternRotation + patternAccents + patternFill + patternPadding +
-				patternAccentRotation;
-			if (newChecksum != patternChecksum) {
-				patternChecksum = newChecksum;
-				bCalculate = true;
-			}
+			knobShift = params[PARAM_SHIFT].getValue();
 
 			patternStyle = sphinx::PatternStyle(params[PARAM_PATTERN_STYLE].getValue());
 			if (patternStyle != lastPatternStyle) {

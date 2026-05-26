@@ -36,6 +36,8 @@ without the backticks.
 
 - Fortuna considers voltages ? 1V instead of voltages ? 2V as triggers.
 
+- Sphinx: process CV in real time.
+
 
 ---
 
