@@ -25,7 +25,6 @@ struct Medusa : SanguineModule {
 		LIGHTS_COUNT
 	};
 
-	static const int kLightsFrequency = 1024;
 	int jitteredLightsFrequency;
 	int portPalettes[medusa::kMaxPorts];
 
@@ -95,7 +94,7 @@ struct Medusa : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		jitteredLightsFrequency = medusa::kLightsFrequency + (getId() % medusa::kLightsFrequency);
 		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 };
