@@ -52,7 +52,7 @@ struct Fortuna : SanguineModule {
 
     dsp::BooleanTrigger btGateTriggers[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS];
     dsp::ClockDivider lightsDivider;
-    RampGenerator rampGenerators[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS];
+    RampGenerator<float> rampGenerators[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS];
 
     fortuna::RollResults lastRollResults[fortuna::kMaxModuleSections][PORT_MAX_CHANNELS] = {};
 
