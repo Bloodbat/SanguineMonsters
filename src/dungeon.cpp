@@ -56,11 +56,8 @@ struct Dungeon : SanguineModule {
 	NVGcolor outerMoon = dungeon::moonColors[1].outerColor;
 #endif
 
-	static const int kLightsFrequency = 512;
 	int jitteredLightsFrequency;
 
-	static constexpr float kMinSlew = -9.965784285; // std::log2(1e-3f)
-	static constexpr float kMaxSlew = 3.321928095; // std::log2(10.f)
 	float inVoltage = 0.f;
 	float whiteNoise = 0.f;
 
@@ -93,7 +90,8 @@ struct Dungeon : SanguineModule {
 				return ParamQuantity::getDisplayValue();
 			}
 		};
-		configParam<SlewQuantity>(PARAM_SLEW, kMinSlew, kMaxSlew, kMinSlew, "Slew", " ms/V", 2, 1000);
+		configParam<SlewQuantity>(PARAM_SLEW, dungeon::kMinSlew, dungeon::kMaxSlew,
+			dungeon::kMinSlew, "Slew", " ms/V", 2, 1000);
 		configInput(INPUT_SLEW, "Slew CV");
 
 		configInput(INPUT_CLOCK, "Clock");
@@ -182,7 +180,7 @@ struct Dungeon : SanguineModule {
 
 		if (bOutVoltageConnected) {
 			// Slider bottom means infinite slew
-			if (slewParam <= kMinSlew) {
+			if (slewParam <= dungeon::kMinSlew) {
 				slewParam = -INFINITY;
 			}
 
@@ -207,7 +205,8 @@ struct Dungeon : SanguineModule {
 
 			if (!bInSlewConnected) {
 				lights[LIGHT_SLEW].setBrightnessSmooth(0.f, sampleTime);
-				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(params[PARAM_SLEW].getValue(), kMinSlew, kMaxSlew, 0.f, 1.f), sampleTime);
+				lights[LIGHT_SLEW + 1].setBrightnessSmooth(math::rescale(
+					params[PARAM_SLEW].getValue(), dungeon::kMinSlew, dungeon::kMaxSlew, 0.f, 1.f), sampleTime);
 			} else {
 				float rescaledLight = math::rescale(inputs[INPUT_SLEW].getVoltage(), 0.f, 5.f, 0.f, 1.f);
 				lights[LIGHT_SLEW].setBrightnessSmooth(rescaledLight, sampleTime);
@@ -298,7 +297,7 @@ struct Dungeon : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredLightsFrequency = kLightsFrequency + (getId() % kLightsFrequency);
+		jitteredLightsFrequency = dungeon::kLightsFrequency + (getId() % dungeon::kLightsFrequency);
 		lightsDivider.setDivision(jitteredLightsFrequency);
 	}
 

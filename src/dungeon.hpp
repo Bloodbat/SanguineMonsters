@@ -19,6 +19,11 @@ namespace dungeon {
         "TH",
         "HT"
     };
+
+    static const int kLightsFrequency = 512;
+
+    static const float kMinSlew = -9.965784285; // std::log2(1e-3f)
+    static const float kMaxSlew = 3.321928095; // std::log2(10.f)
 }
 
 struct SlewFilter {
