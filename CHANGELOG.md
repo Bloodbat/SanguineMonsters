@@ -32,6 +32,10 @@ without the backticks.
 
 - Sphinx: display borders when module is bypassed.
 
+## Changes
+
+- Fortuna considers voltages ? 1V instead of voltages ? 2V as triggers.
+
 
 ---
 
