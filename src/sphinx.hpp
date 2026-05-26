@@ -86,4 +86,39 @@ namespace sphinx {
         "Gate",
         "Turing"
     };
+
+    static const std::vector<std::string> labelsLength = {
+        "1 steps",
+        "2 steps",
+        "3 steps",
+        "4 steps",
+        "5 steps",
+        "6 steps",
+        "7 steps",
+        "8 steps",
+        "9 steps",
+        "10 steps",
+        "11 steps",
+        "12 steps",
+        "13 steps",
+        "14 steps",
+        "15 steps",
+        "16 steps",
+        "17 steps",
+        "18 steps",
+        "19 steps",
+        "20 steps",
+        "21 steps",
+        "22 steps",
+        "23 steps",
+        "24 steps",
+        "25 steps",
+        "26 steps",
+        "27 steps",
+        "28 steps",
+        "29 steps",
+        "30 steps",
+        "31 steps",
+        "32 steps"
+    };
 }
