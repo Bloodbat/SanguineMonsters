@@ -99,22 +99,19 @@ struct Brainz : SanguineModule {
 		{0.f, 0.f, kSanguineButtonLightValue},
 	};
 
-	static const int kLogicFrequency = 64;
-	static const int kMaxSteps = 3;
-	static const int kMaxOutTriggers = 4;
 	int jitteredLogicDivider;
 
 	bool bEnteredMetronome = false;
 	bool bInMetronome = false;
 	bool bResetSent;
 	bool bRunSent;
-	bool stepsEnabled[kMaxSteps] = { true, true, true };
+	bool stepsEnabled[brainz::kMaxSteps] = { true, true, true };
 	bool bStepStarted = false;
 	bool bStepTrigger = false;
-	bool bTriggersDone[kMaxOutTriggers];
+	bool bTriggersDone[brainz::kMaxOutTriggers];
 	bool bTriggersSent = false;
 
-	bool globalOutputsConnected[kMaxOutTriggers] = {};
+	bool globalOutputsConnected[brainz::kMaxOutTriggers] = {};
 	bool bRunConnected = false;
 	bool bResetConnected = false;
 
@@ -131,8 +128,8 @@ struct Brainz : SanguineModule {
 	int* metronomeCounterPtr;
 
 	int currentDelayTime;
-	int currentCounters[kMaxSteps] = { 0,0,0 };
-	int maxCounters[kMaxSteps] = { 1,1,1 };
+	int currentCounters[brainz::kMaxSteps] = { 0,0,0 };
+	int maxCounters[brainz::kMaxSteps] = { 1,1,1 };
 	int metronomeSpeed = 60;
 	int metronomeSteps = 0;
 	int metronomeStepsDone = 0;
@@ -148,7 +145,7 @@ struct Brainz : SanguineModule {
 	dsp::PulseGenerator pgReset;
 	dsp::PulseGenerator pgRun;
 	dsp::PulseGenerator pgTrigger;
-	dsp::PulseGenerator pgOutTriggers[kMaxOutTriggers];
+	dsp::PulseGenerator pgOutTriggers[brainz::kMaxOutTriggers];
 
 	dsp::ClockDivider logicDivider;
 
@@ -251,7 +248,7 @@ struct Brainz : SanguineModule {
 						if (params[PARAM_START_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
 						} else {
-							for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
+							for (int trigger = 0; trigger < brainz::kMaxOutTriggers; ++trigger) {
 								bTriggersDone[trigger] = true;
 							}
 						}
@@ -502,7 +499,7 @@ struct Brainz : SanguineModule {
 						if (params[PARAM_END_TRIGGERS].getValue()) {
 							doGlobalTriggers(sampleTime);
 						} else {
-							for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
+							for (int trigger = 0; trigger < brainz::kMaxOutTriggers; ++trigger) {
 								bTriggersDone[trigger] = true;
 							}
 						}
@@ -523,7 +520,7 @@ struct Brainz : SanguineModule {
 				metronomeSpeed = params[PARAM_METRONOME_SPEED].getValue();
 				metronomeSteps = params[PARAM_METRONOME_STEPS].getValue();
 
-				for (int step = 0; step < kMaxSteps; ++step) {
+				for (int step = 0; step < brainz::kMaxSteps; ++step) {
 					stepsEnabled[step] = params[PARAM_A_ENABLED + step].getValue();
 
 					lights[LIGHT_STEP_A_ENABLED + step].setBrightnessSmooth(params[PARAM_A_ENABLED + step].getValue() *
@@ -607,7 +604,7 @@ struct Brainz : SanguineModule {
 	}
 
 	void onReset() override {
-		for (int step = 0; step < kMaxSteps; ++step) {
+		for (int step = 0; step < brainz::kMaxSteps; ++step) {
 			params[PARAM_A_ENABLED + step].setValue(1);
 			if (step < 2) {
 				params[PARAM_START_TRIGGERS + step].setValue(1);
@@ -617,12 +614,12 @@ struct Brainz : SanguineModule {
 	}
 
 	void resetGlobalTriggers() {
-		memset(bTriggersDone, 0, sizeof(bool) * kMaxOutTriggers);
+		memset(bTriggersDone, 0, sizeof(bool) * brainz::kMaxOutTriggers);
 	}
 
 	void doGlobalTriggers(const float sampleTime) {
 		if (!bTriggersSent) {
-			for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
+			for (int trigger = 0; trigger < brainz::kMaxOutTriggers; ++trigger) {
 				if (globalOutputsConnected[trigger]) {
 					pgOutTriggers[trigger].trigger();
 					outputs[OUTPUT_OUT_1 + trigger].setVoltage(pgOutTriggers[trigger].process(1.f / sampleTime) ? 10.f : 0.f);
@@ -630,7 +627,7 @@ struct Brainz : SanguineModule {
 			}
 			bTriggersSent = true;
 		} else {
-			for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
+			for (int trigger = 0; trigger < brainz::kMaxOutTriggers; ++trigger) {
 				bTriggersDone[trigger] = !pgOutTriggers[trigger].process(1.f / sampleTime);
 				if (globalOutputsConnected[trigger]) {
 					outputs[OUTPUT_OUT_1 + trigger].setVoltage(bTriggersDone[trigger] ? 0.f : 10.f);
@@ -723,7 +720,7 @@ struct Brainz : SanguineModule {
 				case brainz::MODULE_STATE_ROUND_1_END:
 					if (moduleDirection == brainz::DIRECTION_BACKWARD
 						|| moduleDirection == brainz::DIRECTION_BIDIRECTIONAL) {
-						memset(currentCounters, 0, sizeof(int) * kMaxSteps);
+						memset(currentCounters, 0, sizeof(int) * brainz::kMaxSteps);
 						moduleStage = brainz::MODULE_STAGE_ROUND_2;
 						moduleState = brainz::MODULE_STATE_ROUND_2_START;
 					}
@@ -754,7 +751,7 @@ struct Brainz : SanguineModule {
 	void handleResetTriggers() {
 		bInMetronome = false;
 		killVoltages();
-		memset(currentCounters, 0, sizeof(int) * kMaxSteps);
+		memset(currentCounters, 0, sizeof(int) * brainz::kMaxSteps);
 		metronomeStepsDone = 0;
 		moduleState = brainz::MODULE_STATE_READY;
 		moduleStage = brainz::MODULE_STAGE_INIT;
@@ -803,7 +800,7 @@ struct Brainz : SanguineModule {
 	void doEndOfStepTriggers(ParamIds checkParam, const float sampleTime) {
 		if (bStepStarted && stepState == brainz::STEP_STATE_TRIGGER_DONE) {
 			if (!params[checkParam].getValue()) {
-				for (int trigger = 0; trigger < kMaxOutTriggers; ++trigger) {
+				for (int trigger = 0; trigger < brainz::kMaxOutTriggers; ++trigger) {
 					bTriggersDone[trigger] = true;
 				}
 			} else {
@@ -860,7 +857,7 @@ struct Brainz : SanguineModule {
 	}
 
 	void onAdd(const AddEvent& e) override {
-		jitteredLogicDivider = kLogicFrequency + (getId() % kLogicFrequency);
+		jitteredLogicDivider = brainz::kLogicFrequency + (getId() % brainz::kLogicFrequency);
 		logicDivider.setDivision(jitteredLogicDivider);
 	}
 };

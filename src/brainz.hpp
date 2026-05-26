@@ -47,4 +47,8 @@ namespace brainz {
             "Forward",
             "Backward"
     };
+
+    static const int kLogicFrequency = 64;
+    static const int kMaxSteps = 3;
+    static const int kMaxOutTriggers = 4;
 }
