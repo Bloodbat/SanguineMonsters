@@ -86,8 +86,8 @@ struct Beleth : SanguineModule {
         configSwitch(PARAM_PARTS, 3.f, 7.f, 7.f, "Parts", beleth::partsLabels);
         configSwitch(PARAM_VOICING, -4.f, 4.f, 0.f, "Voicing", beleth::voicingLabels);
 
-        configInput(INPUT_PERFECT_FIFTH, "Perfect fifth per volt");
-        configInput(INPUT_MAJOR_TRIAD, "Major triad per volt");
+        configInput(INPUT_PERFECT_FIFTH, "Volt per perfect fifth");
+        configInput(INPUT_MAJOR_TRIAD, "Volt per Major triad");
         configInput(INPUT_TRANSPOSE, "Transpose");
         configInput(INPUT_VOICING, "Voicing");
         configInput(INPUT_PARTS, "Parts");
