@@ -128,3 +128,7 @@ The modules available in the MetaModule port are the following:
 |                     Raiju                      |                      Sphinx                      |                     Werewolf                     |
 
 Keep in mind we're not in charge of building or releasing the MetaModule plugin; so available modules and their faceplates may be out of sync with those presented here.
+
+## Pull requests
+
+Development happens in the "monstersdev" branch, so make sure you make it against that branch and not against "main": that one is reserved for releases and urgent bug fixes!
