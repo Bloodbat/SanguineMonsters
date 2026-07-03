@@ -8,6 +8,11 @@ You can find the Nightly builds [here](https://github.com/Bloodbat/SanguineMonst
 
 Looking for the Mutants? Click [here](https://github.com/Bloodbat/SanguineMutants).
 
+- [Sanguine Modules Monsters](#sanguine-modules-monsters)
+  - [Modules](#modules)
+  - [MetaModule port modules](#metamodule-port-modules)
+  - [Pull requests](#pull-requests)
+
 ## Modules
 
 ![alt text](pics/monster_modules.png)
