@@ -259,6 +259,9 @@ struct OraculusWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Cable detection options should be handled by the main module!
+		bShowSanguineOptions = false;
+
 		addInput(createInputCentered<BananutGreenPoly>(millimetersToPixelsVec(6.452, 23.464), module, Oraculus::INPUT_POLYPHONIC));
 
 		addInput(createInputCentered<BananutBlack>(millimetersToPixelsVec(22.734, 43.189), module, Oraculus::INPUT_CV_OFFSET));

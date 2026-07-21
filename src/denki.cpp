@@ -60,6 +60,9 @@ struct DenkiWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_TOP_RIGHT | SCREW_BOTTOM_RIGHT);
 
+		// TODO: Main module should handle cable detection options.
+		bShowSanguineOptions = false;
+
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.769, 5.573), module, Denki::LIGHT_MASTER_MODULE));
 
 		// Channel 1

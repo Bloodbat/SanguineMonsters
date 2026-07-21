@@ -275,6 +275,9 @@ struct AionWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Tie the option to something actually useful and remove the line below!
+		bShowSanguineOptions = false;
+
 		FramebufferWidget* aionFramebuffer = new FramebufferWidget();
 		addChild(aionFramebuffer);
 

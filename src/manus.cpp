@@ -73,6 +73,10 @@ struct ManusWidget : SanguineModuleWidget {
 
         addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
+        // TODO: Main module should handle cable detection options.
+        // TODO: possible problem here: this expander can work with modules on either side at the same time...
+        bShowSanguineOptions = false;
+
         addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573),
             module, Manus::LIGHT_MASTER_MODULE_LEFT));
 

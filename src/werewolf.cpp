@@ -309,6 +309,9 @@ struct WerewolfWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Cable detection options should be handled by the main module!
+		bShowSanguineOptions = false;
+
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(22.879, 39.583), module, Werewolf::LIGHT_EYE_1));
 		addChild(createLightCentered<SmallLight<RedGreenBlueLight>>(millimetersToPixelsVec(38.602, 39.583), module, Werewolf::LIGHT_EYE_2));
 

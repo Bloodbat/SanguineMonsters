@@ -48,6 +48,8 @@ struct OublietteWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		bShowSanguineOptions = false;
+
 		static const float xBase = 6.012;
 		static const float xDelta = 9.539;
 

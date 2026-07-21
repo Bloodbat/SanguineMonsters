@@ -765,6 +765,9 @@ struct AlchemistWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: The main module should handle expander cable detection options!
+		bShowSanguineOptions = false;
+
 #ifndef METAMODULE
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6, 5.573), module,
 			Alchemist::LIGHT_EXPANDER_LEFT));

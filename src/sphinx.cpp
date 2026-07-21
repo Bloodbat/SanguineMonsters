@@ -704,6 +704,9 @@ struct SphinxWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Cable detection options should be handled by the main module!
+		bShowSanguineOptions = false;
+
 		FramebufferWidget* sphinxFrameBuffer = new FramebufferWidget();
 		addChild(sphinxFrameBuffer);
 

@@ -556,6 +556,10 @@ struct SuperSwitch81Widget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Main module should handle cable detection options.
+		// TODO: possible problem here: this expander can work with modules on either side at the same time...
+		bShowSanguineOptions = false;
+
 #ifndef METAMODULE
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(2.6f, 5.573f), module,
 			SuperSwitch81::LIGHT_EXPANDER));

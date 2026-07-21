@@ -425,6 +425,9 @@ struct KitsuneWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Main module should handle cable detection options!
+		bShowSanguineOptions = false;
+
 #ifndef METAMODULE
 		addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(48.017, 5.573), module, Kitsune::LIGHT_EXPANDER));
 #endif

@@ -153,6 +153,9 @@ struct DollyXWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Cable detection options should be handled by the main module!
+		bShowSanguineOptions = false;
+
 		FramebufferWidget* dollyFrameBuffer = new FramebufferWidget();
 		addChild(dollyFrameBuffer);
 

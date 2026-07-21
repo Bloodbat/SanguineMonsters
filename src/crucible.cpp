@@ -48,6 +48,9 @@ struct CrucibleWidget : SanguineModuleWidget {
 
         addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH * 2, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
+        // TODO: Cable detection options should be handled by the main module!
+        bShowSanguineOptions = false;
+
         addChild(createLightCentered<SmallLight<OrangeLight>>(millimetersToPixelsVec(22.8, 5.573), module,
             Crucible::LIGHT_MASTER_MODULE));
 

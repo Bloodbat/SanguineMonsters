@@ -281,8 +281,10 @@ struct FortunaWidget : SanguineModuleWidget {
 
         makePanel();
 
-
         addScrews(SCREW_ALL);
+
+        // TODO: Cable detection options should be handled by the main module!
+        bShowSanguineOptions = false;
 
         // Section 1
 #ifndef METAMODULE

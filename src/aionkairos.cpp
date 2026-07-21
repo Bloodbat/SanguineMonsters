@@ -272,6 +272,9 @@ struct AionKairosWidget : SanguineModuleWidget {
 
         addScrews(SCREW_TOP_LEFT | SCREW_BOTTOM_RIGHT);
 
+        // TODO: Tie the option to something actually useful and remove the line below!
+        bShowSanguineOptions = false;
+
         FramebufferWidget* aionKairosFramebuffer = new FramebufferWidget();
         addChild(aionKairosFramebuffer);
 

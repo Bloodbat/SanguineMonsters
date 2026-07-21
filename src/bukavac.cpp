@@ -345,6 +345,9 @@ struct BukavacWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Tie the option to something actually useful and remove the line below!
+		bShowSanguineOptions = false;
+
 #ifndef METAMODULE
 		SanguineStaticRGBLight* speedLight = new SanguineStaticRGBLight(module, "res/speed_lit.svg", 4.199, 23.402, true, kSanguineBlueLight);
 		addChild(speedLight);

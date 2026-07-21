@@ -193,6 +193,9 @@ struct RaijuWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Cable detection options should be handled by the main module!
+		bShowSanguineOptions = false;
+
 		addParam(createParamCentered<BefacoTinyKnobRed>(millimetersToPixelsVec(127.365, 12.197), module, Raiju::PARAM_CHANNEL_COUNT));
 
 		float yDistance = 19.688;

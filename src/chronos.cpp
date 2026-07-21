@@ -579,6 +579,9 @@ struct ChronosWidget : SanguineModuleWidget {
 
         addScrews(SCREW_ALL);
 
+        // TODO: Tie the option to something actually useful and remove the line below!
+        bShowSanguineOptions = false;
+
         // LFO 1
         SanguineStaticRGBLight* lightClock1 = new SanguineStaticRGBLight(module, "res/clock_lit.svg", 22.771, 13.18, true, kSanguineBlueLight);
         addChild(lightClock1);

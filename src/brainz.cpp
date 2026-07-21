@@ -913,6 +913,9 @@ struct BrainzWidget : SanguineModuleWidget {
 
 		addScrews(SCREW_ALL);
 
+		// TODO: Tie the option to something actually useful and remove the line below!
+		bShowSanguineOptions = false;
+
 #ifndef METAMODULE
 		addParam(createParamCentered<SeqButtonPlay>(millimetersToPixelsVec(97.39, 11.87), module,
 			Brainz::PARAM_PLAY_BUTTON));
