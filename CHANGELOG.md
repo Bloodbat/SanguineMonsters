@@ -34,6 +34,8 @@ without the backticks.
 
 ## Changes
 
+- Plugin: reorganize Sanguine Modules context menu: Themes can now be found under the "Sanguine modules options" item.
+
 - Fortuna considers voltages ? 1V instead of voltages ? 2V as triggers.
 
 - Sphinx: process CV in real time.
